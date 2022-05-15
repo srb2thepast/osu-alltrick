@@ -3,20 +3,6 @@ local Camera = require 'camera'
 
 local Skills = {}
 
-function NewSkill(ID,name,textSize,x,y,w,h,connections,color)
-    local Skill = {
-        ID=ID,
-        name=name,
-        textSize=textSize,
-        x=(x-w/2),y=(y-h/2),
-        cnx=x,cny=y,
-        w=w,h=h,
-        connections=connections,
-        color=color
-    }
-    table.insert(Skills,Skill)
-    return Skill
-end
 local gameIsPaused = false
 
 local GameWidth, GameHeight = love.graphics.getDimensions()
@@ -25,16 +11,32 @@ local PoppinsSBFont
 
 
 function love.load()
-    NewSkill(
-        0,"Fundamental Gameplay Elements",13,
-        -426,0,150,50,
-        nil,{230,25,25}
+    local xp,yp = -426, 0
+    local wid,hei = 150,50
+    table.insert(Skills,{
+        name= "Fundamental Gameplay Elements",
+        ID= 0,
+        textSize= 13,
+        cnx= xp,cny=yp, -- X,Y
+        x=(xp-wid/2),y=(yp-hei/2),
+        xoff= 0,yoff= 3, -- XOffset, YOffset (for text)
+        w= wid,h= hei, -- Width, Height
+        connections= nil,
+        color= {230,25,25}}
     )
 
-    NewSkill(
-        100,"Consistency",20,
-        0,0,150,50,
-        nil,{0,0,255}
+    xp,yp = 0,0
+    wid,hei = 150,50
+    table.insert(Skills,{
+        name= "Consistency",
+        ID= 100,
+        textSize= 20,
+        cnx= xp,cny=yp, -- X,Y
+        x=(xp-wid/2),y=(yp-hei/2),
+        xoff= 0,yoff= 10, -- XOffset, YOffset (for text)
+        w= wid,h= hei, -- Width, Height
+        connections= nil,
+        color= {0,0,255}}
     )
     PoppinsSBFont = love.graphics.newFont("Poppins-SemiBold.ttf", 15)
     print(Skills[1].cnx,Skills[2].cnx,Skills[2].x)
@@ -116,7 +118,7 @@ function love.draw()
         love.graphics.setFont(PoppinsSBFont)
         local width,lines = PoppinsSBFont:getWrap(Skill.name,Skill.w)
         local Fheight = PoppinsSBFont:getHeight(Skill.name)
-        love.graphics.printf(Skill.name,Skill.cnx,Skill.cny+Skill.yoffset,Skill.w,"center") -- TODO: auto-center the text's Y Position based on the skill scaling
+        love.graphics.printf(Skill.name,Skill.cnx+Skill.xoff,Skill.cny+Skill.yoff,Skill.w,"center") -- TODO: auto-center the text's Y Position based on the skill scaling
         --print(Skill.name,Skill.y,Skill.h,"|",Skill.textSize)
         love.graphics.print(tostring(Skill.cnx),Skill.cnx,Skill.cny)
         love.graphics.setColor(255,0,0)
