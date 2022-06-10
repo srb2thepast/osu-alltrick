@@ -1,0 +1,10 @@
+{
+  "solution": {
+    "path": "osuAT.sln",
+    "projects": [
+      "osuAT.Game\\osuAT.Game.csproj",
+      "osuAT.Resources\\osuAT.Resources.csproj",
+      "osuAT.iOS\\osuAT.iOS.csproj"
+    ]
+  }
+}

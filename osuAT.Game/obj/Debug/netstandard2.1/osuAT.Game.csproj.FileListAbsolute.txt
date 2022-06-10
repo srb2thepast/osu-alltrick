@@ -1,0 +1,13 @@
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Game\bin\Debug\netstandard2.1\osuAT.Game.deps.json
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Game\bin\Debug\netstandard2.1\osuAT.Game.dll
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Game\bin\Debug\netstandard2.1\osuAT.Game.pdb
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Game\bin\Debug\netstandard2.1\osuAT.Resources.dll
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Game\bin\Debug\netstandard2.1\osuAT.Resources.pdb
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Game\obj\Debug\netstandard2.1\osuAT.Game.csproj.AssemblyReference.cache
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Game\obj\Debug\netstandard2.1\osuAT.Game.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Game\obj\Debug\netstandard2.1\osuAT.Game.AssemblyInfoInputs.cache
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Game\obj\Debug\netstandard2.1\osuAT.Game.AssemblyInfo.cs
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Game\obj\Debug\netstandard2.1\osuAT.Game.csproj.CoreCompileInputs.cache
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Game\obj\Debug\netstandard2.1\osuAT.Game.csproj.CopyComplete
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Game\obj\Debug\netstandard2.1\osuAT.Game.dll
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Game\obj\Debug\netstandard2.1\osuAT.Game.pdb

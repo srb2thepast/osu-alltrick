@@ -1,0 +1,10 @@
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Resources\bin\Release\netstandard2.1\osuAT.Resources.deps.json
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Resources\bin\Release\netstandard2.1\osuAT.Resources.dll
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Resources\bin\Release\netstandard2.1\osuAT.Resources.pdb
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Resources\obj\Release\netstandard2.1\osuAT.Resources.csproj.AssemblyReference.cache
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Resources\obj\Release\netstandard2.1\osuAT.Resources.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Resources\obj\Release\netstandard2.1\osuAT.Resources.AssemblyInfoInputs.cache
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Resources\obj\Release\netstandard2.1\osuAT.Resources.AssemblyInfo.cs
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Resources\obj\Release\netstandard2.1\osuAT.Resources.csproj.CoreCompileInputs.cache
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Resources\obj\Release\netstandard2.1\osuAT.Resources.dll
+C:\Users\alexh\Documents\osu!alltrick\osuAT\osuAT.Resources\obj\Release\netstandard2.1\osuAT.Resources.pdb

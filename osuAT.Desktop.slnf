@@ -1,0 +1,11 @@
+﻿{
+  "solution": {
+    "path": "osuAT.sln",
+    "projects": [
+      "osuAT.Desktop\\osuAT.Desktop.csproj",
+      "osuAT.Game\\osuAT.Game.csproj",
+      "osuAT.Game.Tests\\osuAT.Game.Tests.csproj",
+      "osuAT.Resources\\osuAT.Resources.csproj"
+    ]
+  }
+}
