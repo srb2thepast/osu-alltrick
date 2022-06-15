@@ -25,9 +25,10 @@ namespace osuAT.Game.Objects
         public string SkillName = "Empty Skill";
         public Colour4 SkillPrimaryColor = Colour4.Purple;
         public Colour4 SkillSecondaryColor = Colour4.Black;
-        public int HScale = 100;
-        public State Status = State.MiniBox;
+        public int HScale = 100; // Hight Scale
+        public State Status = State.MiniBox; // Box Status
         public int TextSize = 83;
+
         private Sprite miniBG;
         private Container box;
         private Container stars;
@@ -44,137 +45,174 @@ namespace osuAT.Game.Objects
             var HSVPrime = SkillPrimaryColor.ToHSV();
             InternalChild = box = new Container
             {
-                AutoSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
 
-                Masking = true,
-                CornerRadius = 50,
-                
-                Children = new Drawable[]
-                    {
+                new Container {
+                    AutoSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
 
-                        
-                        new Box
+                    Masking = true,
+                    CornerRadius = 50,
+
+                    Children = new Drawable[]
                         {
-                            Size = new Vector2(352,224),
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Colour = Colour4.White,
 
-                            
-                        },
-                        new BufferedContainer {
-                            AutoSizeAxes = Axes.Both,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Children = new Drawable[] {
 
-                                miniBG = new Sprite {
-                                    Size = new Vector2(352,224),
-                                    Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre,
-                                    Texture = textures.Get("TestBG"),
-                                    Alpha = 1f,
+                            new Box
+                            {
+                                Size = new Vector2(352,224),
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Colour = Colour4.White,
+
+
+                            },
+                            new BufferedContainer {
+                                AutoSizeAxes = Axes.Both,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Children = new Drawable[] {
+
+                                    miniBG = new Sprite {
+                                        Size = new Vector2(352,224),
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
+                                        Texture = textures.Get("TestBG"),
+                                        Alpha = 1f,
+                                    },
+
+                                }
+                            }.WithEffect(new GlowEffect
+                            {
+                                BlurSigma = new Vector2(3f),
+                                Strength = 5f,
+                                Colour = new ColourInfo
+                                    {
+                                        BottomLeft = Colour4.Black,
+                                        TopRight = Colour4.DimGray,
+                                    },
+                                PadExtent = true,
+                            }),
+                            new Container {
+                                AutoSizeAxes = Axes.Both,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+
+                                Children = new Drawable[] {
+
+                                    new Container {
+                                        AutoSizeAxes = Axes.Both,
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
+                                        Masking = true,
+                                        CornerRadius = 50,
+                                        Y = 50,
+
+                                        Children = new Drawable[] {
+                                            new Circle
+                                            {
+                                                Size = new Vector2(267,20),
+                                                Anchor = Anchor.Centre,
+                                                Origin = Anchor.Centre,
+                                                Colour = SkillSecondaryColor,
+                                                Y = 5,
+                                            },
+                                            new Circle
+                                            {
+                                                Size = new Vector2(267,20),
+                                                Anchor = Anchor.Centre,
+                                                Origin = Anchor.Centre,
+                                                Colour = SkillPrimaryColor,
+
+                                            },
+                                        }
+                                    },
+                                    new SpriteText {
+
+                                        Text = SkillName,
+                                        Anchor = Anchor.Centre,
+                                        Y = -10,
+                                        Origin = Anchor.Centre,
+                                        Font = new FontUsage("VarelaRound",size:TextSize), // FontUsage.Default.With(size:80)
+                                        Colour = SkillPrimaryColor + (Colour4.White/2),
+                                        Shadow = true,
+                                        ShadowColour = SkillSecondaryColor
+                                        //Padding = new MarginPadding
+                                        //{
+                                        //    Horizontal = 15,
+                                        //    Vertical = 1
+                                        //},
+                                        // 
+
+                                    }.WithEffect(new GlowEffect
+                                    {
+                                        BlurSigma = new Vector2(2f),
+                                        Strength = 5f,
+                                        Colour = ColourInfo.GradientHorizontal(SkillPrimaryColor, SkillSecondaryColor),
+                                        PadExtent = true,
+
+                                    }).WithEffect(new OutlineEffect
+                                    {
+                                    BlurSigma = new Vector2(3f),
+                                    Strength = 4f,
+                                    Colour = Colour4.White,
+                                    PadExtent = true,
+                                    }),
+
                                 },
 
-                            }
+
+                            },
+                            stars = new Container {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Y = 66,
+                                X = -120,
+                                Children = new Drawable[] {
+
+                                    new StarShad (SkillPrimaryColor,SkillSecondaryColor,new Vector2(10,0)),
+                                    new StarShad (SkillPrimaryColor,SkillSecondaryColor,new Vector2(55,0)),
+                                    new StarShad (SkillPrimaryColor,SkillSecondaryColor,new Vector2(100,0)),
+                                    new StarShad (SkillPrimaryColor,SkillSecondaryColor,new Vector2(145,0)),
+                                    new StarShad (SkillPrimaryColor,SkillSecondaryColor,new Vector2(190,0)),
+                                }
+                            },
+
+                        }
+                    },
+
+                new Container {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Children = new Drawable[] {
+                        new SpriteIcon {
+                            Position = new Vector2(-206,-148),
+                            Size = new Vector2(70,70),
+                            Icon = FontAwesome.Solid.Star,
+                            Colour = SkillPrimaryColor
                         }.WithEffect(new GlowEffect
                         {
-                            BlurSigma = new Vector2(3f),
-                            Strength = 5f,
-                            Colour = new ColourInfo
-                                {
-                                    BottomLeft = Colour4.Black,
-                                    TopRight = Colour4.DimGray,
-                                },
-                            PadExtent = true,
+                        BlurSigma = new Vector2(3f),
+                        Strength = 1f,
+                        Colour = SkillPrimaryColor,
+                        PadExtent = true,
                         }),
-                        new Container {
-                            AutoSizeAxes = Axes.Both,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            
-                            Children = new Drawable[] {
+                        new SpriteIcon {
+                            Position = new Vector2(126,58),
+                            Size = new Vector2(70,70),
+                            Icon = FontAwesome.Solid.Star,
+                            Colour = SkillSecondaryColor
+                        }.WithEffect(new GlowEffect
+                        {
+                        BlurSigma = new Vector2(3f),
+                        Strength = 1f,
+                        Colour = SkillSecondaryColor,
+                        PadExtent = true,
+                        }),
 
-                                new Container {
-                                    AutoSizeAxes = Axes.Both,
-                                    Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre,
-                                    Masking = true,
-                                    CornerRadius = 50,
-                                    Y = 50,
-                                    
-                                    Children = new Drawable[] {
-                                        new Circle
-                                        {
-                                            Size = new Vector2(267,20),
-                                            Anchor = Anchor.Centre,
-                                            Origin = Anchor.Centre,
-                                            Colour = SkillSecondaryColor,
-                                            Y = 5,
-                                        },
-                                        new Circle
-                                        {
-                                            Size = new Vector2(267,20),
-                                            Anchor = Anchor.Centre,
-                                            Origin = Anchor.Centre,
-                                            Colour = SkillPrimaryColor,
-
-                                        },
-                                    }
-                                },
-                                new SpriteText {
-
-                                    Text = SkillName,
-                                    Anchor = Anchor.Centre,
-                                    Y = -10,
-                                    Origin = Anchor.Centre,
-                                    Font = new FontUsage("VarelaRound",size:TextSize), // FontUsage.Default.With(size:80)
-                                    Colour = SkillPrimaryColor + (Colour4.White/2),
-                                    Shadow = true,
-                                    ShadowColour = SkillSecondaryColor
-                                    //Padding = new MarginPadding
-                                    //{
-                                    //    Horizontal = 15,
-                                    //    Vertical = 1
-                                    //},
-                                    // 
-
-                                }.WithEffect(new GlowEffect
-                                {
-                                    BlurSigma = new Vector2(2f),
-                                    Strength = 5f,
-                                    Colour = ColourInfo.GradientHorizontal(SkillPrimaryColor, SkillSecondaryColor),
-                                    PadExtent = true,
-
-                                }).WithEffect(new OutlineEffect
-                                {
-                                BlurSigma = new Vector2(3f),
-                                Strength = 4f,
-                                Colour = Colour4.White,
-                                PadExtent = true,
-                                }),
-                                
-                            },
-                            
-                            
-                        },
-                        stars = new Container {
-                                    Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre,
-                                    Y = 66,
-                                    X = -120,
-                                    Children = new Drawable[] {
-
-                                        new StarShad (SkillPrimaryColor,SkillSecondaryColor,new Vector2(10,0)),
-                                        new StarShad (SkillPrimaryColor,SkillSecondaryColor,new Vector2(55,0)),
-                                        new StarShad (SkillPrimaryColor,SkillSecondaryColor,new Vector2(100,0)),
-                                        new StarShad (SkillPrimaryColor,SkillSecondaryColor,new Vector2(145,0)),
-                                        new StarShad (SkillPrimaryColor,SkillSecondaryColor,new Vector2(190,0)),
-                                    }
-                                }
                     }
+                }
+
             };
         }
         private class Icon : Container, IHasTooltip
