@@ -13,7 +13,7 @@ namespace osuAT.Game.Tests.Visual
     {
         [Test]
         public void TestSolidBorder() => createBorderTest(Colour4.Blue, Colour4.Red);
-
+            
         [Test]
         public void TestVerticalGradientBorder() => createBorderTest(Colour4.Green, ColourInfo.GradientVertical(Colour4.Black, Colour4.White));
 

@@ -17,7 +17,7 @@ namespace osuAT.Game
         private Drawable background;
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(TextureStore textures)
         {
             
             InternalChildren = new Drawable[]
@@ -35,7 +35,7 @@ namespace osuAT.Game
                 new SpriteText
                 {
                     Y = 20,
-                    Text = "Welcome to osu!skills. [Version 0.0.1]",
+                    Text = "Welcome to osu!alltrick. [Version 0.0.1]",
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
                     Font = FontUsage.Default.With(size: 40)
@@ -48,9 +48,13 @@ namespace osuAT.Game
                        Anchor = Anchor.Centre,
                        Origin = Anchor.Centre,
                        SkillName = "Flow Aim",
-                       SkillPrimaryColor = Colour4.FromHex("#e7ffc9"),
-                       HScale= 100
-                }
+                       SkillPrimaryColor = Colour4.FromHex("#76FF00"),
+                       SkillSecondaryColor = Colour4.FromHex("#00FFF0"),
+                       HScale= 100,
+                       TextSize = 83
+                       
+                },
+                
             };
             
         }
@@ -103,7 +107,7 @@ namespace osuAT.Game
                 return true;
             }
             protected override void OnDrag(DragEvent e) {
-                Vector2 DragChange = -(e.MousePosition - e.MouseDownPosition);
+                Vector2 DragChange = (e.MousePosition - e.MouseDownPosition);
                 Parent.Parent.MoveTo(DragChange + lastoffpos);
 
             }

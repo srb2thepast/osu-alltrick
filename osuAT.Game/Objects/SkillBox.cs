@@ -9,7 +9,7 @@ using osu.Framework.Input.Events;
 
 namespace osuAT.Game.Objects
 {
-    public class FullSkillBox : CompositeDrawable
+    public class SkillBox : CompositeDrawable
     {
 
         public string SkillName = "Empty Skill";
@@ -18,7 +18,7 @@ namespace osuAT.Game.Objects
         public int HScale = 100;
 
         private Container box;
-        public FullSkillBox()
+        public SkillBox()
         {
             AutoSizeAxes = Axes.Both;
             Origin = Anchor.Centre;
