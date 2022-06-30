@@ -341,4 +341,7 @@ inspectcode
 FodyWeavers.xsd
 **/FodyWeavers.xml
 
+# htm from VisualStudio
+*.htm
+
 .idea/.idea.osu.Desktop/.idea/misc.xml
