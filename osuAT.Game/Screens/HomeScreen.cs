@@ -22,7 +22,7 @@ namespace osuAT.Game
             
             InternalChildren = new Drawable[]
             {
-                background = new DragContainer
+                background = new Container
                 {
                     RelativeSizeAxes = Axes.Both,
                     Children = new Drawable[] { 
@@ -44,17 +44,14 @@ namespace osuAT.Game
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.Centre,
                 },
-                new SimpleSkillBox {
-                       Anchor = Anchor.Centre,
-                       Origin = Anchor.Centre,
-                       SkillName = "Flow Aim",
-                       SkillPrimaryColor = Colour4.FromHex("#76FF00"),
-                       SkillSecondaryColor = Colour4.FromHex("#00FFF0"),
-                       HScale= 100,
-                       TextSize = 83
-                       
-                },
-                
+                new DraggableContainer {
+                    AutoSizeAxes = Axes.Both,
+                    Anchor = Anchor.TopLeft,
+                    Origin = Anchor.Centre,
+                    Children = new Drawable[] {
+                        new SkillContainer{}
+                    }
+                }
             };
             
         }
@@ -92,7 +89,7 @@ namespace osuAT.Game
                     },
                     }
                 };
-            }
+            }   
 
             protected override void LoadComplete()
             {
@@ -100,37 +97,56 @@ namespace osuAT.Game
                 box.Loop(b => b.RotateTo(0).RotateTo(360, 2500));
             }
         }
-        private class DragContainer : Container {
+        private class DraggableContainer : Container {
             private Vector2 lastoffpos = Vector2.Zero;
+            private Vector2 lastscale = Vector2.One;
             protected override bool OnDragStart(DragStartEvent e) {
                 
                 return true;
             }
             protected override void OnDrag(DragEvent e) {
-                Vector2 DragChange = (e.MousePosition - e.MouseDownPosition);
-                Parent.Parent.MoveTo(DragChange + lastoffpos);
-
+                Vector2 newPos = (e.MousePosition - e.MouseDownPosition) + lastoffpos;
+                Child.MoveTo(newPos);
+                
             }
             protected override void OnDragEnd(DragEndEvent e)
             {
                 base.OnDragEnd(e);
-                lastoffpos = Parent.Parent.Position;
+                lastoffpos = Child.Position;
+                
                 System.Console.WriteLine(Parent.Parent.Position);
+                System.Console.WriteLine(lastoffpos);
+
+            }
+            protected override bool OnScroll(ScrollEvent e)
+            {
+                Vector2 newScale = lastscale + new Vector2(e.ScrollDelta.Y / 10, e.ScrollDelta.Y / 10);
+                
+                lastscale = ( (newScale.X < 0.5 && newScale.Y < 0.5) || (newScale.X > 3 && newScale.Y > 3   )) ? lastscale : newScale;
+                Vector2 BoxScreenPos = new Vector2(
+                    (Child.Position.X * Child.Scale.X) + Child.Position.X,
+                    (Child.Position.X * Child.Scale.X) + Child.Position.X
+                    );
+
+
+                Child.ScaleTo(lastscale,300,Easing.OutExpo);
+
+                System.Console.Write("World: ");
+                System.Console.WriteLine(BoxScreenPos);
+                System.Console.Write("Mouse World: ");
+                System.Console.WriteLine(new Vector2(
+                    (e.MousePosition.X - Child.Position.X) / Child.Scale.X,
+                    (e.MousePosition.Y - Child.Position.Y) / Child.Scale.Y
+
+                    ));
+                
+                return true;
                 
             }
-
-            protected override void OnHoverLost(HoverLostEvent e)
-            {
-                base.OnHoverLost(e);
-                System.Console.WriteLine("Dragging");
-            }
+            
         }
 
-        protected override void OnMouseUp(MouseUpEvent e)
-            {
-            base.OnMouseUp(e);
-            System.Console.WriteLine("Clicked");
-        }
+        
         
     }
 }

@@ -1,79 +1,79 @@
-using System.Numerics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Input.Events;
+using osu.Framework.Extensions.IEnumerableExtensions;
+using osu.Framework.Graphics.Cursor;
+using osu.Framework.Localisation;
+using osuAT.Game.Types;
+using osuTK;
+
 
 namespace osuAT.Game.Objects
 {
-    public class SkillBox : CompositeDrawable
+    public class SkillBox : Container
     {
+        public enum State
+        {
+            miniBox = 1,
+            FullBox = 2
+        }
+        
 
-        public string SkillName = "Empty Skill";
-        public Colour4 SkillPrimaryColor = Colour4.Purple;
-        public Colour4 SkillSecondaryColor = Colour4.Black;
-        public int HScale = 100;
+        public string SkillName; // Name
+        public int TextSize; // Text Size
 
-        private Container box;
+        public Colour4 SkillPrimaryColor; // Primary Color
+        public Colour4 SkillSecondaryColor; // Secondary Color
+
+        public Texture Background; // Skill Background
+        public int MiniHeight = 100; // Minibox Height
+        public SkillLevel Level;
+
+        public MiniSkillBox MiniBox;
+        public FullSkillBox FullBox;
+
         public SkillBox()
         {
             AutoSizeAxes = Axes.Both;
             Origin = Anchor.Centre;
+            Anchor = Anchor.Centre;
         }
 
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            var HSVPrime = SkillPrimaryColor.ToHSV();
-            InternalChild = box = new Container
+            
+            MiniBox = new MiniSkillBox(
+                    SkillName,
+                    TextSize,
+                    SkillPrimaryColor,
+                    SkillSecondaryColor,
+                    Background,
+                    MiniHeight,
+                    Level);
+            FullBox = new FullSkillBox(
+                    SkillName,
+                    TextSize,
+                    SkillPrimaryColor,
+                    SkillSecondaryColor,
+                    Background,
+                    MiniHeight,
+                    Level);
+
+            InternalChild = new Container
             {
-                AutoSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-
-                Masking = true,
-                CornerRadius = 4,
-                BorderThickness = 4,
-                BorderColour = Colour4.FromHSV(HSVPrime.X, HSVPrime.Y + 1, HSVPrime.Z),
-
-                Children = new Drawable[]
-                    {
-                        new Box
-                        {
-                            RelativeSizeAxes = Axes.X,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Height = HScale,
-                            Colour = SkillPrimaryColor,
-
-                        },
-                        new SpriteText {
-                            Text = SkillName,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Font = FontUsage.Default.With(size:30),
-                            Colour = Colour4.Black,
-                            Padding = new MarginPadding
-                            {
-
-                                Horizontal = 15,
-                                Vertical = 1
-                            },
-
-                        },
-                    }
+                FullBox
             };
+            FullBox.ScaleTo(3);
 
         }
 
-        protected override void LoadComplete()
-        {
-            base.LoadComplete();
-
-        }
 
     }
 }

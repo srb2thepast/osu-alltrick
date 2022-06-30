@@ -30,7 +30,9 @@ namespace osuAT.Game
         private void load()
         {
             Resources.AddStore(new DllResourceStore(typeof(osuATResources).Assembly));
-            AddFont(Resources, @"Fonts/FinalTestFont");
+            AddFont(Resources, @"Fonts/osuFont");
+            AddFont(Resources, @"Fonts/VarelaRound");
+            AddFont(Resources, @"Fonts/ChivoBold");
         }
     }
 }

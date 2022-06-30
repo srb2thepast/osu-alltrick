@@ -7,7 +7,7 @@ namespace osuAT.Game.Tests
     {
         public static void Main()
         {
-            using (GameHost host = Host.GetSuitableDesktopHost("visual-tests"))
+            using (GameHost host = Host.GetSuitableDesktopHost("osu!AT"))
             using (var game = new osuATTestBrowser())
                 host.Run(game);
         }
