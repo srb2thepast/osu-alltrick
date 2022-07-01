@@ -20,7 +20,7 @@ namespace osuAT.Game.Tests.Visual.Display
                     Origin = Anchor.Centre,
                     RulesetList = new RulesetInfo[] {
 
-                        Rulesets.Osu,
+                        RulesetStore.Osu,
                     }
                 };
             });
@@ -32,8 +32,8 @@ namespace osuAT.Game.Tests.Visual.Display
                     Origin = Anchor.Centre,
                     RulesetList = new RulesetInfo[] {
 
-                        Rulesets.Osu,
-                        Rulesets.Mania,
+                        RulesetStore.Osu,
+                        RulesetStore.Mania,
                     }
                 };
             });
@@ -45,9 +45,9 @@ namespace osuAT.Game.Tests.Visual.Display
                     Origin = Anchor.Centre,
                     RulesetList = new RulesetInfo[] {
 
-                        Rulesets.Osu,
-                        Rulesets.Mania,
-                        Rulesets.Taiko,
+                        RulesetStore.Osu,
+                        RulesetStore.Mania,
+                        RulesetStore.Taiko,
                     }
                 };
             });
@@ -59,10 +59,10 @@ namespace osuAT.Game.Tests.Visual.Display
                     Origin = Anchor.Centre,
                     RulesetList = new RulesetInfo[] {
 
-                        Rulesets.Osu,
-                        Rulesets.Mania,
-                        Rulesets.Taiko,
-                        Rulesets.Catch,
+                        RulesetStore.Osu,
+                        RulesetStore.Mania,
+                        RulesetStore.Taiko,
+                        RulesetStore.Catch,
                     }
                 };
             });
@@ -74,15 +74,15 @@ namespace osuAT.Game.Tests.Visual.Display
                     Origin = Anchor.Centre,
                     RulesetList = new RulesetInfo[] {
 
-                        Rulesets.Osu,
-                        Rulesets.Mania,
-                        Rulesets.Taiko,
-                        Rulesets.Catch,
-                        Rulesets.Osu,
-                        Rulesets.Mania,
-                        Rulesets.Osu,
-                        Rulesets.Mania,
-                        Rulesets.Taiko,
+                        RulesetStore.Osu,
+                        RulesetStore.Mania,
+                        RulesetStore.Taiko,
+                        RulesetStore.Catch,
+                        RulesetStore.Osu,
+                        RulesetStore.Mania,
+                        RulesetStore.Osu,
+                        RulesetStore.Mania,
+                        RulesetStore.Taiko,
                     }
                 };
             });
@@ -94,35 +94,35 @@ namespace osuAT.Game.Tests.Visual.Display
                     Origin = Anchor.Centre,
                     RulesetList = new RulesetInfo[] {
 
-                        Rulesets.Osu,
-                        Rulesets.Mania,
-                        Rulesets.Taiko,
-                        Rulesets.Catch,
-                        Rulesets.Osu,
-                        Rulesets.Mania,
-                        Rulesets.Osu,
-                        Rulesets.Mania,
-                        Rulesets.Taiko,
-                        Rulesets.Osu,
-                        Rulesets.Mania,
-                        Rulesets.Taiko,
-                        Rulesets.Catch,
-                        Rulesets.Osu,
-                        Rulesets.Mania,
-                        Rulesets.Osu,
-                        Rulesets.Mania,
-                        Rulesets.Taiko,
-                        Rulesets.Mania,
-                        Rulesets.Taiko,
-                        Rulesets.Osu,
-                        Rulesets.Mania,
-                        Rulesets.Taiko,
-                        Rulesets.Catch,
-                        Rulesets.Osu,
-                        Rulesets.Mania,
-                        Rulesets.Osu,
-                        Rulesets.Mania,
-                        Rulesets.Taiko,
+                        RulesetStore.Osu,
+                        RulesetStore.Mania,
+                        RulesetStore.Taiko,
+                        RulesetStore.Catch,
+                        RulesetStore.Osu,
+                        RulesetStore.Mania,
+                        RulesetStore.Osu,
+                        RulesetStore.Mania,
+                        RulesetStore.Taiko,
+                        RulesetStore.Osu,
+                        RulesetStore.Mania,
+                        RulesetStore.Taiko,
+                        RulesetStore.Catch,
+                        RulesetStore.Osu,
+                        RulesetStore.Mania,
+                        RulesetStore.Osu,
+                        RulesetStore.Mania,
+                        RulesetStore.Taiko,
+                        RulesetStore.Mania,
+                        RulesetStore.Taiko,
+                        RulesetStore.Osu,
+                        RulesetStore.Mania,
+                        RulesetStore.Taiko,
+                        RulesetStore.Catch,
+                        RulesetStore.Osu,
+                        RulesetStore.Mania,
+                        RulesetStore.Osu,
+                        RulesetStore.Mania,
+                        RulesetStore.Taiko,
                     }
                 };
                 Child.ScaleTo(0.5f);
@@ -130,3 +130,5 @@ namespace osuAT.Game.Tests.Visual.Display
         }
     }
 }
+
+// () => {}

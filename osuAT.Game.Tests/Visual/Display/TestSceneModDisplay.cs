@@ -46,11 +46,11 @@ namespace osuAT.Game.Tests.Visual.Display
                     {
                         Value = new ModInfo[]
                         {
-                            Mods.Hardrock,
-                            Mods.Doubletime,
-                            Mods.Auto,
-                            Mods.Easy,
-                            Mods.Nomod
+                            ModStore.Hardrock,
+                            ModStore.Doubletime,
+                            ModStore.Auto,
+                            ModStore.Easy,
+                            ModStore.Nomod
                         }
                     }
                 };

@@ -1,11 +1,13 @@
 ﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Textures;
 using osuAT.Game.Types;
+using osuAT.Game.Types.Score;
 
 #nullable enable
 
 namespace osuAT.Game.Skills
 {
+    // When a skill is ready to be put into savedata, add it to the SkillPPTotals.cs class.
     public interface ISkill
     {
         /// <summary>
@@ -22,7 +24,7 @@ namespace osuAT.Game.Skills
         /// The skill's PP Calculator System.
         /// </summary>
         /// <param name="ruleset">The ruleset .</param>
-        public double SkillCalc(RulesetInfo ruleset, IScore score, ModInfo[]? mods);
+        public double SkillCalc(RulesetInfo ruleset, Score score, ModInfo[]? mods);
 
         /// <summary>
         /// The rulesets the skill can support.

@@ -66,8 +66,7 @@ namespace osuAT.Game.Objects.Displays
 
             using (outerCircle.BeginDelayedSequence(50))
                 outerCircle.ResizeTo(new Vector2(78 + RulesetList.Length * 60, 67), 500, Easing.InOutCubic);
-
-            using (innerCircle.BeginDelayedSequence(100))
+            using (innerCircle.BeginDelayedSequence(50))
                 innerCircle.ResizeTo(new Vector2(69 + RulesetList.Length * 60, 58),500,Easing.InOutCubic);
 
             for (var i = 0; i < RulesetList.Length; i++)

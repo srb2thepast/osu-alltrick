@@ -25,7 +25,7 @@ namespace osuAT.Game.Objects
         public Texture Background; // Skill Background
         public int MiniHeight; // Minibox Height
         public SkillLevel Level { get; }
-        public RulesetInfo[] SupportedRulesets = {Rulesets.Osu};
+        public RulesetInfo[] SupportedRulesets = {RulesetStore.Osu};
         private Container fullBox;
         private CircularProgress backprogress;
         private CircularProgress skillprogress;
@@ -45,7 +45,7 @@ namespace osuAT.Game.Objects
             public Texture Background; // Skill Background
             public int MiniHeight; // Minibox Height
             public SkillLevel Level { get; }
-            public RulesetInfo[] SupportedRulesets = { Rulesets.Osu };
+            public RulesetInfo[] SupportedRulesets = { RulesetStore.Osu };
 
             private Circle bubble1;
             private Circle bubble2;
@@ -385,11 +385,11 @@ namespace osuAT.Game.Objects
                             Scale = new Vector2(0.25f),
                             RulesetList = new RulesetInfo[] {
 
-                                Rulesets.Osu,
-                                Rulesets.Mania,
-                                Rulesets.Taiko,
-                                Rulesets.Catch,
-                                Rulesets.Osu,
+                                RulesetStore.Osu,
+                                RulesetStore.Mania,
+                                RulesetStore.Taiko,
+                                RulesetStore.Catch,
+                                RulesetStore.Osu,
                             }
                         },
                         // Skill Description
@@ -849,11 +849,11 @@ namespace osuAT.Game.Objects
                                     Scale = new Vector2(0.25f),
                                     RulesetList = new RulesetInfo[] {
 
-                                        Rulesets.Osu,
-                                        Rulesets.Mania,
-                                        Rulesets.Taiko,
-                                        Rulesets.Catch,
-                                        Rulesets.Osu,
+                                        RulesetStore.Osu,
+                                        RulesetStore.Mania,
+                                        RulesetStore.Taiko,
+                                        RulesetStore.Catch,
+                                        RulesetStore.Osu,
                                     }
                                 },
                                 // Skill Description

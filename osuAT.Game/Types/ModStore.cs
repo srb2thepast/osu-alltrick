@@ -26,7 +26,7 @@ namespace osuAT.Game.Types
         }
         
     }
-    public class Mods
+    public class ModStore
     {
         #region osu!standard mods
         public static ModInfo Auto => new ModInfo("Auto", "AT", 1, ModType.Automation, OsuIcon.ModAuto); 

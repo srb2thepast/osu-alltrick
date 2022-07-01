@@ -19,7 +19,7 @@ namespace osuAT.Game.Types
         }
         
     }
-    public class Rulesets
+    public class RulesetStore
     {
         public static RulesetInfo Osu => new RulesetInfo("Osu", OsuIcon.RulesetOsu); 
         public static RulesetInfo Mania => new RulesetInfo("Mania", OsuIcon.RulesetMania);
