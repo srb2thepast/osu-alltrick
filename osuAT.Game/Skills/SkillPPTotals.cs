@@ -12,6 +12,6 @@ namespace osuAT.Game.Skills
     public class SkillPPTotals
     {
         [JsonProperty("flowaim")]
-        public int FlowAim;
+        public int FlowAim = 0;
     }
 }

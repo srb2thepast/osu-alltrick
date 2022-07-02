@@ -36,91 +36,110 @@ namespace osuAT.Game.Types.Score
 
     public class Score
     {
+
+        /// <summary>
+        /// The score's ID based on it's placement in the save file. It can be null if this score has not been saved
+        /// to file yet.
+        /// </summary>
+        [JsonIgnore]
+        public int? ID { get; set; }
+
+
         /// <summary>
         /// The score's ID based on osu!web. It can be null depending on how the score is imported.
         /// </summary>
         [JsonProperty("scoreid")]
-        public int? ID { get; set; }
+        public int? OsuID { get; set; }
 
         /// <summary>
         /// Whether or not the score was set in osu!lazer.
-        /// </summary
+        /// </summary>
         [JsonProperty("islazer")]
         public bool IsLazer { get; set; }
 
         /// <summary>
         /// The ID of the beatmap this score was set on.
-        /// </summary
+        /// </summary>
         [JsonProperty("beatmap")]
         public uint BeatmapID { get; set; }
 
         /// <summary>
         /// The ID of the beatmapset this score was set on.
-        /// </summary
+        /// </summary>
         [JsonProperty("beatmapset")]
         public uint BeatmapsetID { get; set; }
 
         /// <summary>
         /// The location of the beatmap on the player's computer. There is a very high chance of it being null.
-        /// </summary
+        /// </summary>
         [JsonIgnore]
         public string? BeatmapLocation { get; set; }
 
         /// <summary>
         /// The date this score was created **in osu!alltrick**.
-        /// </summary
+        /// </summary>
         [JsonProperty("created_at")]
         public DateTime DateCreated { get; set; }
 
 
         /// <summary>
         /// The accuracy the player got.
-        /// </summary
+        /// </summary>
         [JsonProperty("accuracy")]
         public double Accuracy { get; set; }
 
         /// <summary>
         /// The Total Score the player got.
-        /// </summary
+        /// </summary>
         [JsonProperty("totalscore")]
         public long TotalScore { get; set; }
 
         /// <summary>
         /// The details on how many misses, 300s, 100s, and 50s the player got.
-        /// </summary
+        /// </summary>
         [JsonProperty("accStats")]
         public AccStat? AccuracyStats { get; set; }
 
         /// <summary>
         /// The amount of Combo the player got.
-        /// </summary
+        /// </summary>
         [JsonProperty("combo")]
         public int Combo { get; set; }
 
         /// <summary>
-        /// The amount of Combo the player got.
-        /// </summary
+        /// The cached alltrickpp values for this skill.
+        /// </summary>
         [JsonProperty("alltrickpp")]
         public SkillPPTotals? AlltrickPP { get; set; }
 
+        /// <summary>
+        /// The Ruleset this score was set in based on the <see cref="RulesetInfo"/> class.
+        /// </summary>
         [JsonIgnore]
         public virtual RulesetInfo? Ruleset { get; set; }
 
+        /// <summary>
+        /// The Mods the score was set with based on the <see cref="ModInfo"/> class.
+        /// </summary>
         [JsonIgnore]
         public List<ModInfo>? Mods { get; set; } = default!;
 
-        [JsonProperty("mods")]
+        /// </summary>
+        /// A list of the name of each mod this score was set with.
+        /// </summary>
+        [JsonProperty("modlist")]
         public List<string> ModsString { get; set; }
-        public Score(int iD, uint beatmap, uint beatmapset, long totalScore, AccStat accuracy, int combo, SkillPPTotals alltrickPP, bool isLazer, List<ModInfo> mods)
+        public Score(int osuid, uint beatmap, uint beatmapset,double accuracy, long totalScore, AccStat accstat, int combo, SkillPPTotals alltrickPP, bool isLazer, List<ModInfo> mods)
         {
-            ID = iD;
+            OsuID = osuid;
+            IsLazer = isLazer;
             BeatmapID = beatmap;
             BeatmapsetID = beatmapset;
             TotalScore = totalScore;
-            AccuracyStats = accuracy;
+            Accuracy = accuracy;
+            AccuracyStats = accstat;
             Combo = combo;
             AlltrickPP = alltrickPP;
-            IsLazer = isLazer;
             Mods = mods;
 
 

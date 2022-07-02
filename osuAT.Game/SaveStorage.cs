@@ -9,7 +9,7 @@ using osuAT.Game.Skills;
 
 namespace osuAT.Game
 {
-    public interface ISaveData {
+    public class CSaveData {
         /// <summary>
         /// The save data version.
         /// </summary>
@@ -19,14 +19,14 @@ namespace osuAT.Game
         /// <summary>
         /// The player the save data is attached to.
         /// </summary>
-        [JsonProperty("player")]
-        public int PlayerName { get; set; }
+        [JsonProperty("playerid")]
+        public int PlayerID { get; set; }
 
         /// <summary>
         /// The player's APIKey.
         /// </summary>
         [JsonProperty("APIKey")]
-        protected string APIKey { get; set; }
+        public string APIKey { get; set; } // reminder to make a seperate class named APIManager that will manage all API requests with private variables.
 
         /// <summary>
         /// The overall cached PP for each skill.
@@ -43,110 +43,73 @@ namespace osuAT.Game
 
     public class SaveStorage
     {
-        private class ShortenedModInfo {
 
+        public static CSaveData SaveData;
+        public static string SaveFile = "savedata\\data.json";
+
+        static SaveStorage() {
+
+            if (!(CheckSaveExists())) { 
+                SaveData = new CSaveData {
+                    Version = "osu!AT save data v1",
+                    PlayerID = -1,
+                    APIKey = "null",
+                    TotalSkillPP = new SkillPPTotals(), 
+                    Scores = new List<Score>()
+                };
+                Save();
+                return;
+            }
+
+
+            SaveData = JsonConvert.DeserializeObject<CSaveData>(Read());
         }
-        public static FileInfo SaveToFile(string filename,string text) {
+
+        public static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
+        }
+
+        public static string Base64Decode(string base64EncodedData)
+        {
+            var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
+            return Encoding.UTF8.GetString(base64EncodedBytes);
+        }
+
+        public static string Read()
+        {
+            return Base64Decode(File.ReadAllText(SaveFile));
+        }
+
+        public static FileInfo Save() {
+            string encodedtext = Base64Encode(JsonConvert.SerializeObject(SaveData));
+            File.WriteAllText(SaveFile, encodedtext);
+            return new FileInfo(SaveFile);
+        }
+
+
+
+        public static FileInfo SaveScore(Score score) {
+            CheckSaveExists();
             
-            File.WriteAllText(filename, text);
-            return new FileInfo(filename);
-        }
-        public static void SaveScore(Score score) {
-            var savedata = "savedata\\" + score.Ruleset.Name.ToLower() + "\\data.json";
-            
+            SaveData.Scores.Add(score);
+            score.ID = SaveData.Scores.Count; 
+            return Save();
 
         }
 
-        public static string ScoreToJson(Score score) {
-            return JsonConvert.SerializeObject(score);
-        }
-
-
-
-
-        /*
-        public static List<(IScore, string)> GetScores()
-        {
-            List<(IScore, string)> scores = new List<(IScore, string)>();
-
-            if (!checkMainDirectoryExistance())
-                return scores;
-
-            var directories = Directory.GetDirectories("Levels/");
-
-            if (directories.Length == 0)
-                return scores;
-
-            foreach (var dir in directories)
-            {
-                var file = $"{dir}/level";
-
-                if (!File.Exists(file))
-                    continue;
-
-                var save = $"{dir}/level";
-                var contents = File.ReadAllText(save);
-                if (dir == "standard") {
-                    OsuScore score = JsonConvert.DeserializeObject<OsuScore>(contents)!;
-                }
-
-                using (StreamReader sr = File.OpenText(file))
-                {
-                    var text = sr.ReadLine();
-                    sr.Close();
-
-                    var level = JsonConvert.DeserializeObject<IScore>(text);
-                    var name = file.Substring(0, dir.Substring(7).Length);
-
-                    scores.Add((level, name));
-                }
-            }
-
-            return scores;
-        }
-        
-        public static void CreateLevel(string name, Level level)
-        {
-            if (!LevelExists(name))
-                CreateLevelDirectory(name);
-
-            string jsonResult = JsonConvert.SerializeObject(level);
-
-            using (StreamWriter sw = File.CreateText($"Levels/{name}/level"))
-            {
-                sw.WriteLine(jsonResult.ToString());
-                sw.Close();
-            }
-        }
-
-        public static bool LevelExists(string name)
-        {
-            if (!checkMainDirectoryExistance())
+        public static bool CheckSaveExists() {
+            if (!Directory.Exists("savedata")) {
+                Directory.CreateDirectory("savedata");
                 return false;
-
-            var directories = Directory.GetDirectories("Levels");
-
-            if (directories.Length == 0)
-                return false;
-
-            foreach (var dir in directories)
-            {
-                if (dir.Substring(7).ToLower() == name.ToLower())
-                    return true;
             }
-
-            return false;
-        }
-
-        private static bool checkMainDirectoryExistance()
-        {
-            if (!Directory.Exists("Levels"))
-            {
-                Directory.CreateDirectory("Levels");
+            if (!File.Exists("savedata\\data.json")) {
                 return false;
             }
 
             return true;
-        }*/
+        } 
+        
     }
 }

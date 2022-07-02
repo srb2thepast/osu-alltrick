@@ -35,6 +35,15 @@ namespace osuAT.Game.Tests.Visual
             FlowAim = 100
         };
 
+        private void saveDummy() {
+            FileInfo info = SaveStorage.SaveScore(dummyscore);
+            string contentstring = SaveStorage.Read().Replace(",", "\n").Replace("{", "\n {").Replace("}", "}\n");
+            savelocation.Text = info.FullName;
+            savecontents.Text = contentstring;
+            System.Console.WriteLine(contentstring);
+        }
+
+
         [SetUp]
         public void SetUp() {
             Child = new Container
@@ -90,17 +99,11 @@ namespace osuAT.Game.Tests.Visual
                     ModStore.Flashlight
                 };
 
-                dummyscore = new Score(4000, 1, 1, 100, new AccStat(0, 1, 0, 0), 1, samplePPTotals, true, ModList);
+                dummyscore = new Score(4000, 1, 1, 1, 100, new AccStat(0, 1, 0, 0), 1, samplePPTotals, true, ModList);
             });
-            AddStep("save dummy score to file", () =>
-            {
-                var jsstring = SaveStorage.ScoreToJson(dummyscore);
-                var info = SaveStorage.SaveToFile("savedata.json", jsstring);
-                savelocation.Text = info.FullName;
-                savecontents.Text = jsstring.Replace(",", "\n").Replace("{", "\n {").Replace("}", "}\n");
-            });
+            AddStep("save dummy score to file", saveDummy);
             AddAssert("score exists", () => {
-                return true;
+                return SaveStorage.SaveData.Scores.Contains(dummyscore);
             });
             AddSliderStep("flowaim pptotal", 0, 20000, 100, amount => { samplePPTotals = new SkillPPTotals { FlowAim = amount};  });
         }
@@ -110,15 +113,9 @@ namespace osuAT.Game.Tests.Visual
         {
             AddStep("create dummy score", () =>
             {
-                dummyscore = new Score(69420727, 1, 1, 100, new AccStat(0, 1, 0, 0), 1, samplePPTotals, true, null);
+                dummyscore = new Score(69420727, 1, 1, 1, 100, new AccStat(0, 1, 0, 0), 1, samplePPTotals, true, null);
             });
-            AddStep("save dummy score to file", () =>
-            {
-                var jsstring = SaveStorage.ScoreToJson(dummyscore);
-                var info = SaveStorage.SaveToFile("savedata.json", jsstring);
-                savelocation.Text = info.FullName;
-                savecontents.Text = jsstring.Replace(",", "\n").Replace("{", "\n {").Replace("}", "}\n");
-            });
+            AddStep("save dummy score to file", saveDummy);
             AddAssert("score exists", () => {
                 return true;
             });
