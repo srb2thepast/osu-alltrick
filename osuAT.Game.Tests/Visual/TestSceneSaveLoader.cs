@@ -1,7 +1,6 @@
 using NUnit.Framework;
 using osuAT.Game;
 using osuAT.Game.Types;
-using osuAT.Game.Types.Score;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
@@ -18,7 +17,7 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Localisation;
 using osuAT.Game.Objects;
-using osuAT.Game.Skills;
+using osuAT.Game.Skill;
 using osuTK;
 using System.Collections.Generic;
 
@@ -36,9 +35,9 @@ namespace osuAT.Game.Tests.Visual
         };
 
         private void saveDummy() {
-            FileInfo info = SaveStorage.SaveScore(dummyscore);
+            (FileInfo,int) info = SaveStorage.SaveScore(dummyscore);
             string contentstring = SaveStorage.Read().Replace(",", "\n").Replace("{", "\n {").Replace("}", "}\n");
-            savelocation.Text = info.FullName;
+            savelocation.Text = info.Item1.FullName;
             savecontents.Text = contentstring;
             System.Console.WriteLine(contentstring);
         }
@@ -86,6 +85,45 @@ namespace osuAT.Game.Tests.Visual
                 }
             };
         }
+
+
+        [Test]
+        public void TestNomod()
+        {
+            AddStep("create dummy score", () =>
+            {
+               dummyscore = new Score()
+                {
+                    ScoreRuleset = RulesetStore.Osu,
+                    IsLazer = false,
+                    OsuID = 3152295822,
+                    BeatmapInfo = new Beatmap
+                    {
+                        MapID = 651507,
+                        MapsetID = 1380717,
+                        SongArtist = "a_hisa",
+                        SongName = "Logical Stimulus",
+                        DifficultyName = "owo",
+                        MapsetCreator = "Naidaaka",
+                        StarRating = 7.93,
+                        MaxCombo = 2336
+                    },
+                    Grade = "SH",
+                    Accuracy = 99.51,
+                    AccuracyStats = new AccStat(2020, 15, 0, 0),
+                    Combo = 2333,
+                    TotalScore = 116276034,
+                    Mods = new List<ModInfo>(),
+                    DateCreated = System.DateTime.Today
+                };
+                dummyscore.Register();
+            });
+            AddStep("save dummy score to file", saveDummy);
+            AddAssert("score exists", () => {
+                return true;
+            });
+        }
+
         [Test]
         public void TestFourmod()
         {
@@ -99,7 +137,31 @@ namespace osuAT.Game.Tests.Visual
                     ModStore.Flashlight
                 };
 
-                dummyscore = new Score(4000, 1, 1, 1, 100, new AccStat(0, 1, 0, 0), 1, samplePPTotals, true, ModList);
+                dummyscore = new Score()
+                {
+                    ScoreRuleset = RulesetStore.Osu,
+                    IsLazer = false,
+                    OsuID = 3152295822,
+                    BeatmapInfo = new Beatmap
+                    {
+                        MapID = 651507,
+                        MapsetID = 1380717,
+                        SongArtist = "a_hisa",
+                        SongName = "Logical Stimulus",
+                        DifficultyName = "owo",
+                        MapsetCreator = "Naidaaka",
+                        StarRating = 7.93,
+                        MaxCombo = 2336
+                    },
+                    Grade = "SH",
+                    Accuracy = 99.51,
+                    AccuracyStats = new AccStat(2020, 15, 0, 0),
+                    Combo = 2333,
+                    TotalScore = 116276034,
+                    Mods = ModList,
+                    DateCreated = System.DateTime.Today
+                };
+                dummyscore.Register();
             });
             AddStep("save dummy score to file", saveDummy);
             AddAssert("score exists", () => {
@@ -108,18 +170,7 @@ namespace osuAT.Game.Tests.Visual
             AddSliderStep("flowaim pptotal", 0, 20000, 100, amount => { samplePPTotals = new SkillPPTotals { FlowAim = amount};  });
         }
 
-        [Test]
-        public void TestNomod()
-        {
-            AddStep("create dummy score", () =>
-            {
-                dummyscore = new Score(69420727, 1, 1, 1, 100, new AccStat(0, 1, 0, 0), 1, samplePPTotals, true, null);
-            });
-            AddStep("save dummy score to file", saveDummy);
-            AddAssert("score exists", () => {
-                return true;
-            });
-        }
+        
 
         
     }

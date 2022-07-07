@@ -1,6 +1,9 @@
+using System.Collections.Generic;
 using osu.Framework.Graphics;
-using osuAT.Game.Objects;
 using NUnit.Framework;
+using osuAT.Game.Objects;
+using osuAT.Game.Skill;
+using osuAT.Game.Types;
 
 namespace osuAT.Game.Tests.Visual
 {
@@ -12,6 +15,7 @@ namespace osuAT.Game.Tests.Visual
         [Test]
         public void TestSkillBox()
         {
+            
             AddStep("Create new skillbox", () =>
             {
                 Child = new SkillBox

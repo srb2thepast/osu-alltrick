@@ -72,6 +72,7 @@ namespace osuAT.Game.Objects.LazerAssets.Mod
             InternalChild = iconsContainer = new ReverseChildIDFillFlowContainer<ModIcon>
             {
                 AutoSizeAxes = Axes.Both,
+                Y = -3,
                 Direction = FillDirection.Horizontal,
             };
         }

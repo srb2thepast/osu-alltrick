@@ -34,7 +34,7 @@ using osuAT.Game.Objects.LazerAssets.StarRating;
 namespace osuAT.Game.Tests.Visual.Display
 {
     public class TestSceneStarRatingDisplay : TestScene
-    {
+    {   
         [TestCase(StarRatingDisplaySize.Regular)]
         [TestCase(StarRatingDisplaySize.Small)]
         public void TestDisplay(StarRatingDisplaySize size)

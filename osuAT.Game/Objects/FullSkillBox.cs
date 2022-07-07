@@ -931,13 +931,11 @@ namespace osuAT.Game.Objects
                                 
                         },
 
-                        // ScoreDisplay List
-                        new Container {
-                            AutoSizeAxes = Axes.Both,
+                        // ScoreDisplayList
+                        new ScoreContainer {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Children = new Drawable[] {
-                            }
+                            X = -80,
                         }
 
                     }

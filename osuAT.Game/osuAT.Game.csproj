@@ -3,9 +3,9 @@
     <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Skills\RulesetOsu\**" />
-    <EmbeddedResource Remove="Skills\RulesetOsu\**" />
-    <None Remove="Skills\RulesetOsu\**" />
+    <Compile Remove="Skill\RulesetOsu\**" />
+    <EmbeddedResource Remove="Skill\RulesetOsu\**" />
+    <None Remove="Skill\RulesetOsu\**" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\osuAT.Resources\osuAT.Resources.csproj" />

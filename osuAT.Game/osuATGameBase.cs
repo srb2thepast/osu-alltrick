@@ -33,6 +33,7 @@ namespace osuAT.Game
             AddFont(Resources, @"Fonts/osuFont");
             AddFont(Resources, @"Fonts/VarelaRound");
             AddFont(Resources, @"Fonts/ChivoBold");
+            AddFont(Resources, @"Fonts/Venera");
         }
     }
 }

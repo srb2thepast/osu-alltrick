@@ -16,14 +16,15 @@ using osuTK;
 
 namespace osuAT.Game.Objects
 {
+
+    public enum SkillBoxState
+    {
+        miniBox = 1,
+        FullBox = 2
+    }
+
     public class SkillBox : Container
     {
-        public enum State
-        {
-            miniBox = 1,
-            FullBox = 2
-        }
-        
 
         public string SkillName; // Name
         public int TextSize; // Text Size

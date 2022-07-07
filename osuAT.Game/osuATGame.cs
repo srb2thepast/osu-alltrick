@@ -18,8 +18,6 @@ namespace osuAT.Game
             // Add your top-level game components here.
             // A screen stack and sample screen has been provided for convenience, but you can replace it if you don't want to use screens.
             Child = screenStack = new ScreenStack { RelativeSizeAxes = Axes.Both };
-            //Console.WriteLine(storage.GetFullPath(string.Empty, true));
-            AddFont(Resources, @"Resources/Fonts/VarelaRound.fnt");
         }
 
         protected override void LoadComplete()

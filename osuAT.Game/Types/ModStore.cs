@@ -1,4 +1,6 @@
-﻿using osu.Framework.Graphics;
+﻿using System;
+using System.Reflection;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Textures;
 using osuAT.Game.Objects;
@@ -46,6 +48,28 @@ namespace osuAT.Game.Types
         public static ModInfo Nomod => new ModInfo("Nomod", "NM", 0, ModType.System, OsuIcon.ModBg);
         #endregion
 
+        public static ModInfo GetByName(string name)
+        {
+            switch (name)
+            {
+                case "Auto": return Auto;
+                case "Relax": return Relax;
+                case "Autopilot": return Autopilot;
+                case "Spunout": return Spunout;
+                case "Easy": return Easy;
+                case "Nofail": return Nofail;
+                case "Hidden": return Hidden;
+                case "Halftime": return Halftime;
+                case "Nightcore": return Nightcore;
+                case "Doubletime": return Doubletime;
+                case "Hardrock": return Hardrock;
+                case "Suddendeath": return Suddendeath;
+                case "Perfect": return Perfect;
+                case "Flashlight": return Flashlight;
+                default: return Nomod;
+            }
+        }
+
         public ModInfo GetByAcronym(string acronym) {
             switch (acronym) {
                 case "AT": return Auto; 
@@ -58,9 +82,12 @@ namespace osuAT.Game.Types
                 case "HT": return Halftime;
                 case "NC": return Nightcore;
                 case "DT": return Doubletime;
+                case "HR": return Hardrock;
+                case "SD": return Suddendeath;
+                case "PF": return Perfect;
+                case "FL": return Flashlight;
+                default: return Nomod;
             }
-            return Nomod;
-
         }
     }
 }

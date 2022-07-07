@@ -26,6 +26,15 @@ namespace osuAT.Game.Types
         public static RulesetInfo Catch => new RulesetInfo("Catch", OsuIcon.RulesetCatch);
         public static RulesetInfo Taiko => new RulesetInfo("Taiko", OsuIcon.RulesetTaiko);
 
+        public static RulesetInfo GetByName(string name) {
+            switch (name.ToLower()) {
+                case "osu": return Osu;
+                case "mania": return Mania;
+                case "catch": return Catch;
+                case "taiko": return Taiko;
 
+                default: return Osu;
+            }
+        }
     }
 }

@@ -1,11 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 using System.IO;
-using osuAT.Game.Types.Score;
+using osu.Framework.Platform; // Reminder: consider using osu.Framework.Platform.Storage for safe file writing.
 using osuAT.Game.Types;
-using osuAT.Game.Skills;
+using osuAT.Game.Skill;
 
 namespace osuAT.Game
 {
@@ -34,6 +35,8 @@ namespace osuAT.Game
         [JsonProperty("alltrickPP")]
         public SkillPPTotals TotalSkillPP { get; set;}
 
+        public SkillTopScores AlltrickTop { get; set; }
+
         /// <summary>
         /// A list of every score that osu!alltrick was able to process.
         /// </summary>
@@ -49,12 +52,12 @@ namespace osuAT.Game
 
         static SaveStorage() {
 
-            if (!(CheckSaveExists())) { 
+            if (!(CheckSaveExists())) {
                 SaveData = new CSaveData {
                     Version = "osu!AT save data v1",
                     PlayerID = -1,
                     APIKey = "null",
-                    TotalSkillPP = new SkillPPTotals(), 
+                    TotalSkillPP = new SkillPPTotals(),
                     Scores = new List<Score>()
                 };
                 Save();
@@ -63,6 +66,12 @@ namespace osuAT.Game
 
 
             SaveData = JsonConvert.DeserializeObject<CSaveData>(Read());
+
+            int i = 0;
+            foreach (Score score in SaveData.Scores) {
+                score.Register(index: i);
+                i += 1;
+            }
         }
 
         public static string Base64Encode(string plainText)
@@ -88,16 +97,45 @@ namespace osuAT.Game
             return new FileInfo(SaveFile);
         }
 
+        public static void DeleteScore(int location) {
+            SaveData.Scores[location] = new Score()
+            {
+                ScoreRuleset = RulesetStore.Osu,
+                IsLazer = false,
+                OsuID = -1,
+                BeatmapInfo = new Beatmap
+                {
+                    MapID = -1,
+                    MapsetID = -1,
+                    SongArtist = "deleted",
+                    SongName = "deleted",
+                    DifficultyName = "deleted",
+                    MapsetCreator = "deleted",
+                    StarRating = 0,
+                    MaxCombo = 0
+                },
+                Grade = "deleted",
+                Accuracy = 0,
+                AccuracyStats = new AccStat(0, 0, 0, 0),
+                Combo = 0,
+                TotalScore = 0,
+                Mods = new List<ModInfo>(),
+                IndexPosition = SaveData.Scores[location].IndexPosition,
+                DateCreated = SaveData.Scores[location].DateCreated
+            };
+            SaveData.Scores[location].Register();
+            Save(); 
+        }
 
-
-        public static FileInfo SaveScore(Score score) {
+        public static (FileInfo,int) SaveScore(Score score) {
             CheckSaveExists();
             
             SaveData.Scores.Add(score);
-            score.ID = SaveData.Scores.Count; 
-            return Save();
+            score.IndexPosition = SaveData.Scores.Count - 1;
+            return (Save(), SaveData.Scores.Count);
 
         }
+
 
         public static bool CheckSaveExists() {
             if (!Directory.Exists("savedata")) {
