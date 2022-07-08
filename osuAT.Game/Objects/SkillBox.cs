@@ -69,9 +69,9 @@ namespace osuAT.Game.Objects
 
             InternalChild = new Container
             {
-                FullBox
+                MiniBox
             };
-            FullBox.ScaleTo(3);
+            MiniBox.ScaleTo(3);
 
         }
 

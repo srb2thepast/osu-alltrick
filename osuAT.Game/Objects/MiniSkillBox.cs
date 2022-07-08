@@ -64,6 +64,7 @@ namespace osuAT.Game.Objects
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         Children = new Drawable[] {
+                            
                             // MainBox
                             new Container {
                                 AutoSizeAxes = Axes.Both,
@@ -72,7 +73,6 @@ namespace osuAT.Game.Objects
 
                                 Masking = true,
                                 CornerRadius = 50,
-
                                 Children = new Drawable[]
                                     {
                                         // White Box
@@ -94,13 +94,37 @@ namespace osuAT.Game.Objects
                                                     Size = new Vector2(352, 224),
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.Centre,
-                                                    Texture = textures.Get("TestBG"),
+                                                    Texture = textures.Get("SkillBG/FlowAim"),
                                                 },
-
+                                                new Box {
+                                                    Size = new Vector2(352  , 224),
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.Centre,
+                                                    Colour = new ColourInfo{
+                                                        BottomLeft = Colour4.Black,
+                                                        TopLeft = Colour4.Black,
+                                                        BottomRight = Colour4.Gray,
+                                                        TopRight = Colour4.Gray,
+                                                    },
+                                                    Alpha = 0.2f
+                                                },
+                                                new Box {
+                                                    Size = new Vector2(352  , 224),
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.Centre,
+                                                    Rotation = 180,
+                                                    Colour = new ColourInfo{
+                                                        BottomLeft = Colour4.Black,
+                                                        TopLeft = Colour4.Black,
+                                                        BottomRight = Colour4.Gray,
+                                                        TopRight = Colour4.Gray,
+                                                    },
+                                                    Alpha = 0.2f
+                                                }
                                             }
                                         }.WithEffect(new GlowEffect
                                         {
-                                            BlurSigma = new Vector2(3f),
+                                            BlurSigma = new Vector2(1f),
                                             Strength = 5f,
                                             Colour = new ColourInfo
                                             {
@@ -187,15 +211,15 @@ namespace osuAT.Game.Objects
                                             AutoSizeAxes = Axes.Both,
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Y = 66,
-                                            X = -120,
+                                            Y = 86,
+                                            X = -100,
                                             Children = new Drawable[] {
 
-                                                new StarShad(PrimaryColor, SecondaryColor, new Vector2(10, 0)),
-                                                new StarShad(PrimaryColor, SecondaryColor, new Vector2(55, 0)),
-                                                new StarShad(PrimaryColor, SecondaryColor, new Vector2(100, 0)),
-                                                new StarShad(PrimaryColor, SecondaryColor, new Vector2(145, 0)),
-                                                new StarShad(PrimaryColor, SecondaryColor, new Vector2(190, 0)),
+                                                new StarShad(textures,PrimaryColor, SecondaryColor, new Vector2(10, 0)),
+                                                new StarShad(textures,PrimaryColor, SecondaryColor, new Vector2(55, 0)),
+                                                new StarShad(textures,PrimaryColor, SecondaryColor, new Vector2(100, 0)),
+                                                new StarShad(textures,PrimaryColor, SecondaryColor, new Vector2(145, 0)),
+                                                new StarShad(textures,PrimaryColor, SecondaryColor, new Vector2(190, 0)),
                                             }
                                         },
 
@@ -210,10 +234,10 @@ namespace osuAT.Game.Objects
                                 X = 96,
                                 Y = 70,
                                 Children = new Drawable[] {
-                                    new SpriteIcon {
-                                        Position = new Vector2(-206, -148),
+                                    new Sprite {
+                                        Position = new Vector2(-200, -145),
                                         Size = new Vector2(70, 70),
-                                        Icon = FontAwesome.Solid.Star,
+                                        Texture = textures.Get("FigmaVectors/DiamondStar"),
                                         Colour = PrimaryColor
                                     }.WithEffect(new GlowEffect
                                     {
@@ -222,10 +246,10 @@ namespace osuAT.Game.Objects
                                         Colour = PrimaryColor,
                                         PadExtent = true,
                                     }),
-                                    new SpriteIcon {
+                                    new Sprite {
                                         Position = new Vector2(126, 58),
                                         Size = new Vector2(70, 70),
-                                        Icon = FontAwesome.Solid.Star,
+                                        Texture = textures.Get("FigmaVectors/DiamondStar"),
                                         Colour = SecondaryColor
                                     }.WithEffect(new GlowEffect
                                     {
@@ -237,8 +261,10 @@ namespace osuAT.Game.Objects
                                     }),
 
                                 }
-                            }
-                            }
+                            },
+
+                            
+                        }
                     }
                 }
             };
@@ -251,23 +277,30 @@ namespace osuAT.Game.Objects
         private class StarShad : Container
         {
             public Container StarShading;
-            public StarShad(Colour4 MainColor, Colour4 ShadowColor, Vector2 Pos)
+            public StarShad(TextureStore textures,Colour4 MainColor, Colour4 ShadowColor, Vector2 Pos)
             {
 
                 Child = StarShading = new Container
                 {
                     Position = Pos,
                     Children = new Drawable[] {
-                        new SpriteIcon {
+                        new Sprite {
                             Y=5,
+                            Origin = Anchor.Centre,
                             Size = new Vector2(40,40),
-                            Icon = FontAwesome.Solid.Star,
+                            Texture = textures.Get("FigmaVectors/StarFull"),
                             Colour = ShadowColor,
                         },
-                        new SpriteIcon {
+                        new Sprite {
+                            Origin = Anchor.Centre,
                             Size = new Vector2(40,40),
-                            Icon = FontAwesome.Solid.Star,
+                            Texture = textures.Get("FigmaVectors/StarFull"),
                             Colour = MainColor,
+                        },
+                        new Sprite {
+                            Origin = Anchor.Centre,
+                            Size = new Vector2(43,43),
+                            Texture = textures.Get("FigmaVectors/StarThin"),
                         },
                     }
                 };

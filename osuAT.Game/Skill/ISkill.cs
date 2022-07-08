@@ -32,7 +32,7 @@ namespace osuAT.Game.Skill
         /// <summary>
         /// The image to be used when displaying this skill's <see cref="SkillBox"/>.
         /// </summary>
-        public Texture Background { get; }
+        public string Background { get; }
 
         /// <summary>
         /// The height of this skill's <see cref="MiniSkillBox"/>.

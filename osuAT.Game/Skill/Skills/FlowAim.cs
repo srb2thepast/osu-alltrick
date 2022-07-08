@@ -18,7 +18,7 @@ namespace osuAT.Game.Skill.Skills
 
         public Colour4 SecondaryColor => Colour4.FromHex("#00FFF0");
 
-        public Texture Background => throw new NotImplementedException();
+        public string Background => "SkillBG/FlowAim";
 
         public double MiniHeight => 100;
 
