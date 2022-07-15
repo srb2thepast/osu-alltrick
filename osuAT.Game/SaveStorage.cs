@@ -119,34 +119,56 @@ namespace osuAT.Game
                 i += 1;
             }
 
-            /// For every skill in <see cref="Skill.SkillList"/>,
-            /// check if it exists in SaveData.SkillVersions.
-            /// if the skill is not found in SaveData.SkillVersions, yet it exists
-            /// in the Skill.SkillList, that means it was a
-            /// skill added as of the newest update, so:
-            ///     Add new dictonary entry "skill.Identifier" to:
-            ///         a. SaveData.SkillVersions
-            ///         b. SaveData.AlltrickTop
-            ///         c. Every score in SaveData.Scores
-            ///         d. SaveData.TotalSkillPP
-            ///         
-            ///     1a. Set SaveData.SkillVersion[skill.Identifier] to skill.Version
-            ///     
-            ///     1b. Create a tempDict of type Dictionary<string, double>
-            ///     2b. Loop through every score in SaveData.Scores
-            ///     3bc. Calc the SkillPP of each score for the skill
-            ///     4bc. Set score.alltrickpp[skill.Identifier] to the skillPP 
-            ///     5b. Add (score.ID,score.alltrickPP[skill.Identifier]) to the tempDict
-            ///     6b. Set SaveData.AlltrickTop[skill.Identifier] to tempDict
-            ///
-            ///     1d. Set SaveData.TotalSkillPP to
-            ///     <see cref="Skill.CalcWeighted">(SaveData.AlltrickTop[skill.Identifier]
+            // these two loops can be easily turned into one but im too tired to fix them rn
 
+            /// Check the verions in the SaveFile for:
+            ///     1. If it doesnt exist in the savefile
+            foreach (ISkill skill in Skill.SkillList) {
+
+                /// if the skill from SkillList is not found in SaveData.SkillVersions, the
+                /// skill was added as of the newest update.
+
+                if (!(SaveData.SkillVersions.ContainsKey(skill.Identifier)))
+                {
+                    IsSaving = true;
+
+                    Console.WriteLine("---------------New Skill Addition Begun----------------");
+                    Console.WriteLine("The skill " + skill.Name + "has been added to the game.");
+
+                    /// Add new dictonary entry "skill.Identifier" to:
+
+                    /// a. SaveData.SkillVersions
+
+                    SaveData.SkillVersions.Add(skill.Identifier, skill.Version);
+
+                    /// b. SaveData.AlltrickTop
+
+                    List<Tuple<Guid, double>> tupl = new List<Tuple<Guid, double>>();
+                    // Loop through every score in SaveData.Scores
+                    foreach (Score score in SaveData.Scores.Values)
+                    {
+                        // Calc the SkillPP of each score for the new skill
+                        score.AlltrickPP[skill.Identifier] = skill.SkillCalc(score);
+                        tupl.Add(new Tuple<Guid,double>(score.ID, score.AlltrickPP[skill.Identifier]));
+
+                    }
+                    tupl.Sort((x, y) => y.Item2.CompareTo(x.Item2));
+                    SaveData.AlltrickTop[skill.Identifier] = tupl;
+
+                    /// c. SaveData.TotalSkillPP
+                    SaveData.TotalSkillPP[skill.Identifier] = Skill.CalcWeighted(tupl);
+
+                    Console.WriteLine("---------------New Skill Addition Complete----------------");
+                }
+            }
+
+            /// Check the verions in the SaveFile for:
+            ///     1. If it's different than the code (recalcs scores)
+            ///     2. If it doesnt exist in the code (does nothing)
             foreach (KeyValuePair<string, string> skillVer in SaveData.SkillVersions) {
 
                 /// check if the skill exists in <see cref="Skill.SkillList"/>, if it doesn't
-                /// then that means it was a deleted/removed skill, so:
-                ///     1. Dont do any of the stuff below, just "return;".
+                /// then that means it was a deleted/removed skill.
                 ISkill skillInstance = Skill.GetSkillByID(skillVer.Key);
                 if (skillInstance == null) {return; }
 
@@ -155,25 +177,34 @@ namespace osuAT.Game
                 /// <see cref="Skill.SkillList"/>.
                 if (!(skillVer.Value == skillInstance.Version))
                 {
-                    Console.WriteLine("---------------Score Recalc Updated----------------");
-                    Console.WriteLine("The skill " + skillInstance.Name + "has been updated. Recalculating scores..");
+                    IsSaving = true;
+
+                    Console.WriteLine("---------------Score Recalc Begun----------------");
+                    Console.WriteLine("The skill " + skillInstance.Name + " has been updated. Recalculating scores..");
+
                     List<Score> scorelist = GetTrickTopScoreList(skillInstance);
-                    ///     2. Get the IDs of each score in that list
-                    ///     3. Use those IDs to get each score from SaveData.Scores
-                    ///     4. Create a tempList of type List<Score>
-                    ///     5. Set each score[skill.Identifer] = skill.Calc(score)
-                    foreach (Score score in scorelist) {
+                    List <Tuple<Guid, double>> tupleList = new List<Tuple<Guid, double>>();
+                    foreach (Score score in scorelist)
+                    {
+                        Console.WriteLine("-------- " + score.ID.ToString());
+                        Console.Write("Previous: " + score.AlltrickPP[skillID].ToString());
+
                         score.AlltrickPP[skillID] = skillInstance.SkillCalc(score);
+
+                        Console.WriteLine(" | New: " + score.AlltrickPP[skillID].ToString());
+
+                        tupleList.Add(new Tuple<Guid, double>(score.ID, score.AlltrickPP[skillID]));
                     }
-                    //SaveData.AlltrickTop[skillID] = scorelist.val ;
-                    ///     6. Save each score to tempList
-                    ///     7. Wipe SaveData.AlltrickTop[skill.Identifer].Value
-                    ///     8. Set SaveData.AlltrickTop[Skill.Identifer].Value to tempList
-                    Console.WriteLine("---------------Score Recalc Update Complete----------------");
+                    tupleList.Sort((x, y) => y.Item2.CompareTo(x.Item2));
+                    SaveData.AlltrickTop[skillID] = tupleList;
+                    SaveData.SkillVersions[skillID] = skillInstance.Version;
+
+                    Console.WriteLine("---------------Score Recalc Complete----------------");
 
                 }
 
             }
+            Save();
         }
 
         

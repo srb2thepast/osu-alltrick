@@ -17,7 +17,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "flowaim";
 
-        public string Version => "0.001";
+        public string Version => "0.002";
 
         public string Summary => "The ability to move your cursor \n as smoothly and linearly as\n possible.";
 
