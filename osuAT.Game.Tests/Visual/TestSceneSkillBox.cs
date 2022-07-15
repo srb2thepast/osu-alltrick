@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using osu.Framework.Graphics;
 using NUnit.Framework;
 using osuAT.Game.Objects;
-using osuAT.Game.Skill;
+using osuAT.Game.Skills;
 using osuAT.Game.Types;
+using osuTK;
 
 namespace osuAT.Game.Tests.Visual
 {
@@ -18,17 +19,16 @@ namespace osuAT.Game.Tests.Visual
             
             AddStep("Create new skillbox", () =>
             {
-                Child = new SkillBox
+                Child = new FullSkillBox
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    SkillName = "Flow Aim",
-                    SkillPrimaryColor = Colour4.FromHex("#99FF69"),
-                    SkillSecondaryColor = Colour4.FromHex("#00FFF0"),
-                    MiniHeight = 100,
-                    TextSize = 83,
-                    Scale = new osuTK.Vector2(0.9f)
+                    Scale = new Vector2(2.7f),
+                    Skill = Skill.Flowaim,
+                    
+                    
                 };
+                
                 
             });
         }

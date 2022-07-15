@@ -13,18 +13,19 @@ namespace osuAT.Game.Types
     public class RulesetInfo {
         public string Name { get; }
         public IconUsage Icon { get; }
-        public RulesetInfo(string name, IconUsage icon) {
+        public RulesetInfo(string name, IconUsage icon)
+        {
             Name = name;
             Icon = icon;
         }
-        
+
     }
     public class RulesetStore
     {
-        public static RulesetInfo Osu => new RulesetInfo("Osu", OsuIcon.RulesetOsu); 
-        public static RulesetInfo Mania => new RulesetInfo("Mania", OsuIcon.RulesetMania);
-        public static RulesetInfo Catch => new RulesetInfo("Catch", OsuIcon.RulesetCatch);
-        public static RulesetInfo Taiko => new RulesetInfo("Taiko", OsuIcon.RulesetTaiko);
+        public static RulesetInfo Osu = new RulesetInfo("osu", OsuIcon.RulesetOsu); 
+        public static RulesetInfo Mania = new RulesetInfo("mania", OsuIcon.RulesetMania);
+        public static RulesetInfo Catch = new RulesetInfo("catch", OsuIcon.RulesetCatch);
+        public static RulesetInfo Taiko = new RulesetInfo("taiko", OsuIcon.RulesetTaiko);
 
         public static RulesetInfo GetByName(string name) {
             switch (name.ToLower()) {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace osuAT.Game.Skill
+namespace osuAT.Game.Skills
 {
 
     /// <summary>

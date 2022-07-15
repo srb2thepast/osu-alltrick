@@ -11,6 +11,7 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Localisation;
 using osuAT.Game.Types;
+using osuAT.Game.Skills;
 using osuTK;
 
 
@@ -19,22 +20,17 @@ namespace osuAT.Game.Objects
 
     public enum SkillBoxState
     {
-        miniBox = 1,
+        MiniBox = 1,
         FullBox = 2
     }
 
     public class SkillBox : Container
     {
 
-        public string SkillName; // Name
-        public int TextSize; // Text Size
+        public ISkill Skill;
+        public SkillContainer ParentCont;
 
-        public Colour4 SkillPrimaryColor; // Primary Color
-        public Colour4 SkillSecondaryColor; // Secondary Color
-
-        public Texture Background; // Skill Background
-        public int MiniHeight = 100; // Minibox Height
-        public SkillLevel Level;
+        public SkillBoxState State = SkillBoxState.MiniBox;
 
         public MiniSkillBox MiniBox;
         public FullSkillBox FullBox;
@@ -49,32 +45,49 @@ namespace osuAT.Game.Objects
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            
-            MiniBox = new MiniSkillBox(
-                    SkillName,
-                    TextSize,
-                    SkillPrimaryColor,
-                    SkillSecondaryColor,
-                    Background,
-                    MiniHeight,
-                    Level);
-            FullBox = new FullSkillBox(
-                    SkillName,
-                    TextSize,
-                    SkillPrimaryColor,
-                    SkillSecondaryColor,
-                    Background,
-                    MiniHeight,
-                    Level);
+            Position = Skill.BoxPosition;
+            MiniBox = new MiniSkillBox(Skill,this);
+            FullBox = new FullSkillBox(Skill,this);
 
             InternalChild = new Container
             {
+                FullBox,
                 MiniBox
-            };
+            };  
             MiniBox.ScaleTo(3);
+            FullBox.ScaleTo(1.7f);
+            FullBox.InnerBox.Width = 1;
 
         }
 
+        public void TransitionToFull()
+        {
+            State = SkillBoxState.FullBox;
+            FullBox.InnerBox.Height = 217;
+            FullBox.InnerBox.Width = 320;
+
+            // Move top bar
+            ParentCont.MainScreen.TopBar.ScaleTo(0.8f, 500, Easing.InOutCubic);
+            ParentCont.MainScreen.TopBar.MoveToY(50, 500, Easing.InOutCubic);
+            // Refocus and zoom in
+            ParentCont.FocusOnBox(this);
+            ParentCont.ScaleTo(2.3f/ParentCont.Child.Scale.Y, 400, Easing.InOutExpo);
+
+            // Boxes
+            MiniBox.Slideout();
+            FullBox.Appear(400);    
+        }
+        public void TransitionToMini()
+        {
+            State = SkillBoxState.MiniBox;
+            ParentCont.MainScreen.TopBar.ScaleTo(1, 400, Easing.InOutCubic);
+            ParentCont.MainScreen.TopBar.MoveToY(75, 400, Easing.InOutCubic);
+            ParentCont.Delay(100).ScaleTo(1f,600,Easing.InOutExpo);
+            
+            MiniBox.Slidein();
+            FullBox.Disappear(1000);
+            
+        }
 
     }
 }

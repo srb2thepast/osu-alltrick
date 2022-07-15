@@ -16,6 +16,8 @@ namespace osuAT.Game
     public class HomeScreen : Screen
     {
         private Drawable background;
+        public SkillContainer SkillCont;
+        public Container TopBar;
 
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
@@ -33,15 +35,8 @@ namespace osuAT.Game
                         }
                     }
                 },
-                new DraggableContainer {
-                    AutoSizeAxes = Axes.Both,
-                    Anchor = Anchor.TopLeft,
-                    Origin = Anchor.Centre,
-                    Children = new Drawable[] {
-                        new SkillContainer{}
-                    }
-                },
-                new Container {
+                SkillCont = new SkillContainer(this),
+                TopBar = new Container {
                     AutoSizeAxes = Axes.Both,
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.Centre,
@@ -151,10 +146,10 @@ namespace osuAT.Game
 
                     }
                 },
-                
-                
+
+
             };
-            
+
         }
 
         private class HomeBackground : Container {
@@ -176,18 +171,18 @@ namespace osuAT.Game
                     Origin = Anchor.Centre,
                     Children = new Drawable[]
                     {
-                    new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                    },
-                    new Sprite
-                    {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Texture = textures.Get("logo")
-                    },
+                        new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                        },
+                        new Sprite
+                        {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Texture = textures.Get("logo")
+                        },
                     }
                 };
             }   
@@ -197,54 +192,6 @@ namespace osuAT.Game
                 base.LoadComplete();
                 box.Loop(b => b.RotateTo(0).RotateTo(360, 2500));
             }
-        }
-        private class DraggableContainer : Container {
-            private Vector2 lastoffpos = Vector2.Zero;
-            private Vector2 lastscale = Vector2.One;
-            protected override bool OnDragStart(DragStartEvent e) {
-                
-                return true;
-            }
-            protected override void OnDrag(DragEvent e) {
-                Vector2 newPos = (e.MousePosition - e.MouseDownPosition) + lastoffpos;
-                Child.MoveTo(newPos);
-                
-            }
-            protected override void OnDragEnd(DragEndEvent e)
-            {
-                base.OnDragEnd(e);
-                lastoffpos = Child.Position;
-                
-                System.Console.WriteLine(Parent.Parent.Position);
-                System.Console.WriteLine(lastoffpos);
-
-            }
-            protected override bool OnScroll(ScrollEvent e)
-            {
-                Vector2 newScale = lastscale + new Vector2(e.ScrollDelta.Y / 10, e.ScrollDelta.Y / 10);
-                
-                lastscale = ( (newScale.X < 0.5 && newScale.Y < 0.5) || (newScale.X > 3 && newScale.Y > 3   )) ? lastscale : newScale;
-                Vector2 BoxScreenPos = new Vector2(
-                    (Child.Position.X * Child.Scale.X) + Child.Position.X,
-                    (Child.Position.X * Child.Scale.X) + Child.Position.X
-                    );
-
-
-                Child.ScaleTo(lastscale,300,Easing.OutExpo);
-
-                System.Console.Write("World: ");
-                System.Console.WriteLine(BoxScreenPos);
-                System.Console.Write("Mouse World: ");
-                System.Console.WriteLine(new Vector2(
-                    (e.MousePosition.X - Child.Position.X) / Child.Scale.X,
-                    (e.MousePosition.Y - Child.Position.Y) / Child.Scale.Y
-
-                    ));
-                
-                return true;
-                
-            }
-            
         }
 
         

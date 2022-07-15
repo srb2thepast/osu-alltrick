@@ -12,47 +12,40 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Localisation;
 using osuAT.Game.Objects;
 using osuAT.Game.Types;
+using osuAT.Game.Skills;
 using osuTK;
 
 namespace osuAT.Game.Objects
 {
+
     public class MiniSkillBox : CompositeDrawable
     {
 
-        public string SkillName; // Name
-        public int TextSize; // Text Size
+        public ISkill Skill;
+        public SkillBox ParentBox;
 
-        public Colour4 PrimaryColor; // Primary Color
-        public Colour4 SecondaryColor; // Secondary Color
-
-        public Texture Background; // Skill Background
-        public int MiniHeight; // Minibox Height
-        public SkillLevel Level;
-
-
-        private Sprite miniBG;
+        // private SkillContainer OverallContainer;
+        
+        private BufferedContainer miniBG;
         private Container miniBox;
+        private Container mainbox;
         private Container stars;
-        public MiniSkillBox(string name, int textsize, Colour4 primarycolor, Colour4 secondarycolor, Texture background, int height, SkillLevel level)
+        private Container outerstars;
+        private bool transitioning = false;
+        public MiniSkillBox(ISkill skill,SkillBox parentbox)
         {
-            AutoSizeAxes = Axes.Both;
+            Size = new Vector2(392,272);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
 
-
-            SkillName = name;
-            TextSize = textsize;
-            PrimaryColor = primarycolor;
-            SecondaryColor = secondarycolor;
-            Background = background;
-            MiniHeight = height;
-            Level = level;
+            Skill = skill;
+            ParentBox = parentbox;
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
+        private void load(LargeTextureStore textures)
         {
-            var HSVPrime = PrimaryColor.ToHSV();
+            var HSVPrime = Skill.PrimaryColor.ToHSV();
             InternalChild = miniBox = new Container
             {
                 AutoSizeAxes = Axes.Both,
@@ -66,13 +59,13 @@ namespace osuAT.Game.Objects
                         Children = new Drawable[] {
                             
                             // MainBox
-                            new Container {
-                                AutoSizeAxes = Axes.Both,
+                            mainbox = new Container {
+                                Size = new Vector2(352, 224),
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
 
                                 Masking = true,
-                                CornerRadius = 50,
+                                CornerRadius = 30,
                                 Children = new Drawable[]
                                     {
                                         // White Box
@@ -94,45 +87,31 @@ namespace osuAT.Game.Objects
                                                     Size = new Vector2(352, 224),
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.Centre,
-                                                    Texture = textures.Get("SkillBG/FlowAim"),
-                                                },
+                                                    Texture = textures.Get(Skill.Background),
+                                                }.WithEffect(new GlowEffect
+                                                {
+                                                    // BlurSigma = new Vector2(1f),
+                                                    Strength = 1,
+                                                    Colour = new ColourInfo
+                                                    {
+                                                        BottomLeft = Colour4.Black,
+                                                        TopRight = Colour4.DimGray,
+                                                    },
+                                                }),
                                                 new Box {
                                                     Size = new Vector2(352  , 224),
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.Centre,
                                                     Colour = new ColourInfo{
                                                         BottomLeft = Colour4.Black,
-                                                        TopLeft = Colour4.Black,
+                                                        TopLeft = Colour4.Gray,
                                                         BottomRight = Colour4.Gray,
-                                                        TopRight = Colour4.Gray,
+                                                        TopRight = Colour4.White,
                                                     },
-                                                    Alpha = 0.2f
+                                                    Alpha = 0.3f
                                                 },
-                                                new Box {
-                                                    Size = new Vector2(352  , 224),
-                                                    Anchor = Anchor.Centre,
-                                                    Origin = Anchor.Centre,
-                                                    Rotation = 180,
-                                                    Colour = new ColourInfo{
-                                                        BottomLeft = Colour4.Black,
-                                                        TopLeft = Colour4.Black,
-                                                        BottomRight = Colour4.Gray,
-                                                        TopRight = Colour4.Gray,
-                                                    },
-                                                    Alpha = 0.2f
-                                                }
                                             }
-                                        }.WithEffect(new GlowEffect
-                                        {
-                                            BlurSigma = new Vector2(1f),
-                                            Strength = 5f,
-                                            Colour = new ColourInfo
-                                            {
-                                                BottomLeft = Colour4.Black,
-                                                TopRight = Colour4.DimGray,
-                                            },
-                                            PadExtent = true,
-                                        }),
+                                        },
 
                                         // Text and Underline
                                         new Container {
@@ -156,7 +135,7 @@ namespace osuAT.Game.Objects
                                                             Size = new Vector2(267, 20),
                                                             Anchor = Anchor.Centre,
                                                             Origin = Anchor.Centre,
-                                                            Colour = SecondaryColor,
+                                                            Colour = Skill.SecondaryColor,
                                                             Y = 5,
                                                         },
                                                         new Circle
@@ -164,21 +143,21 @@ namespace osuAT.Game.Objects
                                                             Size = new Vector2(267, 20),
                                                             Anchor = Anchor.Centre,
                                                             Origin = Anchor.Centre,
-                                                            Colour = PrimaryColor,
+                                                            Colour = Skill.PrimaryColor,
 
                                                         },
                                                     }
                                                 },
                                                 new SpriteText {
 
-                                                    Text = SkillName,
+                                                    Text = Skill.Name,
                                                     Anchor = Anchor.Centre,
                                                     Y = -10,
                                                     Origin = Anchor.Centre,
-                                                    Font = new FontUsage("VarelaRound", size: TextSize),
-                                                    Colour = PrimaryColor,
+                                                    Font = new FontUsage("VarelaRound", size: Skill.BoxNameSize),
+                                                    Colour = Skill.PrimaryColor,
                                                     Shadow = true,
-                                                    ShadowColour = SecondaryColor
+                                                    ShadowColour = Skill.SecondaryColor
                                                     //Padding = new MarginPadding
                                                     //{
                                                     //    Horizontal = 15,
@@ -190,7 +169,7 @@ namespace osuAT.Game.Objects
                                                 {
                                                     BlurSigma = new Vector2(1),
                                                     Strength = 5,
-                                                    Colour = ColourInfo.GradientHorizontal(PrimaryColor, SecondaryColor),
+                                                    Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
                                                     PadExtent = true,
 
                                                 }).WithEffect(new OutlineEffect
@@ -215,11 +194,11 @@ namespace osuAT.Game.Objects
                                             X = -100,
                                             Children = new Drawable[] {
 
-                                                new StarShad(textures,PrimaryColor, SecondaryColor, new Vector2(10, 0)),
-                                                new StarShad(textures,PrimaryColor, SecondaryColor, new Vector2(55, 0)),
-                                                new StarShad(textures,PrimaryColor, SecondaryColor, new Vector2(100, 0)),
-                                                new StarShad(textures,PrimaryColor, SecondaryColor, new Vector2(145, 0)),
-                                                new StarShad(textures,PrimaryColor, SecondaryColor, new Vector2(190, 0)),
+                                                new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(10, 0)),
+                                                new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(55, 0)),
+                                                new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(100, 0)),
+                                                new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(145, 0)),
+                                                new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(190, 0)),
                                             }
                                         },
 
@@ -227,7 +206,7 @@ namespace osuAT.Game.Objects
                             },
 
                             // OuterStars
-                            new Container {
+                            outerstars = new Container {
                                 AutoSizeAxes = Axes.Both,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
@@ -238,24 +217,24 @@ namespace osuAT.Game.Objects
                                         Position = new Vector2(-200, -145),
                                         Size = new Vector2(70, 70),
                                         Texture = textures.Get("FigmaVectors/DiamondStar"),
-                                        Colour = PrimaryColor
+                                        Colour = Skill.PrimaryColor
                                     }.WithEffect(new GlowEffect
                                     {
                                         BlurSigma = new Vector2(1f),
                                         Strength = 0.3f,
-                                        Colour = PrimaryColor,
+                                        Colour = Skill.PrimaryColor,
                                         PadExtent = true,
                                     }),
                                     new Sprite {
                                         Position = new Vector2(126, 58),
                                         Size = new Vector2(70, 70),
                                         Texture = textures.Get("FigmaVectors/DiamondStar"),
-                                        Colour = SecondaryColor
+                                        Colour = Skill.SecondaryColor
                                     }.WithEffect(new GlowEffect
                                     {
                                         BlurSigma = new Vector2(1f),
                                         Strength = 0.3f,
-                                        Colour = SecondaryColor.Darken(0.2f),
+                                        Colour = Skill.SecondaryColor.Darken(0.2f),
                                         PadExtent = true,
 
                                     }),
@@ -309,18 +288,57 @@ namespace osuAT.Game.Objects
         }
         protected override bool OnHover(HoverEvent e)
         {
+            if (transitioning == true) base.OnHover(e);
             miniBox.Child.ScaleTo(1.1f, 200, Easing.Out);
             return base.OnHover(e);
 
         }
         protected override void OnHoverLost(HoverLostEvent e)
         {
+            if (transitioning == true) return;
             miniBox.Child.ScaleTo(1f, 100, Easing.Out);
             base.OnHoverLost(e);
         }
+
+        protected override bool OnClick(ClickEvent e)
+        {
+                
+            if (ParentBox.ParentCont.FocusedBox == ParentBox && ParentBox.State == SkillBoxState.MiniBox)
+            {
+                transitioning = true;
+                ParentBox.TransitionToFull();
+
+            }
+            else {
+                ParentBox.ParentCont.FocusOnBox(ParentBox);
+            }
+            return base.OnClick(e);
+        }
+
+        public void Slideout()
+        {
+            mainbox.Delay(300).MoveToX(358, 600, Easing.InOutCubic);
+            outerstars[0].Delay(500).MoveTo(new Vector2(0, 0), 600, Easing.InOutCubic);
+            outerstars[1].Delay(500).MoveTo(new Vector2(0, 0), 600, Easing.InOutCubic);
+            outerstars.Delay(500).MoveTo(new Vector2(148, -100), 600, Easing.InOutCubic);
+            outerstars.Delay(500).ScaleTo(0.5f, 600, Easing.InOutCubic);
+            mainbox.Delay(700).FadeOut();
+        }
+
+        public void Slidein()
+        {
+            mainbox.Delay(0).FadeIn();
+            mainbox.Delay(300).MoveToX(0, 600, Easing.InOutCubic);
+            outerstars[0].Delay(500).MoveTo(new Vector2(-200, -145), 600, Easing.InOutCubic);
+            outerstars[1].Delay(500).MoveTo(new Vector2(126, 58), 600, Easing.InOutCubic);
+            outerstars.Delay(500).MoveTo(new Vector2(96, 70), 600, Easing.InOutCubic);
+            outerstars.Delay(500).ScaleTo(1, 600, Easing.InOutCubic);
+        }
+
         protected override bool OnDoubleClick(DoubleClickEvent e)
         {
             System.Console.WriteLine("hihi");
+
             return base.OnDoubleClick(e);
         }
 

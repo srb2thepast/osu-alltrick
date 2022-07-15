@@ -9,10 +9,6 @@ namespace osuAT.Game.Tests.Visual
         // You can make changes to classes associated with the tests and they will recompile and update immediately.
         public TestSceneFullSkillInfo()
         {
-            Add(new FullSkillBox
-            {
-                Anchor = Anchor.Centre,
-            });
         }
     }
 }

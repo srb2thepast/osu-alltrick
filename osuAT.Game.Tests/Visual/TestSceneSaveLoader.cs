@@ -17,7 +17,7 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Localisation;
 using osuAT.Game.Objects;
-using osuAT.Game.Skill;
+using osuAT.Game.Skills;
 using osuTK;
 using System.Collections.Generic;
 
@@ -35,9 +35,15 @@ namespace osuAT.Game.Tests.Visual
         };
 
         private void saveDummy() {
-            (FileInfo,int) info = SaveStorage.SaveScore(dummyscore);
-            string contentstring = SaveStorage.Read().Replace(",", "\n").Replace("{", "\n {").Replace("}", "}\n");
-            savelocation.Text = info.Item1.FullName;
+            SaveStorage.AddScore(dummyscore);
+        }
+        private void saveSStorage()
+        {
+            SaveStorage.Save();
+            FileInfo info = SaveStorage.Save();
+            string content = SaveStorage.Read();
+            string contentstring =  content.Replace(",", "\n").Replace("{", "\n {").Replace("}", "}\n");
+            savelocation.Text = info.FullName;
             savecontents.Text = contentstring;
             System.Console.WriteLine(contentstring);
         }
@@ -116,11 +122,13 @@ namespace osuAT.Game.Tests.Visual
                     Mods = new List<ModInfo>(),
                     DateCreated = System.DateTime.Today
                 };
-                dummyscore.Register();
+               dummyscore.Register();
+
             });
-            AddStep("save dummy score to file", saveDummy);
+            AddStep("add dummy score to storage", saveDummy);
+            AddStep("save the storage", saveSStorage);
             AddAssert("score exists", () => {
-                return true;
+                return SaveStorage.SaveData.Scores.ContainsValue(dummyscore);
             });
         }
 
@@ -163,11 +171,11 @@ namespace osuAT.Game.Tests.Visual
                 };
                 dummyscore.Register();
             });
-            AddStep("save dummy score to file", saveDummy);
+            AddStep("add dummy score to storage", saveDummy);
+            AddStep("save the storage", saveSStorage);
             AddAssert("score exists", () => {
-                return SaveStorage.SaveData.Scores.Contains(dummyscore);
+                return SaveStorage.SaveData.Scores.ContainsValue(dummyscore);
             });
-            AddSliderStep("flowaim pptotal", 0, 20000, 100, amount => { samplePPTotals = new SkillPPTotals { FlowAim = amount};  });
         }
 
         

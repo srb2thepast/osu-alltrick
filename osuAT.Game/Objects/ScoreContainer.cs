@@ -8,13 +8,15 @@ using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Effects;
 using osuAT.Game.Objects.Displays;
 using osuAT.Game.Types;
+using osuAT.Game.Skills;
 using osuTK;
 
 namespace osuAT.Game
 {
     public class ScoreContainer : CompositeDrawable
     {
-
+        public List<Score> ScoreList = new List<Score>();
+        public ISkill Skill { get; set; }
         public ScoreContainer()
         {
             Size = new osuTK.Vector2(100, 100);
@@ -49,38 +51,6 @@ namespace osuAT.Game
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            List<ModInfo> ModList = new List<ModInfo>
-            {
-                ModStore.Hidden,
-                ModStore.Doubletime,
-                ModStore.Hardrock,
-                ModStore.Flashlight
-            };
-            Score dummyscore = new Score()
-            {
-                ScoreRuleset = RulesetStore.Osu,
-                IsLazer = false,
-                OsuID = 3152295822,
-                BeatmapInfo = new Beatmap
-                {
-                    MapID = 651507,
-                    MapsetID = 1380717,
-                    SongArtist = "a_hisa",
-                    SongName = "Logical Stimulus",
-                    DifficultyName = "owo",
-                    MapsetCreator = "Naidaaka",
-                    StarRating = 7.93,
-                    MaxCombo = 2336
-                },
-                Grade = "SH",
-                Accuracy = 99.51,
-                AccuracyStats = new AccStat(2020, 15, 0, 0),
-                Combo = 2333,
-                TotalScore = 116276034,
-                Mods = ModList,
-                DateCreated = System.DateTime.Today
-            };
-            dummyscore.Register();
 
             AddInternal(new Circle
             {
@@ -111,13 +81,39 @@ namespace osuAT.Game
                 {
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
+                    Children = new ScoreDisplay[] { }
                 },
                 
                 ScrollbarAnchor = Anchor.TopLeft
             });
-            
+
             int index = 0;
-            foreach (Score score in SaveStorage.SaveData.Scores)
+            foreach (Score score in ScoreList)
+            {
+                System.Console.WriteLine(score.AlltrickPP[Skill.Identifier]);
+                ScoreDisplay display = new ScoreDisplay
+                {
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.Centre,
+                    Y = 15 + 40 * index,
+                    X = -10,
+                    Current = score,
+                    Skill = Skill,
+                    IndexPos = index,
+                    PrimaryColor = Colour4.FromHex("#99FF69"),
+                    SecondaryColor = Colour4.FromHex("#00FFF0"),
+                    Scale = new Vector2(0.17f)
+                };
+                scrollbox.Add(display);
+                index += 1;
+            }
+
+        }
+
+        public void ReloadScores() {
+            scrollbox.Clear();
+            int index = 0;
+            foreach (Score score in ScoreList)
             {
                 ScoreDisplay display = new ScoreDisplay
                 {
@@ -131,11 +127,29 @@ namespace osuAT.Game
                     Scale = new Vector2(0.17f)
                 };
                 scrollbox.Add(display);
-                display.Appear(index*30);
+                index += 1;
+            }
+            Appear();
+
+        }   
+
+        public void Appear(float delay=0,float offset = 30)
+        {
+            int index = 0;
+            foreach (ScoreDisplay display in scrollbox.ScrollContent.Children)
+            {
+                display.Appear(delay + index * offset);
                 index += 1;
             }
         }
 
+        public void HideScores(float delay)
+        {
+            foreach (ScoreDisplay display in scrollbox.ScrollContent.Children)
+            {
+                display.Disappear(delay) ;
+            }
+        }
 
         protected override void LoadComplete()
         {

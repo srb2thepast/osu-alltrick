@@ -1,5 +1,8 @@
+using System;
+using System.Threading.Tasks;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Screens;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.IO.Stores;
@@ -15,6 +18,7 @@ namespace osuAT.Game
         // It allows for caching global dependencies that should be accessible to tests, or changing
         // the screen scaling for all components including the test browser and framework overlays.
         protected override Container<Drawable> Content { get; }
+        private DependencyContainer dependencies;
 
         protected osuATGameBase()
         {
@@ -26,6 +30,30 @@ namespace osuAT.Game
             });
         }
 
+        protected override bool OnExiting()
+        {
+            if (SaveStorage.IsSaving == false)
+            {
+                System.Console.WriteLine("exited, beginning autosave");
+                SaveStorage.Save();
+                Task.Delay(100);
+            }
+            System.Console.WriteLine("exited");
+            return false;
+        }
+
+        public void GracefullyExit()
+        {
+            if (!OnExiting())
+            {  // force exited
+                System.Console.WriteLine("exited meanly");
+                Exit();
+            }
+            else
+                System.Console.WriteLine("exited");
+            Scheduler.AddDelayed(GracefullyExit, 2000);
+        }
+                
         [BackgroundDependencyLoader]
         private void load()
         {
@@ -34,6 +62,13 @@ namespace osuAT.Game
             AddFont(Resources, @"Fonts/VarelaRound");
             AddFont(Resources, @"Fonts/ChivoBold");
             AddFont(Resources, @"Fonts/Venera");
+
+            var largeStore = new LargeTextureStore(Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"Textures")));
+            largeStore.AddTextureSource(Host.CreateTextureLoaderStore(new OnlineStore()));
+            dependencies.Cache(largeStore);
         }
+            
+        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) =>
+            dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
     }
 }

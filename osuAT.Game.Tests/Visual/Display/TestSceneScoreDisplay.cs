@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using osu.Framework.Graphics;
 using osuAT.Game.Objects.Displays;
 using osuAT.Game.Types;
-using osuAT.Game.Skill;
+using osuAT.Game.Skills;
 
 
 namespace osuAT.Game.Tests.Visual.Display

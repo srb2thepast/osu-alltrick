@@ -68,7 +68,7 @@ namespace osuAT.Game.Objects.Displays
             (600f, Color4Extensions.FromHex("#9D41A6")),
             (750, Color4Extensions.FromHex("#2E29FF")),
             (950f, Color4Extensions.FromHex("#AE6CF2")),
-            (1100f, Color4Extensions.FromHex("#000000")),
+            (1000f, Color4Extensions.FromHex("#000000")),
         }, (float)Math.Round(starDifficulty, 2, MidpointRounding.AwayFromZero));
 
         private readonly Bindable<double> displayedStars = new BindableDouble();
@@ -80,7 +80,7 @@ namespace osuAT.Game.Objects.Displays
             Current = performance;
 
             AutoSizeAxes = Axes.Both;
-            Colour4 textColor = (Current > 750) ? Colour4.FromHex("#FFD966") : Colour4.Black.Opacity(0.75f);
+            Colour4 textColor = (Current > 700) ? Colour4.FromHex("#FFD966") : Colour4.Black.Opacity(0.75f);
 
             InternalChild = new CircularContainer
             {

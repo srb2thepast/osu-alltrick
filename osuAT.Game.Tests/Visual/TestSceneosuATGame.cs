@@ -1,5 +1,12 @@
+using System.Collections.Generic;
+using osu.Framework.Input.Events;
 using osu.Framework.Allocation;
 using osu.Framework.Platform;
+using osu.Framework.Screens;
+using osuAT.Game.Objects;
+using osuAT.Game.Skills;    
+using NUnit.Framework;
+using Newtonsoft.Json;
 
 namespace osuAT.Game.Tests.Visual
 {
@@ -18,6 +25,18 @@ namespace osuAT.Game.Tests.Visual
             game.SetHost(host);
 
             AddGame(game);
+        }
+
+        [Test]
+        public void TestMovetoBox()
+        {
+            HomeScreen mainscreen = game.MainScreen;
+            Dictionary<ISkill, SkillBox> skilldict = mainscreen?.SkillCont?.SkillDict;
+
+            AddToggleStep("Focus on Flowaim", (b) => {
+                if (b == true) { mainscreen.SkillCont.FocusOnBox(skilldict[Skill.Flowaim]); } else { mainscreen.SkillCont.Defocus(); }
+            });
+            AddWaitStep("Wait a bit", 5);
         }
     }
 }

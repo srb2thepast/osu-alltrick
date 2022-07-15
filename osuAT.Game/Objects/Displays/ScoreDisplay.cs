@@ -6,10 +6,11 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Events;
-using osuAT.Game.Types;
-using osuAT.Game.Objects.LazerAssets;
 using osuAT.Game.Objects.LazerAssets.StarRating;
 using osuAT.Game.Objects.LazerAssets.Mod;
+using osuAT.Game.Objects.LazerAssets;
+using osuAT.Game.Types;
+using osuAT.Game.Skills;
 using osuTK;
 namespace osuAT.Game.Objects.Displays
 {
@@ -17,6 +18,8 @@ namespace osuAT.Game.Objects.Displays
     {
 
         public Score Current { get; set; }
+        public ISkill Skill { get; set; }
+        public int IndexPos { get; set; } = 0;
 
         public int TextSize; // Text Size
 
@@ -37,7 +40,7 @@ namespace osuAT.Game.Objects.Displays
         private Circle comboBar;
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
+        private void load(LargeTextureStore textures)
         {
             InternalChild = display = new Container
             {
@@ -60,7 +63,7 @@ namespace osuAT.Game.Objects.Displays
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
 
-                                Colour = SecondaryColor,
+                                Colour = PrimaryColor,
                             },
 
                             new FillFlowContainer {
@@ -315,7 +318,7 @@ namespace osuAT.Game.Objects.Displays
                                                 Alpha = 0.3f
 
                                             },
-                                            new PerformanceDisplay(Current.AlltrickPP.FlowAim) { Scale = new Vector2(0.75f)},
+                                            new PerformanceDisplay(Current.AlltrickPP[Skill.Identifier]) { Scale = new Vector2(0.75f)},
                                         }
                                     },
 
@@ -354,7 +357,7 @@ namespace osuAT.Game.Objects.Displays
                                 Origin = Anchor.Centre,
                                 Position = new Vector2(229,27),
                                 Spacing = new Vector2(-0.3f,0),
-                                Text = "#"+(Current.IndexPosition+1).ToString(),
+                                Text = "#"+(IndexPos+1).ToString(),
                                 Font = new FontUsage("ChivoBold",size: 13),
                                 Colour = Colour4.White,
                                 Shadow = true,
@@ -392,7 +395,7 @@ namespace osuAT.Game.Objects.Displays
                                             comboBar = new Circle {
                                                 RelativeSizeAxes = Axes.Y,
                                                 Width = 0,
-                                                Colour = SecondaryColor
+                                                Colour = PrimaryColor
                                             },
 
                                             // Combo Number
@@ -407,7 +410,7 @@ namespace osuAT.Game.Objects.Displays
                                                     new Box
                                                     {
                                                         RelativeSizeAxes = Axes.Both,
-                                                        Colour = SecondaryColor + new Colour4(100,100,100,0)
+                                                        Colour = PrimaryColor + new Colour4(30,30,30,0)
                                                     },
                                                     new FillFlowContainer
                                                     {
@@ -452,9 +455,7 @@ namespace osuAT.Game.Objects.Displays
                             }
                         }
                     },
-                        
-                        
-                    }
+                }
             };
             InternalChild.ScaleTo(3);
         }
@@ -469,15 +470,22 @@ namespace osuAT.Game.Objects.Displays
         {
             return base.OnHover(e);
         }
-        public void Appear(double delay = 0) {
-
+        public void Appear(float delay = 0) {
             scoreInfo.Alpha = 0;
             diffInfo.Alpha = 0;
             display.Y = 13;
-            display.Delay(delay).MoveToY(0, 450, Easing.InOutSine);
+
             scoreInfo.Delay(delay).FadeIn(450, Easing.InOutSine);
-            comboBar.Delay(delay).ResizeTo(new Vector2(((float)Current.Combo / Current.BeatmapInfo.MaxCombo) * 175, comboBar.Height), 500, Easing.InOutQuad);
             diffInfo.Delay(delay).FadeInFromZero(550, Easing.InOutSine);
+            display.Delay(delay).MoveToY(0, 450, Easing.InOutSine);
+            comboBar.Delay(delay).ResizeTo(new Vector2(((float)Current.Combo / Current.BeatmapInfo.MaxCombo) * 175, comboBar.Height), 500, Easing.InOutQuad);
+        }
+
+        public void Disappear(float delay) {
+            scoreInfo.Delay(delay).FadeOut();
+            diffInfo.Delay(delay).FadeOut();
+            display.Delay(delay).MoveToY(13);
+            comboBar.Delay(delay).ResizeTo(new Vector2(0, comboBar.Height));
         }
 
     }

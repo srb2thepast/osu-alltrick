@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using osuAT.Game.Skill;
+using osuAT.Game.Skills;
 
 namespace osuAT.Game.Types
 {
@@ -37,8 +38,8 @@ namespace osuAT.Game.Types
         /// to file yet.
         /// </summary>
         /// <remarks>This should not be set while constructing.</remarks>
-        [JsonIgnore]
-        public int? ID { get; set; }
+        [JsonProperty("id")]
+        public Guid ID { get; set; }
 
         /// <summary>
         /// The Ruleset name of the Ruleset this score was set in.
@@ -122,7 +123,7 @@ namespace osuAT.Game.Types
         /// </summary>
         /// <remarks>This should not be set while constructing.</remarks>
         [JsonProperty("alltrickpp")]
-        public SkillPPTotals AlltrickPP { get; set; }
+        public Dictionary<string, double> AlltrickPP { get; set; }
 
         /// <summary>
         /// The date this score was created **in osu!alltrick**.
@@ -141,14 +142,16 @@ namespace osuAT.Game.Types
         /// <summary>
         /// Fills in all the missing properties that are not supposed to be set while constructing.
         /// </summary>
-        public void Register(RulesetInfo ruleset = null, List<ModInfo> mods = null, int index = -1)
+        public void Register(bool calcPP = true, bool setDate = true, int index = -1,bool setGUID = true)
         {
-            AlltrickPP = SkillManager.CalcAll(RulesetStore.Osu, this, Mods);
+
+            if (setGUID) {ID = Guid.NewGuid(); }
             PerfectCombo = BeatmapInfo.MaxCombo == Combo;
-            DateCreated = DateTime.Today;
-            ScoreRuleset = ruleset ?? ScoreRuleset ?? RulesetStore.GetByName(RulesetName);
+            if (setDate) { DateCreated = DateTime.Today; }
+            ScoreRuleset ??= RulesetStore.GetByName(RulesetName);
+            if (calcPP) { AlltrickPP = Skill.CalcAll(this); }
             RulesetName = ScoreRuleset.Name;
-            Mods = mods ?? Mods;
+            Mods = Mods;
             IndexPosition = index;
             if (ModsString is null) {
                 ModsString = new List<string>();
@@ -163,6 +166,30 @@ namespace osuAT.Game.Types
                     Mods.Add(ModStore.GetByName(mod));
                 }
             }
+        }
+
+        public Score Clone() {
+            Score newscore = new Score
+            {
+                ID = ID,
+                ScoreRuleset = ScoreRuleset,
+                RulesetName = RulesetName,
+                IsLazer =IsLazer,
+                OsuID = OsuID,
+                BeatmapInfo = BeatmapInfo,
+                Grade = Grade,
+                Accuracy = Accuracy,
+                AccuracyStats = AccuracyStats,
+                Combo = Combo,
+                PerfectCombo = PerfectCombo,
+                TotalScore = TotalScore,
+                Mods = Mods,
+                ModsString = ModsString,
+                AlltrickPP = AlltrickPP,
+                DateCreated = DateCreated,
+                IndexPosition = IndexPosition,
+            };
+            return newscore;
         }
     }
 
