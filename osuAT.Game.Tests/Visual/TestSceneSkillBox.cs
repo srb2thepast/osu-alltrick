@@ -12,14 +12,14 @@ namespace osuAT.Game.Tests.Visual
     {
         // Add visual tests to ensure correct behaviour of your game: https://github.com/ppy/osu-framework/wiki/Development-and-Testing
         // You can make changes to classes associated with the tests and they will recompile and update immediately.
-
+        private FullSkillBox box;
         [Test]
         public void TestSkillBox()
         {
             
-            AddStep("Create new skillbox", () =>
+            AddStep("Create new fullskillbox", () =>
             {
-                Child = new FullSkillBox
+                Child = box = new FullSkillBox
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -28,8 +28,9 @@ namespace osuAT.Game.Tests.Visual
                     
                     
                 };
-                
-                
+
+                box.Appear(0);
+
             });
         }
     }

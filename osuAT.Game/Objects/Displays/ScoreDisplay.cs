@@ -23,9 +23,6 @@ namespace osuAT.Game.Objects.Displays
 
         public int TextSize; // Text Size
 
-        public Colour4 PrimaryColor; // Primary Color
-        public Colour4 SecondaryColor; // Secondary Color
-
         public Texture Background; // Background
         public ScoreDisplay()
         {
@@ -63,7 +60,7 @@ namespace osuAT.Game.Objects.Displays
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
 
-                                Colour = PrimaryColor,
+                                Colour = Skill.PrimaryColor,
                             },
 
                             new FillFlowContainer {
@@ -395,7 +392,7 @@ namespace osuAT.Game.Objects.Displays
                                             comboBar = new Circle {
                                                 RelativeSizeAxes = Axes.Y,
                                                 Width = 0,
-                                                Colour = PrimaryColor
+                                                Colour = Skill.PrimaryColor
                                             },
 
                                             // Combo Number
@@ -410,7 +407,7 @@ namespace osuAT.Game.Objects.Displays
                                                     new Box
                                                     {
                                                         RelativeSizeAxes = Axes.Both,
-                                                        Colour = PrimaryColor + new Colour4(30,30,30,0)
+                                                        Colour = Skill.PrimaryColor + new Colour4(30,30,30,0)
                                                     },
                                                     new FillFlowContainer
                                                     {
@@ -430,7 +427,7 @@ namespace osuAT.Game.Objects.Displays
                                                                 Spacing = new Vector2(-0.3f,0),
                                                                 Text = "x",
                                                                 Font = new FontUsage("ChivoBold",size: 10),
-                                                                Colour = (Current.Combo == Current.BeatmapInfo.MaxCombo)? Colour4.LightPink : Colour4.FromHex("#FFD966"),
+                                                                Colour = (Current.Combo == Current.BeatmapInfo.MaxCombo)? Colour4.FromHex("#FFD966") : Colour4.HotPink,
                                                                 Shadow = true,
                                                                 ShadowOffset = new Vector2(0,0.1f),
                                                             },
@@ -441,7 +438,7 @@ namespace osuAT.Game.Objects.Displays
                                                                 Spacing = new Vector2(-0.3f,0),
                                                                 Text = Current.Combo.ToString(),
                                                                 Font = new FontUsage("ChivoBold",size: 10),
-                                                                Colour = (Current.Combo == Current.BeatmapInfo.MaxCombo)? Colour4.LightPink : Colour4.FromHex("#FFD966"),
+                                                                Colour = (Current.Combo == Current.BeatmapInfo.MaxCombo)? Colour4.FromHex("#FFD966") : Colour4.HotPink,
                                                                 Shadow = true,
                                                                 ShadowOffset = new Vector2(0,0.1f),
                                                             },

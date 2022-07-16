@@ -50,8 +50,6 @@ namespace osuAT.Game.Tests.Visual.Display
                     Origin = Anchor.Centre,
 
                     Current = dummyscore,
-                    PrimaryColor = Colour4.FromHex("#99FF69"),
-                    SecondaryColor = Colour4.FromHex("#00FFF0"),
 
                 };
                 Child = display;

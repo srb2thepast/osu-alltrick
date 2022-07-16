@@ -90,7 +90,6 @@ namespace osuAT.Game
             int index = 0;
             foreach (Score score in ScoreList)
             {
-                System.Console.WriteLine(score.AlltrickPP[Skill.Identifier]);
                 ScoreDisplay display = new ScoreDisplay
                 {
                     Anchor = Anchor.TopCentre,
@@ -100,8 +99,6 @@ namespace osuAT.Game
                     Current = score,
                     Skill = Skill,
                     IndexPos = index,
-                    PrimaryColor = Colour4.FromHex("#99FF69"),
-                    SecondaryColor = Colour4.FromHex("#00FFF0"),
                     Scale = new Vector2(0.17f)
                 };
                 scrollbox.Add(display);
@@ -122,8 +119,6 @@ namespace osuAT.Game
                     Y = 15 + 40 * index,
                     X = -10,
                     Current = score,
-                    PrimaryColor = Colour4.FromHex("#99FF69"),
-                    SecondaryColor = Colour4.FromHex("#00FFF0"),
                     Scale = new Vector2(0.17f)
                 };
                 scrollbox.Add(display);

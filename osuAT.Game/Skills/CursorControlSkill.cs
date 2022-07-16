@@ -10,34 +10,34 @@ using osuTK;
 
 namespace osuAT.Game.Skills
 {
-    public class FlowAimSkill : ISkill
+    public class CursorControlSkill : ISkill
     {
 
-        public string Name => "Flow Aim";
+        public string Name => "Cursor Control";
 
-        public string Identifier => "flowaim";
+        public string Identifier => "cursorcontrol";
 
-        public string Version => "0.002";
+        public string Version => "0.001";
 
-        public string Summary => "Ability to move your cursor \n in a fluid motion.";
+        public string Summary => "Ability to control the movement \n of your aim.";
 
         public int SummarySize => 9;
 
-        public Colour4 PrimaryColor => Colour4.FromHex("#99FF69");
+        public Colour4 PrimaryColor => Colour4.FromHex("#F7E65D");
 
-        public Colour4 SecondaryColor => Colour4.FromHex("#00FFF0");
+        public Colour4 SecondaryColor => Colour4.FromHex("#F0A1B7");
 
         public string Background => "SkillBG/Flowaim2";
 
         public string Cover => "SkillBG/Flowaim1";
 
-        public string BadgeBG => "SkillBG/Flowaim1";    
+        public string BadgeBG => "SkillBG/Flowaim1";
 
         public float MiniHeight => 224;
 
-        public int BoxNameSize => 83;
+        public int BoxNameSize => 63;
 
-        public Vector2 BoxPosition => new Vector2(00, 400);
+        public Vector2 BoxPosition => new Vector2(2000, -1300);
 
         public SkillGoals Benchmarks => new SkillGoals(600, 1500,3000, 6000, 9000, 10000);
 

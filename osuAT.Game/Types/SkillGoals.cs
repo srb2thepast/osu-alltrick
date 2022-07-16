@@ -11,13 +11,13 @@ namespace osuAT.Game.Types
     public class SkillGoals
     {
         public int Learner { get; set; }
-        public int Confident { get; set; }
         public int Experienced { get; set; }
+        public int Confident { get; set; }
         public int Proficient { get; set; }
         public int Mastery { get; set; }
         public int Chosen { get; set; }
 
-        public SkillGoals(int learner, int confident, int experienced, int proficient, int mastery, int chosen)
+        public SkillGoals(int learner, int experienced, int confident, int proficient, int mastery, int chosen)
         {
             Learner = learner;
             Confident = confident;

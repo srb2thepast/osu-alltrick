@@ -13,12 +13,18 @@ namespace osuAT.Game.Skills
     public static class Skill
     {
         public static FlowAimSkill Flowaim = new FlowAimSkill();
+        public static CursorControlSkill CursorControl= new CursorControlSkill();
+        public static AimSkill Aim = new AimSkill();
+        public static NerveControlSkill NerveControl = new NerveControlSkill();
 
         /// <summary>
         /// A list of every skill currently supported.
         /// </summary>
         public static List<ISkill> SkillList => new List<ISkill> {
-            Flowaim
+            Flowaim,
+            CursorControl,
+            Aim,
+            NerveControl
         };
 
         public static ISkill GetSkillByID(string skillid) {

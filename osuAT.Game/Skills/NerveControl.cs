@@ -10,16 +10,16 @@ using osuTK;
 
 namespace osuAT.Game.Skills
 {
-    public class FlowAimSkill : ISkill
+    public class NerveControlSkill : ISkill
     {
 
-        public string Name => "Flow Aim";
+        public string Name => "Nerve Control";
 
-        public string Identifier => "flowaim";
+        public string Identifier => "nervecontrol";
 
         public string Version => "0.002";
 
-        public string Summary => "Ability to move your cursor \n in a fluid motion.";
+        public string Summary => "Ability to maintain composure \n and steadiness under pressure.";
 
         public int SummarySize => 9;
 
@@ -35,9 +35,9 @@ namespace osuAT.Game.Skills
 
         public float MiniHeight => 224;
 
-        public int BoxNameSize => 83;
+        public int BoxNameSize => 65;
 
-        public Vector2 BoxPosition => new Vector2(00, 400);
+        public Vector2 BoxPosition => new Vector2(0, -200);
 
         public SkillGoals Benchmarks => new SkillGoals(600, 1500,3000, 6000, 9000, 10000);
 

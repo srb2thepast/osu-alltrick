@@ -1,3 +1,4 @@
+using System;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -27,16 +28,16 @@ namespace osuAT.Game.Objects
         // private SkillContainer OverallContainer;
         
         private BufferedContainer miniBG;
-        private Container miniBox;
+        private ClickableContainer miniBox;
         private Container mainbox;
         private Container stars;
         private Container outerstars;
         private bool transitioning = false;
         public MiniSkillBox(ISkill skill,SkillBox parentbox)
         {
-            Size = new Vector2(392,272);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
+            Size = new Vector2(352, 224);
 
             Skill = skill;
             ParentBox = parentbox;
@@ -46,21 +47,22 @@ namespace osuAT.Game.Objects
         private void load(LargeTextureStore textures)
         {
             var HSVPrime = Skill.PrimaryColor.ToHSV();
-            InternalChild = miniBox = new Container
+            Size = new Vector2(352, Skill.MiniHeight);
+            InternalChild = miniBox = new ClickableContainer
             {
-                AutoSizeAxes = Axes.Both,
+                Size = new Vector2(352, Skill.MiniHeight),
                 Origin = Anchor.Centre,
                 Anchor = Anchor.Centre,
                 Children = new Drawable[] {
                     new Container {
-                        AutoSizeAxes = Axes.Both,
+                        Size = new Vector2(352, Skill.MiniHeight),
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         Children = new Drawable[] {
                             
                             // MainBox
                             mainbox = new Container {
-                                Size = new Vector2(352, 224),
+                                Size = new Vector2(352, Skill.MiniHeight),
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
 
@@ -71,11 +73,13 @@ namespace osuAT.Game.Objects
                                         // White Box
                                         new Box
                                         {
-                                            Size = new Vector2(352, 224),
+                                            Size = new Vector2(352, Skill.MiniHeight),
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
                                             Colour = Colour4.White,
                                         },
+
+                                        
                                         // Background
                                         new BufferedContainer {
                                             AutoSizeAxes = Axes.Both,
@@ -84,10 +88,10 @@ namespace osuAT.Game.Objects
                                             Children = new Drawable[] {
 
                                                 miniBG = new Sprite {
-                                                    Size = new Vector2(352, 224),
+                                                    Size = new Vector2(352, Skill.MiniHeight),
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.Centre,
-                                                    Texture = textures.Get(Skill.Background),
+                                                    Texture = textures.Get(Skill.Cover),
                                                 }.WithEffect(new GlowEffect
                                                 {
                                                     // BlurSigma = new Vector2(1f),
@@ -99,7 +103,7 @@ namespace osuAT.Game.Objects
                                                     },
                                                 }),
                                                 new Box {
-                                                    Size = new Vector2(352  , 224),
+                                                    Size = new Vector2(352  , Skill.MiniHeight),
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.Centre,
                                                     Colour = new ColourInfo{
@@ -136,7 +140,7 @@ namespace osuAT.Game.Objects
                                                             Anchor = Anchor.Centre,
                                                             Origin = Anchor.Centre,
                                                             Colour = Skill.SecondaryColor,
-                                                            Y = 5,
+                                                            Y = 5 + (Skill.MiniHeight/224-1)*80,
                                                         },
                                                         new Circle
                                                         {
@@ -144,6 +148,7 @@ namespace osuAT.Game.Objects
                                                             Anchor = Anchor.Centre,
                                                             Origin = Anchor.Centre,
                                                             Colour = Skill.PrimaryColor,
+                                                            Y =  (Skill.MiniHeight/224-1)*80,
 
                                                         },
                                                     }
@@ -152,7 +157,7 @@ namespace osuAT.Game.Objects
 
                                                     Text = Skill.Name,
                                                     Anchor = Anchor.Centre,
-                                                    Y = -10,
+                                                    Y = -10 - (Skill.MiniHeight/264-1)*10,
                                                     Origin = Anchor.Centre,
                                                     Font = new FontUsage("VarelaRound", size: Skill.BoxNameSize),
                                                     Colour = Skill.PrimaryColor,
@@ -191,14 +196,13 @@ namespace osuAT.Game.Objects
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
                                             Y = 86,
-                                            X = -100,
                                             Children = new Drawable[] {
 
-                                                new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(10, 0)),
-                                                new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(55, 0)),
-                                                new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(100, 0)),
-                                                new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(145, 0)),
-                                                new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(190, 0)),
+                                                //new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(10, (Skill.MiniHeight/224-1)*100)) { Alpha = ((Skill.GetSkillPP() > Skill.Benchmarks.Learner)? 1 : 0) },
+                                                //new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(55, (Skill.MiniHeight/224-1)*100)) { Alpha = ((Skill.GetSkillPP() > Skill.Benchmarks.Experienced)? 1 : 0) },
+                                                //new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(100, (Skill.MiniHeight/224-1)*100)) { Alpha = ((Skill.GetSkillPP() > Skill.Benchmarks.Confident)? 1 : 0) },
+                                                //new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(145, (Skill.MiniHeight/224-1)*100)) { Alpha = ((Skill.GetSkillPP() > Skill.Benchmarks.Proficient)? 1 : 0) },
+                                                //new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(190, (Skill.MiniHeight/224-1)*100)) { Alpha = ((Skill.GetSkillPP() > Skill.Benchmarks.Mastery)? 1 : 0) },
                                             }
                                         },
 
@@ -212,6 +216,7 @@ namespace osuAT.Game.Objects
                                 Origin = Anchor.Centre,
                                 X = 96,
                                 Y = 70,
+                                Alpha = (Skill.GetSkillPP() >= Skill.Benchmarks.Chosen)? 1:0,
                                 Children = new Drawable[] {
                                     new Sprite {
                                         Position = new Vector2(-200, -145),
@@ -241,15 +246,31 @@ namespace osuAT.Game.Objects
 
                                 }
                             },
-
-                            
                         }
                     }
                 }
             };
             miniBox.ScaleTo(0.5f);
 
+            var skillPP = Skill.GetSkillPP();
+            int lv = 0;
+            if (skillPP > Skill.Benchmarks.Learner) { lv = 1; }
+            if (skillPP > Skill.Benchmarks.Experienced) { lv = 2; }
+            if (skillPP > Skill.Benchmarks.Confident) { lv = 3; }
+            if (skillPP > Skill.Benchmarks.Proficient) { lv = 4; }
+            if (skillPP > Skill.Benchmarks.Mastery) { lv = 5; } 
+            Console.WriteLine(lv);
 
+            for (int i = 0; i < lv; i++) {
+                //stars.Add(new StarShad(textures, Skill.PrimaryColor, Skill.SecondaryColor,
+                //    new Vector2(
+                //         lv % 2 == 1 ? i * 45 + (-22.5f * (lv - 1)) : i * 45 + (-45 * (lv - 2) / 2 - 22.5f),
+                //        (Skill.MiniHeight / 224 - 1) * 100
+                //    )
+               //));
+            }
+
+            miniBox.Action = () => {fireTransition();};
         }
 
 
@@ -302,17 +323,22 @@ namespace osuAT.Game.Objects
 
         protected override bool OnClick(ClickEvent e)
         {
-                
+
+            fireTransition();
+            return true;
+        }
+
+        private void fireTransition() {
             if (ParentBox.ParentCont.FocusedBox == ParentBox && ParentBox.State == SkillBoxState.MiniBox)
             {
                 transitioning = true;
                 ParentBox.TransitionToFull();
 
             }
-            else {
+            else
+            {
                 ParentBox.ParentCont.FocusOnBox(ParentBox);
             }
-            return base.OnClick(e);
         }
 
         public void Slideout()

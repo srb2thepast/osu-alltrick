@@ -20,10 +20,10 @@ namespace osuAT.Game
         public Dictionary<ISkill, SkillBox> SkillDict = new Dictionary<ISkill, SkillBox>();
         public SkillBox FocusedBox;
         public HomeScreen MainScreen;
-
+            
         public SkillContainer(HomeScreen mainscreen)
         {
-            Size = new Vector2(3000,2000);
+            Size = new Vector2(8000,6000);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             MainScreen = mainscreen;
@@ -93,7 +93,7 @@ namespace osuAT.Game
             Child.MoveTo(BoxScreenPos, 400,Easing.OutCubic);
 
             FocusedBox = box;
-            lastoffpos = -box.Position;
+            lastoffpos = BoxScreenPos;
         }
         public void Defocus() {
             FocusedBox = null;
@@ -127,8 +127,8 @@ namespace osuAT.Game
 
         }
         protected override bool OnScroll(ScrollEvent e)
-        {
-
+        { // one day... scrolling will be good... right...!??!?!??!?!?
+            /*
             if (FocusedBox?.State == SkillBoxState.FullBox) { return false; }
                 Vector2 newScale = lastscale + new Vector2(e.ScrollDelta.Y / 10, e.ScrollDelta.Y / 10);
 
@@ -154,9 +154,9 @@ namespace osuAT.Game
             System.Console.WriteLine(MouseWorldPos);
             System.Console.WriteLine(e.MousePosition);
             System.Console.WriteLine(Child.Position);
+            */
 
             return true;
-
         }
         #endregion
     }

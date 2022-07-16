@@ -23,7 +23,7 @@ namespace osuAT.Game.Skills
         public string Identifier { get; }
 
         /// <summary>
-        /// The MAJOR.MINOR [M.MIN] version of this skill. This value is saved in <see cref="SaveStorage"/>.
+        /// The MAJOR.MINOR [MA.MIN] version of this skill's SkillCalc. This value is saved in <see cref="SaveStorage"/>.
         /// </summary>
         /// <remarks>
         /// Updating this value will recalc all scores in the savedata for this skill.
@@ -66,9 +66,14 @@ namespace osuAT.Game.Skills
         public string Cover { get; }
 
         /// <summary>
+        /// The path of image to be used when displaying the SkillLevel Badge in this skill's <see cref="FullSkillBox"/>.
+        /// </summary>
+        public string BadgeBG { get; }
+
+        /// <summary>
         /// The height of this skill's <see cref="MiniSkillBox"/>.
         /// </summary>
-        public double MiniHeight { get; }
+        public float MiniHeight { get; }
 
         /// <summary>
         /// The text size of the Skill's Name when displayed in a <see cref="SkillBox"/>.
@@ -90,11 +95,12 @@ namespace osuAT.Game.Skills
         /// </summary>
         public double SkillCalc(Score score) { return 0; }
 
+        public double GetSkillPP() { return SaveStorage.SaveData.TotalSkillPP[Identifier]; }
+
         /// <summary>
         /// The rulesets this skill can support.
         /// </summary>
         public List<RulesetInfo> SupportedRulesets { get; }
-
 
     }
 }

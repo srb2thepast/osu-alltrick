@@ -42,16 +42,19 @@ namespace osuAT.Game
         /// </summary>
         /// <remarks> The dictonary follows a format of (<see cref="ISkill.Identifier"/> : SkillPP).</remarks>
         [JsonProperty("alltrickPP")]
-        public Dictionary<string, double> TotalSkillPP { get; set;}
+        public Dictionary<string, double> TotalSkillPP { get; set; }
 
         /// <summary>
         /// The cached top-scores for each skill.
         /// </summary>
         /// <remarks> The dictonary follows a format of
-        /// (<see cref="ISkill.Identifier"/> : List( Tuple(<see cref="Score.ID"/>, ScorePP)) ).
+        /// (<see cref="ISkill.Identifier"/> : Dict(Ruleset.Name (or "overall") : List( Tuple(<see cref="Score.ID"/>, ScorePP))) ).
         /// </remarks>
+        // what if it was seperated this by ruleset so ruleset based leaderboards are possible?
+        // then you could become an all-trick in every ruleset and it could glow on the SkillInfo
+        // board. (update: i just did that.)
         [JsonProperty("alltrickTop")]
-        public Dictionary<string, List<Tuple<Guid, double>>> AlltrickTop { get; set; }
+        public Dictionary<string, Dictionary<string,List<Tuple<Guid, double>>>> AlltrickTop { get; set; }
 
         /// <summary>
         /// A list of every score that osu!alltrick was able to process.
@@ -77,12 +80,20 @@ namespace osuAT.Game
             return dict;
         }
 
-        private static Dictionary<string, List<Tuple<Guid, double>>> getDefaultTop()
+        private static Dictionary<string, Dictionary<string, List<Tuple<Guid, double>>>> getDefaultTop()
         {
-            Dictionary<string, List<Tuple<Guid, double>>> dict = new Dictionary<string, List<Tuple<Guid, double>>>();
+            Dictionary<string, Dictionary<string, List<Tuple<Guid, double>>>> dict = new Dictionary<string, Dictionary<string, List<Tuple<Guid, double>>>>();
             foreach (ISkill skill in Skill.SkillList)
             {
-                dict.Add(skill.Identifier, new List<Tuple<Guid, double>>((150)));
+                // add skils
+                dict.Add(skill.Identifier, new Dictionary<string, List<Tuple<Guid, double>>>());
+
+                // add all modes to each skill, regardless of whether it can support it.
+                dict[skill.Identifier].Add("overall", new List<Tuple<Guid, double>>());
+                dict[skill.Identifier].Add("osu", new List<Tuple<Guid, double>>()); 
+                dict[skill.Identifier].Add("mania", new List<Tuple<Guid, double>>());
+                dict[skill.Identifier].Add("catch", new List<Tuple<Guid, double>>());
+                dict[skill.Identifier].Add("taiko", new List<Tuple<Guid, double>>());
             }
             return dict;
         }
@@ -133,30 +144,52 @@ namespace osuAT.Game
                     IsSaving = true;
 
                     Console.WriteLine("---------------New Skill Addition Begun----------------");
-                    Console.WriteLine("The skill " + skill.Name + "has been added to the game.");
+                    Console.WriteLine("The skill " + skill.Name + " has been added to the game.");
+
+                    SaveData.TotalSkillPP.Add(skill.Identifier, 0);
+                    Console.WriteLine("added to total");
 
                     /// Add new dictonary entry "skill.Identifier" to:
 
                     /// a. SaveData.SkillVersions
+                    Console.WriteLine("added to versions");
 
                     SaveData.SkillVersions.Add(skill.Identifier, skill.Version);
 
                     /// b. SaveData.AlltrickTop
-
-                    List<Tuple<Guid, double>> tupl = new List<Tuple<Guid, double>>();
+                    Dictionary<string,List<Tuple<Guid, double>>> tuplList = new Dictionary<string, List<Tuple<Guid, double>>>
+                    {
+                        { "overall",new List<Tuple<Guid, double>>()},
+                        { "osu",new List<Tuple<Guid, double>>()},
+                        { "mania",new List<Tuple<Guid, double>>()},
+                        { "catch",new List<Tuple<Guid, double>>()},
+                        { "taiko",new List<Tuple<Guid, double>>()}
+                    };
+                    Console.WriteLine("adding to top (0/2)");
                     // Loop through every score in SaveData.Scores
                     foreach (Score score in SaveData.Scores.Values)
                     {
-                        // Calc the SkillPP of each score for the new skill
-                        score.AlltrickPP[skill.Identifier] = skill.SkillCalc(score);
-                        tupl.Add(new Tuple<Guid,double>(score.ID, score.AlltrickPP[skill.Identifier]));
-
+                        // Calc the SkillPP of each score for the new skill if the skill supports the score's ruleset
+                        if (skill.SupportedRulesets.Contains(score.ScoreRuleset)) {
+                            score.AlltrickPP.Add(skill.Identifier, skill.SkillCalc(score));
+                            Tuple<Guid, double> newtupl = new Tuple<Guid, double>(score.ID, score.AlltrickPP[skill.Identifier]);
+                            tuplList["overall"].Add(newtupl);
+                            tuplList[score.ScoreRuleset.Name].Add(newtupl);
+                        }
                     }
-                    tupl.Sort((x, y) => y.Item2.CompareTo(x.Item2));
-                    SaveData.AlltrickTop[skill.Identifier] = tupl;
+                    Console.WriteLine("adding to top (1/2)");
+                    SaveData.AlltrickTop.Add(skill.Identifier, new Dictionary<string, List<Tuple<Guid, double>>>());
+
+                    // sort and set each ruleset tuple
+                    foreach (KeyValuePair<string, List<Tuple<Guid, double>>> tupl in tuplList) {
+                        tupl.Value.Sort((x, y) => y.Item2.CompareTo(x.Item2));
+                        SaveData.AlltrickTop[skill.Identifier].Add(tupl.Key, tupl.Value);
+                    }
+                    Console.WriteLine("added to top (2/2)");
 
                     /// c. SaveData.TotalSkillPP
-                    SaveData.TotalSkillPP[skill.Identifier] = Skill.CalcWeighted(tupl);
+                    SaveData.TotalSkillPP[skill.Identifier] = Skill.CalcWeighted(tuplList["overall"]);
+                    Console.WriteLine("added to total");
 
                     Console.WriteLine("---------------New Skill Addition Complete----------------");
                 }
@@ -183,22 +216,35 @@ namespace osuAT.Game
                     Console.WriteLine("The skill " + skillInstance.Name + " has been updated. Recalculating scores..");
 
                     List<Score> scorelist = GetTrickTopScoreList(skillInstance);
-                    List <Tuple<Guid, double>> tupleList = new List<Tuple<Guid, double>>();
+                    Dictionary<string, List<Tuple<Guid, double>>> tuplList = new Dictionary<string, List<Tuple<Guid, double>>>
+                    {
+                        { "overall",new List<Tuple<Guid, double>>()},
+                        { "mania",new List<Tuple<Guid, double>>()},
+                        { "mania",new List<Tuple<Guid, double>>()},
+                        { "catch",new List<Tuple<Guid, double>>()},
+                        { "taiko",new List<Tuple<Guid, double>>()}
+                    };
                     foreach (Score score in scorelist)
                     {
-                        Console.WriteLine("-------- " + score.ID.ToString());
-                        Console.Write("Previous: " + score.AlltrickPP[skillID].ToString());
+                        // check if the skill supports the score's ruleset
+                        if (skillInstance.SupportedRulesets.Contains(score.ScoreRuleset))
+                        {
+                            score.AlltrickPP[skillID] = skillInstance.SkillCalc(score);
+                            Tuple<Guid, double> newTuple = new Tuple<Guid, double>(score.ID, score.AlltrickPP[skillID]);
 
-                        score.AlltrickPP[skillID] = skillInstance.SkillCalc(score);
-
-                        Console.WriteLine(" | New: " + score.AlltrickPP[skillID].ToString());
-
-                        tupleList.Add(new Tuple<Guid, double>(score.ID, score.AlltrickPP[skillID]));
+                            tuplList["overall"].Add(newTuple);
+                            tuplList[score.ScoreRuleset.Name].Add(newTuple);
+                            Console.WriteLine(score.ID.ToString()+ " | NewPP: " + score.AlltrickPP[skillID].ToString());
+                        }
                     }
-                    tupleList.Sort((x, y) => y.Item2.CompareTo(x.Item2));
-                    SaveData.AlltrickTop[skillID] = tupleList;
-                    SaveData.SkillVersions[skillID] = skillInstance.Version;
+                    // sort and set each ruleset tuple
+                    foreach (KeyValuePair<string, List<Tuple<Guid, double>>> tupl in tuplList)
+                    {
+                        tupl.Value.Sort((x, y) => y.Item2.CompareTo(x.Item2));
+                        SaveData.AlltrickTop[skillID][tupl.Key] = tupl.Value;
+                    }
 
+                    SaveData.SkillVersions[skillID] = skillInstance.Version;
                     Console.WriteLine("---------------Score Recalc Complete----------------");
 
                 }
@@ -238,11 +284,6 @@ namespace osuAT.Game
         {
             IsSaving = true;
             CheckSaveExists();
-            foreach (Score score in SaveData.Scores.Values) {
-                Console.WriteLine(score.ID);
-                Console.WriteLine(score.AlltrickPP["flowaim"]);
-            } 
-
             string encodedtext = "";
             foreach (char chara in JsonConvert.SerializeObject(SaveData))
             {
@@ -258,7 +299,7 @@ namespace osuAT.Game
             if (!(SaveData.Scores[scoreID] == null)) {
                 Console.WriteLine(
                     "The score with the Guid " + scoreID.ToString() +
-                    "could not be found in the SaveData. Maybe you already deleted it?");
+                    " could not be found in the SaveData. Maybe you already deleted it?");
                 return;
             }
             SaveData.Scores[scoreID] = new Score()
@@ -295,45 +336,46 @@ namespace osuAT.Game
 
             // So that there arent duplicate references of the same score in the savedata.
             Score scoreclone = score.Clone();
-
-            Console.WriteLine("------------------------------new------------------------------------");
-
             foreach (var sitem in SaveData.Scores.Values)
             {
                 Console.WriteLine(sitem.ID);
             }
-            Console.WriteLine(score.ID.ToString());
-            Dictionary<Guid, Score> tempdict = new Dictionary<Guid, Score>(SaveData.Scores);
-            tempdict.Add(scoreclone.ID, scoreclone);
+            Dictionary<Guid, Score> tempdict = new Dictionary<Guid, Score>(SaveData.Scores)
+            {
+                { scoreclone.ID, scoreclone }
+            };
             SaveData.Scores = tempdict;
+            addToSkillTops(score);
+            
+        }
+        /// <summary>
+        /// Adds the score to every Skill's AlltrickTop([score.ScoreRuleset] and "overall"]) if it's high enough
+        /// and resorts those AlltrickTop sections from greatest to least.
+        /// </summary>
 
-
-
-            Console.WriteLine(SaveData.Scores[score.ID].ToString());
-            Console.WriteLine("------------------------------------------------------------------");
-
-
-            foreach (var sitem in SaveData.Scores.Values) {
-                Console.WriteLine(sitem.ID);
-            }
-
-            // add the score to each skill's alltricktop that it's high enough for.
+        private static void addToSkillTops(Score score)
+        {
+            var modeList = new List<string> { "overall", score.ScoreRuleset.Name };
             foreach (KeyValuePair<string, double> scoreSkillPP in score.AlltrickPP)
             {
-                var SkillList = SaveData.AlltrickTop[scoreSkillPP.Key];
-                if (SkillList.Count < 150)
+                foreach (var mode in modeList)
                 {
-                    SkillList.Add(new Tuple<Guid, double>(score.ID, scoreSkillPP.Value));
-                    SaveData.TotalSkillPP[scoreSkillPP.Key] = (Skill.CalcWeighted(SkillList));
-                }
-                else {
-                    if (scoreSkillPP.Value > SkillList[149].Item2)
+                    var SkillList = SaveData.AlltrickTop[scoreSkillPP.Key][mode];
+                    if (SkillList.Count < 100)
                     {
                         SkillList.Add(new Tuple<Guid, double>(score.ID, scoreSkillPP.Value));
                         SaveData.TotalSkillPP[scoreSkillPP.Key] = (Skill.CalcWeighted(SkillList));
                     }
+                    else
+                    {
+                        if (scoreSkillPP.Value > SkillList[99].Item2)
+                        {
+                            SkillList.Add(new Tuple<Guid, double>(score.ID, scoreSkillPP.Value));
+                            SaveData.TotalSkillPP[scoreSkillPP.Key] = (Skill.CalcWeighted(SkillList));
+                        }
+                    }
+                    SkillList.Sort((x, y) => y.Item2.CompareTo(x.Item2));
                 }
-                SkillList.Sort((x, y) => y.Item2.CompareTo(x.Item2));
             }
         }
 
@@ -341,8 +383,8 @@ namespace osuAT.Game
         /// Returns a list of scores based on a SkillTop list contained in a <see cref="CSaveData.AlltrickTop"/>.
         /// </summary>
         /// <returns>A list of each <see cref="Score"/> in order.</returns>
-        public static List<Score> GetTrickTopScoreList(ISkill skill) {
-            List<Tuple<Guid, double>> list = SaveData.AlltrickTop[skill.Identifier];
+        public static List<Score> GetTrickTopScoreList(ISkill skill, string ruleset = "overall") {
+            List<Tuple<Guid, double>> list = SaveData.AlltrickTop[skill.Identifier][ruleset];
             List<Score> scorelist = new List<Score>();  
             foreach (Tuple<Guid, double> pair in list)
             {
