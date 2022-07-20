@@ -56,7 +56,7 @@ namespace osuAT.Game.Objects
             }
 
             [BackgroundDependencyLoader]
-            private void load(TextureStore textures)
+            private void load(LargeTextureStore textures)
             {
                 CircularProgress learnerProg;
                 CircularProgress experiencedProg;
@@ -84,7 +84,7 @@ namespace osuAT.Game.Objects
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Masking = true,
-                    CornerRadius = 35,
+                    CornerRadius = 25,
                     X = 80,
                     Children = new Drawable[] {
                         // Background Image (top play)
@@ -382,7 +382,7 @@ namespace osuAT.Game.Objects
                                             Colour = Skill.PrimaryColor,
                                         },
                                         new SpriteText {
-                                            Text = (Math.Truncate(Skill.GetSkillPP())).ToString() + "pp/" + ((Skill.GetSkillPP() < Skill.Benchmarks.Mastery)? Skill.Benchmarks.Mastery.ToString() : Skill.Benchmarks.Chosen.ToString())+"pp",
+                                            Text = (Math.Truncate(Skill.SkillPP)).ToString() + "pp/" + ((Skill.Level < SkillLevel.Chosen)? Skill.Benchmarks.Mastery.ToString() : Skill.Benchmarks.Chosen.ToString())+"pp",
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
                                             Y = -0.5f,
@@ -421,12 +421,13 @@ namespace osuAT.Game.Objects
                      }),
                                     }
                                 },
+
                                 // Rulesets
                                 new RulesetDisplay {
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Y = 29,
                                     Scale = new Vector2(0.25f),
+                                    Y = 29,
                                     RulesetList = new RulesetInfo[] {
 
                                         RulesetStore.Osu,
@@ -436,6 +437,7 @@ namespace osuAT.Game.Objects
                                         RulesetStore.Osu,
                                     }
                                 },
+
                                 // Skill Description
                                 skillDescription = new Container {
                                     AutoSizeAxes = Axes.Both,
@@ -444,6 +446,16 @@ namespace osuAT.Game.Objects
                                     Y = 45,
                                     Children = new Drawable[] {
                                     }
+                                },
+
+                                
+                                // SkillLevel Display
+                                new SkillLevelDisplay{
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                    Scale = new Vector2(0.25f),
+                                    Y = 73,
+                                    Skill = Skill
                                 }
                             }
                         }
@@ -455,7 +467,7 @@ namespace osuAT.Game.Objects
                 confidentProg.Current.Value = (float)Skill.Benchmarks.Confident / Skill.Benchmarks.Mastery;
                 proficientProg.Current.Value = (float)Skill.Benchmarks.Proficient / Skill.Benchmarks.Mastery;
                 masteryProg.Current.Value = 1;
-                if (Skill.GetSkillPP() >= Skill.Benchmarks.Mastery)
+                if (Skill.SkillPP >= Skill.Benchmarks.Mastery)
                 {
 
                 }
@@ -502,7 +514,7 @@ namespace osuAT.Game.Objects
             }
             public void Appear(float delay)
             {
-                skillprogress.Delay(300 + delay).FillTo((Skill.GetSkillPP() < Skill.Benchmarks.Mastery)? (float)Skill.GetSkillPP()/ Skill.Benchmarks.Mastery : 1, 1000, Easing.InOutCubic);
+                skillprogress.Delay(300 + delay).FillTo((Skill.Level < SkillLevel.Mastery) ? (float)Skill.SkillPP / Skill.Benchmarks.Mastery : 1, 1000, Easing.InOutCubic);
                 
             }
 
@@ -542,7 +554,7 @@ namespace osuAT.Game.Objects
                 Origin = Anchor.Centre,
 
                 Masking = true,
-                BorderThickness = ((Skill.GetSkillPP() < Skill.Benchmarks.Mastery) ? 0 : 3),
+                BorderThickness = ((Skill.Level < SkillLevel.Mastery) ? 0 : 3),
                 BorderColour = new ColourInfo
                 {
                     TopLeft = Skill.PrimaryColor,
@@ -593,6 +605,18 @@ namespace osuAT.Game.Objects
                         }
                     },
 
+                    // SkillInfo Box
+                    skillInfo = new SkillInfo{Skill = Skill,},
+
+                    // ScoreContainer Scrollbox
+                    scoreContainer = new ScoreContainer {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        X = -80,
+                        ScoreList = SaveStorage.GetTrickTopScoreList(Skill),
+                        Skill = Skill
+                    },
+                    
                     // Back button
                     backBut = new ClickableContainer {
                         AutoSizeAxes = Axes.Both,
@@ -600,6 +624,7 @@ namespace osuAT.Game.Objects
                         Origin = Anchor.Centre,
                         Position = new Vector2(-120,-98),
                         Scale = new Vector2(0.6f),
+                        Name = "BackButton",
                         Children = new Drawable[] {
                             // Border
                             new Circle() {
@@ -651,21 +676,9 @@ namespace osuAT.Game.Objects
                             }
                         }
                     },
-                    // SkillInfo Box
-                    skillInfo = new SkillInfo{Skill = Skill,},
-
-                    // ScoreContainer Scrollbox
-                    scoreContainer = new ScoreContainer {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        X = -80,
-                        ScoreList = SaveStorage.GetTrickTopScoreList(Skill),
-                        Skill = Skill
-                    }
-
                 }
             };
-            backBut.Action = () => { ParentBox.TransitionToMini(); };
+            backBut.Action = () => { ParentBox.TransitionToMini(); System.Console.WriteLine("hieoihjergji"); };
         }
 
         public void Appear(float delay) {

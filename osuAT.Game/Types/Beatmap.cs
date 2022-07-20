@@ -39,7 +39,7 @@ namespace osuAT.Game.Types
         public int MaxCombo { get; set; }
 
         [JsonProperty("beatmap_path")]
-        public string Path { get; set; } = default!; // very likely to be null
+        public string FolderName { get; set; } = default!; // very likely to be null
 
     }
 }

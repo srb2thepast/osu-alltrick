@@ -28,16 +28,16 @@ namespace osuAT.Game.Objects
         // private SkillContainer OverallContainer;
         
         private BufferedContainer miniBG;
-        private ClickableContainer miniBox;
+        private Container miniBox;
         private Container mainbox;
         private Container stars;
         private Container outerstars;
         private bool transitioning = false;
         public MiniSkillBox(ISkill skill,SkillBox parentbox)
-        {
+        {   
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
-            Size = new Vector2(352, 224);
+            Size = new Vector2(175, 100);
 
             Skill = skill;
             ParentBox = parentbox;
@@ -46,9 +46,11 @@ namespace osuAT.Game.Objects
         [BackgroundDependencyLoader]
         private void load(LargeTextureStore textures)
         {
+            Size = new Vector2(175, Skill.MiniHeight * 0.546F);
+
             var HSVPrime = Skill.PrimaryColor.ToHSV();
-            Size = new Vector2(352, Skill.MiniHeight);
-            InternalChild = miniBox = new ClickableContainer
+
+            InternalChild = miniBox = new Container
             {
                 Size = new Vector2(352, Skill.MiniHeight),
                 Origin = Anchor.Centre,
@@ -196,14 +198,7 @@ namespace osuAT.Game.Objects
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
                                             Y = 86,
-                                            Children = new Drawable[] {
-
-                                                //new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(10, (Skill.MiniHeight/224-1)*100)) { Alpha = ((Skill.GetSkillPP() > Skill.Benchmarks.Learner)? 1 : 0) },
-                                                //new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(55, (Skill.MiniHeight/224-1)*100)) { Alpha = ((Skill.GetSkillPP() > Skill.Benchmarks.Experienced)? 1 : 0) },
-                                                //new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(100, (Skill.MiniHeight/224-1)*100)) { Alpha = ((Skill.GetSkillPP() > Skill.Benchmarks.Confident)? 1 : 0) },
-                                                //new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(145, (Skill.MiniHeight/224-1)*100)) { Alpha = ((Skill.GetSkillPP() > Skill.Benchmarks.Proficient)? 1 : 0) },
-                                                //new StarShad(textures,Skill.PrimaryColor, Skill.SecondaryColor, new Vector2(190, (Skill.MiniHeight/224-1)*100)) { Alpha = ((Skill.GetSkillPP() > Skill.Benchmarks.Mastery)? 1 : 0) },
-                                            }
+                                            Children = new Drawable[] {}
                                         },
 
                                     }
@@ -216,7 +211,7 @@ namespace osuAT.Game.Objects
                                 Origin = Anchor.Centre,
                                 X = 96,
                                 Y = 70,
-                                Alpha = (Skill.GetSkillPP() >= Skill.Benchmarks.Chosen)? 1:0,
+                                Alpha = (Skill.Level == SkillLevel.Chosen )? 1:0,
                                 Children = new Drawable[] {
                                     new Sprite {
                                         Position = new Vector2(-200, -145),
@@ -252,25 +247,18 @@ namespace osuAT.Game.Objects
             };
             miniBox.ScaleTo(0.5f);
 
-            var skillPP = Skill.GetSkillPP();
-            int lv = 0;
-            if (skillPP > Skill.Benchmarks.Learner) { lv = 1; }
-            if (skillPP > Skill.Benchmarks.Experienced) { lv = 2; }
-            if (skillPP > Skill.Benchmarks.Confident) { lv = 3; }
-            if (skillPP > Skill.Benchmarks.Proficient) { lv = 4; }
-            if (skillPP > Skill.Benchmarks.Mastery) { lv = 5; } 
+            int lv = Math.Clamp((int)Skill.Level,0,5);
             Console.WriteLine(lv);
 
             for (int i = 0; i < lv; i++) {
-                //stars.Add(new StarShad(textures, Skill.PrimaryColor, Skill.SecondaryColor,
-                //    new Vector2(
-                //         lv % 2 == 1 ? i * 45 + (-22.5f * (lv - 1)) : i * 45 + (-45 * (lv - 2) / 2 - 22.5f),
-                //        (Skill.MiniHeight / 224 - 1) * 100
-                //    )
-               //));
+                stars.Add(new StarShad(textures, Skill.PrimaryColor, Skill.SecondaryColor,
+                    new Vector2(
+                        lv % 2 == 1 ? i * 45 + (-22.5f * (lv - 1)) : i * 45 + (-45 * (lv - 2) / 2 - 22.5f),
+                        (Skill.MiniHeight / 224 - 1) * 100
+                    )
+              ));
             }
 
-            miniBox.Action = () => {fireTransition();};
         }
 
 
@@ -309,21 +297,23 @@ namespace osuAT.Game.Objects
         }
         protected override bool OnHover(HoverEvent e)
         {
-            if (transitioning == true) base.OnHover(e);
-            miniBox.Child.ScaleTo(1.1f, 200, Easing.Out);
+            if (ParentBox.State == SkillBoxState.FullBox) return false;
+            miniBox.Child.ScaleTo(1.07f, 100, Easing.Out);
+            Console.WriteLine(miniBox.Child.Scale);
             return base.OnHover(e);
 
         }
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            if (transitioning == true) return;
+            if (ParentBox.State == SkillBoxState.FullBox) { miniBox.Child.Scale = new Vector2(1.1f); return; }
             miniBox.Child.ScaleTo(1f, 100, Easing.Out);
             base.OnHoverLost(e);
+            Console.WriteLine(miniBox.Child.Scale);
         }
 
-        protected override bool OnClick(ClickEvent e)
+        protected override bool OnClick(ClickEvent e)   
         {
-
+            if (ParentBox.State == SkillBoxState.FullBox) return false;
             fireTransition();
             return true;
         }
@@ -343,12 +333,13 @@ namespace osuAT.Game.Objects
 
         public void Slideout()
         {
+
             mainbox.Delay(300).MoveToX(358, 600, Easing.InOutCubic);
             outerstars[0].Delay(500).MoveTo(new Vector2(0, 0), 600, Easing.InOutCubic);
             outerstars[1].Delay(500).MoveTo(new Vector2(0, 0), 600, Easing.InOutCubic);
             outerstars.Delay(500).MoveTo(new Vector2(148, -100), 600, Easing.InOutCubic);
             outerstars.Delay(500).ScaleTo(0.5f, 600, Easing.InOutCubic);
-            mainbox.Delay(700).FadeOut();
+            //mainbox.Delay(700).FadeOut();
         }
 
         public void Slidein()

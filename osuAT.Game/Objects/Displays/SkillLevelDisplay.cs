@@ -1,21 +1,31 @@
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osuAT.Game.Objects.LazerAssets;
-using osuAT.Game.Types;
+using osu.Framework.Graphics.Textures;
+using osu.Framework.Graphics.Effects;
+using osuAT.Game.Skills;
 using osuTK;
 namespace osuAT.Game.Objects.Displays
 {
     public class SkillLevelDisplay : CompositeDrawable
     {
 
-
-        public RulesetInfo[] RulesetList;
         private Container rulesetContainer;
         private Circle innerCircle;
-        private Circle outerCircle;
+        private string levelText { get {
+                if ((int)Skill.Level == 1) return "Learner";
+                if ((int)Skill.Level == 2) return "Experienced";
+                if ((int)Skill.Level == 3) return "Confident";
+                if ((int)Skill.Level == 4) return "Proficent";
+                if ((int)Skill.Level == 5) return "Mastery";
+                if ((int)Skill.Level == 6) return "Chosen";
+                return "None";
+            }
+        }
+        public ISkill Skill;
         public SkillLevelDisplay()
         {
             AutoSizeAxes = Axes.Both;
@@ -23,76 +33,117 @@ namespace osuAT.Game.Objects.Displays
         }
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(LargeTextureStore textures)
         {
-            InternalChild = new Container
+            InternalChild = new Container {
+
+                new Circle {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Y = 8,
+                    Colour = Skill.SecondaryColor.Lighten(10),
+                    Size = new Vector2(378, 73),
+                },
+
+                new CircularContainer {
+                    Size = new Vector2(378, 73),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Masking = true,
+                    Children = new Drawable[]
+                    {
+                        // Circle Gradient
+                        innerCircle = new Circle
+                        {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
+                            Size = new Vector2(78,67),
+                        },
+
+                        // Background image
+                        new Sprite {
+                            Size = new Vector2(700,440),
+                            X = -40,
+                            Y = 80,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Texture = textures.Get("TestBG2"),
+                            Alpha = 0.4f
+                        },
+                        new SpriteText {
+                            Text = levelText,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Font = new FontUsage("AveriaSansLibre", size: 70),
+                            Colour = Skill.PrimaryColor.Lighten(0.3f),
+                            Shadow =true,
+                            ShadowColour = Colour4.Gray,
+
+                            Y = -0.5f,
+                            Padding = new MarginPadding
+                            {
+
+                                Horizontal = 15,
+                                Vertical = 1
+                            },
+
+                        }.WithEffect(new GlowEffect
+                        {
+                            BlurSigma = new Vector2(1),
+                            Strength = 5,
+                            Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
+                            PadExtent = true,
+
+                        }).WithEffect(new OutlineEffect
+                        {
+                            BlurSigma = new Vector2(0),
+                            Strength = 0.4f ,
+                            Colour = Colour4.Black,
+                            PadExtent = true,
+                        }),
+                        // Container
+                        rulesetContainer = new Container{
+                            AutoSizeAxes = Axes.Both,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                        }
+
+                    }
+                },
+
+            };
+
+            // Position the circles
+            new Container
             {
-                AutoSizeAxes = Axes.Both,
+                Size = new Vector2(378, 73),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Masking = true,
-                Children = new Drawable[]
-                {
-                    
-                    // Outer Circle
-                     outerCircle = new Circle
-                     {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Colour = Colour4.FromHex("#F0A1B7"),
-                            Size = new Vector2(78,67),
-                            Alpha = 0
-                     },
-                    // Inner Circle
-                    innerCircle = new Circle
+                Children = new Drawable[] {
+                    new Circle
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Colour = Colour4.FromHex("#F7E65D"),
-                        Size = new Vector2(69,58),
-                        Alpha = 0
+                        Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
+                        Size = new Vector2(40,40),
                     },
-                    // Container
-                    rulesetContainer = new Container{
-                        AutoSizeAxes = Axes.Both,
+                    new Circle
+                    {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                    }
-                    
+                        Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
+                        Size = new Vector2(40,40),
+                    },
                 }
             };
-            outerCircle.FadeIn(200, Easing.InOutCubic);
+
             innerCircle.FadeIn(200, Easing.InOutCubic);
 
-            using (outerCircle.BeginDelayedSequence(50))
-                outerCircle.ResizeTo(new Vector2(78 + RulesetList.Length * 60, 67), 500, Easing.InOutCubic);
             using (innerCircle.BeginDelayedSequence(50))
-                innerCircle.ResizeTo(new Vector2(69 + RulesetList.Length * 60, 58),500,Easing.InOutCubic);
+                innerCircle.ResizeTo(new Vector2(378, 73), 500, Easing.InOutCubic);
 
-            for (var i = 0; i < RulesetList.Length; i++)
-            {
-                RulesetInfo ruleset = RulesetList[i];
-                SpriteIcon newIcon = new SpriteIcon
-                {
-                    X = RulesetList.Length % 2 == 1 ? i * 60 + (-30 * (RulesetList.Length - 1)) : i * 60 + (-60 * (RulesetList.Length - 2) / 2 - 30),
-                    Y = 25, // starts at 25, moves to 0 in the animation
-                    Icon = ruleset.Icon,
-
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Colour = Colour4.White,
-                    Alpha = 0,
-                    Size = new Vector2(48)
-
-                };
-                rulesetContainer.Add(
-                    newIcon
-                );
-
-                using (newIcon.BeginDelayedSequence(450))
-                    newIcon.FadeIn(250, Easing.InOutSine);
-                    newIcon.MoveToY(0, 1000,Easing.Out);
-            };
 
 
         }
@@ -102,6 +153,5 @@ namespace osuAT.Game.Objects.Displays
             base.LoadComplete();
 
         }
-
     }
 }

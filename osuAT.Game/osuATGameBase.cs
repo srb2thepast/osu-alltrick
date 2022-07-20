@@ -62,10 +62,12 @@ namespace osuAT.Game
             AddFont(Resources, @"Fonts/VarelaRound");
             AddFont(Resources, @"Fonts/ChivoBold");
             AddFont(Resources, @"Fonts/Venera");
+            AddFont(Resources, @"Fonts/AveriaSansLibre");
 
             var largeStore = new LargeTextureStore(Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"Textures")));
             largeStore.AddTextureSource(Host.CreateTextureLoaderStore(new OnlineStore()));
             dependencies.Cache(largeStore);
+
         }
             
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) =>

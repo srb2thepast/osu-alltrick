@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Graphics.Sprites;
 using osuAT.Game.Types;
 using osuAT.Game.Objects;
 using osuTK;
@@ -70,6 +71,8 @@ namespace osuAT.Game.Skills
         /// </summary>
         public string BadgeBG { get; }
 
+        public Tuple<Vector2,Vector2> BadgePosSize { get; }
+
         /// <summary>
         /// The height of this skill's <see cref="MiniSkillBox"/>.
         /// </summary>
@@ -95,7 +98,28 @@ namespace osuAT.Game.Skills
         /// </summary>
         public double SkillCalc(Score score) { return 0; }
 
-        public double GetSkillPP() { return SaveStorage.SaveData.TotalSkillPP[Identifier]; }
+        /// <summary>
+        /// Returns the SkillPP of this skill from the SaveStorage.
+        /// </summary>
+        public double SkillPP => SaveStorage.SaveData.TotalSkillPP[Identifier];
+
+        /// <summary>
+        /// Returns the current SkillLevel based on the current Skill's SkillPP.
+        /// </summary>
+        public SkillLevel Level
+        {
+            get
+            {
+                double skillPP = SkillPP;
+                if (skillPP > Benchmarks.Chosen) { return (SkillLevel.Chosen); }
+                if (skillPP > Benchmarks.Mastery) { return (SkillLevel.Mastery); }
+                if (skillPP > Benchmarks.Proficient) { return (SkillLevel.Proficient); }
+                if (skillPP > Benchmarks.Confident) { return (SkillLevel.Confident); }
+                if (skillPP > Benchmarks.Experienced) { return (SkillLevel.Experienced); }
+                if (skillPP > Benchmarks.Learner) { return (SkillLevel.Learner); }
+                return (SkillLevel.None);
+            }
+        }
 
         /// <summary>
         /// The rulesets this skill can support.

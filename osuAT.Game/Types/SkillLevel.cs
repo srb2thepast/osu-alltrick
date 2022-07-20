@@ -10,11 +10,12 @@ namespace osuAT.Game.Types
 {
     public enum SkillLevel
     {
-        Learner,
-        Confident,
-        Experienced,
-        Proficient,
-        Mastery,
-        Chosen
+        None = 0,
+        Learner = 1,
+        Experienced = 2,
+        Confident = 3,
+        Proficient = 4,
+        Mastery = 5,
+        Chosen = 6,
     }
 }

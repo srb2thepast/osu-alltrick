@@ -54,7 +54,7 @@ namespace osuAT.Game.Objects
                 FullBox,
                 MiniBox
             };  
-            MiniBox.ScaleTo(3);
+            MiniBox.ScaleTo(3.3f);
             FullBox.ScaleTo(1.7f);
             FullBox.InnerBox.Width = 1;
 

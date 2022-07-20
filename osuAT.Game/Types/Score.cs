@@ -28,7 +28,9 @@ namespace osuAT.Game.Types
             Count50 = count50;
             CountMiss = countMiss;
         }
-
+        public double CalcAcc() {
+            return 0.0;
+        }
     }
 
     public class Score

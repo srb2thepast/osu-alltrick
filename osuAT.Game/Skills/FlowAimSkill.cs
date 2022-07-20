@@ -31,7 +31,9 @@ namespace osuAT.Game.Skills
 
         public string Cover => "SkillBG/Flowaim1";
 
-        public string BadgeBG => "SkillBG/Flowaim1";    
+        public string BadgeBG => "SkillBG/Flowaim1";
+
+        public Tuple<Vector2, Vector2> BadgePosSize { get; }
 
         public float MiniHeight => 224;
 
