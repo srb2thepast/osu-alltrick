@@ -345,3 +345,6 @@ FodyWeavers.xsd
 *.htm
 
 .idea/.idea.osu.Desktop/.idea/misc.xml
+
+# osu!at savedata
+**/savedata.json
