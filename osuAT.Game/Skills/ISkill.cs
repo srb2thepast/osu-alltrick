@@ -124,7 +124,7 @@ namespace osuAT.Game.Skills
         /// <summary>
         /// The rulesets this skill can support.
         /// </summary>
-        public List<RulesetInfo> SupportedRulesets { get; }
+        public RulesetInfo[] SupportedRulesets { get; }
 
     }
 }

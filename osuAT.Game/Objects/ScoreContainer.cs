@@ -119,7 +119,7 @@ namespace osuAT.Game
                     Y = 15 + 40 * index,
                     X = -10,
                     Current = score,
-                    Scale = new Vector2(0.17f)
+                    Scale = new Vector2(0.17f),
                 };
                 scrollbox.Add(display);
                 index += 1;

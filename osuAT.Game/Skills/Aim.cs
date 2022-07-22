@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using osu.Framework.Graphics;
@@ -43,7 +44,7 @@ namespace osuAT.Game.Skills
 
         public SkillGoals Benchmarks => new SkillGoals(600, 1500, 3000, 6000, 9000, 10000);
 
-        public List<RulesetInfo> SupportedRulesets => new List<RulesetInfo> { RulesetStore.Osu };
+        public RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
         public double SkillCalc(Score score)
         {

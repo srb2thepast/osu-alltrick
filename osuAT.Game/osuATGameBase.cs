@@ -68,6 +68,7 @@ namespace osuAT.Game
             largeStore.AddTextureSource(Host.CreateTextureLoaderStore(new OnlineStore()));
             dependencies.Cache(largeStore);
 
+            this.Window.Title = "osu!alltrick";
         }
             
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) =>

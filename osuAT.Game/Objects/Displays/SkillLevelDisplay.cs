@@ -14,7 +14,7 @@ namespace osuAT.Game.Objects.Displays
     {
 
         private Container rulesetContainer;
-        private Circle innerCircle;
+        private CircularContainer container;
         private string levelText { get {
                 if ((int)Skill.Level == 1) return "Learner";
                 if ((int)Skill.Level == 2) return "Experienced";
@@ -35,83 +35,85 @@ namespace osuAT.Game.Objects.Displays
         [BackgroundDependencyLoader]
         private void load(LargeTextureStore textures)
         {
-            InternalChild = new Container {
+            InternalChild = container = new CircularContainer {
+                Masking = true,
+                Size = new Vector2(378, 93),
+                Children = new Drawable[] {
+                    new Circle {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Y = 8,
+                        Colour = Skill.SecondaryColor.Lighten(10),
+                        Size = new Vector2(378, 73),
+                    },
 
-                new Circle {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Y = 8,
-                    Colour = Skill.SecondaryColor.Lighten(10),
-                    Size = new Vector2(378, 73),
-                },
-
-                new CircularContainer {
-                    Size = new Vector2(378, 73),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Masking = true,
-                    Children = new Drawable[]
-                    {
-                        // Circle Gradient
-                        innerCircle = new Circle
+                    new CircularContainer {
+                        Size = new Vector2(378, 73),
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Masking = true,
+                        Children = new Drawable[]
                         {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
-                            Size = new Vector2(78,67),
-                        },
-
-                        // Background image
-                        new Sprite {
-                            Size = new Vector2(700,440),
-                            X = -40,
-                            Y = 80,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Texture = textures.Get("TestBG2"),
-                            Alpha = 0.4f
-                        },
-                        new SpriteText {
-                            Text = levelText,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Font = new FontUsage("AveriaSansLibre", size: 70),
-                            Colour = Skill.PrimaryColor.Lighten(0.3f),
-                            Shadow =true,
-                            ShadowColour = Colour4.Gray,
-
-                            Y = -0.5f,
-                            Padding = new MarginPadding
+                            // Circle Gradient
+                            new Circle
                             {
-
-                                Horizontal = 15,
-                                Vertical = 1
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
+                                Size = new Vector2(378, 73),
                             },
 
-                        }.WithEffect(new GlowEffect
-                        {
-                            BlurSigma = new Vector2(1),
-                            Strength = 5,
-                            Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
-                            PadExtent = true,
+                            // Background image
+                            new Sprite {
+                                Size = new Vector2(700,440),
+                                X = -40,
+                                Y = 80,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Texture = textures.Get("TestBG2"),
+                                Alpha = 0.4f
+                            },
+                            new SpriteText {
+                                Text = levelText,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Font = new FontUsage("AveriaSansLibre", size: 70),
+                                Colour = Skill.PrimaryColor.Lighten(0.3f),
+                                Shadow =true,
+                                ShadowColour = Colour4.Gray,
 
-                        }).WithEffect(new OutlineEffect
-                        {
-                            BlurSigma = new Vector2(0),
-                            Strength = 0.4f ,
-                            Colour = Colour4.Black,
-                            PadExtent = true,
-                        }),
-                        // Container
-                        rulesetContainer = new Container{
-                            AutoSizeAxes = Axes.Both,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
+                                Y = -0.5f,
+                                Padding = new MarginPadding
+                                {
+
+                                    Horizontal = 15,
+                                    Vertical = 1
+                                },
+
+                            }.WithEffect(new GlowEffect
+                            {
+                                BlurSigma = new Vector2(1),
+                                Strength = 5,
+                                Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
+                                PadExtent = true,
+
+                            }).WithEffect(new OutlineEffect
+                            {
+                                BlurSigma = new Vector2(0),
+                                Strength = 0.4f ,
+                                Colour = Colour4.Black,
+                                PadExtent = true,
+                            }),
+                            // Container
+                            rulesetContainer = new Container{
+                                AutoSizeAxes = Axes.Both,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                            }
+
                         }
-
-                    }
-                },
-
+                    },
+                }
             };
 
             // Position the circles
@@ -139,14 +141,29 @@ namespace osuAT.Game.Objects.Displays
                 }
             };
 
-            innerCircle.FadeIn(200, Easing.InOutCubic);
-
-            using (innerCircle.BeginDelayedSequence(50))
-                innerCircle.ResizeTo(new Vector2(378, 73), 500, Easing.InOutCubic);
-
-
-
+            container.FadeIn(500, Easing.InOutCubic);
+            container.Children[0].Delay(100).FadeIn(500, Easing.InOutCubic);
+            container.MoveToY(0,800, Easing.InOutCubic);
         }
+
+        public void Appear()
+        {
+            container.Y = 20;
+            container.Alpha = 0;
+            container.Children[0].Alpha = 0;
+            container.FadeIn(500, Easing.InOutCubic);
+            container.Children[0].Delay(100).FadeIn(500, Easing.InOutCubic);
+            container.MoveToY(0, 800, Easing.InOutCubic);
+        }
+
+        public void Disappear()
+        {
+            container.FadeOut(500, Easing.InOutCubic);
+            container.Children[0].Delay(100).FadeOut(500, Easing.InOutCubic);
+            container.MoveToY(20, 800, Easing.InOutCubic);
+        }
+
+
 
         protected override void LoadComplete()
         {

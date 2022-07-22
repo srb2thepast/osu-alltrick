@@ -1,5 +1,6 @@
 using osu.Framework.Graphics;
 using osu.Framework.Screens;
+using osuAT.Game.Screens;
 using NUnit;
 
 namespace osuAT.Game.Tests.Visual

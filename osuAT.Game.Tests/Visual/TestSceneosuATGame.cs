@@ -4,7 +4,8 @@ using osu.Framework.Allocation;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuAT.Game.Objects;
-using osuAT.Game.Skills;    
+using osuAT.Game.Skills;
+using osuAT.Game.Screens;
 using NUnit.Framework;
 using Newtonsoft.Json;
 

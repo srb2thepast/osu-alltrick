@@ -305,14 +305,16 @@ namespace osuAT.Game.Objects
         }
         protected override void OnHoverLost(HoverLostEvent e)
         {
+            if (ParentBox.ParentCont.MainScreen.CurrentlyFocused == false) return;
             if (ParentBox.State == SkillBoxState.FullBox) { miniBox.Child.Scale = new Vector2(1.1f); return; }
             miniBox.Child.ScaleTo(1f, 100, Easing.Out);
             base.OnHoverLost(e);
             Console.WriteLine(miniBox.Child.Scale);
         }
 
-        protected override bool OnClick(ClickEvent e)   
+        protected override bool OnClick(ClickEvent e)
         {
+            if (ParentBox.ParentCont.MainScreen.CurrentlyFocused == false) return false;
             if (ParentBox.State == SkillBoxState.FullBox) return false;
             fireTransition();
             return true;
@@ -323,7 +325,6 @@ namespace osuAT.Game.Objects
             {
                 transitioning = true;
                 ParentBox.TransitionToFull();
-
             }
             else
             {

@@ -8,6 +8,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Events;
+using osuAT.Game.Screens;
 using osuAT.Game.Objects;
 using osuAT.Game.Skills;
 using osuTK;
@@ -35,7 +36,7 @@ namespace osuAT.Game
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Skill = skill
+                        Skill = skill,
                     }
                 );
             }
@@ -104,7 +105,7 @@ namespace osuAT.Game
         private Vector2 lastscale = Vector2.One;
         protected override bool OnDragStart(DragStartEvent e)
         {
-            if (!(FocusedBox?.State == SkillBoxState.FullBox) || (FocusedBox == null)) // if a box is
+            if ((!(FocusedBox?.State == SkillBoxState.FullBox) || (FocusedBox == null)) && MainScreen.CurrentlyFocused == true )
             {
                 FocusedBox = null; // if you start dragging, the box will defocus.
                 return true;
@@ -128,8 +129,8 @@ namespace osuAT.Game
         }
         protected override bool OnScroll(ScrollEvent e)
         { // one day... scrolling will be good... right...!??!?!??!?!?
-            
-            if (FocusedBox?.State == SkillBoxState.FullBox) { return false; }
+            if (MainScreen.CurrentlyFocused == false) return false;
+                if (FocusedBox?.State == SkillBoxState.FullBox) { return false; }
                 Vector2 newScale = lastscale + new Vector2(e.ScrollDelta.Y / 10, e.ScrollDelta.Y / 10);
 
             lastscale = ((newScale.X < 0.5 && newScale.Y < 0.5) || (newScale.X > 1.5 && newScale.Y > 1.5)) ? lastscale : newScale;

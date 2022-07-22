@@ -50,7 +50,7 @@ namespace osuAT.Game.Tests.Visual.Display
                     Origin = Anchor.Centre,
 
                     Current = dummyscore,
-
+                    Skill = Skill.Flowaim
                 };
                 Child = display;
                 display.Appear();

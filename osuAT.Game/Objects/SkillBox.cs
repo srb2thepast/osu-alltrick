@@ -62,6 +62,7 @@ namespace osuAT.Game.Objects
 
         public void TransitionToFull()
         {
+            ParentCont.MainScreen.AllowButtons = false;
             State = SkillBoxState.FullBox;
             FullBox.InnerBox.Height = 217;
             FullBox.InnerBox.Width = 320;
@@ -79,6 +80,7 @@ namespace osuAT.Game.Objects
         }
         public void TransitionToMini()
         {
+            ParentCont.MainScreen.AllowButtons = true;
             State = SkillBoxState.MiniBox;
             ParentCont.MainScreen.TopBar.ScaleTo(1, 400, Easing.InOutCubic);
             ParentCont.MainScreen.TopBar.MoveToY(75, 400, Easing.InOutCubic);
