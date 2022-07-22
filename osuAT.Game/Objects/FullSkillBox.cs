@@ -19,7 +19,7 @@ using osuTK;
 namespace osuAT.Game.Objects
 {
 
-    public partial class FullSkillBox : CompositeDrawable
+    public class FullSkillBox : CompositeDrawable
     {
 
         public ISkill Skill;
@@ -31,7 +31,7 @@ namespace osuAT.Game.Objects
         private ScoreContainer scoreContainer;
 
 
-        public partial class SkillInfo : CompositeDrawable
+        public class SkillInfo : CompositeDrawable
         {
             public ISkill Skill;
             public int TextSize; // Text Size
@@ -44,9 +44,6 @@ namespace osuAT.Game.Objects
             #region Updatable CircularProgresses 
             private CircularProgress skillprogress { get; set; }
             private CircularProgress chosenprogress { get; set; }
-
-#endregion
-#region Paging
 
             public Book InfoBook { get; private set; }
             public Page Page0 { get; private set; }
