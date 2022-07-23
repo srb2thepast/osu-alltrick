@@ -116,6 +116,99 @@ namespace osuAT.Game.Objects
                             Texture = textures.Get("TestBG"),
                             Alpha = 0.7f
                         },
+                        new Box {
+                            Size = new Vector2(350,220),
+                            X = 40,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Colour = new ColourInfo{
+                                TopLeft = Colour4.Black.MultiplyAlpha(0),
+                                TopRight = Colour4.Black.MultiplyAlpha(0),
+                                BottomLeft = Colour4.Black.MultiplyAlpha(0.7f),
+                                BottomRight = Colour4.Black.MultiplyAlpha(0.7f),
+                            }
+                        },
+                        
+                        // Skill Text
+                        new Container {
+                            AutoSizeAxes = Axes.Both,
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.Centre,
+
+                            Y = 14,
+
+                            Children = new Drawable[] {
+
+                                // Circle Shadow
+                                new Circle
+                                {
+                                    Size = new Vector2(100,20),
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                    Colour = Colour4.Black,
+                                    CornerRadius = 30,
+                                    Y = 1.5f,
+
+                                }.WithEffect(new BlurEffect
+                                {
+                                    Sigma = new Vector2(2f, 2f),
+                                    Strength = 0.5f,
+
+
+                                }),
+
+                                // Circle
+                                new Circle
+                                {
+                                    Size = new Vector2(100,20),
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                    Colour = Skill.PrimaryColor,
+                                    CornerRadius = 30,
+                                    Alpha = 0.9f
+                                },
+
+                                // SkillText
+                                new SpriteText {
+                                    Text = Skill.Name,
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                    Font = new FontUsage("VarelaRound", size: Math.Clamp(Skill.BoxNameSize/3.8f,0,23)),
+                                    Colour = Colour4.White,
+                                    Shadow =true,
+                                    ShadowColour = Skill.PrimaryColor,
+                                    Y = -0.5f,
+                                    Padding = new MarginPadding
+                                    {
+
+                                        Horizontal = 15,
+                                        Vertical = 1
+                                    },
+
+                                }.WithEffect(new GlowEffect
+                                {
+                                    BlurSigma = new Vector2(1),
+                                    Strength = 5,
+                                    Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
+                                    PadExtent = true,
+
+                                }).WithEffect(new OutlineEffect
+                                {
+                                    BlurSigma = new Vector2(0),
+                                    Strength = 5,
+                                    Colour = Colour4.White,
+                                    PadExtent = true,
+                                }),
+
+                                // Frame
+                                new Container {
+                                    AutoSizeAxes = Axes.Both,
+                                    Anchor = Anchor.TopCentre,
+                                    Origin = Anchor.Centre,
+                                }
+                            }
+                        },
+
                         InfoBook = new Book {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
@@ -131,86 +224,6 @@ namespace osuAT.Game.Objects
                                     Origin = Anchor.Centre,
 
                                     Children = new Drawable[] {
-                                        // Skill Text
-                                        new Container {
-                                            AutoSizeAxes = Axes.Both,
-                                            Anchor = Anchor.TopCentre,
-                                            Origin = Anchor.Centre,
-
-                                            Y = 14,
-
-                                            Children = new Drawable[] {
-
-                                                // Circle Shadow
-                                                new Circle
-                                                {
-                                                    Size = new Vector2(100,20),
-                                                    Anchor = Anchor.Centre,
-                                                    Origin = Anchor.Centre,
-                                                    Colour = Colour4.Black,
-                                                    CornerRadius = 30,
-                                                    Y = 1.5f,
-
-                                                }.WithEffect(new BlurEffect
-                                                {
-                                                    Sigma = new Vector2(2f, 2f),
-                                                    Strength = 0.5f,
-
-
-                                                }),
-
-                                                // Circle
-                                                new Circle
-                                                {
-                                                    Size = new Vector2(100,20),
-                                                    Anchor = Anchor.Centre,
-                                                    Origin = Anchor.Centre,
-                                                    Colour = Skill.PrimaryColor,
-                                                    CornerRadius = 30,
-                                                    Alpha = 0.9f
-                                                },
-
-                                                // SkillText
-                                                new SpriteText {
-                                                    Text = Skill.Name,
-                                                    Anchor = Anchor.Centre,
-                                                    Origin = Anchor.Centre,
-                                                    Font = new FontUsage("VarelaRound", size: Math.Clamp(Skill.BoxNameSize/3.8f,0,23)),
-                                                    Colour = Colour4.White,
-                                                    Shadow =true,
-                                                    ShadowColour = Skill.PrimaryColor,
-                                                    Y = -0.5f,
-                                                    Padding = new MarginPadding
-                                                    {
-
-                                                        Horizontal = 15,
-                                                        Vertical = 1
-                                                    },
-
-                                                }.WithEffect(new GlowEffect
-                                                {
-                                                    BlurSigma = new Vector2(1),
-                                                    Strength = 5,
-                                                    Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
-                                                    PadExtent = true,
-
-                                                }).WithEffect(new OutlineEffect
-                                                {
-                                                    BlurSigma = new Vector2(0),
-                                                    Strength = 5,
-                                                    Colour = Colour4.White,
-                                                    PadExtent = true,
-                                                }),
-
-                                                // Frame
-                                                new Container {
-                                                    AutoSizeAxes = Axes.Both,
-                                                    Anchor = Anchor.TopCentre,
-                                                    Origin = Anchor.Centre,
-                                                }
-                                            }
-                                        },
-
                                         // Circular Progress Bar, PFP, Bubbles
                                         new Container {
                                             AutoSizeAxes = Axes.Both,
@@ -447,11 +460,117 @@ namespace osuAT.Game.Objects
                                     Size = new Vector2(130, 180),
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                        
-                                    Child = new Box{
-                                        Anchor = Anchor.Centre,
-                                        Origin = Anchor.Centre,
-                                        RelativeSizeAxes = Axes.Both
+
+                                    Children = new Drawable[]  {
+                                        // PlayButton
+                                        new BufferedContainer {
+                                            Size = new Vector2(80, 55),
+                                            Anchor = Anchor.Centre,
+                                            Origin = Anchor.Centre,
+                                            Masking = true,
+                                            CornerRadius = 10,
+                                            Y = -30,
+                                            BorderThickness = 2,
+                                            BorderColour = Colour4.AliceBlue,
+                                            Children = new Drawable[] {
+                                                new Sprite {
+                                                    Size = new Vector2(1280/12, 720/12),
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.Centre,
+                                                    Texture = textures.Get("Contributors/osuphd"),
+                                                },
+                                                new Sprite{
+                                                    X = 2,
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.Centre,
+                                                    Scale = new Vector2(0.04f),
+                                                    Colour = Colour4.White,
+                                                    Texture = textures.Get("FigmaVectors/PlayButton")
+                                                
+                                                }
+                                            }
+                                        },
+
+                                        // "Created by" Text
+                                        new SpriteText
+                                        {
+                                            Anchor = Anchor.Centre,
+                                            Origin = Anchor.Centre,
+                                            Y = 8,
+                                            Text = "Created by:",
+                                            Font = new FontUsage("VarelaRound", size: 10),
+                                            Shadow = true,
+                                            ShadowOffset = new Vector2(0, 0.05f),
+                                            Spacing = new Vector2(0.1f, 0),
+                                            Padding = new MarginPadding
+                                            {
+
+                                                Horizontal = 5,
+                                            },
+
+                                        }.WithEffect(new OutlineEffect
+                                        {
+                                            BlurSigma = new Vector2(0.5f),
+                                            Strength = 5,
+                                            Colour = Colour4.White,
+                                            PadExtent = true,
+                                        }).WithEffect(new GlowEffect
+                                        {
+                                            BlurSigma = new Vector2(0.5f),
+                                            Strength = 5,
+                                            Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
+                                            PadExtent = true,
+
+                                        }),
+
+                                        // DigitalHypno's PFP
+                                        new BufferedContainer {
+                                            AutoSizeAxes = Axes.Both,
+                                            Anchor = Anchor.Centre,
+                                            Origin = Anchor.Centre,
+                                            Masking = true,
+                                            CornerRadius = 10,
+                                            Y = 40,
+                                            Child = new Sprite {
+                                                Size = new Vector2(50, 50),
+                                                Anchor = Anchor.Centre,
+                                                Origin = Anchor.Centre,
+                                                Texture = textures.Get("Contributors/DigitalHypno"),
+                                            }
+                                        },
+
+                                        // DigitalHypno's username
+                                        new SpriteText
+                                        {
+                                            Anchor = Anchor.Centre,
+                                            Origin = Anchor.Centre,
+                                            Y = 75,
+                                            Text = "DigitalHypno",
+                                            Font = new FontUsage("VarelaRound", size: 15),
+                                            Colour = Colour4.White,
+                                            Shadow = true,
+                                            ShadowOffset = new Vector2(0, 0.05f),
+                                            Spacing = new Vector2(0.1f, 0),
+                                            Padding = new MarginPadding
+                                            {
+
+                                                Horizontal = 5,
+                                            },
+
+                                        }.WithEffect(new OutlineEffect
+                                        {
+                                            BlurSigma = new Vector2(0.5f),
+                                            Strength = 5,
+                                            Colour = Colour4.White,
+                                            PadExtent = true,
+                                        }).WithEffect(new GlowEffect
+                                        {
+                                            BlurSigma = new Vector2(0.5f),
+                                            Strength = 5,
+                                            Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
+                                            PadExtent = true,
+
+                                        }),
                                     }
                                 },
                                 Page2 = new Page {
@@ -547,6 +666,8 @@ namespace osuAT.Game.Objects
                 InfoBook.CurrentPage.Value = 0;
                 Page1.Hide();
                 Page2.Hide();
+
+                // Repositon Bubbles when the page is changed
                 InfoBook.CurrentPage.ValueChanged += (ValueChangedEvent<int> value) =>
                 {
                     // page0
@@ -561,9 +682,9 @@ namespace osuAT.Game.Objects
                     // page1
                     if (value.NewValue == 1)
                     {
-                        Bubble1.MoveTo(new Vector2(0, -18), 500, Easing.InOutCubic);
-                        Bubble2.MoveTo(new Vector2(7, 0), 500, Easing.InOutCubic);
-                        Bubble3.MoveTo(new Vector2(0, 18), 500, Easing.InOutCubic);
+                        Bubble1.MoveTo(new Vector2(8, -20), 500, Easing.InOutCubic);
+                        Bubble2.MoveTo(new Vector2(16, 0), 500, Easing.InOutCubic);
+                        Bubble3.MoveTo(new Vector2(8, 20), 500, Easing.InOutCubic);
 
                     }
                     // page2

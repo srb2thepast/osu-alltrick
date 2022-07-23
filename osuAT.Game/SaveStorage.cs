@@ -6,6 +6,7 @@ using System.Text;
 using Newtonsoft.Json;
 using System.IO;
 using osu.Framework.Platform; // Reminder: consider using osu.Framework.Platform.Storage for safe file writing.
+using OsuApiHelper;
 using osuAT.Game.Types;
 using osuAT.Game.Skills;
 
@@ -35,7 +36,7 @@ namespace osuAT.Game
         /// The player's APIKey.
         /// </summary>
         [JsonProperty("APIKey")]
-        public string APIKey { get; set; } // reminder to make a seperate class named APIManager that will manage all API requests with private variables.
+        public string APIKey { get; set; }
 
         /// <summary>
         /// The overall cached PP for each skill.
@@ -123,7 +124,7 @@ namespace osuAT.Game
 
 
             SaveData = JsonConvert.DeserializeObject<CSaveData>(Read());
-
+            OsuApiKey.Key = SaveData.APIKey;
             int i = 0;
             foreach (Score score in SaveData.Scores.Values) {
                 score.Register(index: i,setGUID: false,calcPP: false);

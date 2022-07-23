@@ -54,7 +54,7 @@ namespace osuAT.Game.Screens
                 },
                 SkillCont = new SkillContainer(this),
 
-                
+
                 TopBar = new Container {
                         AutoSizeAxes = Axes.Both,
                         Anchor = Anchor.TopCentre,
@@ -109,7 +109,7 @@ namespace osuAT.Game.Screens
                                 Child = new Sprite{
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Texture = textures.Get("TestPFP"),
+                                    Texture = textures.Get("http://s.ppy.sh/a/8257444"),
                                     Size = new Vector2(87,87)
                                 }
                             },

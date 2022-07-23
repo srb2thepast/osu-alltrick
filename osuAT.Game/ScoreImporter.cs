@@ -6,9 +6,10 @@ using System.Timers;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using osu.Game.Rulesets.Difficulty;
+using osu.Framework;
 using osuAT.Game.Types;
 using osuAT.Game.Objects.LazerAssets;
+using OsuApiHelper;
 using OsuMemoryDataProvider;
 using OsuMemoryDataProvider.OsuMemoryModels.Abstract;
 using OsuMemoryDataProvider.OsuMemoryModels.Direct;
@@ -17,10 +18,13 @@ namespace osuAT.Game
 {
     public class ScoreImporter
     {
-        private Timer scoreSetTimer = new Timer(1000);
+        // looks like timers dont go to well with hot reload in o!f. alternative is needed  
+        private Timer scoreSetTimer = new Timer(1000); 
         private StructuredOsuMemoryReader osuReader;
         private string osuLocation = "C:\\Users\\alexh\\AppData\\Local\\osu!"; // dont forget to set this as something saved in SaveStorage
         private OsuMemoryStatus lastScreen;
+
+
         public ScoreImporter()
         {
             Console.WriteLine("initalised scoreimpoter");
@@ -30,11 +34,12 @@ namespace osuAT.Game
             scoreSetTimer.Enabled = true;
             scoreSetTimer.AutoReset = true;
             scoreSetTimer.Start();
+
         }
 
         private async void scoreSetTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            
+            /*
             {
                 ResultsScreen playerResults = new ResultsScreen();
                 GeneralData gameData = new GeneralData();
@@ -45,15 +50,16 @@ namespace osuAT.Game
                 Console.WriteLine(playerResults.Username);
                 Console.WriteLine(playerResults.MaxCombo.ToString());
                 Console.WriteLine(RulesetStore.GetByNum(playerResults.Mode).Name);
-
                 if (lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.ResultsScreen)
                 {
                     Console.WriteLine("results reached");
                     if (playerResults.Username != "osu!") 
-                    { // autoplay check
-                        CurrentBeatmap mapPlayed = new CurrentBeatmap();
-                        osuReader.TryRead(mapPlayed);
-
+                    {
+                        var osuScore = OsuApi.GetUserRecent("srb2thepast")[0];
+                        var splay = new OsuPlay();
+                        if (splay.Mode != OsuMode.Standard) return;
+                        var smap = new OsuBeatmap();
+                        
                         string maplocation = osuLocation + "\\Songs\\" + mapPlayed.FolderName + "\\" + mapPlayed.OsuFileName;
                         string[] text = await File.ReadAllLinesAsync(maplocation);
                         string title = default;
@@ -82,7 +88,7 @@ namespace osuAT.Game
                             // osu
                             BeatmapInfo = new Beatmap
                             {
-                                MapID = mapPlayed.Id,
+                                MapID = mapPlayed.id,
                                 MapsetID = mapPlayed.SetId,
                                 SongArtist = artist,
                                 SongName = title,
@@ -108,7 +114,7 @@ namespace osuAT.Game
 
 
                 lastScreen = (OsuMemoryStatus)gameData.RawStatus;
-            }
+            }*/
         }
 
         
