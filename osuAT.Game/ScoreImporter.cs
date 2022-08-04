@@ -16,119 +16,178 @@ using OsuMemoryDataProvider.OsuMemoryModels.Direct;
 
 namespace osuAT.Game
 {
+
+
     public class ScoreImporter
     {
-        // looks like timers dont go to well with hot reload in o!f. alternative is needed  
-        private Timer scoreSetTimer = new Timer(1000); 
-        private StructuredOsuMemoryReader osuReader;
-        private string osuLocation = "C:\\Users\\alexh\\AppData\\Local\\osu!"; // dont forget to set this as something saved in SaveStorage
-        private OsuMemoryStatus lastScreen;
+        // looks like timers dont go to well with hot reload in o!f. alternative is needed
+        public static int TickDelay = 1500;
+        private static Timer scoreSetTimer = new Timer(TickDelay);
+        private static double apireqs = 0;
+        private static StructuredOsuMemoryReader osuReader;
+        private static string osuLocation = "C:\\Users\\alexh\\AppData\\Local\\osu!"; // dont forget to set this as something saved in SaveStorage
+        private static OsuMemoryStatus lastScreen = OsuMemoryStatus.Playing;
 
 
-        public ScoreImporter()
+        public static void Init()
         {
             Console.WriteLine("initalised scoreimpoter");
             osuReader = StructuredOsuMemoryReader.Instance.GetInstanceForWindowTitleHint("");
-
+            scoreSetTimer.Interval = TickDelay;
             scoreSetTimer.Elapsed += scoreSetTimer_Elapsed;
             scoreSetTimer.Enabled = true;
             scoreSetTimer.AutoReset = true;
             scoreSetTimer.Start();
 
         }
-
-        private async void scoreSetTimer_Elapsed(object sender, ElapsedEventArgs e)
+        public static List<OsuPlay> OsuApiGetScores(string beatmapid, string username, OsuMode mode = OsuMode.Standard, int limit = 1, bool generateBeatmaps = false)
         {
-            /*
+            string[] obj = new string[11]
             {
-                ResultsScreen playerResults = new ResultsScreen();
-                GeneralData gameData = new GeneralData();
+                "https://osu.ppy.sh/api/",
+                "get_scores?k=",
+                OsuApiKey.Key,
+                "&b=",
+                beatmapid,
+                "&u=",
+                username,
+                "&m=",
+                (((int)mode).ToString()),
+                "&limit=",  
+                limit.ToString(),
+            };
+            List<OsuPlay> data = APIHelper<List<OsuPlay>>.GetData(string.Concat(obj));
+            if (data != null && data.Count > 0)
+            {
+                data.ForEach(delegate (OsuPlay play)
+                {
+                    play.Mode = mode;
+                    if (generateBeatmaps)
+                    {
+                        play.Beatmap = OsuApi.GetBeatmap(play.MapID, play.Mods, mode);
+                    }
+                });
+            }
 
-                osuReader.TryRead(playerResults);
+            if (data == null || data.Count <= 0)
+            {
+                return null;
+            }
+
+            return data;
+        }
+            
+
+        private static async void scoreSetTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (!(OsuApi.IsKeyValid())) return;
+            if (apireqs >= 30) return;
+            try
+            {
+                GeneralData gameData = new GeneralData();
                 osuReader.TryRead(gameData);
                 Console.WriteLine(gameData.OsuStatus);
-                Console.WriteLine(playerResults.Username);
-                Console.WriteLine(playerResults.MaxCombo.ToString());
-                Console.WriteLine(RulesetStore.GetByNum(playerResults.Mode).Name);
-                if (lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.ResultsScreen)
+
+                // check if the play went from playing to the results screen
+                if (
+                    lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.ResultsScreen || (lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.MultiplayerResultsscreen))
                 {
-                    Console.WriteLine("results reached");
-                    if (playerResults.Username != "osu!") 
+                    apireqs -= TickDelay / 100;
+                    Task.Delay(1000); // wait a bit incase osu!servers are slow
+                    var osuScore = OsuApi.GetUserRecent("srb2thepast")[0];
+                    apireqs += 1;
+                    Console.WriteLine(osuScore.Rank);
+
+                    // check if score was an F rank
+                    if (osuScore.Rank == "F") return;
+                    var osuMap = OsuApi.GetBeatmap(osuScore.MapID, osuScore.Mods, osuScore.Mode);
+                    apireqs += 1;
+                    Console.WriteLine(osuMap.BeatmapSetID);
+                    Console.WriteLine(osuMap.Status);
+
+                    // check if the map is ranked/approved
+                    if (osuMap.Status == BeatmapStatus.Ranked || osuMap.Status == BeatmapStatus.Approved)
                     {
-                        var osuScore = OsuApi.GetUserRecent("srb2thepast")[0];
-                        var splay = new OsuPlay();
-                        if (splay.Mode != OsuMode.Standard) return;
-                        var smap = new OsuBeatmap();
-                        
-                        string maplocation = osuLocation + "\\Songs\\" + mapPlayed.FolderName + "\\" + mapPlayed.OsuFileName;
-                        string[] text = await File.ReadAllLinesAsync(maplocation);
-                        string title = default;
-                        string artist = default;
-                        string creator = default;
-                        string diffname = default;
+                        var mapScore = OsuApiGetScores(osuScore.MapID, "srb2thepast")[0];
+                        apireqs += 1;
+                        Console.WriteLine(mapScore);
 
-
-                        foreach (string line in text) {
-                            if (line.StartsWith("Title:")) title = line.Split("Title:")[1];
-                            if (line.StartsWith("Artist:")) artist = line.Split("Artist:")[1];
-                            if (line.StartsWith("Creator:")) creator = line.Split("Creator:")[1];
-                            if (line.StartsWith("Version:")) diffname = line.Split("Version:")[1];
-                            if (line == "[Difficulty]") break;
-                        }
-
-                        System.Console.WriteLine(title + " by " + artist);
-                        System.Console.WriteLine(creator + " (maybe) made the diff " + diffname);
-                        Console.WriteLine((OsuMod)playerResults.Mods.Value);
-                        
-                        AccStat accstats = new AccStat(playerResults.Hit300, playerResults.Hit100, playerResults.Hit50, playerResults.HitMiss);
-                        Score score = new Score
+                        // check if the score set was the user's best score on the map before continuing
+                        if (mapScore?.ScoreID == osuScore.ScoreID)
                         {
-                            ScoreRuleset = RulesetStore.GetByNum(playerResults.Mode),
-                            IsLazer = false,
-                            // osu
-                            BeatmapInfo = new Beatmap
+
+                            // check if the score has already been saved
+                            foreach (Score savedscore in SaveStorage.SaveData.Scores.Values)
                             {
-                                MapID = mapPlayed.id,
-                                MapsetID = mapPlayed.SetId,
-                                SongArtist = artist,
-                                SongName = title,
-                                DifficultyName = diffname,
-                                MapsetCreator = creator,
-                                FolderName = mapPlayed.FolderName,
-                                MaxCombo = 30000, // Although i'd like to include MaxCombo, there appears to be no way for me to get it unless i make an entire method to get all circles, slider heads, slider tails, and slider repeat count. Leaving all scores as 30,000 until this system is created.
-                                StarRating = 8
-                            },
-                            Accuracy = accstats.CalcAcc(),
-                            AccuracyStats = accstats,
-                            Combo = playerResults.Combo,
-                            TotalScore = playerResults.Score,
-                            ModsString = new List<string> { "Nightcore", "Hidden" },
-                            Grade = "SS"
-                            
-                            
-                        };
-                        score.Register();
-                        SaveStorage.AddScore(score);
+                                if (savedscore.OsuID.ToString() == mapScore.ScoreID)
+                                {
+                                    lastScreen = (OsuMemoryStatus)gameData.RawStatus;
+                                    return;
+                                }
+                            }
+
+                            string mapFolder = Directory.GetDirectories(osuLocation + "\\Songs\\").Where((folder) =>
+                            {
+                                return (folder.StartsWith(osuLocation + "\\Songs\\" + osuMap.BeatmapSetID + ' '));
+                            }).ElementAt(0);
+                            string osuFile = Directory.GetFiles(mapFolder, "*.osu").Where((file) =>
+                            {
+                                Console.WriteLine(file);
+                                string[] text = File.ReadAllLines(file);
+                                string filemapid = default;
+
+                                foreach (string line in text)
+                                {
+                                    if (line.StartsWith("BeatmapID:")) filemapid = line.Split("BeatmapID:")[1];
+                                    if (line == "[Difficulty]") break;
+                                }
+
+                                System.Console.WriteLine(filemapid, osuMap.BeatmapID);
+                                return (filemapid == osuMap.BeatmapID);
+                            }).ElementAt(0);
+
+
+                            AccStat accstats = new AccStat((int)osuScore.C300, (int)osuScore.C100, (int)osuScore.C50, (int)osuScore.CMiss);
+                            Score score = new Score
+                            {
+                                ScoreRuleset = RulesetStore.Osu,
+                                IsLazer = false,
+                                OsuID = long.Parse(mapScore.ScoreID),
+                                BeatmapInfo = new Beatmap
+                                {
+                                    MapID = int.Parse(osuMap.BeatmapID),
+                                    MapsetID = int.Parse(osuMap.BeatmapSetID),
+                                    SongArtist = osuMap.Artist,
+                                    SongName = osuMap.Title,
+                                    DifficultyName = osuMap.DifficultyName,
+                                    MapsetCreator = osuMap.Mapper,
+                                    FolderName = osuFile.Remove(osuLocation.Length - 1),
+                                    MaxCombo = (int)osuMap.MaxCombo,
+                                    StarRating = (double)osuMap.Starrating
+                                },
+                                Accuracy = accstats.CalcAcc(),
+                                Combo = (int)osuScore.MaxCombo,
+                                AccuracyStats = accstats,
+                                TotalScore = osuScore.Score,
+                                ModsString = osuScore.Mods.ToString().Split(", ").ToList(),
+                                Grade = osuScore.Rank
+
+
+                            };
+                            score.Register();
+                            SaveStorage.AddScore(score);
+                            SaveStorage.Save();
+                        }
                     }
                 }
 
 
                 lastScreen = (OsuMemoryStatus)gameData.RawStatus;
-            }*/
-        }
-
-        
-
-        public void CheckScoreSet_Tick()
-        {
-            //Console.WriteLine(osuReader.GetPlayingMods().ToString());
-        }
-
-        public void CheckScore_Timer()
-        {
-
+            }
+            finally { }
 
         }
+
 
         public void ImportScore() {
         }

@@ -31,7 +31,6 @@ namespace osuAT.Game.Tests.Visual
                 };
 
                 box.Appear(0);
-                box.InfoBox.InfoBook.CurrentPage.Value = 1;
 
             });
             AddStep("Go to page 0", () => { box.InfoBox.InfoBook.CurrentPage.Value = 0; });

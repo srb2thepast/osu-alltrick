@@ -6,11 +6,13 @@ using osu.Framework.Graphics.Sprites;
 using osuAT.Game.Types;
 using osuAT.Game.Objects;
 using osuTK;
-
+using osu.Framework.Allocation;
+using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.Colour;
 namespace osuAT.Game.Skills
 {
-    // When a skill is ready to be used, dont forget to add it to Skill.cs   
 
+    // When a skill is ready to be used, dont forget to add it to Skill.cs   
     public interface ISkill
     {
         /// <summary>
@@ -31,7 +33,7 @@ namespace osuAT.Game.Skills
         /// This value should always increment, and NEVER decrement.
         /// If you are reverting changes, you must still increment the value.
         /// </remarks>
-        /// 
+
         /// Major should be incremented when a full-scale rework is created.
         /// Minor should be incremented in all other cases.
         public string Version { get; }
@@ -71,7 +73,7 @@ namespace osuAT.Game.Skills
         /// </summary>
         public string BadgeBG { get; }
 
-        public Tuple<Vector2,Vector2> BadgePosSize { get; }
+        public (Vector2, Vector2) BadgePosSize { get; }
 
         /// <summary>
         /// The height of this skill's <see cref="MiniSkillBox"/>.
@@ -97,6 +99,19 @@ namespace osuAT.Game.Skills
         /// This skill's PP Calculator System.
         /// </summary>
         public double SkillCalc(Score score) { return 0; }
+
+        /// <summary>
+        /// The people who contributed to this skill.
+        /// </summary>
+        public Contributor[] Contributors => new Contributor[] {};
+
+        /// <summary>
+        /// This skill's (possibly custom) Contributor Page.
+        /// </summary>
+        public Page ContributorPage => new DefaultContributorPage {
+            Skill = this,
+            Contribs = Contributors
+        };
 
         /// <summary>
         /// Returns the SkillPP of this skill from the SaveStorage.

@@ -41,7 +41,6 @@ namespace osuAT.Game.Skills
         /// </summary>
         public static Dictionary<string, double> CalcAll(Score score)
         {
-            // todo: this function should return skillPPCalcs for every skill that exists.
             Dictionary<string, double> dict = new Dictionary<string, double>();
             foreach (ISkill skill in SkillList) {
                 dict.Add(skill.Identifier, skill.SkillCalc(score));

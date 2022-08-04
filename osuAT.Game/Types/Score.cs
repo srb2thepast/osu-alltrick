@@ -165,6 +165,7 @@ namespace osuAT.Game.Types
             if (Mods is null) {
                 Mods = new List<ModInfo>();
                 foreach (string mod in ModsString) {
+                    if (mod == "None") continue;
                     Mods.Add(ModStore.GetByName(mod));
                 }
             }

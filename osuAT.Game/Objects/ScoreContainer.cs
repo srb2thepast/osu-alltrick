@@ -15,14 +15,13 @@ namespace osuAT.Game
 {
     public class ScoreContainer : CompositeDrawable
     {
-        public List<Score> ScoreList = new List<Score>();
+        protected List<Score> ScoreList = new List<Score>();
         public ISkill Skill { get; set; }
         public ScoreContainer()
         {
             Size = new osuTK.Vector2(100, 100);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
-
         }
         private ScoreScrollContainer<Drawable> scrollbox;
 
@@ -51,6 +50,7 @@ namespace osuAT.Game
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
+            ScoreList = SaveStorage.GetTrickTopScoreList(Skill);
 
             AddInternal(new Circle
             {
@@ -104,10 +104,12 @@ namespace osuAT.Game
                 scrollbox.Add(display);
                 index += 1;
             }
-
         }
 
-        public void ReloadScores() {
+        public void ReloadScores()
+        {
+            ScoreList = SaveStorage.GetTrickTopScoreList(Skill);
+            
             scrollbox.Clear();
             int index = 0;
             foreach (Score score in ScoreList)
@@ -119,17 +121,19 @@ namespace osuAT.Game
                     Y = 15 + 40 * index,
                     X = -10,
                     Current = score,
+                    Skill = Skill,
+                    IndexPos = index,
                     Scale = new Vector2(0.17f),
                 };
                 scrollbox.Add(display);
                 index += 1;
             }
-            Appear();
 
         }   
 
         public void Appear(float delay=0,float offset = 30)
         {
+            ReloadScores();
             int index = 0;
             foreach (ScoreDisplay display in scrollbox.ScrollContent.Children)
             {

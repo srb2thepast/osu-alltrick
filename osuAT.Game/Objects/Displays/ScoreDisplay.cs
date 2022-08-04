@@ -78,7 +78,7 @@ namespace osuAT.Game.Objects.Displays
                                         Shadow = true,
                                         ShadowOffset = new Vector2(0,0.1f),
                                         Truncate = true,
-                                        Width = (Current.BeatmapInfo.DifficultyName.Length)*2+16,
+                                        Width = Math.Clamp((Current.BeatmapInfo.DifficultyName.Length)*2+16,40,100),
                                         Font = new FontUsage("ChivoBold",size: 13),
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft

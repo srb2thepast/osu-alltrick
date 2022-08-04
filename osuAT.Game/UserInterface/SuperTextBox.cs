@@ -23,7 +23,7 @@ namespace osuAT.Game.UserInterface
 
         public SuperTextBox()
         {
-
+            
             BackgroundFocused = BGFocusedColor;
             BackgroundUnfocused = BGUnfocusedColor;
             BackgroundCommit = BGCommitColor;

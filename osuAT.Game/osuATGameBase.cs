@@ -26,10 +26,11 @@ namespace osuAT.Game
             base.Content.Add(Content = new DrawSizePreservingFillContainer
             {
                 // You may want to change TargetDrawSize to your "default" resolution, which will decide how things scale and position when using absolute coordinates.
-                TargetDrawSize = new Vector2(1366, 768)
+                TargetDrawSize = new Vector2(1312, 738)
             });
         }
 
+        /*
         protected override bool OnExiting()
         {
             if (SaveStorage.IsSaving == false)
@@ -41,19 +42,8 @@ namespace osuAT.Game
             System.Console.WriteLine("exited");
             return false;
         }
-
-        public void GracefullyExit()
-        {
-            if (!OnExiting())
-            {  // force exited
-                System.Console.WriteLine("exited meanly");
-                Exit();
-            }
-            else
-                System.Console.WriteLine("exited");
-            Scheduler.AddDelayed(GracefullyExit, 2000);
-        }
-                
+        */
+        
         [BackgroundDependencyLoader]
         private void load()
         {
@@ -68,7 +58,10 @@ namespace osuAT.Game
             largeStore.AddTextureSource(Host.CreateTextureLoaderStore(new OnlineStore()));
             dependencies.Cache(largeStore);
 
+            dependencies.CacheAs(this);
+
             this.Window.Title = "osu!alltrick";
+            ScoreImporter.Init();
         }
             
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) =>

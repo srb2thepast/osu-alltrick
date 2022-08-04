@@ -16,6 +16,7 @@ namespace osuAT.Game.Screens
     public class HomeScreen : Screen
     {
         private Drawable background;
+        public SpriteText UsernameText;
         public SkillContainer SkillCont;
         public Container TopBar;
         public bool CurrentlyFocused = true;
@@ -37,7 +38,7 @@ namespace osuAT.Game.Screens
         
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
+        private void load(LargeTextureStore textures)
         {
 
             InternalChildren = new Drawable[]
@@ -59,7 +60,8 @@ namespace osuAT.Game.Screens
                         AutoSizeAxes = Axes.Both,
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.Centre,
-                        Y = 75,
+                        Y = 60,
+                        Scale = new Vector2(0.8f,0.8f),
 
                         Children = new Drawable[] {
 
@@ -109,7 +111,7 @@ namespace osuAT.Game.Screens
                                 Child = new Sprite{
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Texture = textures.Get("http://s.ppy.sh/a/8257444"),
+                                    Texture = textures.Get(@"avatar-guest"),
                                     Size = new Vector2(87,87)
                                 }
                             },
@@ -138,8 +140,8 @@ namespace osuAT.Game.Screens
                             },
 
                             // Username text
-                            new SpriteText {
-                                Text = "srb2thepast",
+                            UsernameText = new SpriteText {
+                                Text = SaveStorage.SaveData.PlayerUsername,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
                                 Y = 65,
@@ -175,12 +177,6 @@ namespace osuAT.Game.Screens
                 
 
             };
-
-        }
-
-        public void DisplaySettings(bool setup = false)
-        {
-            
 
         }
 

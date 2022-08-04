@@ -34,7 +34,7 @@ namespace osuAT.Game.Skills
 
         public string BadgeBG => "SkillBG/Flowaim1";
 
-        public Tuple<Vector2, Vector2> BadgePosSize { get; }
+        public (Vector2, Vector2) BadgePosSize => (new Vector2(-20, 60), new Vector2(700, 440));
 
         public float MiniHeight => 224;
 
@@ -48,9 +48,11 @@ namespace osuAT.Game.Skills
 
         public double SkillCalc(Score score)
         {
-            if (!SupportedRulesets.Contains(score.ScoreRuleset)) return -1;
 
-            return new Random().Next(1200);
+            if (!SupportedRulesets.Contains(score.ScoreRuleset)) return -1;
+            //if (score.BeatmapInfo.FolderName == default) return -1;
+
+            return new Random().Next(15000);
         }
     }
 }

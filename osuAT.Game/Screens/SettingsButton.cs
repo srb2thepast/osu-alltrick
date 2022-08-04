@@ -10,6 +10,7 @@ using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuAT.Game.UserInterface;
 using osuAT.Game.Screens;
+using OsuApiHelper;
 using osuTK;
 using osuTK.Graphics;
 using osuAT.Game.Objects;
@@ -90,6 +91,7 @@ namespace osuAT.Game
 
 
             private SuperPasswordTextBox apikeyText;
+            private SuperTextBox usernameText;
             private ArrowedContainer langOption;
             private ArrowedContainer asiOption; // AutoScoreImportation Text
 
@@ -134,6 +136,8 @@ namespace osuAT.Game
                                 RelativeSizeAxes = Axes.Both,
                                 Colour = Colour4.FromHex("FF56A2")
                             },
+
+                            // Api Key
                             new SpriteText {
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.CentreLeft,
@@ -157,13 +161,9 @@ namespace osuAT.Game
                                 TextFont = new FontUsage("VarelaRound", size: 50),
                                 Shadow = true,
                                 ShadowOffset = new Vector2(0,0.1f),
-                                OnDefocus = () => {
-                                   // check if it's a valid api key. if it is, display a checkmark
-                                   // otherwise, display a red X
-                                   // then, save it to savestorage.
-                                   SaveStorage.SaveData.APIKey = apikeyText.Text;
-                                }
                             },
+
+                            // Username
                             new SpriteText {
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.CentreLeft,
@@ -172,22 +172,39 @@ namespace osuAT.Game
                                 Colour = Colour4.White,
                                 Shadow = true,
                                 ShadowOffset = new Vector2(0,0.1f),
-                                Text = "Language: "
+                                Text = "Username:"
                             },
+
+                            usernameText = new SuperTextBox
+                            {
+                                Anchor = Anchor.TopLeft,
+                                Origin = Anchor.CentreLeft,
+                                Position = new Vector2(256,110),
+                                Colour = Colour4.White,
+                                Masking =true,
+                                CornerRadius = 20,
+                                Size = new Vector2(500,50),
+                                Text = "",
+                                TextFont = new FontUsage("VarelaRound", size: 50),
+                                Shadow = true,
+                                ShadowOffset = new Vector2(0,0.1f),
+                            },
+
+                            // Language
                             new SpriteText {
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.CentreLeft,
-                                Position = new Vector2(60,175),
+                                Position = new Vector2(60,170),
                                 Font = new FontUsage("VarelaRound", size: 50),
                                 Colour = Colour4.White,
                                 Shadow = true,
                                 ShadowOffset = new Vector2(0,0.1f),
-                                Text = "Automatic Score Importation: "
+                                Text = "Language: "
                             },
                             langOption = new ArrowedContainer{
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.CentreLeft,
-                                Position = new Vector2(260,115),
+                                Position = new Vector2(260,170),
                                 Objects = new Drawable[] {
                                     new SpriteText {
                                         Anchor = Anchor.TopLeft,
@@ -211,10 +228,22 @@ namespace osuAT.Game
                                     },
                                 }
                             },
+
+                            // ASI Option
+                            new SpriteText {
+                                Anchor = Anchor.TopLeft,
+                                Origin = Anchor.CentreLeft,
+                                Position = new Vector2(60,230),
+                                Font = new FontUsage("VarelaRound", size: 50),
+                                Colour = Colour4.White,
+                                Shadow = true,
+                                ShadowOffset = new Vector2(0,0.1f),
+                                Text = "Automatic Score Importation: "
+                            },
                             asiOption = new ArrowedContainer{
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.CentreLeft,
-                                Position = new Vector2(610,175),
+                                Position = new Vector2(610,230),
                                 Objects = new Drawable[] {
                                     new SpriteText {
                                         Anchor = Anchor.TopLeft,
@@ -237,6 +266,28 @@ namespace osuAT.Game
                                         Text = "ON"
                                     },
                                 }
+                            },
+
+                            // Credit
+                            new SpriteText {
+                                Anchor = Anchor.BottomRight,
+                                Origin = Anchor.Centre,
+                                Position = new Vector2(-380,-90),
+                                Font = new FontUsage("VarelaRound", size: 40),
+                                Colour = Colour4.White,
+                                Shadow = true,
+                                ShadowOffset = new Vector2(0,0.1f),
+                                Text = "o!at - created by srb2thepast"
+                            },
+                            new SpriteText {
+                                Anchor = Anchor.BottomRight,
+                                Origin = Anchor.Centre,
+                                Position = new Vector2(-380,-55),
+                                Font = new FontUsage("VarelaRound", size: 40),
+                                Colour = Colour4.White,
+                                Shadow = true,
+                                ShadowOffset = new Vector2(0,0.1f),
+                                Text = "inspired by digitalhypno's osu!phd"
                             }
                         }
 
@@ -251,6 +302,49 @@ namespace osuAT.Game
                         Texture = textures.Get("OATlogo"),
                     },
                 };
+                apikeyText.Text = SaveStorage.SaveData.APIKey;
+                usernameText.Text = SaveStorage.SaveData.PlayerUsername;
+
+                apikeyText.OnCommit += new TextBox.OnCommitHandler((TextBox box, bool target) => {
+
+                    // check if it's a valid api key. if it is, display a checkmark
+                    // then, save it to savestorage.
+                    // otherwise, display a red X
+                    OsuApiKey.Key = apikeyText.Text;
+                    if (OsuApi.IsKeyValid()) {
+                        SaveStorage.SaveData.APIKey = apikeyText.Text;
+                        OsuApiKey.Key = apikeyText.Text;
+                        apikeyText.FlashColour(Color4.Green, 3000, Easing.InOutCubic);
+                        // Set UserID
+                        OsuUser player = OsuApi.GetUser(usernameText.Text);
+                        if (player == default)
+                        {
+                            usernameText.FlashColour(Color4.Red, 3000, Easing.InOutCubic);
+                            return;
+                        }
+                        SaveStorage.SaveData.PlayerUsername = usernameText.Text;
+                        return;
+                    }
+                    OsuApiKey.Key = SaveStorage.SaveData.APIKey;
+                    apikeyText.FlashColour(Color4.Red, 2000, Easing.InOutCubic);
+
+                });
+                usernameText.OnCommit += new TextBox.OnCommitHandler((TextBox box, bool target) =>
+                {
+                    if (OsuApi.IsKeyValid())
+                    {
+                        OsuUser player = OsuApi.GetUser(usernameText.Text);
+                        if (player == default)
+                        {
+                            usernameText.FlashColour(Color4.Red, 3000, Easing.InOutCubic);
+                            return;
+                        }
+                        SaveStorage.SaveData.PlayerID = player.ID;
+                        System.Console.WriteLine(OsuApi.GetUser(usernameText.Text).CountryCode);
+                    }
+                    SaveStorage.SaveData.PlayerUsername = usernameText.Text;
+                    usernameText.FlashColour(Color4.Green, 3000, Easing.InOutCubic);    
+                });
             }
 
             protected override bool OnClick(ClickEvent e)

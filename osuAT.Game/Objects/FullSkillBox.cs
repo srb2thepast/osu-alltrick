@@ -10,6 +10,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Graphics.Colour;
+using osu.Framework.Extensions.LocalisationExtensions;
 using osuAT.Game.Types;
 using osuAT.Game.Skills;
 using osuAT.Game.Objects.Displays;
@@ -41,6 +42,12 @@ namespace osuAT.Game.Objects
             public SkillLevel Level { get; }
             public RulesetInfo[] SupportedRulesets = { RulesetStore.Osu };
 
+
+            private ppBar ppBox;
+            private SkillLevelDisplay levelDisplay;
+            private Circle pfpBorder1;
+            private Circle pfpBorder2;
+
             #region Updatable CircularProgresses 
             private CircularProgress skillprogress { get; set; }
             private CircularProgress chosenprogress { get; set; }
@@ -59,6 +66,228 @@ namespace osuAT.Game.Objects
             public ClickableContainer Bubble3 { get; private set; }
             private Container bubbleContainer;
             #endregion
+
+            private class ppBar : Container
+            {
+                public ISkill Skill;
+                private readonly BindableWithCurrent<int> performance = new BindableWithCurrent<int>();
+                public Bindable<int> Performance
+                {
+                    get => performance.Current;
+                    set => performance.Current = value;
+                }
+
+                private Bindable<int> performPoints = new BindableInt();
+                private BufferedContainer ppText;
+
+                public ppBar() {
+                    AutoSizeAxes = Axes.Both;
+                }
+
+                [BackgroundDependencyLoader]
+                private void load(LargeTextureStore textures)
+                {
+                    ColourInfo VerticalGrad = new ColourInfo
+                    {
+                        TopLeft = Skill.PrimaryColor,
+                        TopRight = Skill.PrimaryColor,
+                        BottomLeft = Skill.SecondaryColor,
+                        BottomRight = Skill.SecondaryColor,
+                    };
+                    ColourInfo HorizontalGrad = new ColourInfo
+                    {
+                        TopLeft = Skill.PrimaryColor,
+                        BottomLeft = Skill.PrimaryColor,
+                        TopRight = Skill.SecondaryColor,
+                        BottomRight = Skill.SecondaryColor,
+                    };
+                    Child = new Container
+                    {
+                        AutoSizeAxes = Axes.Both,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Y = 10,
+                        Children = new Drawable[] {
+                            new Circle {
+                                RelativeSizeAxes = Axes.X,
+                                Height = 10,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Colour = Skill.SecondaryColor,
+                                Y = 2,
+                            },
+                            new Circle
+                            {
+                                RelativeSizeAxes = Axes.X,
+                                Height = 10,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Colour = Skill.PrimaryColor,
+                            },
+                            ppText = new SpriteText {
+                                Text = (Math.Truncate((double)performPoints.Value)).ToString() + "pp/" + ((Skill.Level < SkillLevel.Chosen)? Skill.Benchmarks.Mastery.ToString() : Skill.Benchmarks.Chosen.ToString())+"pp",
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Y = -0.5f,
+                                Font = new FontUsage("VarelaRound", size: 10),
+                                Colour = Colour4.White,
+                                Shadow =true,
+                                ShadowOffset = new Vector2(0,0.05f),
+                                Spacing = new Vector2(0.2f,0),
+                                Padding = new MarginPadding
+                                {
+                                    Horizontal = 5,
+                                },
+
+                            }.WithEffect(new GlowEffect
+                            {
+                                BlurSigma = new Vector2(1),
+                                Strength = 30,
+                                Colour = HorizontalGrad,
+                                PadExtent = true,
+
+                            }).WithEffect(new OutlineEffect
+                            {
+                                BlurSigma = new Vector2(0),
+                                Strength = 1,
+                                Colour = Colour4.White,
+                                PadExtent = true,
+                            }).WithEffect(new GlowEffect
+                            {
+                                BlurSigma = new Vector2(0.0f),
+                                Strength = 0.4f,
+                                Colour = HorizontalGrad,
+                                PadExtent = true,
+
+                            }),
+                        }
+                    };
+
+                }
+
+                protected override void LoadComplete()
+                {
+                    ColourInfo HorizontalGrad = new ColourInfo
+                    {
+                        TopLeft = Skill.PrimaryColor,
+                        BottomLeft = Skill.PrimaryColor,
+                        TopRight = Skill.SecondaryColor,
+                        BottomRight = Skill.SecondaryColor,
+                    };
+                    Performance.BindValueChanged(c =>
+                    {
+                       this.TransformBindableTo(performPoints, c.NewValue, 1000, Easing.InOutQuint);
+                    });
+                    performPoints.Value = Performance.Value;
+                    performPoints.BindValueChanged(pp =>
+                    {
+                        ppText = new SpriteText
+                        {
+                            Text = pp.NewValue.ToLocalisableString("0") + "pp/" + ((Skill.Level < SkillLevel.Mastery) ? Skill.Benchmarks.Mastery.ToString() : Skill.Benchmarks.Chosen.ToString()) + "pp",
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Y = 9.5f,
+                            Font = new FontUsage("VarelaRound", size: 10),
+                            Colour = Colour4.White,
+                            Shadow = true,
+                            ShadowOffset = new Vector2(0, 0.05f),
+                            Spacing = new Vector2(0.2f, 0),
+                            Padding = new MarginPadding
+                            {
+
+                                Horizontal = 5,
+                            },
+
+                        }.WithEffect(new GlowEffect
+                        {
+                            BlurSigma = new Vector2(1),
+                            Strength = 30,
+                            Colour = HorizontalGrad,
+                            PadExtent = true,
+
+                        }).WithEffect(new OutlineEffect
+                        {
+                            BlurSigma = new Vector2(0),
+                            Strength = 1,
+                            Colour = Colour4.White,
+                            PadExtent = true,
+                        });
+                            Clear();
+                        Add(
+                            new Circle
+                            {
+                                Y = 12,
+                                RelativeSizeAxes = Axes.X,
+                                Height = 10,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Colour = Skill.SecondaryColor,
+                            });
+                        Add(
+                            new Circle
+                            {
+                                Y = 10,
+                                RelativeSizeAxes = Axes.X,
+                                Height = 10,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Colour = Skill.PrimaryColor,
+                            });
+                        Add(ppText);
+                        
+                    }, true);
+                }
+
+                public void Appear()
+                {
+                    reloadPPText((int)Skill.SkillPP);
+                    
+
+                }
+                private void reloadPPText(int pp)
+                {
+                    ColourInfo HorizontalGrad = new ColourInfo
+                    {
+                        TopLeft = Skill.PrimaryColor,
+                        BottomLeft = Skill.PrimaryColor,
+                        TopRight = Skill.SecondaryColor,
+                        BottomRight = Skill.SecondaryColor,
+                    };
+                    Remove(ppText);
+                    ppText = new SpriteText
+                    {
+                        Text = pp.ToLocalisableString("0") + "pp/" + ((Skill.Level < SkillLevel.Chosen) ? Skill.Benchmarks.Mastery.ToString() : Skill.Benchmarks.Chosen.ToString()) + "pp",
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Y = -0.5f,
+                        Font = new FontUsage("VarelaRound", size: 10),
+                        Colour = Colour4.White,
+                        Shadow = true,
+                        ShadowOffset = new Vector2(0, 0.05f),
+                        Spacing = new Vector2(0.2f, 0),
+                        Padding = new MarginPadding
+                        {
+
+                            Horizontal = 5,
+                        },
+
+                    }.WithEffect(new GlowEffect
+                    {
+                        BlurSigma = new Vector2(1),
+                        Strength = 30,
+                        Colour = HorizontalGrad,
+                        PadExtent = true,
+
+                    }).WithEffect(new OutlineEffect
+                    {
+                        BlurSigma = new Vector2(0),
+                        Strength = 1,
+                        Colour = Colour4.White,
+                        PadExtent = true,
+                    });
+                    Add(ppText);
+                }
+            }
 
             public Dictionary<Page, ClickableContainer> PageBubbleDict { get; private set; }
 
@@ -307,6 +536,7 @@ namespace osuAT.Game.Objects
                                                         },
                                                     }
                                                 },
+
                                                 // Player PFP
                                                 new Container {
                                                     AutoSizeAxes = Axes.Both,
@@ -314,7 +544,7 @@ namespace osuAT.Game.Objects
                                                     Origin = Anchor.Centre,
                                                     Children = new Drawable[] {
                                                         // Border
-                                                        new Circle{
+                                                        pfpBorder1 = new Circle{
                                                             Size = new Vector2(37,37),
                                                             Anchor = Anchor.Centre,
                                                             Origin = Anchor.Centre,
@@ -322,7 +552,7 @@ namespace osuAT.Game.Objects
                                                             Alpha = (Skill.Level >= SkillLevel.Mastery) ? 1 : 0
 
                                                         },
-                                                        new Circle{
+                                                        pfpBorder2 = new Circle{
                                                             Size = new Vector2(34,34),
                                                             Anchor = Anchor.Centre,
                                                             Origin = Anchor.Centre,
@@ -348,7 +578,7 @@ namespace osuAT.Game.Objects
                                                                     Size = new Vector2(31,31),
                                                                     Anchor = Anchor.Centre,
                                                                     Origin = Anchor.Centre,
-                                                                    Texture = textures.Get("TestPFP")
+                                                                    Texture = textures.Get("avatar-guest")
                                                                 }
                                                             }
                                                         }
@@ -360,68 +590,10 @@ namespace osuAT.Game.Objects
                                         },
 
                                         // PP Bar
-                                        new Container {
-                                            AutoSizeAxes = Axes.Both,
+                                        ppBox = new ppBar {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Y = 10,
-                                            Children = new Drawable[] {
-
-                                                new Circle {
-                                                    RelativeSizeAxes = Axes.X,
-                                                    Height = 10,
-                                                    Anchor = Anchor.Centre,
-                                                    Origin = Anchor.Centre,
-                                                    Colour = Skill.SecondaryColor,
-                                                    Y = 2,
-                                                },
-                                                new Circle
-                                                {
-                                                    RelativeSizeAxes = Axes.X,
-                                                    Height = 10,
-                                                    Anchor = Anchor.Centre,
-                                                    Origin = Anchor.Centre,
-                                                    Colour = Skill.PrimaryColor,
-                                                },
-                                                new SpriteText {
-                                                    Text = (Math.Truncate(Skill.SkillPP)).ToString() + "pp/" + ((Skill.Level < SkillLevel.Chosen)? Skill.Benchmarks.Mastery.ToString() : Skill.Benchmarks.Chosen.ToString())+"pp",
-                                                    Anchor = Anchor.Centre,
-                                                    Origin = Anchor.Centre,
-                                                    Y = -0.5f,
-                                                    Font = new FontUsage("VarelaRound", size: 10),
-                                                    Colour = Colour4.White,
-                                                    Shadow =true,
-                                                    ShadowOffset = new Vector2(0,0.05f),
-                                                    Spacing = new Vector2(0.2f,0),
-                                                    Padding = new MarginPadding
-                                                    {
-
-                                                        Horizontal = 5,
-                                                    },
-
-                                                }.WithEffect(new GlowEffect
-                                                {
-                                                    BlurSigma = new Vector2(1),
-                                                    Strength = 30,
-                                                    Colour = HorizontalGrad,
-                                                    PadExtent = true,
-
-                                                }).WithEffect(new OutlineEffect
-                                                {
-                                                    BlurSigma = new Vector2(0),
-                                                    Strength = 1,
-                                                    Colour = Colour4.White,
-                                                    PadExtent = true,
-                                                })
-                            .WithEffect(new GlowEffect
-                                {
-                                    BlurSigma = new Vector2(0.0f),
-                                    Strength = 0.4f,
-                                    Colour = HorizontalGrad,
-                                    PadExtent = true,
-
-                                }),
-                                            }
+                                            Skill = Skill,
                                         },
 
                                         // Rulesets
@@ -445,7 +617,7 @@ namespace osuAT.Game.Objects
 
                                 
                                         // SkillLevel Display
-                                        new SkillLevelDisplay{
+                                        levelDisplay = new SkillLevelDisplay{
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
                                             Scale = new Vector2(0.25f),
@@ -479,7 +651,32 @@ namespace osuAT.Game.Objects
                                                     Origin = Anchor.Centre,
                                                     Texture = textures.Get("Contributors/osuphd"),
                                                 },
-                                                new Sprite{
+                                                new Circle{
+                                                    Size = new Vector2(22),
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.Centre,
+                                                    Colour = Colour4.DimGray,
+                                                },
+                                                new SpriteIcon{
+                                                    Size = new Vector2(20),
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.Centre,
+                                                    Colour = Colour4.White,
+
+                                                    Icon = FontAwesome.Solid.ExclamationCircle
+                                                },
+                                                new SpriteText {
+                                                    Anchor = Anchor.Centre,
+                                                    Y = 15,
+                                                    Origin = Anchor.Centre,
+                                                    Colour = Colour4.White,
+                                                    Font = new FontUsage("VarelaRound", size: 11),
+                                                    Text = "Work In Progress",
+                                                    ShadowColour = Colour4.Gray,
+                                                    Shadow = true
+                                                        
+                                                }
+                                                /* Play Button new Sprite{
                                                     X = 2,
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.Centre,
@@ -487,7 +684,7 @@ namespace osuAT.Game.Objects
                                                     Colour = Colour4.White,
                                                     Texture = textures.Get("FigmaVectors/PlayButton")
                                                 
-                                                }
+                                                }*/
                                             }
                                         },
 
@@ -497,7 +694,7 @@ namespace osuAT.Game.Objects
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
                                             Y = 8,
-                                            Text = "Created by:",
+                                            Text = "Created with care by:",
                                             Font = new FontUsage("VarelaRound", size: 10),
                                             Shadow = true,
                                             ShadowOffset = new Vector2(0, 0.05f),
@@ -573,13 +770,7 @@ namespace osuAT.Game.Objects
                                         }),
                                     }
                                 },
-                                Page2 = new Page {
-                                    Index = 2,
-                                    Name = "Page2",
-                                    Size = new Vector2(130, 180),
-                                    Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre,
-                                }
+                                Page2 = Skill.ContributorPage
                             }
                         },
                         
@@ -690,10 +881,14 @@ namespace osuAT.Game.Objects
                     // page2
                     if (value.NewValue == 2)
                     {
+                        Bubble1.MoveTo(new Vector2(-57, -27), 500, Easing.InOutCubic);
+                        Bubble2.MoveTo(new Vector2(-40, -27), 500, Easing.InOutCubic);
+                        Bubble3.MoveTo(new Vector2(-23, -27), 500, Easing.InOutCubic);
 
                     }
                 };
 
+                
 
                 PageBubbleDict = new Dictionary<Page, ClickableContainer>
                 {
@@ -710,11 +905,6 @@ namespace osuAT.Game.Objects
                 proficientProg.Current.Value = (float)Skill.Benchmarks.Proficient / Skill.Benchmarks.Mastery;
                 masteryProg.Current.Value = 1;
                 #endregion
-
-                if (Skill.SkillPP >= Skill.Benchmarks.Mastery)
-                {
-
-                }
 
 
                 int i = 0;
@@ -758,14 +948,30 @@ namespace osuAT.Game.Objects
             }
             public void Appear(float delay = 0)
             {
+                levelDisplay.Appear();
+                levelDisplay.SwitchLevel(Skill.Level);
+                ColourInfo HorizontalGrad = new ColourInfo
+                {
+                    TopLeft = Skill.PrimaryColor,
+                    BottomLeft = Skill.PrimaryColor,
+                    TopRight = Skill.SecondaryColor,
+                    BottomRight = Skill.SecondaryColor,
+                };
                 skillprogress.Delay(300 + delay).FillTo((Skill.Level < SkillLevel.Mastery) ? (float)Skill.SkillPP / Skill.Benchmarks.Mastery : 1, 1000, Easing.InOutCubic);
-                chosenprogress.Delay(1000 + delay).FillTo((Skill.Level >= SkillLevel.Mastery) ? (float)Skill.SkillPP / Skill.Benchmarks.Chosen : 0,1000,Easing.InOutCubic);
+                chosenprogress.Delay(1000 + delay).FillTo((Skill.Level >= SkillLevel.Mastery) ? Math.Clamp((float)Skill.SkillPP / Skill.Benchmarks.Chosen, 0,1) : 0, 1000, Easing.InOutCubic);
+                ppBox.Performance.Value = (int)Skill.SkillPP;
 
+                if (Skill.Level >= SkillLevel.Mastery)
+                {
+                    pfpBorder1.FadeIn(600, Easing.InOutSine);
+                    pfpBorder2.FadeOut(600,Easing.InOutSine);
+                }
             }
 
             public void Disappear(float delay = 0)
             {
                 skillprogress.Delay(delay).FillTo(0, 0, Easing.InOutCubic);
+                chosenprogress.Delay(delay).FillTo(0, 0, Easing.InOutCubic);
             }
             
         }
@@ -858,7 +1064,6 @@ namespace osuAT.Game.Objects
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         X = -80,
-                        ScoreList = SaveStorage.GetTrickTopScoreList(Skill),
                         Skill = Skill
                     },
                     
@@ -924,9 +1129,10 @@ namespace osuAT.Game.Objects
                 }
             };
             backBut.Action = () => { ParentBox.TransitionToMini(); System.Console.WriteLine("hieoihjergji"); };
+            
         }
 
-        public void Appear(float delay) {
+        public void Appear(float delay = 0) {
 
 
             InfoBox.Appear(delay);

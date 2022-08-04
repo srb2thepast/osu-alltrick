@@ -27,10 +27,17 @@ namespace osuAT.Game
         public Dictionary<string, string> SkillVersions { get; set; }
 
         /// <summary>
+        /// The username of player the save data is attached to.
+        /// </summary>
+        [JsonProperty("username")]
+        public string PlayerUsername { get; set; }
+
+        /// <summary>
         /// The player the save data is attached to.
         /// </summary>
         [JsonProperty("playerid")]
         public int PlayerID { get; set; }
+
 
         /// <summary>
         /// The player's APIKey.
@@ -337,18 +344,21 @@ namespace osuAT.Game
 
             // So that there arent duplicate references of the same score in the savedata.
             Score scoreclone = score.Clone();
-            foreach (var sitem in SaveData.Scores.Values)
-            {
-                Console.WriteLine(sitem.ID);
-            }
+            Console.WriteLine(scoreclone.ID);
+
             Dictionary<Guid, Score> tempdict = new Dictionary<Guid, Score>(SaveData.Scores)
             {
                 { scoreclone.ID, scoreclone }
             };
             SaveData.Scores = tempdict;
             addToSkillTops(score);
-            
+            OnScoreAdded?.Invoke(score);
+
         }
+
+        public delegate void ScoreAddedHandler(Score score);
+        public static event ScoreAddedHandler OnScoreAdded;
+
         /// <summary>
         /// Adds the score to every Skill's AlltrickTop([score.ScoreRuleset] and "overall"]) if it's high enough
         /// and resorts those AlltrickTop sections from greatest to least.
@@ -378,6 +388,7 @@ namespace osuAT.Game
                     SkillList.Sort((x, y) => y.Item2.CompareTo(x.Item2));
                 }
             }
+            
         }
 
         /// <summary>

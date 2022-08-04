@@ -61,7 +61,7 @@ namespace osuAT.Game.Objects
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         Children = new Drawable[] {
-                            
+                                
                             // MainBox
                             mainbox = new Container {
                                 Size = new Vector2(352, Skill.MiniHeight),

@@ -50,7 +50,7 @@ namespace osuAT.Game.Types
 
         public static ModInfo GetByName(string name)
         {
-            switch (name)
+            switch (name.ToUpper()[0] + name.ToLower()[1..])
             {
                 case "Auto": return Auto;
                 case "Relax": return Relax;

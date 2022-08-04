@@ -57,7 +57,18 @@ namespace osuAT.Game.Objects
             MiniBox.ScaleTo(3.3f);
             FullBox.ScaleTo(1.7f);
             FullBox.InnerBox.Width = 1;
+            SaveStorage.OnScoreAdded += new SaveStorage.ScoreAddedHandler(score =>
+            {
+                if (State == SkillBoxState.FullBox)
+                {
 
+                    Schedule(() => FullBox.Appear());
+                };
+                if (State == SkillBoxState.MiniBox)
+                {
+                    // Check if the SkillLevel has increased and play the star animation.
+                };
+            });
         }
 
         public void TransitionToFull()
@@ -68,22 +79,23 @@ namespace osuAT.Game.Objects
             FullBox.InnerBox.Width = 320;
 
             // Move top bar
-            ParentCont.MainScreen.TopBar.ScaleTo(0.8f, 500, Easing.InOutCubic);
+            ParentCont.MainScreen.TopBar.ScaleTo(0.5f, 500, Easing.InOutCubic);
             ParentCont.MainScreen.TopBar.MoveToY(50, 500, Easing.InOutCubic);
             // Refocus and zoom in
             ParentCont.FocusOnBox(this);
-            ParentCont.ScaleTo(2.3f/ParentCont.Child.Scale.Y, 400, Easing.InOutExpo);
+            ParentCont.ScaleTo(1.9f/ParentCont.Child.Scale.Y, 400, Easing.InOutExpo);
 
             // Boxes
             MiniBox.Slideout();
             FullBox.Appear(400);    
         }
+
         public void TransitionToMini()
         {
             ParentCont.MainScreen.AllowButtons = true;
             State = SkillBoxState.MiniBox;
-            ParentCont.MainScreen.TopBar.ScaleTo(1, 400, Easing.InOutCubic);
-            ParentCont.MainScreen.TopBar.MoveToY(75, 400, Easing.InOutCubic);
+            ParentCont.MainScreen.TopBar.ScaleTo(0.8f, 400, Easing.InOutCubic);
+            ParentCont.MainScreen.TopBar.MoveToY(60, 400, Easing.InOutCubic);
             ParentCont.Delay(100).ScaleTo(1f,600,Easing.InOutExpo);
             
             MiniBox.Slidein();
