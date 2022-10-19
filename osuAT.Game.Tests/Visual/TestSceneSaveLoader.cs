@@ -98,7 +98,7 @@ namespace osuAT.Game.Tests.Visual
         {
             AddStep("create dummy score", () =>
             {
-               dummyscore = new Score()
+                dummyscore = new Score()
                 {
                     ScoreRuleset = RulesetStore.Osu,
                     IsLazer = false,
@@ -122,8 +122,7 @@ namespace osuAT.Game.Tests.Visual
                     Mods = new List<ModInfo>(),
                     DateCreated = System.DateTime.Today
                 };
-               dummyscore.Register();
-
+                dummyscore.Register();
             });
             AddStep("add dummy score to storage", saveDummy);
             AddStep("save the storage", saveSStorage);
@@ -169,7 +168,9 @@ namespace osuAT.Game.Tests.Visual
                     Mods = ModList,
                     DateCreated = System.DateTime.Today
                 };
+
                 dummyscore.Register();
+
             });
             AddStep("add dummy score to storage", saveDummy);
             AddStep("save the storage", saveSStorage);

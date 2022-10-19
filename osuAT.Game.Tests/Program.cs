@@ -9,7 +9,7 @@ namespace osuAT.Game.Tests
         {
             using (GameHost host = Host.GetSuitableDesktopHost("osu!AT"))
             using (var game = new osuATTestBrowser())
-                host.Run(game);
+                host.Run(game); 
         }
     }
 }

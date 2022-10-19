@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using osuAT.Game.Types.BeatmapParsers;
 using Newtonsoft.Json;
 
 namespace osuAT.Game.Types
@@ -41,5 +42,7 @@ namespace osuAT.Game.Types
         [JsonProperty("beatmap_path")]
         public string FolderName { get; set; } = default!; // very likely to be null
 
+        [JsonIgnore]
+        public List<HitObject> HitObjects { get; set; } // also very likely to be null
     }
 }

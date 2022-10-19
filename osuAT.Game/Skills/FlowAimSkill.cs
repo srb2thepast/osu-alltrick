@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
@@ -48,10 +49,20 @@ namespace osuAT.Game.Skills
 
         public double SkillCalc(Score score)
         {
-
             if (!SupportedRulesets.Contains(score.ScoreRuleset)) return -1;
-            //if (score.BeatmapInfo.FolderName == default) return -1;
+            if (score.BeatmapInfo.FolderName == default) return -1;
 
+            Console.WriteLine(score.BeatmapInfo.FolderName);
+
+            var text = File.ReadAllLinesAsync(SaveStorage.SaveData.OsuPath + @"\" + score.BeatmapInfo.FolderName).Result;
+            string filemapid;
+                
+            foreach (string line in text)
+            {
+                if (line.StartsWith("BeatmapID:")) filemapid = line.Split("BeatmapID:")[1];
+                if (line == "[Difficulty]") break;
+            }
+            
             return new Random().Next(15000);
         }
     }

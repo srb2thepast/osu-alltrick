@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using osu.Framework;
 using osuAT.Game.Types;
+using osuAT.Game.Types.BeatmapParsers;
 using osuAT.Game.Objects.LazerAssets;
 using OsuApiHelper;
 using OsuMemoryDataProvider;
@@ -25,7 +26,6 @@ namespace osuAT.Game
         private static Timer scoreSetTimer = new Timer(TickDelay);
         private static double apireqs = 0;
         private static StructuredOsuMemoryReader osuReader;
-        private static string osuLocation = "C:\\Users\\alexh\\AppData\\Local\\osu!"; // dont forget to set this as something saved in SaveStorage
         private static OsuMemoryStatus lastScreen = OsuMemoryStatus.Playing;
 
 
@@ -93,7 +93,7 @@ namespace osuAT.Game
                     lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.ResultsScreen || (lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.MultiplayerResultsscreen))
                 {
                     apireqs -= TickDelay / 100;
-                    Task.Delay(1000); // wait a bit incase osu!servers are slow
+                    Task.Delay(2000); // wait a bit incase osu!servers are slow
                     var osuScore = OsuApi.GetUserRecent("srb2thepast")[0];
                     apireqs += 1;
                     Console.WriteLine(osuScore.Rank);
@@ -113,7 +113,7 @@ namespace osuAT.Game
                         Console.WriteLine(mapScore);
 
                         // check if the score set was the user's best score on the map before continuing
-                        if (mapScore?.ScoreID == osuScore.ScoreID)
+                        if (true)// (mapScore?.ScoreID == osuScore.ScoreID)
                         {
 
                             // check if the score has already been saved
@@ -126,9 +126,9 @@ namespace osuAT.Game
                                 }
                             }
 
-                            string mapFolder = Directory.GetDirectories(osuLocation + "\\Songs\\").Where((folder) =>
+                            string mapFolder = Directory.GetDirectories(SaveStorage.SaveData.OsuPath + "\\Songs\\").Where((folder) =>
                             {
-                                return (folder.StartsWith(osuLocation + "\\Songs\\" + osuMap.BeatmapSetID + ' '));
+                                return (folder.StartsWith(SaveStorage.SaveData.OsuPath + "\\Songs\\" + osuMap.BeatmapSetID + ' '));
                             }).ElementAt(0);
                             string osuFile = Directory.GetFiles(mapFolder, "*.osu").Where((file) =>
                             {
@@ -145,7 +145,8 @@ namespace osuAT.Game
                                 System.Console.WriteLine(filemapid, osuMap.BeatmapID);
                                 return (filemapid == osuMap.BeatmapID);
                             }).ElementAt(0);
-
+                            Console.WriteLine(mapFolder);
+                            Console.WriteLine("HJUH");
 
                             AccStat accstats = new AccStat((int)osuScore.C300, (int)osuScore.C100, (int)osuScore.C50, (int)osuScore.CMiss);
                             Score score = new Score
@@ -161,9 +162,10 @@ namespace osuAT.Game
                                     SongName = osuMap.Title,
                                     DifficultyName = osuMap.DifficultyName,
                                     MapsetCreator = osuMap.Mapper,
-                                    FolderName = osuFile.Remove(osuLocation.Length - 1),
+                                    FolderName = osuFile.Remove(SaveStorage.SaveData.OsuPath.Length - 1),
                                     MaxCombo = (int)osuMap.MaxCombo,
-                                    StarRating = (double)osuMap.Starrating
+                                    StarRating = (double)osuMap.Starrating,
+                                    // HitObjects = BeatmapFileParser.ParseOsuFileHitObjects(osuFile,RulesetStore.Osu)
                                 },
                                 Accuracy = accstats.CalcAcc(),
                                 Combo = (int)osuScore.MaxCombo,
@@ -174,11 +176,15 @@ namespace osuAT.Game
 
 
                             };
+                            // THE ERROR IS THE LINE BELOW
                             score.Register();
+                            // THE ERROR IS THE LINE ABOVE
+                            Console.WriteLine("HJUH????");
                             SaveStorage.AddScore(score);
                             SaveStorage.Save();
                         }
                     }
+
                 }
 
 

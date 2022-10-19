@@ -12,7 +12,14 @@ using osuAT.Game.Skills;
 
 namespace osuAT.Game
 {
-    public class CSaveData {
+    public class CSaveData
+    {
+        /// <summary>
+        /// The path of the player's osu! folder.
+        /// </summary>
+        [JsonProperty("osupath")]
+        public string OsuPath { get; set; } = @"C:\Users\alexh\AppData\Local\osu!";
+
         /// <summary>
         /// The save data version.
         /// </summary>

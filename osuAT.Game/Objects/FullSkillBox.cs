@@ -253,7 +253,7 @@ namespace osuAT.Game.Objects
                         TopRight = Skill.SecondaryColor,
                         BottomRight = Skill.SecondaryColor,
                     };
-                    Remove(ppText);
+                    Remove(ppText,true);
                     ppText = new SpriteText
                     {
                         Text = pp.ToLocalisableString("0") + "pp/" + ((Skill.Level < SkillLevel.Chosen) ? Skill.Benchmarks.Mastery.ToString() : Skill.Benchmarks.Chosen.ToString()) + "pp",

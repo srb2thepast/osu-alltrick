@@ -1,31 +1,38 @@
 ﻿using osu.Framework.Graphics;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Textures;
 using osuAT.Game.Objects;
-using osu.Framework.Graphics.Sprites;
 using osuAT.Game.Objects.LazerAssets;
 using osuAT.Game.Objects.LazerAssets.Mod;
+using osuAT.Game.Types.BeatmapParsers;
+using osuTK;
 
 
 namespace osuAT.Game.Types
 {
 
+
     public class RulesetInfo {
+
         public string Name { get; }
         public IconUsage Icon { get; }
-        public RulesetInfo(string name, IconUsage icon)
+        public IParser? MapParser { get; }
+
+        public RulesetInfo(string name, IconUsage icon, IParser? parser)
         {
             Name = name;
             Icon = icon;
+            MapParser = parser;
         }
 
     }
     public class RulesetStore
     {
-        public static RulesetInfo Osu = new RulesetInfo("osu", OsuIcon.RulesetOsu); 
-        public static RulesetInfo Mania = new RulesetInfo("mania", OsuIcon.RulesetMania);
-        public static RulesetInfo Catch = new RulesetInfo("catch", OsuIcon.RulesetCatch);
-        public static RulesetInfo Taiko = new RulesetInfo("taiko", OsuIcon.RulesetTaiko);
+        public static RulesetInfo Osu = new RulesetInfo("osu", OsuIcon.RulesetOsu, new OsuParser()); 
+        public static RulesetInfo Mania = new RulesetInfo("mania", OsuIcon.RulesetMania, null);
+        public static RulesetInfo Catch = new RulesetInfo("catch", OsuIcon.RulesetCatch,null);
+        public static RulesetInfo Taiko = new RulesetInfo("taiko", OsuIcon.RulesetTaiko, null);
 
         public static RulesetInfo GetByName(string name)
         {

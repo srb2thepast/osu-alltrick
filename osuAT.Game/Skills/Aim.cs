@@ -50,6 +50,7 @@ namespace osuAT.Game.Skills
         {
             if (!SupportedRulesets.Contains(score.ScoreRuleset)) return -1;
 
+            
             return new Random().Next(120000);
         }
     }
