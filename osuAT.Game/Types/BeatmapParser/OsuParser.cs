@@ -848,7 +848,7 @@ namespace osuAT.Game.Types.BeatmapParsers
                 int nodes = repeatCount + 2;
 
                 // Read any per-node sound types
-
+                
                 result = new Slider
                 {
                     Position = pos,
