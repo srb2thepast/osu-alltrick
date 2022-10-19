@@ -15,7 +15,7 @@ namespace osuAT.Game.Types
     /// <summary>
     /// Converts a .osu map to a <see cref="Beatmap"/>.
     /// </summary>
-    public static partial class BeatmapFileParser
+    public static class BeatmapFileParser
     {
 
         public static KeyValuePair<string, string> SplitKeyVal(string line, char separator = ':')
@@ -71,7 +71,6 @@ namespace osuAT.Game.Types
 
         private static void handleHitObject(Beatmap beatmap, RulesetInfo ruleset, string line)
         {
-            // If the ruleset wasn't specified, assume the osu!standard ruleset.
             IParser parser = ruleset.MapParser;
 
             var obj = parser.ParseHitObject(line);
@@ -82,14 +81,17 @@ namespace osuAT.Game.Types
             }
         }
 
-        public static void ParseLine(Beatmap beatmap, RulesetInfo ruleset, Section section, string line)
+        public static void ParseLine(Beatmap beatmap, RulesetInfo ruleset, Section section, string line,handleMeta = false)
         {
+
             switch (section)
             {
-
                 case Section.Metadata:
-                    handleMetadata(beatmap, ruleset, line);
+                    if (handleMeta) {
+                        handleMetadata(beatmap, ruleset, line);
+                    }
                     return;
+
                 case Section.HitObjects:
                     handleHitObject(beatmap, ruleset, line);
                     return;
@@ -106,7 +108,10 @@ namespace osuAT.Game.Types
             return line;
         }
 
-        public static void ParseOsuFile(string location, RulesetInfo ruleset)
+        /// <summary>
+        /// Converts a the contents of a .osu file  into an Instance of the  <see cref="Beatmap"/> class.
+        /// </summary>
+        public static Beatmap ParseOsuFile(string location, RulesetInfo ruleset)
         {
             Beatmap map = new Beatmap { };
             Section section = Section.General;
@@ -121,29 +126,29 @@ namespace osuAT.Game.Types
                 
                 if (lineStrip.StartsWith('[') && line.EndsWith(']'))
                 {
-                    if (!Enum.TryParse(lineStrip[1..^1], out section))
-                        Console.WriteLine ($"Unknown section \"{lineStrip}\" in ");
+                    if (!Enum.TryParse(lineStrip[1..^1], out section)) Console.WriteLine ($"Unknown section \"{lineStrip}\" in ");
 
                     continue;
                 }
 
                 ParseLine(map, ruleset, section, line);
             }
-
+            return map
         }
 
         /// <summary>
         /// Same as above, but it only returns the list of HitObjects.
         /// </summary>
-        /// <param name="location"></param>
-        /// <param name="ruleset"></param>
+        /// <param name="location">The location of the file.</param>
+        /// <param name="ruleset">The ruleset to use for parsing the file.</param>
         public static List<HitObject> ParseOsuFileHitObjects(string location, RulesetInfo ruleset)
         {
             List<HitObject> hitObjects = new List<HitObject>();
             Section section = Section.General;
             IParser parser = ruleset.MapParser;
-
-
+            if (File.Exists(location)) {
+                
+            }
             foreach (string line in File.ReadLines(location))
             {
                 if (section == Section.HitObjects)
@@ -163,7 +168,8 @@ namespace osuAT.Game.Types
                         continue;
                     }
 
-                    var obj = parser.ParseHitObject(lineStrip );
+                    // only different code vs the original ParseOsuFile
+                    var obj = parser.ParseHitObject(lineStrip);
                     if (obj != null)
                     {
                         hitObjects.Add(obj);

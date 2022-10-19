@@ -53,6 +53,7 @@ namespace osuAT.Game.Types.BeatmapParsers
         {
         }
 
+        #region Slider
         /// <summary>
         /// The osu! Slider.
         /// </summary>
@@ -780,7 +781,7 @@ namespace osuAT.Game.Types.BeatmapParsers
             static bool isLinear(PathControlPoint[] p) => Precision.AlmostEquals(0, (p[1].Position.Y - p[0].Position.Y) * (p[2].Position.X - p[0].Position.X)
                                                                                     - (p[1].Position.X - p[0].Position.X) * (p[2].Position.Y - p[0].Position.Y));
         }
-
+        #endregion
 
         public class Spinner : OsuHitObject {
             public double EndTime
@@ -805,8 +806,9 @@ namespace osuAT.Game.Types.BeatmapParsers
         }
         #endregion
 
-        public HitObject ParseHitObject(string text)
+        public HitObject ParseHitObject(string text,int FortmatVersion)
         {
+            this.FortmatVersion = FortmatVersion
             string[] split = text.Split(',');
 
             Vector2 pos = new Vector2((int)Parsing.ParseFloat(split[0], Parsing.MAX_COORDINATE_VALUE), (int)Parsing.ParseFloat(split[1], Parsing.MAX_COORDINATE_VALUE));
