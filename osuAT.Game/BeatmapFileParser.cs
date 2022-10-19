@@ -10,7 +10,7 @@ using osuAT.Game.Types;
 using osuAT.Game.Objects;
 using osuTK;
 
-namespace osuAT.Game.Types
+namespace osuAT.Game
 {
     /// <summary>
     /// Converts a .osu map to a <see cref="Beatmap"/>.

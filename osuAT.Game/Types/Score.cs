@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using osuAT.Game;
 using osuAT.Game.Skills;
 
 namespace osuAT.Game.Types
@@ -144,13 +145,14 @@ namespace osuAT.Game.Types
         /// <summary>
         /// Fills in all the missing properties that are not supposed to be set while constructing.
         /// </summary>
-        public void Register(bool calcPP = true, bool setDate = true, int index = -1,bool setGUID = true)
+        public void Register(bool calcPP = true, bool setDate = true, int index = -1,bool setGUID = true,bool setBeatmapHitObjects = true)
         {
 
             if (setGUID) {ID = Guid.NewGuid(); }
             PerfectCombo = BeatmapInfo.MaxCombo == Combo;
             if (setDate) { DateCreated = DateTime.Today; }
             ScoreRuleset ??= RulesetStore.GetByName(RulesetName);
+            if (setBeatmapHitObjects or calcPP) {BeatmapInfo.HitObjects = BeatmapFileParser.ParseOsuFileHitObjects(SaveStorage.SaveData.OsuPath + @"\" + BeatmapInfo.FolderName)}
             if (calcPP) { AlltrickPP = Skill.CalcAll(this); }
             RulesetName = ScoreRuleset.Name;
             Mods = Mods;
