@@ -164,8 +164,7 @@ namespace osuAT.Game
                                     MapsetCreator = osuMap.Mapper,
                                     FolderName = osuFile.Remove(SaveStorage.SaveData.OsuPath.Length - 1),
                                     MaxCombo = (int)osuMap.MaxCombo,
-                                    StarRating = (double)osuMap.Starrating,
-                                    // HitObjects = BeatmapFileParser.ParseOsuFileHitObjects(osuFile,RulesetStore.Osu)
+                                    StarRating = (double)osuMap.Starrating
                                 },
                                 Accuracy = accstats.CalcAcc(),
                                 Combo = (int)osuScore.MaxCombo,

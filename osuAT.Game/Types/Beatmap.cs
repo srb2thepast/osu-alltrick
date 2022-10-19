@@ -42,25 +42,35 @@ namespace osuAT.Game.Types
         [JsonProperty("beatmap_path")]
         public string FolderName { get; set; } = default!; // very likely to be null
 
-        [JsonIgnore]
-        public List<HitObject> HitObjects // also very likely to be null (depends on foldername)
+        // The three below should not be set while constructing.
 
         [JsonIgnore]
-        public BeatmapDifficultyInfo DifficultyInfo // also also very likely to be null (also depends on foldername)
+        public BeatmapDifficultyInfo DifficultyInfo { get; set; } // also also very likely to be null (also depends on foldername)
 
         [JsonIgnore]
-        public RUlesetInfo ContentRuleset {get; set;}
+        public List<HitObject> HitObjects { get; set; } // also very likely to be null (depends on foldername)
+        
+        [JsonIgnore]
+        public RulesetInfo ContentRuleset {get; set;}
         
         /// <summary>
-        /// Sets the HitObjects parameter and DifficultyInfo parameters.
+        /// Sets the HitObjects, DifficultyInfo, and ContentRuleset parameters, basically anything
+        /// related to the acutal objects IN the beatmap rather than just metadata.
         /// </summary>
-        public void ReloadContents(RulesetInfo ruleset) {
+        public void LoadMapContents(RulesetInfo ruleset) {
             // note to self: convert BeatmapFileParser from several seperate sections into a 
             // main method that returns each of data from the requested section
-            // so that the programming isnt looping through the whole beatmap twice
-            HitObjects = BeatmapFileParser.ParseOsuFileHitObjects(SaveStorage.SaveData.OsuPath + @"\" + BeatmapInfo.FolderName,ruleset)
-            DifficultyInfo = BeatmapFileParser.ParseOsuFileDifficulty(SaveStorage.SaveData.OsuPath + @"\" + BeatmapInfo.FolderName)
-            
+            // so that the programming isnt looping through the whole beatmap twice [DONE]
+            BeatmapFileParser.ParseOsuFile(
+                SaveStorage.SaveData.OsuPath + @"\" + BeatmapInfo.FolderName, 
+                this, 
+                new List<Section> {
+                    Section.HitObjects,
+                    Section.Difficulty
+                },
+                ruleset
+            );
+            ContentRuleset = ruleset
 
         }
 

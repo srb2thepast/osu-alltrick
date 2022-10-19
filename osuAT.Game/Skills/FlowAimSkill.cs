@@ -21,7 +21,7 @@ namespace osuAT.Game.Skills
 
         public string Version => "0.002";
 
-        public string Summary => "Ability to move your cursor \n in a fluid motion.";
+        public string Summary => "The ability to move your cursor \n in a fluid motion.";
 
         public int SummarySize => 9;
 
@@ -54,7 +54,7 @@ namespace osuAT.Game.Skills
             if (score.BeatmapInfo.HitObjects == default) return -1;
 
             foreach (HitObject Object in score.BeatmapInfo.HitObjects) {
-                
+                // do stuff
             }
             
             return new Random().Next(15000);

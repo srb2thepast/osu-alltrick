@@ -29,7 +29,7 @@ namespace osuAT.Game
             );
         }
 
-        private static void handleMetadata(Beatmap beatmap, RulesetInfo ruleset, string line)
+        private static void handleMetadata(Beatmap beatmap, string line)
         {
             var pair = SplitKeyVal(line);
 
@@ -69,7 +69,7 @@ namespace osuAT.Game
             }
         }
 
-        private static void handleHitObject(Beatmap beatmap, RulesetInfo ruleset, string line)
+        private static HitObject handleHitObject(RulesetInfo ruleset, string line)
         {
             IParser parser = ruleset.MapParser;
 
@@ -77,26 +77,45 @@ namespace osuAT.Game
 
             if (obj != null)
             {
-                beatmap.HitObjects.Add(obj);
+                return obj;
             }
         }
 
-        public static void ParseLine(Beatmap beatmap, RulesetInfo ruleset, Section section, string line,handleMeta = false)
-        {
+        private static void handleDifficulty(BeatmapDifficultyInfo difficulty, string line) {
+            var pair = SplitKeyVal(line);
+            var difficulty = new BeatmapDifficultyInfo;
 
-            switch (section)
+            switch (pair.Key)
             {
-                case Section.Metadata:
-                    if (handleMeta) {
-                        handleMetadata(beatmap, ruleset, line);
-                    }
-                    return;
+                case @"HPDrainRate":
+                    difficulty.HPDrainRate = Parsing.ParseFloat(pair.Value);
+                    break;
 
-                case Section.HitObjects:
-                    handleHitObject(beatmap, ruleset, line);
-                    return;
+                case @"CircleSize":
+                    difficulty.CircleSize = Parsing.ParseFloat(pair.Value);
+                    break;
+
+                case @"OverallDifficulty":
+                    difficulty.OverallDifficulty = Parsing.ParseFloat(pair.Value);
+                    if (!hasApproachRate)
+                        difficulty.ApproachRate = difficulty.OverallDifficulty;
+                    break;
+
+                case @"ApproachRate":
+                    difficulty.ApproachRate = Parsing.ParseFloat(pair.Value);
+                    hasApproachRate = true;
+                    break;
+
+                case @"SliderMultiplier":
+                    difficulty.SliderMultiplier = Parsing.ParseDouble(pair.Value);
+                    break;
+
+                case @"SliderTickRate":
+                    difficulty.SliderTickRate = Parsing.ParseDouble(pair.Value);
+                    break;
             }
         }
+
         private static bool shouldSkipLine(string line) => string.IsNullOrWhiteSpace(line) || line.AsSpan().TrimStart().StartsWith("//".AsSpan(), StringComparison.Ordinal);
 
         private static string stripComments(string line)
@@ -109,11 +128,17 @@ namespace osuAT.Game
         }
 
         /// <summary>
-        /// Converts a the contents of a .osu file  into an Instance of the  <see cref="Beatmap"/> class.
+        /// Converts a the contents of a .osu file into an Instance of the <see cref="Beatmap"/> class.
         /// </summary>
-        public static Beatmap ParseOsuFile(string location, RulesetInfo ruleset)
+        /// <param name="location">The location of the file.</param>
+        /// <param name="map">The map to parse to.</param>
+        /// <param name="requestedSections">The sections in the .osu to parse to the Beatmap.</param>
+        /// <param name="ruleset">The target ruleset. Can be null if the HitObjects section is not requested.</param>
+        public static void ParseOsuFile(string location, Beatmap map, List<Section> requestedSections, RulesetInfo? ruleset)
         {
-            Beatmap map = new Beatmap { };
+            BeatmapDifficultyInfo diffinfo = new BeatmapDifficultyInfo();
+            
+            
             Section section = Section.General;
             foreach (string line in File.ReadLines(location))
             {
@@ -131,116 +156,33 @@ namespace osuAT.Game
                     continue;
                 }
 
-                ParseLine(map, ruleset, section, line);
-            }
-            return map
-        }
-
-        /// <summary>
-        /// Same as ParseOsuFile, but it only returns the list of HitObjects.
-        /// </summary>
-        /// <param name="location">The location of the file.</param>
-        /// <param name="ruleset">The ruleset to use for parsing the file.</param>
-        public static List<HitObject> ParseOsuFileHitObjects(string location, RulesetInfo ruleset)
-        {
-            List<HitObject> hitObjects = new List<HitObject>();
-            Section section = Section.General;
-            IParser parser = ruleset.MapParser;
-            if (File.Exists(location)) {
-                
-            }
-            foreach (string line in File.ReadLines(location))
-            {
-                if (section == Section.HitObjects)
+                // ParseLine
+                // Goal: Asking for all 3 of these sections would fill every single variable
+                // of a Beatmap class.
+                switch (section)
                 {
-                    if (shouldSkipLine(line))
-                    {
-                        continue;
-                    }
+                    case Section.Metadata:
+                        if (requestedSections.Contains(section)) {
+                            handleMetadata(map, line);
+                        }
+                        return;
 
-                    string lineStrip = stripComments(line);
-
-                    if (lineStrip.StartsWith('[') && line.EndsWith(']'))
-                    {
-                        if (!Enum.TryParse(lineStrip[1..^1], out section))
-                            Console.WriteLine($"Unknown section \"{lineStrip}\" in ");
-
-                        continue;
-                    }
-
-                    // only different code vs the original ParseOsuFile
-                    var obj = parser.ParseHitObject(lineStrip);
-                    if (obj != null)
-                    {
-                        hitObjects.Add(obj);
-                    }
+                    case Section.HitObjects:
+                        if (requestedSections.Contains(section)) {
+                            map.HitObjects.Add(handleHitObject(beatmap, ruleset, line));
+                        }
+                        return;
+                    case Section.Difficulty:
+                        if (requestedSections.Contains(section)) {
+                            handleDifficulty(diffInfo, line);
+                        }
+                        return;
                 }
             }
-            return hitObjects;
-
-        }
-
-        public static BeatmapDifficultyInfo ParseOsuFileDifficulty(string location) {
-            Section section = Section.General;
-            if (File.Exists(location)) {
-                
-            }
-            foreach (string line in File.ReadLines(location))
-            {
-                if (section == Section.HitObjects)
-                {
-                    if (shouldSkipLine(line))
-                    {
-                        continue;
-                    }
-
-                    string lineStrip = stripComments(line);
-
-                    if (lineStrip.StartsWith('[') && line.EndsWith(']'))
-                    {
-                        if (!Enum.TryParse(lineStrip[1..^1], out section))
-                            Console.WriteLine($"Unknown section \"{lineStrip}\" in ");
-
-                        continue;
-                    }
-
-                    // only different code vs the original ParseOsuFile==
-                    var pair = SplitKeyVal(line);
-
-                    var difficulty = new BeatmapDifficultyInfo;
-
-                    switch (pair.Key)
-                    {
-                        case @"HPDrainRate":
-                            difficulty.HPDrainRate = Parsing.ParseFloat(pair.Value);
-                            break;
-
-                        case @"CircleSize":
-                            difficulty.CircleSize = Parsing.ParseFloat(pair.Value);
-                            break;
-
-                        case @"OverallDifficulty":
-                            difficulty.OverallDifficulty = Parsing.ParseFloat(pair.Value);
-                            if (!hasApproachRate)
-                                difficulty.ApproachRate = difficulty.OverallDifficulty;
-                            break;
-
-                        case @"ApproachRate":
-                            difficulty.ApproachRate = Parsing.ParseFloat(pair.Value);
-                            hasApproachRate = true;
-                            break;
-
-                        case @"SliderMultiplier":
-                            difficulty.SliderMultiplier = Parsing.ParseDouble(pair.Value);
-                            break;
-
-                        case @"SliderTickRate":
-                            difficulty.SliderTickRate = Parsing.ParseDouble(pair.Value);
-                            break;
-                    }
-                }
-            }
-            return hitObjects;
+            // note to self: get rid of any processing related to diffInfo if the beatmap already has one
+            // because all of the work we did putting things inside diffInfo would be discarded
+            // at the end anyways.
+            map.BeatmapDifficultyInfo ??= diffInfo
         }
     }
 }
