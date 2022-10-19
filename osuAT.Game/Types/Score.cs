@@ -152,7 +152,7 @@ namespace osuAT.Game.Types
             PerfectCombo = BeatmapInfo.MaxCombo == Combo;
             if (setDate) { DateCreated = DateTime.Today; }
             ScoreRuleset ??= RulesetStore.GetByName(RulesetName);
-            if (setBeatmapHitObjects or calcPP) {BeatmapInfo.HitObjects = BeatmapFileParser.ParseOsuFileHitObjects(SaveStorage.SaveData.OsuPath + @"\" + BeatmapInfo.FolderName)}
+            if (setBeatmapHitObjects or calcPP) {BeatmapInfo.ReloadContents(ScoreRuleset)}
             if (calcPP) { AlltrickPP = Skill.CalcAll(this); }
             RulesetName = ScoreRuleset.Name;
             Mods = Mods;

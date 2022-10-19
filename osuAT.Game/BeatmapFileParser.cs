@@ -137,7 +137,7 @@ namespace osuAT.Game
         }
 
         /// <summary>
-        /// Same as above, but it only returns the list of HitObjects.
+        /// Same as ParseOsuFile, but it only returns the list of HitObjects.
         /// </summary>
         /// <param name="location">The location of the file.</param>
         /// <param name="ruleset">The ruleset to use for parsing the file.</param>
@@ -178,6 +178,69 @@ namespace osuAT.Game
             }
             return hitObjects;
 
+        }
+
+        public static BeatmapDifficultyInfo ParseOsuFileDifficulty(string location) {
+            Section section = Section.General;
+            if (File.Exists(location)) {
+                
+            }
+            foreach (string line in File.ReadLines(location))
+            {
+                if (section == Section.HitObjects)
+                {
+                    if (shouldSkipLine(line))
+                    {
+                        continue;
+                    }
+
+                    string lineStrip = stripComments(line);
+
+                    if (lineStrip.StartsWith('[') && line.EndsWith(']'))
+                    {
+                        if (!Enum.TryParse(lineStrip[1..^1], out section))
+                            Console.WriteLine($"Unknown section \"{lineStrip}\" in ");
+
+                        continue;
+                    }
+
+                    // only different code vs the original ParseOsuFile==
+                    var pair = SplitKeyVal(line);
+
+                    var difficulty = new BeatmapDifficultyInfo;
+
+                    switch (pair.Key)
+                    {
+                        case @"HPDrainRate":
+                            difficulty.HPDrainRate = Parsing.ParseFloat(pair.Value);
+                            break;
+
+                        case @"CircleSize":
+                            difficulty.CircleSize = Parsing.ParseFloat(pair.Value);
+                            break;
+
+                        case @"OverallDifficulty":
+                            difficulty.OverallDifficulty = Parsing.ParseFloat(pair.Value);
+                            if (!hasApproachRate)
+                                difficulty.ApproachRate = difficulty.OverallDifficulty;
+                            break;
+
+                        case @"ApproachRate":
+                            difficulty.ApproachRate = Parsing.ParseFloat(pair.Value);
+                            hasApproachRate = true;
+                            break;
+
+                        case @"SliderMultiplier":
+                            difficulty.SliderMultiplier = Parsing.ParseDouble(pair.Value);
+                            break;
+
+                        case @"SliderTickRate":
+                            difficulty.SliderTickRate = Parsing.ParseDouble(pair.Value);
+                            break;
+                    }
+                }
+            }
+            return hitObjects;
         }
     }
 }

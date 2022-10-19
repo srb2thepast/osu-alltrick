@@ -43,6 +43,26 @@ namespace osuAT.Game.Types
         public string FolderName { get; set; } = default!; // very likely to be null
 
         [JsonIgnore]
-        public List<HitObject> HitObjects { get; set; } // also very likely to be null
+        public List<HitObject> HitObjects // also very likely to be null (depends on foldername)
+
+        [JsonIgnore]
+        public BeatmapDifficultyInfo DifficultyInfo // also also very likely to be null (also depends on foldername)
+
+        [JsonIgnore]
+        public RUlesetInfo ContentRuleset {get; set;}
+        
+        /// <summary>
+        /// Sets the HitObjects parameter and DifficultyInfo parameters.
+        /// </summary>
+        public void ReloadContents(RulesetInfo ruleset) {
+            // note to self: convert BeatmapFileParser from several seperate sections into a 
+            // main method that returns each of data from the requested section
+            // so that the programming isnt looping through the whole beatmap twice
+            HitObjects = BeatmapFileParser.ParseOsuFileHitObjects(SaveStorage.SaveData.OsuPath + @"\" + BeatmapInfo.FolderName,ruleset)
+            DifficultyInfo = BeatmapFileParser.ParseOsuFileDifficulty(SaveStorage.SaveData.OsuPath + @"\" + BeatmapInfo.FolderName)
+            
+
+        }
+
     }
 }

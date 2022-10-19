@@ -51,16 +51,10 @@ namespace osuAT.Game.Skills
         {
             if (!SupportedRulesets.Contains(score.ScoreRuleset)) return -1;
             if (score.BeatmapInfo.FolderName == default) return -1;
+            if (score.BeatmapInfo.HitObjects == default) return -1;
 
-            Console.WriteLine(score.BeatmapInfo.FolderName);
-
-            var text = File.ReadAllLinesAsync(SaveStorage.SaveData.OsuPath + @"\" + score.BeatmapInfo.FolderName).Result;
-            string filemapid;
+            foreach (HitObject Object in score.BeatmapInfo.HitObjects) {
                 
-            foreach (string line in text)
-            {
-                if (line.StartsWith("BeatmapID:")) filemapid = line.Split("BeatmapID:")[1];
-                if (line == "[Difficulty]") break;
             }
             
             return new Random().Next(15000);
