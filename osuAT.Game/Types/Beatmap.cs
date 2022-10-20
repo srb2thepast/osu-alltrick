@@ -59,9 +59,6 @@ namespace osuAT.Game.Types
         /// related to the acutal objects IN the beatmap rather than just metadata.
         /// </summary>
         public void LoadMapContents(RulesetInfo ruleset) {
-            // note to self: convert BeatmapFileParser from several seperate sections into a 
-            // main method that returns each of data from the requested section
-            // so that the programming isnt looping through the whole beatmap twice [DONE]
             if (FolderName == default || FolderName == "deleted") {
                 HitObjects = new List<HitObject> { }; 
             }

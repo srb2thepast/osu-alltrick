@@ -48,14 +48,6 @@ namespace osuAT.Game.Skills
 
         public RulesetInfo[] SupportedRulesets => new RulesetInfo[]{ RulesetStore.Osu };
 
-
-
-        /// "-" = Something wrong
-        /// "~" = Something wrong but headed in the right direction
-        /// "?" = Unsure if it's wrong
-
-        // note to self: create an example class that sets the amount of pp equal to the amount
-        // of object in a map.
         /// <summary>
         /// Returns a pp value based off of the most spaced out stream of a map.
         /// </summary>
