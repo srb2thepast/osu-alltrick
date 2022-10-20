@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using osuAT.Game.Types.BeatmapParsers;
@@ -61,8 +62,17 @@ namespace osuAT.Game.Types
             // note to self: convert BeatmapFileParser from several seperate sections into a 
             // main method that returns each of data from the requested section
             // so that the programming isnt looping through the whole beatmap twice [DONE]
+            if (FolderName == default || FolderName == "deleted") {
+                HitObjects = new List<HitObject> { }; 
+            }
+
+            string path = SaveStorage.SaveData.OsuPath + @"\" + FolderName;
+            if (!File.Exists(path))
+            {
+                throw new ArgumentNullException($"The path of this beatmap does not exist!!! : {path}");
+            }
             BeatmapFileParser.ParseOsuFile(
-                SaveStorage.SaveData.OsuPath + @"\" + BeatmapInfo.FolderName, 
+                path, 
                 this, 
                 new List<Section> {
                     Section.HitObjects,
@@ -70,7 +80,7 @@ namespace osuAT.Game.Types
                 },
                 ruleset
             );
-            ContentRuleset = ruleset
+            ContentRuleset = ruleset;
 
         }
 

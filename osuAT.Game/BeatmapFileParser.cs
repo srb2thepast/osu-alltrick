@@ -17,6 +17,7 @@ namespace osuAT.Game
     /// </summary>
     public static class BeatmapFileParser
     {
+        public const int EARLY_VERSION_TIMING_OFFSET = 24;
 
         public static KeyValuePair<string, string> SplitKeyVal(string line, char separator = ':')
         {
@@ -69,21 +70,18 @@ namespace osuAT.Game
             }
         }
 
-        private static HitObject handleHitObject(RulesetInfo ruleset, string line)
+        private static HitObject handleHitObject(RulesetInfo ruleset, string line, int version)
         {
             IParser parser = ruleset.MapParser;
 
-            var obj = parser.ParseHitObject(line);
+            var obj = parser.ParseHitObject(line,version);
 
-            if (obj != null)
-            {
-                return obj;
-            }
+            return obj;
         }
 
         private static void handleDifficulty(BeatmapDifficultyInfo difficulty, string line) {
             var pair = SplitKeyVal(line);
-            var difficulty = new BeatmapDifficultyInfo;
+            bool hasApproachRate = false;
 
             switch (pair.Key)
             {
@@ -136,12 +134,17 @@ namespace osuAT.Game
         /// <param name="ruleset">The target ruleset. Can be null if the HitObjects section is not requested.</param>
         public static void ParseOsuFile(string location, Beatmap map, List<Section> requestedSections, RulesetInfo? ruleset)
         {
-            BeatmapDifficultyInfo diffinfo = new BeatmapDifficultyInfo();
+            BeatmapDifficultyInfo diffInfo = new BeatmapDifficultyInfo();
             
             
             Section section = Section.General;
+            int version = int.Parse(File.ReadAllLines(location)[0].Split("osu file format v")[1]);
+
+            if (requestedSections.Contains(Section.HitObjects)) map.HitObjects = new List<HitObject>();
+
             foreach (string line in File.ReadLines(location))
             {
+                
                 if (shouldSkipLine(line))
                 {
                     continue;
@@ -165,24 +168,23 @@ namespace osuAT.Game
                         if (requestedSections.Contains(section)) {
                             handleMetadata(map, line);
                         }
-                        return;
-
+                        continue;
                     case Section.HitObjects:
                         if (requestedSections.Contains(section)) {
-                            map.HitObjects.Add(handleHitObject(beatmap, ruleset, line));
+                            map.HitObjects.Add(handleHitObject(ruleset, line,version));
                         }
-                        return;
+                        continue;
                     case Section.Difficulty:
                         if (requestedSections.Contains(section)) {
                             handleDifficulty(diffInfo, line);
                         }
-                        return;
+                        continue;
                 }
             }
             // note to self: get rid of any processing related to diffInfo if the beatmap already has one
             // because all of the work we did putting things inside diffInfo would be discarded
             // at the end anyways.
-            map.BeatmapDifficultyInfo ??= diffInfo
+            map.DifficultyInfo ??= diffInfo;
         }
     }
 }

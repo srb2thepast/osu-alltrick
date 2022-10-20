@@ -7,6 +7,6 @@
     /// </summary>
     public interface IParser
     {
-        public HitObject ParseHitObject(string line) { return new HitObject(); }
+        public HitObject ParseHitObject(string line, int formatVersion) { return new HitObject(); }
     }
 }

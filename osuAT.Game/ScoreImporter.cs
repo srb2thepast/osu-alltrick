@@ -146,8 +146,7 @@ namespace osuAT.Game
                                 return (filemapid == osuMap.BeatmapID);
                             }).ElementAt(0);
                             Console.WriteLine(mapFolder);
-                            Console.WriteLine("HJUH");
-
+;
                             AccStat accstats = new AccStat((int)osuScore.C300, (int)osuScore.C100, (int)osuScore.C50, (int)osuScore.CMiss);
                             Score score = new Score
                             {
@@ -162,7 +161,7 @@ namespace osuAT.Game
                                     SongName = osuMap.Title,
                                     DifficultyName = osuMap.DifficultyName,
                                     MapsetCreator = osuMap.Mapper,
-                                    FolderName = osuFile.Remove(SaveStorage.SaveData.OsuPath.Length - 1),
+                                    FolderName = osuFile.Remove(0, SaveStorage.SaveData.OsuPath.Length + 1),
                                     MaxCombo = (int)osuMap.MaxCombo,
                                     StarRating = (double)osuMap.Starrating
                                 },
@@ -175,10 +174,7 @@ namespace osuAT.Game
 
 
                             };
-                            // THE ERROR IS THE LINE BELOW
                             score.Register();
-                            // THE ERROR IS THE LINE ABOVE
-                            Console.WriteLine("HJUH????");
                             SaveStorage.AddScore(score);
                             SaveStorage.Save();
                         }

@@ -15,7 +15,8 @@ namespace osuAT.Game.Types.BeatmapParsers
 {
     public class OsuParser: IParser
     {
-        protected static readonly int FormatVersion;
+        protected static int FormatVersion;
+        public const int EARLY_VERSION_TIMING_OFFSET = 24;
         #region Hit Objects
 
         public class OsuHitObject: HitObject {
@@ -806,14 +807,15 @@ namespace osuAT.Game.Types.BeatmapParsers
         }
         #endregion
 
-        public HitObject ParseHitObject(string text,int FortmatVersion)
+        public HitObject ParseHitObject(string text,int formatVersion)
         {
-            this.FortmatVersion = FortmatVersion
+            FormatVersion = formatVersion;
+            int offset = FormatVersion < 5 ? EARLY_VERSION_TIMING_OFFSET : 0;
             string[] split = text.Split(',');
 
             Vector2 pos = new Vector2((int)Parsing.ParseFloat(split[0], Parsing.MAX_COORDINATE_VALUE), (int)Parsing.ParseFloat(split[1], Parsing.MAX_COORDINATE_VALUE));
 
-            double startTime = Parsing.ParseDouble(split[2]) + 0;
+            double startTime = Parsing.ParseDouble(split[2]) + offset;
 
             LegacyHitObjectType type = (LegacyHitObjectType)Parsing.ParseInt(split[3]);
 
@@ -823,6 +825,7 @@ namespace osuAT.Game.Types.BeatmapParsers
                 // osu.Game.Rulesets.Objects.Legacy.Osu.ConvertHitObjectParser.CreateHit
                 result = new HitCircle
                 {
+                    StartTime = startTime,
                     Position = pos,
                 };
 
@@ -853,6 +856,7 @@ namespace osuAT.Game.Types.BeatmapParsers
                 
                 result = new Slider
                 {
+                    StartTime = startTime,
                     Position = pos,
                     Path = new SliderPath(convertPathString(split[5], pos), length),
                     RepeatCount = repeatCount,
@@ -861,10 +865,11 @@ namespace osuAT.Game.Types.BeatmapParsers
             }
             else if (type.HasFlagFast(LegacyHitObjectType.Spinner))
             {
-                double duration = Math.Max(0, Parsing.ParseDouble(split[5]) + 0 - startTime);
+                double duration = Math.Max(0, Parsing.ParseDouble(split[5]) + offset- startTime);
 
                 result = new Spinner
                 {
+                    StartTime = startTime,
                     Position = pos,
                     Duration = duration
                 };

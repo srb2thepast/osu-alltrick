@@ -234,13 +234,15 @@ namespace osuAT.Game
                     Dictionary<string, List<Tuple<Guid, double>>> tuplList = new Dictionary<string, List<Tuple<Guid, double>>>
                     {
                         { "overall",new List<Tuple<Guid, double>>()},
-                        { "mania",new List<Tuple<Guid, double>>()},
+                        { "osu",new List<Tuple<Guid, double>>()},
                         { "mania",new List<Tuple<Guid, double>>()},
                         { "catch",new List<Tuple<Guid, double>>()},
                         { "taiko",new List<Tuple<Guid, double>>()}
                     };
+
                     foreach (Score score in scorelist)
                     {
+                        Console.WriteLine(score.ToString());
                         // check if the skill supports the score's ruleset
                         if (skillInstance.SupportedRulesets.Contains(score.ScoreRuleset))
                         {
@@ -330,6 +332,7 @@ namespace osuAT.Game
                     SongName = "deleted",
                     DifficultyName = "deleted",
                     MapsetCreator = "deleted",
+                    FolderName = "deleted",
                     StarRating = 0,
                     MaxCombo = 0
                 },

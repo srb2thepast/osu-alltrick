@@ -152,8 +152,14 @@ namespace osuAT.Game.Types
             PerfectCombo = BeatmapInfo.MaxCombo == Combo;
             if (setDate) { DateCreated = DateTime.Today; }
             ScoreRuleset ??= RulesetStore.GetByName(RulesetName);
-            if (loadBeatmapContents || calcPP) {BeatmapInfo.LoadMapContents(ScoreRuleset)}
-            if (calcPP) { AlltrickPP = Skill.CalcAll(this); }
+            if (BeatmapInfo.FolderName != "deleted" && BeatmapInfo.FolderName != default)
+            {
+                if (loadBeatmapContents || calcPP) { BeatmapInfo.LoadMapContents(ScoreRuleset); }
+                if (calcPP) { AlltrickPP = Skill.CalcAll(this); }
+            }
+            else {
+                Console.WriteLine("Deleted or unset folder detected. Skipping beatmapinfo contents.");
+            }
             RulesetName = ScoreRuleset.Name;
             Mods = Mods;
             IndexPosition = index;

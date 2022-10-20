@@ -33,6 +33,7 @@ namespace osuAT.Game.Tests.Visual.Display
                     MapsetCreator = "Naidaaka",
                     StarRating = 7.93,
                     MaxCombo = 2336
+
                 },
                 Grade = "SH",
                 Accuracy = 99.51,
@@ -43,6 +44,7 @@ namespace osuAT.Game.Tests.Visual.Display
                 DateCreated = System.DateTime.Today
             };
             dummyscore.Register();
+            dummyscore.AlltrickPP = new Dictionary<string, double>() { {"flowaim",727} };
             AddStep("create score display", () => {
                 ScoreDisplay display = new ScoreDisplay
                 {

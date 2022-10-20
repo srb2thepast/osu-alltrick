@@ -8,16 +8,16 @@ namespace osuAT.Game.Types
 {
     public class BeatmapDifficultyInfo
     {   
-        public int HPDrainRate { get; set; }
+        public float HPDrainRate { get; set; }
 
-        public int CircleSize { get; set; }
+        public float CircleSize { get; set; }
 
-        public int OverallDifficulty { get; set; }
+        public float OverallDifficulty { get; set; }
         
-        public int ApproachRate { get; set; }
+        public float ApproachRate { get; set; }
 
-        public int SliderMultiplier { get; set; }
+        public double SliderMultiplier { get; set; }
 
-        public int SliderTickRate { get; set; }
+        public double SliderTickRate { get; set; }
     }
 }
