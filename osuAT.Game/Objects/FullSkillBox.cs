@@ -35,7 +35,7 @@ namespace osuAT.Game.Objects
         public class SkillInfo : CompositeDrawable
         {
             public ISkill Skill;
-            public int TextSize; // Text Size
+            public int TextSize; // Text Size 
 
             public Texture Background; // Skill Background
             public int MiniHeight; // Minibox Height
