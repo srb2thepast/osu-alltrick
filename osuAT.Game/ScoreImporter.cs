@@ -85,12 +85,13 @@ namespace osuAT.Game
             try
             {
                 GeneralData gameData = new GeneralData();
+                OsuMemoryStatus curStatus = (OsuMemoryStatus)gameData.RawStatus;
                 osuReader.TryRead(gameData);
+                Console.WriteLine(lastScreen); ;
                 Console.WriteLine(gameData.OsuStatus);
 
                 // check if the play went from playing to the results screen
-                if (
-                    lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.ResultsScreen || (lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.MultiplayerResultsscreen))
+                if (lastScreen == OsuMemoryStatus.Playing && curStatus == OsuMemoryStatus.ResultsScreen || (lastScreen == OsuMemoryStatus.Playing && curStatus == OsuMemoryStatus.MultiplayerResultsscreen))
                 {
                     apireqs -= TickDelay / 100;
                     Task.Delay(2000); // wait a bit incase osu!servers are slow
@@ -184,6 +185,10 @@ namespace osuAT.Game
 
 
                 lastScreen = (OsuMemoryStatus)gameData.RawStatus;
+            } catch(Exception err) {
+                // remove this section when scoreimporter is converted to osu!of's schedule
+                File.WriteAllText("errlog_scoreimp.txt", err.StackTrace + "\n ----------- ERROR MESSAGE: \n ----------- " + err.Message);
+                lastScreen = OsuMemoryStatus.Unknown;
             }
             finally { }
 

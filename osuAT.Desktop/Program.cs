@@ -1,4 +1,6 @@
-﻿using osu.Framework.Platform;
+﻿using System;
+using System.IO;
+using osu.Framework.Platform;
 using osu.Framework;
 using osuAT.Game;
 
@@ -10,7 +12,15 @@ namespace osuAT.Desktop
         {
             using (GameHost host = Host.GetSuitableDesktopHost(@"osuAT"))
             using (osu.Framework.Game game = new osuATGame())
-                host.Run(game);
+                try
+                {
+                    host.Run(game);
+                }
+                catch (Exception err)
+                {
+                    File.WriteAllText("errlog.txt", err.StackTrace + "\n ----------- ERROR MESSAGE: \n ----------- " + err.Message);
+                    Console.WriteLine("Logged");
+                }
         }
     }
 }

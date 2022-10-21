@@ -30,7 +30,7 @@ namespace osuAT.Game.Types
             CountMiss = countMiss;
         }
         public double CalcAcc() {
-            return 0.0;
+            return ((300 * Count300) + (100 * Count300) + (50 * Count50))/(300* (Count300+Count100+Count50+CountMiss));
         }
     }
 
@@ -152,14 +152,6 @@ namespace osuAT.Game.Types
             PerfectCombo = BeatmapInfo.MaxCombo == Combo;
             if (setDate) { DateCreated = DateTime.Today; }
             ScoreRuleset ??= RulesetStore.GetByName(RulesetName);
-            if (BeatmapInfo.FolderName != "deleted" && BeatmapInfo.FolderName != default)
-            {
-                if (loadBeatmapContents || calcPP) { BeatmapInfo.LoadMapContents(ScoreRuleset); }
-                if (calcPP) { AlltrickPP = Skill.CalcAll(this); }
-            }
-            else {
-                Console.WriteLine("Deleted or unset folder detected. Skipping beatmapinfo contents.");
-            }
             RulesetName = ScoreRuleset.Name;
             Mods = Mods;
             IndexPosition = index;
@@ -176,6 +168,17 @@ namespace osuAT.Game.Types
                     if (mod == "None") continue;
                     Mods.Add(ModStore.GetByName(mod));
                 }
+                Console.WriteLine(Mods);
+            }
+
+            if (BeatmapInfo.FolderName != "deleted" && BeatmapInfo.FolderName != default)
+            {
+                if (loadBeatmapContents || calcPP) { BeatmapInfo.LoadMapContents(ScoreRuleset); }
+                if (calcPP) { AlltrickPP = Skill.CalcAll(this); }
+            }
+            else
+            {
+                Console.WriteLine("Deleted or unset folder detected. Skipping beatmapinfo contents.");
             }
         }
 

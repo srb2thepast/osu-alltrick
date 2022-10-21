@@ -76,15 +76,15 @@ namespace osuAT.Game.Tests.Visual
 
             AddLabel("---Beatmap Settings---");
             AddSliderStep("HP Drain", 0f, 11f, score.BeatmapInfo.DifficultyInfo.HPDrainRate, v =>  score.BeatmapInfo.DifficultyInfo.HPDrainRate = v);
-            AddSliderStep("Circle Size", 0f, 11f, score.BeatmapInfo.DifficultyInfo.CircleSize, v => score.BeatmapInfo.DifficultyInfo.CircleSize = v);
-            AddSliderStep("Overall Difficulty", 0f, 11f, score.BeatmapInfo.DifficultyInfo.OverallDifficulty, v => score.BeatmapInfo.DifficultyInfo.OverallDifficulty = v);
+            AddSliderStep("Circle Size", 0f, 10f, score.BeatmapInfo.DifficultyInfo.CircleSize, v => score.BeatmapInfo.DifficultyInfo.CircleSize = v);
+            AddSliderStep("Overall Difficulty", 0f, 10f, score.BeatmapInfo.DifficultyInfo.OverallDifficulty, v => score.BeatmapInfo.DifficultyInfo.OverallDifficulty = v);
             AddSliderStep("Approach Rate", 0f, 11f, score.BeatmapInfo.DifficultyInfo.ApproachRate, v => { score.BeatmapInfo.DifficultyInfo.ApproachRate = v; });
-            AddSliderStep("Slider Multiplier", 0.0, 11.0, score.BeatmapInfo.DifficultyInfo.SliderMultiplier, v => score.BeatmapInfo.DifficultyInfo.SliderMultiplier = v);
-            AddSliderStep("Slider Tick Rate", 0.0, 11.0, score.BeatmapInfo.DifficultyInfo.SliderTickRate, v => score.BeatmapInfo.DifficultyInfo.SliderTickRate = v);
+            // AddSliderStep("Slider Multiplier", 0.0, 11.0, score.BeatmapInfo.DifficultyInfo.SliderMultiplier, v => score.BeatmapInfo.DifficultyInfo.SliderMultiplier = v);
+            // AddSliderStep("Slider Tick Rate", 0.0, 11.0, score.BeatmapInfo.DifficultyInfo.SliderTickRate, v => score.BeatmapInfo.DifficultyInfo.SliderTickRate = v);
 
             AddLabel("---Score Settings---");
             AddSliderStep("Accuracy", 0f, 100f, score.Accuracy, v => score.Accuracy = v);
-            AddSliderStep("Combo", 0, score.BeatmapInfo.MaxCombo, 0, v => score.Combo = v);
+            AddSliderStep("Combo", 0, score.BeatmapInfo.MaxCombo, score.BeatmapInfo.MaxCombo, v => score.Combo = v);
             scoreCount++;
         }
 
