@@ -115,6 +115,7 @@ namespace osuAT.Game.Skills
                     // THIS LINE is where calculations are done.
                     // The reason it's in the loop is so that the stream that outputs the most PP is the one
                     // that's returned.
+                    // Preferably (and by standard), the total pp should be calculated outside the loop.
                     double curHighestPP =
                         ((
                         (Math.Pow(curAvgSpacing, 2.2) * csMult * // spacing and circle size (exponentional)

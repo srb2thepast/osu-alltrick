@@ -30,9 +30,6 @@ namespace osuAT.Game.Tests.Visual
         private Score dummyscore;
         private BasicTextBox savelocation;
         private TextFlowContainer savecontents;
-        private SkillPPTotals samplePPTotals = new SkillPPTotals {
-            FlowAim = 100
-        };
 
         private void saveDummy() {
             SaveStorage.AddScore(dummyscore);
