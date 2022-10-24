@@ -12,6 +12,7 @@ using osuAT.Game.Skills;
 using osuAT.Game.Types;
 using osuTK;
 using osuTK.Graphics;
+
 namespace osuAT.Game.Tests.Visual
 {
     public class TestSceneSkillTest : osuATTestScene
@@ -40,7 +41,7 @@ namespace osuAT.Game.Tests.Visual
             AccuracyStats = new AccStat(285, 15, 0, 0),
             Combo = 300,
             TotalScore = 11627,
-            Mods = new List<ModInfo> { },
+            Mods = new List<ModInfo> {ModStore.Doubletime},
             DateCreated = System.DateTime.Today
         };
 
@@ -54,7 +55,7 @@ namespace osuAT.Game.Tests.Visual
                 MapID = 651507,
                 MapsetID = 1380717,
                 SongArtist = "a_hisa",
-                SongName = "Logical Stimulus",
+                SongName = "FREEDOM DIVE Arles",
                 DifficultyName = "owo",
                 MapsetCreator = "Naidaaka",
                 StarRating = 7.93,
@@ -66,7 +67,7 @@ namespace osuAT.Game.Tests.Visual
             AccuracyStats = new AccStat(5, 0, 0, 2030),
             Combo = 5,
             TotalScore = 3250,
-            Mods = new List<ModInfo> { ModStore.Doubletime },
+            Mods = new List<ModInfo> { }, //{ ModStore.Doubletime },
             DateCreated = System.DateTime.Today
         };
 
@@ -75,7 +76,7 @@ namespace osuAT.Game.Tests.Visual
             AddLabel($"---SCORE {scoreCount.ToString()}---");
 
             AddLabel("---Beatmap Settings---");
-            AddSliderStep("HP Drain", 0f, 11f, score.BeatmapInfo.DifficultyInfo.HPDrainRate, v =>  score.BeatmapInfo.DifficultyInfo.HPDrainRate = v);
+            AddSliderStep("HP Drain", 0f, 11f, score.BeatmapInfo.DifficultyInfo.DrainRate, v =>  score.BeatmapInfo.DifficultyInfo.DrainRate = v);
             AddSliderStep("Circle Size", 0f, 10f, score.BeatmapInfo.DifficultyInfo.CircleSize, v => score.BeatmapInfo.DifficultyInfo.CircleSize = v);
             AddSliderStep("Overall Difficulty", 0f, 10f, score.BeatmapInfo.DifficultyInfo.OverallDifficulty, v => score.BeatmapInfo.DifficultyInfo.OverallDifficulty = v);
             AddSliderStep("Approach Rate", 0f, 11f, score.BeatmapInfo.DifficultyInfo.ApproachRate, v => { score.BeatmapInfo.DifficultyInfo.ApproachRate = v; });

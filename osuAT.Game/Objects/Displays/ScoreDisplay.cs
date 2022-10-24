@@ -196,22 +196,47 @@ namespace osuAT.Game.Objects.Displays
                                             },
                                         }
                                     },
-
+                                    (Current.BeatmapInfo.FolderName != default)? 
                                     // Icon
-                                    new SpriteIcon {
+                                    new Container {
+                                        AutoSizeAxes = Axes.Both,
+                                        Anchor = Anchor.Centre, 
+                                        Origin = Anchor.Centre,
+                                        Child = new SpriteIcon {
 
+                                            Anchor = Anchor.Centre,
+                                            Origin = Anchor.Centre,
+                                            Size = new Vector2(38,38),
+                                            Colour = new osu.Framework.Graphics.Colour.ColourInfo{
+                                                BottomLeft = Colour4.FromHex("#F0A8AE"),
+                                                TopLeft = Colour4.FromHex("#F0A8AE"),
+                                                BottomRight = Colour4.FromHex("#FBE7E9"),
+                                                TopRight = Colour4.FromHex("#FBE7E9")
+                                            },
+                                            Icon = Current.ScoreRuleset.Icon,
+                                            X = -100
+                                        }
+                                    } :
+                                    new Container {
+                                        AutoSizeAxes = Axes.Both,
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
-                                        Size = new Vector2(38,38),
-                                        Colour = new osu.Framework.Graphics.Colour.ColourInfo{
-                                            BottomLeft = Colour4.FromHex("#F0A8AE"),
-                                            TopLeft = Colour4.FromHex("#F0A8AE"),
-                                            BottomRight = Colour4.FromHex("#FBE7E9"),
-                                            TopRight = Colour4.FromHex("#FBE7E9")
-                                        },
-                                        Icon = Current.ScoreRuleset.Icon,
-                                        X = -100
-                                    },
+                                        Child = new SpriteIcon {
+
+                                            Anchor = Anchor.Centre,
+                                            Origin = Anchor.Centre,
+                                            Size = new Vector2(38,38),
+                                            Colour = new osu.Framework.Graphics.Colour.ColourInfo{
+                                                BottomLeft = Colour4.FromHex("#F0A8AE"),
+                                                TopLeft = Colour4.FromHex("#F0A8AE"),
+                                                BottomRight = Colour4.FromHex("#FBE7E9"),
+                                                TopRight = Colour4.FromHex("#FBE7E9")
+                                            },
+                                            Icon = OsuIcon.CrossCircle  ,
+                                            X = -100
+                                        }
+                                    }
+                                    ,
                                 }
                             },
 

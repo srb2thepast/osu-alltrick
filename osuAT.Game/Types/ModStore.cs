@@ -7,6 +7,8 @@ using osuAT.Game.Objects;
 using osu.Framework.Graphics.Sprites;
 using osuAT.Game.Objects.LazerAssets;
 using osuAT.Game.Objects.LazerAssets.Mod;
+using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Osu.Mods;
 
 
 namespace osuAT.Game.Types
@@ -47,6 +49,29 @@ namespace osuAT.Game.Types
         public static ModInfo Flashlight => new ModInfo("Flashlight", "FL", 11, ModType.DifficultyIncrease, OsuIcon.ModFlashlight);
         public static ModInfo Nomod => new ModInfo("Nomod", "NM", 0, ModType.System, OsuIcon.ModBg);
         #endregion
+
+        public static Mod ConvertToOsuMod(ModInfo mod) {
+            string name = mod.Name;
+            switch (name.ToUpper()[0] + name.ToLower()[1..])
+            {
+                case "Auto": return new OsuModAutoplay();
+                case "Relax": return new OsuModRelax();
+                case "Autopilot": return new OsuModAutopilot();
+                case "Spunout": return new OsuModSpunOut();
+                case "Easy": return new OsuModEasy();
+                case "Nofail": return new OsuModNoFail();
+                case "Hidden": return new OsuModHidden();
+                case "Halftime": return new OsuModHalfTime();
+                case "Nightcore": return new OsuModNightcore();
+                case "Doubletime": return new OsuModDoubleTime();
+                case "Hardrock": return new OsuModHardRock();
+                case "Suddendeath": return new OsuModSuddenDeath();
+                case "Perfect": return new OsuModPerfect();
+                case "Flashlight": return new OsuModFlashlight();
+                default: return new ModNoMod();
+            }
+
+        }
 
         public static ModInfo GetByName(string name)
         {

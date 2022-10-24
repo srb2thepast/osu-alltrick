@@ -5,6 +5,8 @@ using Newtonsoft.Json;
 using osuAT.Game;
 using osuAT.Game.Skills;
 
+// [!] Maybe in the future we could finally have the location of misses in a beatmap avaliable based off of a replay! (https://discord.com/channels/546120878908506119/757615676310552598/1033540314914373642) <- PP Discord
+// One day...
 namespace osuAT.Game.Types
 {
 
@@ -122,7 +124,7 @@ namespace osuAT.Game.Types
         public bool PerfectCombo { get; set; }
 
         /// <summary>
-        /// The cached alltrickpp values for this skill.
+        /// The cached alltrickpp values for this skill. Follows a format of (ISkill.ID: pp).
         /// </summary>
         /// <remarks>This should not be set while constructing.</remarks>
         [JsonProperty("alltrickpp")]
@@ -173,12 +175,13 @@ namespace osuAT.Game.Types
 
             if (BeatmapInfo.FolderName != "deleted" && BeatmapInfo.FolderName != default)
             {
-                if (loadBeatmapContents || calcPP) { BeatmapInfo.LoadMapContents(ScoreRuleset); }
+                if (loadBeatmapContents || calcPP) { BeatmapInfo.LoadMapContents(ScoreRuleset,Mods); }
                 if (calcPP) { AlltrickPP = Skill.CalcAll(this); }
             }
             else
             {
-                Console.WriteLine("Deleted or unset folder detected. Skipping beatmapinfo contents.");
+                Console.WriteLine($"Deleted or unset folder detected: {OsuID}. Skipping beatmapinfo contents.");
+
             }
         }
 

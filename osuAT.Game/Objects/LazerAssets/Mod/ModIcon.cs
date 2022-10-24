@@ -34,6 +34,7 @@ using osuTK.Graphics;
 using osu.Framework.Bindables;
 using osu.Framework.Localisation;
 using osuAT.Game.Types;
+using osu.Game.Rulesets.Mods;
 
 namespace osuAT.Game.Objects.LazerAssets.Mod
 {
@@ -180,14 +181,5 @@ namespace osuAT.Game.Objects.LazerAssets.Mod
         {
             background.Colour = Selected.Value ? highlightedColour : backgroundColour;
         }
-    }
-    public enum ModType
-    {
-        DifficultyReduction,
-        DifficultyIncrease,
-        Conversion,
-        Automation,
-        Fun,
-        System
     }
 }

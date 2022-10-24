@@ -5,14 +5,18 @@ using System.Collections.Generic;
 using System.Text;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Textures;
-using osuAT.Game.Types.BeatmapParsers;
+using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using osuAT.Game.Types;
+
+using osu.Game.Rulesets.Osu.Objects;
+using osu.Game.Rulesets.Osu.Difficulty;
 using osuAT.Game.Objects;
 using osuTK;
 
 
 namespace osuAT.Game.Skills
 {
+    
     public class FlowAimSkill : ISkill
     {
 
@@ -20,7 +24,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "flowaim";
 
-        public string Version => "0.002";
+        public string Version => "0.003";
 
         public string Summary => "The ability to move your cursor \n in a fluid motion.";
 
@@ -58,9 +62,10 @@ namespace osuAT.Game.Skills
         /// - Only considers one stream rather than the map as a whole
         /// ~ Difficulty Spike of Spacing is considered as a simple parabola.
         /// - Difficulty Spike of CS is considered as a linear curve
-        /// - Difficulty Spike of BPM is considered as a linear curve
+        /// - Difficulty Spike of BPM is a un-tuned parabola
         /// - Difficulty of Stream Count is considered as a linear curve
         /// - No combo diff-spike
+        /// - Jumps can be considered streams if they're fast enough
         /// </remarks>
         public double SkillCalc(Score score)
         {
@@ -68,15 +73,6 @@ namespace osuAT.Game.Skills
             if (score.BeatmapInfo.FolderName == default) return -2;
             if (score.BeatmapInfo.HitObjects == default) return -3;
 
-            double speedMult = 1;
-            if (score.Mods.Contains(ModStore.Doubletime) || score.Mods.Contains(ModStore.Nightcore))
-            {
-                speedMult = 1.5;
-            }
-            if (score.Mods.Contains(ModStore.Halftime))
-            {
-                speedMult = 0.75;
-            }
 
             float csMult = score.BeatmapInfo.DifficultyInfo.CircleSize / 4;
 
@@ -90,39 +86,41 @@ namespace osuAT.Game.Skills
             int focusedLength = 0;
             double focusedAvgTimediff = 0; // the average difference between the starttime of each object
 
-            int totalCount = score.BeatmapInfo.HitObjects.Count;
+            for (int i = 0; i < score.BeatmapInfo.DiffHitObjects.Count; i++) {
+                // [!] add generic support based off of a mode's general hitobject class
+                var DiffHitObj = score.BeatmapInfo.DiffHitObjects[i];
+                var HitObj = (OsuHitObject)DiffHitObj.BaseObject;
+                var LastHitObj = (OsuHitObject)DiffHitObj.LastObject;
 
-            for (int i = 0; i < score.BeatmapInfo.HitObjects.Count; i++) {
-                HitObject HitObj = score.BeatmapInfo.HitObjects[i];
-                HitObject HitObj_prev0 = (i >= 1)? score.BeatmapInfo.HitObjects[i - 1]: null;
 
                 // if this circle appears within 150ms of the last one, it (might be) a circle in a stream!
                 // So it only runs if it's a circle and it appears within 150ms of the previous circle in the loop.
                 // And also if it's not the first circle of the map (because there would be no previous circle).
-                if (!(HitObj is OsuParser.Spinner) && HitObj_prev0 != null && (HitObj.StartTime - HitObj_prev0.StartTime) * speedMult < 150)
+                if ((HitObj is HitCircle) && (DiffHitObj.StartTime - DiffHitObj.LastObject.StartTime) < 150)
                 {
                     curlength++;
-                    curTimediffSum += HitObj.StartTime - HitObj_prev0.StartTime;
-                    curSpacingSum += Math.Abs((HitObj.Position - HitObj_prev0.Position).Length);
+                    curTimediffSum += DiffHitObj.StartTime - DiffHitObj.LastObject.StartTime;
+                    curSpacingSum += Math.Abs((HitObj.Position - LastHitObj.Position).Length);
                 }
 
                 // Otherwise, it's considered the end of a stream.
                 else {
                     if (curlength == 0) continue;
-                    float curAvgSpacing = 0;
-                    curAvgSpacing = curSpacingSum / curlength;
+                    float curAvgSpacing = curSpacingSum / curlength;
+                    double curAvgTimediff = curTimediffSum / curlength;
 
                     // THIS LINE is where calculations are done.
                     // The reason it's in the loop is so that the stream that outputs the most PP is the one
                     // that's returned.
                     // Preferably (and by standard), the total pp should be calculated outside the loop.
                     double curHighestPP =
-                        ((
-                        (Math.Pow(curAvgSpacing, 2.2) * csMult * // spacing and circle size (exponentional)
-                        Math.Log((curlength * 4) + 1, 10)))/40) * // length of season (logarithmic)
-                        ((double)score.Combo/score.BeatmapInfo.MaxCombo * // Combo Multiplier (linear)
-                        SharedMethods.MissPenalty(score.AccuracyStats.CountMiss,score.BeatmapInfo.MaxCombo) // Miss Multiplier
-                        );
+                        Math.Pow(
+                        (Math.Pow((curAvgSpacing / 1.3 * Math.Log(curlength) / 3), 2.2) * csMult * // spacing and circle size (exponentional + shorter streams decrease this mult)
+                        Math.Log((curlength ) + 1, 10)) / 40 * // length of stream (logarithmic)
+                        ((double)score.Combo / score.BeatmapInfo.MaxCombo * // Combo Multiplier (linear)
+                        SharedMethods.MissPenalty(score.AccuracyStats.CountMiss, score.BeatmapInfo.MaxCombo) // Miss Multiplier
+                        ),
+                        (84/curAvgTimediff)); // BPM buff math.pow
 
                     if (curHighestPP >= focusedHighestPP)
                     {
@@ -138,7 +136,7 @@ namespace osuAT.Game.Skills
                     curlength = 0;
                 }
             }
-            Console.WriteLine(score.BeatmapInfo.SongName + " " + focusedLength.ToString() + " " + focusedAvgSpacing.ToString());
+            Console.WriteLine(score.BeatmapInfo.SongName + " LEN: " + focusedLength.ToString() + " ATD: " + focusedAvgTimediff.ToString() + " ASP: " + focusedAvgSpacing.ToString());
             Console.WriteLine(((double)score.Combo / score.BeatmapInfo.MaxCombo));
             return (int)focusedHighestPP;
         }

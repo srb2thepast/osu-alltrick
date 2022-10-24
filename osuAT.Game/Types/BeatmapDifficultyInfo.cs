@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using osuAT.Game.Types.BeatmapParsers;
 using Newtonsoft.Json;
 
 namespace osuAT.Game.Types

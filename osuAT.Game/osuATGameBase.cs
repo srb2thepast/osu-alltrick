@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using osu.Game.Online;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Screens;
@@ -19,6 +20,7 @@ namespace osuAT.Game
         // the screen scaling for all components including the test browser and framework overlays.
         protected override Container<Drawable> Content { get; }
         private DependencyContainer dependencies;
+        public static readonly EndpointConfiguration ENDPOINT_CONFIGURATION = new ProductionEndpointConfiguration();
 
         protected osuATGameBase()
         {
