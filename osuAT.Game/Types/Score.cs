@@ -61,6 +61,7 @@ namespace osuAT.Game.Types
         /// <summary>
         /// Whether or not the score was set in osu!lazer.
         /// </summary>
+        // [!] Queued for removal (can be added in when a new save format is created.)
         [JsonProperty("islazer")]
         public bool IsLazer { get; set; }
 

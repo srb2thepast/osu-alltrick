@@ -19,7 +19,7 @@ using OsuApiHelper;
 
 namespace osuAT.Game.Types
 {
-    public class Beatmap
+    public class BeatmapInfo
     {
 
         /// <summary>
@@ -55,23 +55,21 @@ namespace osuAT.Game.Types
         [JsonProperty("beatmap_path")]
         public string FolderLocation { get; set; } = default!; // very likely to be null
 
-        // [!] Add MD5 Hash of current beatmap to allow comparison against online's MD5 to prevent people from editing the beatmap's file.
         [JsonProperty("file_md5")]
-        public string OnlineMD5Hash { get; set; } = default!; // depends on File.(osuDir + FolderName) existing
-
-        // The three below should not be set while constructing.
+        public string OnlineMD5Hash { get; set; } = default!; // depends on BeatmapContents
 
         [JsonIgnore]
-        public BeatmapDifficulty DifficultyInfo { get; set; } // also also very likely to be null (also depends on foldername)
+        public BeatmapContents Contents { get; set; }
 
-        [JsonIgnore]
-        public List<HitObject> HitObjects { get; set; } // also very likely to be null (depends on foldername)
-
-        [JsonIgnore]
-        public List<DifficultyHitObject> DiffHitObjects { get; set; } // also very likely to be null (depends on foldername)
-
-        [JsonIgnore]
-        public RulesetInfo ContentRuleset {get; set;}
+        /// <summary>
+        /// Sets the HitObjects, DifficultyInfo, and ContentRuleset parameters, basically anything
+        /// related to the acutal objects IN the beatmap rather than just metadata.
+        /// </summary>
+        public LoadMapContents(RulesetInfo ruleset, List<ModInfo> mods = null)
+        {
+            Contents = new BeatmapContents(folderLocation,ruleset,mods);
+            return Contents.Workmap;
+        }
 
         public static explicit operator Beatmap(OsuBeatmap map) {
 
@@ -85,17 +83,15 @@ namespace osuAT.Game.Types
                 MapsetCreator = map.BeatmapInfo.BeatmapSet.Metadata.Author.Username,
                 DifficultyName = map.BeatmapInfo.Metadata.TitleUnicode,
                 StarRating = 0,
-                MaxCombo = BeatmapExtensions.GetMaxCombo(map),
-                FolderLocation = map.BeatmapInfo.File.Filename,
-                OnlineMD5Hash = map.BeatmapInfo.OnlineMD5Hash,
-                HitObjects = map.HitObjects
+                BeatmapContents = new BeatmapContents(map.BeatmapInfo.File.Filename) {
+                    MaxCombo = BeatmapExtensions.GetMaxCombo(map),
+                    OnlineMD5Hash = map.BeatmapInfo.OnlineMD5Hash,
+                    HitObjects = map.HitObjects,
+                }
             };
             return newmap;
         }
 
-        public Beatmap() {
-
-        }
         public string GetLocalBackgroundFile(LargeTextureStore textures)
         {
             if (FolderLocation == default || FolderLocation == "deleted")
@@ -133,62 +129,6 @@ namespace osuAT.Game.Types
         {
             return textures.Get(GetLocalBackgroundFile(textures));
         }
-
-        public Texture GetOnlineCover(LargeTextureStore textures,bool Scale2x = false)
-        {
-            string fallback = "";
-            string scale = Scale2x ? "@2x" : "";
-            if (OsuApi.IsKeyValid())
-            {
-                return textures.Get($"assets.ppy.sh/beatmaps/{MapsetID}/covers/cover{scale}.jpg") ?? textures.Get(fallback);
-            }
-            throw new InvalidOperationException("Cannot get beatmap cover without osu!api.");
-        }
-
-        /// <summary>
-        /// Sets the HitObjects, DifficultyInfo, and ContentRuleset parameters, basically anything
-        /// related to the acutal objects IN the beatmap rather than just metadata.
-        /// </summary>
-        public ProcessorWorkingBeatmap LoadMapContents(RulesetInfo ruleset, List<ModInfo> mods = null,AudioManager audio = null)
-        {
-            mods ??= new List<ModInfo>();
-            if (FolderLocation == default || FolderLocation == "deleted")
-            {
-                HitObjects = new List<HitObject> { };
-                DiffHitObjects = new List<DifficultyHitObject> { };
-                return null;
-            }
-            Console.WriteLine("hi");
-
-            string path = SaveStorage.SaveData.OsuPath + @"\" + FolderLocation;
-            Console.WriteLine(path);
-
-            if (!(File.Exists(path)))
-            {
-                throw new ArgumentNullException($"The path of this beatmap does not exist!!! : {path}");
-            }
-
-            // [!] Create ability to get the hitobjects from DifficultyCalculator.CreateHitobjects()
-
-            var Workmap = ProcessorWorkingBeatmap.FromFileOrId(path,audio);
-            var rulesetInstance = RulesetStore.ConvertToOsuRuleset(ruleset);
-            var diffcalc = RulesetStore.GetDiffCalcObj(ruleset, Workmap);
-            List<Mod> osuModList = new List<Mod>();
-            foreach (ModInfo mod in mods) {
-                Console.WriteLine(mod);
-                osuModList.Add(ModStore.ConvertToOsuMod(mod));
-                Console.WriteLine(ModStore.ConvertToOsuMod(mod));
-            }
-
-            var PlayableMap = Workmap.GetPlayableBeatmap(rulesetInstance.RulesetInfo, osuModList);
-            var diffhitobjs = diffcalc.GetDifficultyHitObjects(PlayableMap, 1.0);
-            HitObjects = PlayableMap.HitObjects.ToList();
-            DiffHitObjects = diffhitobjs.ToList();
-            DifficultyInfo = PlayableMap.Difficulty;
-            Console.WriteLine(osuModList.Count);
-            Console.WriteLine(PlayableMap.Difficulty.CircleSize);
-            ContentRuleset = ruleset;
-            return Workmap;
-        }
+        
     }
 }

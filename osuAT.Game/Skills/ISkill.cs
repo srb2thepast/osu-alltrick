@@ -13,7 +13,7 @@ namespace osuAT.Game.Skills
 {
 
     // When a skill is ready to be used, dont forget to add it to Skill.cs   
-    public interface ISkill
+    public interface ISkill : ISkillCalcuator
     {
         /// <summary>
         /// The displayed name of this skill.
