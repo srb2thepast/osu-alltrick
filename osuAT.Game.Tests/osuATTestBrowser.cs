@@ -24,8 +24,8 @@ namespace osuAT.Game.Tests
         {
 
             this.Window.Title = "osu!alltrick";
-            SaveStorage.Init();
-            ScoreImporter.Init();
+            //SaveStorage.Init();
+            //ScoreImporter.Init();
         }
 
         public override void SetHost(GameHost host)

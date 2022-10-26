@@ -11,6 +11,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Colour;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
+
 namespace osuAT.Game.Skills
 {
 
@@ -29,14 +30,17 @@ namespace osuAT.Game.Skills
         /// <summary>
         /// Returns the most pp possible in a map for this skill.
         /// </summary>
-        public double SkillCalc(Beatmap map, RulesetInfo ruleset, Mods[] mods) 
-        { 
-            return SkillCalc(new Score {
-            RulesetName = ruleset.Name,
-            ScoreRuleset = ruleset,
-            Combo = map.MaxCombo,
-            Beatmap = map
-            }) 
+        public double SkillCalc(Beatmap map, RulesetInfo ruleset, List<ModInfo> mods) 
+        {
+            return SkillCalc(new Score
+            {
+                RulesetName = ruleset.Name,
+                ScoreRuleset = ruleset,
+                Combo = map.MaxCombo,
+                BeatmapInfo = map,
+                Mods = mods,
+                AccuracyStats = new AccStat(map.Contents.HitObjects.Count,0,0,0),
+            });
         }
         /// <summary>
         /// The people who contributed to this skill's development.
@@ -46,8 +50,8 @@ namespace osuAT.Game.Skills
         /// <summary>
         /// Returns a list of how the Skill's PP changes over the course of a list of hit
         /// </summary>
-        public List<double> SkillCalcHitlist(Beatmap map, RulesetInfo ruleset, Mods[] mods) {
-            
+        public List<double> SkillCalcHitlist(Beatmap map, RulesetInfo ruleset, List<ModInfo> mods) {
+            throw new NotImplementedException("not done");
         }
 
     }

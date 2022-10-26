@@ -71,10 +71,10 @@ namespace osuAT.Game.Skills
         {
             if (!SupportedRulesets.Contains(score.ScoreRuleset)) return -1;
             if (score.BeatmapInfo.FolderLocation == default) return -2;
-            if (score.BeatmapInfo.HitObjects == default) return -3;
+            if (score.BeatmapInfo.Contents.HitObjects == default) return -3;
 
 
-            float csMult = score.BeatmapInfo.DifficultyInfo.CircleSize / 4;
+            float csMult = score.BeatmapInfo.Contents.DifficultyInfo.CircleSize / 4;
 
             double focusedHighestPP = 0;
 
@@ -86,9 +86,9 @@ namespace osuAT.Game.Skills
             int focusedLength = 0;
             double focusedAvgTimediff = 0; // the average difference between the starttime of each object
 
-            for (int i = 0; i < score.BeatmapInfo.DiffHitObjects.Count; i++) {
+            for (int i = 0; i < score.BeatmapInfo.Contents.DiffHitObjects.Count; i++) {
                 // [!] add generic support based off of a mode's general hitobject class
-                var DiffHitObj = score.BeatmapInfo.DiffHitObjects[i];
+                var DiffHitObj = score.BeatmapInfo.Contents.DiffHitObjects[i];
                 var HitObj = (OsuHitObject)DiffHitObj.BaseObject;
                 var LastHitObj = (OsuHitObject)DiffHitObj.LastObject;
 

@@ -4,19 +4,18 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Sprites;
 using osuAT.Game.Types;
-using osuAT.Game.Objects;
+using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osuTK;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Colour;
-using osu.Game.Rulesets.Difficulty.Preprocessing;
-namespace osuAT.Game.Skills
-{
 
-    public abstract IStrainSkill : ISkillCalcuator
+namespace osuAT.Game.Skills
+{ 
+    public abstract class IStrainSkill : ISkillCalcuator
     {
 
-        protected virtual double DecayWeight = 0.5;
+        protected double DecayWeight = 0.5;
 
         /// <summary>
         /// The rulesets this skill can support.
@@ -33,8 +32,8 @@ namespace osuAT.Game.Skills
         /// </summary>
         public Contributor[] Contributors => new Contributor[] {};
 
-        public GetBeatmapStrains(DifficultyHitObject hitobject)  {
-
+        public List<double> GetBeatmapStrains(DifficultyHitObject hitobject)  {
+            return null;
         }
 
         

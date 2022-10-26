@@ -19,7 +19,7 @@ using OsuApiHelper;
 
 namespace osuAT.Game.Types
 {
-    public class BeatmapInfo
+    public class Beatmap
     {
 
         /// <summary>
@@ -56,21 +56,62 @@ namespace osuAT.Game.Types
         public string FolderLocation { get; set; } = default!; // very likely to be null
 
         [JsonProperty("file_md5")]
-        public string OnlineMD5Hash { get; set; } = default!; // depends on BeatmapContents
+        private string onlineMD5Hash { get; set; } = default!;
 
         [JsonIgnore]
-        public BeatmapContents Contents { get; set; }
+        public string OnlineMD5Hash { get
+            {
+                if (onlineMD5Hash == null) {
+                    throw new NotSupportedException("You must call a sucessful Beatmap.LoadMD5Hash() before tryig to access.");
+                };
+                return onlineMD5Hash;
+            }
+        }
+
+        [JsonIgnore]
+        private BeatmapContents contents;
+
+        [JsonIgnore]
+        public BeatmapContents Contents
+        {
+            get
+            {
+                if (contents == null)
+                {
+                    throw new NotSupportedException("You must call LoadMapContents before tryig to access.");
+                }
+                return contents;
+            }
+            private set => contents = value;
+        }
 
         /// <summary>
         /// Sets the HitObjects, DifficultyInfo, and ContentRuleset parameters, basically anything
         /// related to the acutal objects IN the beatmap rather than just metadata.
         /// </summary>
-        public LoadMapContents(RulesetInfo ruleset, List<ModInfo> mods = null)
+        public void LoadMapContents(RulesetInfo ruleset, List<ModInfo> mods = null)
         {
-            Contents = new BeatmapContents(folderLocation,ruleset,mods);
-            return Contents.Workmap;
+                contents = new BeatmapContents(FolderLocation,ruleset,mods);
         }
 
+        // [!] wip
+        /// <summary>
+        /// Gets the OnlineMD5 Hash of a betamap from the website.
+        /// </summary>
+        /// <returns>true if the hash was sucessfully set, false if otherwise.</returns>
+        public bool LoadMD5Hash() {
+            if (OsuApi.IsKeyValid()) {
+                
+            }
+            return false;
+        }
+
+        public Beatmap()
+        {
+
+        }
+
+        /* Currently no use for this. Will uncomment and fix once a need exists.
         public static explicit operator Beatmap(OsuBeatmap map) {
 
             // [!] Add DiffHitObjects here
@@ -83,14 +124,15 @@ namespace osuAT.Game.Types
                 MapsetCreator = map.BeatmapInfo.BeatmapSet.Metadata.Author.Username,
                 DifficultyName = map.BeatmapInfo.Metadata.TitleUnicode,
                 StarRating = 0,
-                BeatmapContents = new BeatmapContents(map.BeatmapInfo.File.Filename) {
-                    MaxCombo = BeatmapExtensions.GetMaxCombo(map),
-                    OnlineMD5Hash = map.BeatmapInfo.OnlineMD5Hash,
-                    HitObjects = map.HitObjects,
+                FolderLocation = map.BeatmapInfo.File.Filename,
+                MaxCombo = BeatmapExtensions.GetMaxCombo(map),
+                OnlineMD5Hash = map.BeatmapInfo.OnlineMD5Hash,
+                Contents = new BeatmapContents(map) {
+                    
                 }
             };
             return newmap;
-        }
+        }*/
 
         public string GetLocalBackgroundFile(LargeTextureStore textures)
         {
@@ -99,7 +141,7 @@ namespace osuAT.Game.Types
                 Console.WriteLine("No folder provided.");
                 return null;
             }
-            using (var stream = File.OpenRead(SaveStorage.SaveData.OsuPath + @"\" + FolderLocation))
+            using (var stream = File.OpenRead(SaveStorage.ConcateOsuPath(FolderLocation)))
             using (var reader = new StreamReader(stream))
             {
                 string line;
@@ -114,7 +156,7 @@ namespace osuAT.Game.Types
                             line = reader.ReadLine();
                             List<string> FolderSplit = FolderLocation.Split("\\").ToList();
                             FolderSplit.RemoveAt(FolderSplit.Count-1);
-                            return String.Join(@"\",FolderSplit) + @"\" + line.Split(",")[2].Trim('"').ToStandardisedPath();
+                            return string.Join(@"\",FolderSplit) + @"\" + line.Split(",")[2].Trim('"').ToStandardisedPath();
                         }
                         Console.WriteLine("Background section not found.");
                         return null;

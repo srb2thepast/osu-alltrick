@@ -20,7 +20,7 @@ namespace osuAT.Game.Skills
         /// <summary>
         /// A list of every skill currently supported.
         /// </summary>
-        public static List<ISkill> SkillList => new List<ISkill> {
+        public static List<ISkill> SkillList = new List<ISkill> {
             Flowaim,
             CursorControl,
             Aim,

@@ -87,8 +87,8 @@ namespace osuAT.Game.Types
         /// <summary>
         /// The accuracy the player got.
         /// </summary>
-        [JsonProperty("accuracy")]
-        public double Accuracy { get; set; }
+        [JsonIgnore]
+        public double Accuracy => AccuracyStats.CalcAcc();
 
         /// <summary>
         /// The details on how many misses, 300s, 100s, and 50s the player got.
@@ -196,7 +196,6 @@ namespace osuAT.Game.Types
                 OsuID = OsuID,
                 BeatmapInfo = BeatmapInfo,
                 Grade = Grade,
-                Accuracy = Accuracy,
                 AccuracyStats = AccuracyStats,
                 Combo = Combo,
                 PerfectCombo = PerfectCombo,

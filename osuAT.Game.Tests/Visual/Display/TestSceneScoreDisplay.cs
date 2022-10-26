@@ -36,7 +36,6 @@ namespace osuAT.Game.Tests.Visual.Display
 
                 },
                 Grade = "SH",
-                Accuracy = 99.51,
                 AccuracyStats = new AccStat(2020, 15, 0, 0),
                 Combo = 2333,
                 TotalScore = 116276034,

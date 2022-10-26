@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -13,6 +14,7 @@ using osuAT.Game.Objects.LazerAssets;
 using osuAT.Game.Types;
 using osuAT.Game.Skills;
 using osuTK;
+
 namespace osuAT.Game.Objects.Displays
 {
     public class ScoreDisplay : CompositeDrawable
@@ -196,7 +198,7 @@ namespace osuAT.Game.Objects.Displays
                                             },
                                         }
                                     },
-                                    (Current.BeatmapInfo.FolderLocation != default)? 
+                                    (Current.BeatmapInfo.FolderLocation != default && File.Exists(SaveStorage.ConcateOsuPath(Current.BeatmapInfo.FolderLocation)) )? 
                                     // Icon
                                     new Container {
                                         AutoSizeAxes = Axes.Both,
@@ -232,7 +234,7 @@ namespace osuAT.Game.Objects.Displays
                                                 BottomRight = Colour4.FromHex("#FBE7E9"),
                                                 TopRight = Colour4.FromHex("#FBE7E9")
                                             },
-                                            Icon = OsuIcon.CrossCircle  ,
+                                            Icon = OsuIcon.CrossCircle,
                                             X = -100
                                         }
                                     }

@@ -44,7 +44,6 @@ namespace osuAT.Game.Screens
         [BackgroundDependencyLoader]
         private void load(LargeTextureStore textures)
         {
-            SaveStorage.Init();
             System.Console.WriteLine(audio);
             InternalChildren = new Drawable[]
             {

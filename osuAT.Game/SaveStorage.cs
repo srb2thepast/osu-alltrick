@@ -9,9 +9,13 @@ using osu.Framework.Platform; // Reminder: consider using osu.Framework.Platform
 using OsuApiHelper;
 using osuAT.Game.Types;
 using osuAT.Game.Skills;
+using osu.Game.Rulesets.Difficulty.Skills;
+using Skill = osuAT.Game.Skills.Skill;
+using osu.Framework.Allocation;
 
 namespace osuAT.Game
 {
+    // [!] check out the osu!framework config class
     public class CSaveData
     {
         /// <summary>
@@ -113,6 +117,10 @@ namespace osuAT.Game
             return dict;
         }
 
+        public static string ConcateOsuPath(string str) {
+            return SaveData.OsuPath + @"\" + str;
+        }
+
         private static Dictionary<string, string> getDefaultSkillVer() {
             Dictionary<string, string> dict = new Dictionary<string, string>();
             foreach (ISkill skill in Skill.SkillList) {
@@ -140,7 +148,7 @@ namespace osuAT.Game
             OsuApiKey.Key = SaveData.APIKey;
             int i = 0;
             foreach (Score score in SaveData.Scores.Values) {
-                score.Register(index: i, setGUID: false, calcPP: false);
+                score.Register(index: i, setGUID: false, calcPP: false,loadBeatmapContents: false);
                 i += 1;
             }
 
@@ -155,57 +163,7 @@ namespace osuAT.Game
 
                 if (!(SaveData.SkillVersions.ContainsKey(skill.Identifier)))
                 {
-                    IsSaving = true;
-
-                    Console.WriteLine("---------------New Skill Addition Begun----------------");
-                    Console.WriteLine("The skill " + skill.Name + " has been added to the game.");
-
-                    SaveData.TotalSkillPP.Add(skill.Identifier, 0);
-                    Console.WriteLine("added to total");
-
-                    /// Add new dictonary entry "skill.Identifier" to:
-
-                    /// a. SaveData.SkillVersions
-                    Console.WriteLine("added to versions");
-
-                    SaveData.SkillVersions.Add(skill.Identifier, skill.Version);
-
-                    /// b. SaveData.AlltrickTop
-                    Dictionary<string, List<Tuple<Guid, double>>> tuplList = new Dictionary<string, List<Tuple<Guid, double>>>
-                    {
-                        { "overall",new List<Tuple<Guid, double>>()},
-                        { "osu",new List<Tuple<Guid, double>>()},
-                        { "mania",new List<Tuple<Guid, double>>()},
-                        { "catch",new List<Tuple<Guid, double>>()},
-                        { "taiko",new List<Tuple<Guid, double>>()}
-                    };
-                    Console.WriteLine("adding to top (0/2)");
-                    // Loop through every score in SaveData.Scores
-                    foreach (Score score in SaveData.Scores.Values)
-                    {
-                        // Calc the SkillPP of each score for the new skill if the skill supports the score's ruleset
-                        if (skill.SupportedRulesets.Contains(score.ScoreRuleset)) {
-                            score.AlltrickPP.Add(skill.Identifier, skill.SkillCalc(score));
-                            Tuple<Guid, double> newtupl = new Tuple<Guid, double>(score.ID, score.AlltrickPP[skill.Identifier]);
-                            tuplList["overall"].Add(newtupl);
-                            tuplList[score.ScoreRuleset.Name].Add(newtupl);
-                        }
-                    }
-                    Console.WriteLine("adding to top (1/2)");
-                    SaveData.AlltrickTop.Add(skill.Identifier, new Dictionary<string, List<Tuple<Guid, double>>>());
-
-                    // sort and set each ruleset tuple
-                    foreach (KeyValuePair<string, List<Tuple<Guid, double>>> tupl in tuplList) {
-                        tupl.Value.Sort((x, y) => y.Item2.CompareTo(x.Item2));
-                        SaveData.AlltrickTop[skill.Identifier].Add(tupl.Key, tupl.Value);
-                    }
-                    Console.WriteLine("added to top (2/2)");
-
-                    /// c. SaveData.TotalSkillPP
-                    SaveData.TotalSkillPP[skill.Identifier] = Skill.CalcWeighted(tuplList["overall"]);
-                    Console.WriteLine("added to total");
-
-                    Console.WriteLine("---------------New Skill Addition Complete----------------");
+                    AddNewSkill(skill);
                 }
             }
 
@@ -268,11 +226,114 @@ namespace osuAT.Game
 
             }
             Save();
+            Console.WriteLine("SaveStorage Initalized Sucessfully!");
         }
 
 
+        public static void AddNewSkill(ISkill skill) {
+            IsSaving = true;
+
+            Console.WriteLine("---------------New Skill Addition Begun----------------");
+            Console.WriteLine("The skill " + skill.Name + " has been added to the game.");
+
+            SaveData.TotalSkillPP.Add(skill.Identifier, 0);
+            Console.WriteLine("added to total");
+
+            /// Add new dictonary entry "skill.Identifier" to:
+
+            /// a. SaveData.SkillVersions
+            Console.WriteLine("added to versions");
+
+            SaveData.SkillVersions.Add(skill.Identifier, skill.Version);
+
+            /// b. SaveData.AlltrickTop
+            Dictionary<string, List<Tuple<Guid, double>>> tuplList = new Dictionary<string, List<Tuple<Guid, double>>>
+                    {
+                        { "overall",new List<Tuple<Guid, double>>()},
+                        { "osu",new List<Tuple<Guid, double>>()},
+                        { "mania",new List<Tuple<Guid, double>>()},
+                        { "catch",new List<Tuple<Guid, double>>()},
+                        { "taiko",new List<Tuple<Guid, double>>()}
+                    };
+            Console.WriteLine("adding to top (0/2)");
+            // Loop through every score in SaveData.Scores
+            foreach (Score score in SaveData.Scores.Values)
+            {
+                // Calc the SkillPP of each score for the new skill if the skill supports the score's ruleset
+                if (skill.SupportedRulesets.Contains(score.ScoreRuleset))
+                {
+                    score.AlltrickPP.Add(skill.Identifier, skill.SkillCalc(score));
+                    Tuple<Guid, double> newtupl = new Tuple<Guid, double>(score.ID, score.AlltrickPP[skill.Identifier]);
+                    tuplList["overall"].Add(newtupl);
+                    tuplList[score.ScoreRuleset.Name].Add(newtupl);
+                }
+            }
+            Console.WriteLine("adding to top (1/2)");
+            SaveData.AlltrickTop.Add(skill.Identifier, new Dictionary<string, List<Tuple<Guid, double>>>());
+
+            // sort and set each ruleset tuple
+            foreach (KeyValuePair<string, List<Tuple<Guid, double>>> tupl in tuplList)
+            {
+                tupl.Value.Sort((x, y) => y.Item2.CompareTo(x.Item2));
+                SaveData.AlltrickTop[skill.Identifier].Add(tupl.Key, tupl.Value);
+            }
+            Console.WriteLine("added to top (2/2)");
+
+            /// c. SaveData.TotalSkillPP
+            SaveData.TotalSkillPP[skill.Identifier] = Skill.CalcWeighted(tuplList["overall"]);
+            Console.WriteLine("added to total");
+
+            Console.WriteLine("---------------New Skill Addition Complete----------------");
+        }
+
+        public static void RemoveSkillFromSave(ISkill skill) {
+            if (!SaveData.TotalSkillPP.ContainsKey(skill.Identifier)) {
+                Console.WriteLine("This skill does not exist in the save storage!");
+                return;
+            }
+            IsSaving = true;
+
+            Console.WriteLine("---------------Skill Removal Begun----------------");
+            Console.WriteLine("The skill " + skill.Name + " has been removed from osu!alltrick.");
+            Console.WriteLine("The TotalSkillPP of this skill will be removed.");
+            Console.WriteLine("All AlltrickTop plays related to this skill will be removed.");
+            Console.WriteLine("All Score.AlltrickPP values referencing to this skill will be removed.");
+
+            Console.WriteLine("They may all be regained via recalculation if this skill is added back.");
 
 
+            SaveData.TotalSkillPP.Remove(skill.Identifier);
+            Console.WriteLine("removed from total");
+
+            /// Remove dictonary entry "skill.Identifier" from:
+
+            /// a. SaveData.SkillVersions
+            SaveData.SkillVersions.Remove(skill.Identifier);
+            Console.WriteLine("removed from versions");
+
+            /// b. SaveData.AlltrickTop
+            Console.WriteLine("removing from top (0/2)");
+
+            // Loop through every score in SaveData.Scores
+            foreach (Score score in SaveData.Scores.Values)
+            {
+                // Remove the AlltrickPP section of this skill
+                if (skill.SupportedRulesets.Contains(score.ScoreRuleset))
+                {
+                    score.AlltrickPP.Remove(skill.Identifier);
+                }
+            }
+            Console.WriteLine("removed from scores.AlltrickPP");
+
+            SaveData.AlltrickTop.Remove(skill.Identifier);
+            Console.WriteLine("removed from top");
+
+            /// c. SaveData.TotalSkillPP
+            SaveData.TotalSkillPP.Remove(skill.Identifier);
+            Console.WriteLine("removed from total");
+
+            Console.WriteLine("---------------Skill Removal Complete----------------");
+        }
         public static string Base64Encode(string plainText)
         {
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
@@ -316,7 +377,7 @@ namespace osuAT.Game
         /// Sets the data of a score to "deleted"
         /// </summary>
         /// <param name="scoreID"></param>
-        [Obsolete]
+        [Obsolete("Please use SaveStorage.RemoveScore(scoreID).",true)]
         public static void DeleteScore(Guid scoreID) {
             if (!(SaveData.Scores[scoreID] == null)) {
                 Console.WriteLine(
@@ -342,7 +403,6 @@ namespace osuAT.Game
                     MaxCombo = 0
                 },
                 Grade = "deleted",
-                Accuracy = 0,
                 AccuracyStats = new AccStat(0, 0, 0, 0),
                 Combo = 0,
                 TotalScore = 0,
@@ -361,6 +421,14 @@ namespace osuAT.Game
         /// <param name="scoreID"></param>
         public static void RemoveScore(Guid scoreID)
         {
+            if (SaveData.Scores[scoreID] == null)
+            {
+                Console.WriteLine(
+                    "The score with the Guid " + scoreID.ToString() +
+                    " could not be found in the SaveData. Maybe you already deleted it?");
+                return;
+            }
+
             Score score = SaveData.Scores[scoreID];
             var modeList = new List<string> { "overall", score.ScoreRuleset.Name };
             foreach (KeyValuePair<string, double> scoreSkillPP in score.AlltrickPP)
@@ -371,11 +439,13 @@ namespace osuAT.Game
                     for (int i = SkillList.Count - 1; i >= 0; i--)
                     {
                         Tuple<Guid, double> skillListScore = SkillList[i];
+                        /* debug
                         Console.WriteLine("start");
                         Console.WriteLine(mode);
                         Console.WriteLine(scoreSkillPP.Key);
                         Console.WriteLine(score.ID);
                         Console.WriteLine(skillListScore.Item1);
+                        */
                         if (skillListScore.Item1 == score.ID) {
                             SkillList.Remove(skillListScore);
                             SkillList.Sort((x, y) => y.Item2.CompareTo(x.Item2));

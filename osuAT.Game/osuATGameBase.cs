@@ -10,6 +10,8 @@ using osu.Framework.IO.Stores;
 using osuTK;
 using osuAT.Resources;
 using osuTK.Graphics.ES30;
+using osu.Framework;
+using osu.Framework.Input.Handlers.Tablet;
 
 namespace osuAT.Game
 {
@@ -49,6 +51,8 @@ namespace osuAT.Game
         [BackgroundDependencyLoader]
         private void load()
         {
+            Console.WriteLine(Host.AvailableInputHandlers);
+
             Resources.AddStore(new DllResourceStore(typeof(osuATResources).Assembly));
             AddFont(Resources, @"Fonts/osuFont");
             AddFont(Resources, @"Fonts/VarelaRound");
@@ -64,6 +68,17 @@ namespace osuAT.Game
             this.Window.Title = "osu!alltrick";
             SaveStorage.Init();
             ScoreImporter.Init();
+
+            foreach (var handler in Host.AvailableInputHandlers)
+            {
+                if (handler is ITabletHandler tabhandler)
+                {
+                    Schedule(() => {
+                        tabhandler.AreaSize.Value = new Vector2(75.6f, 48.17f);
+                        tabhandler.AreaOffset.Value = new Vector2(73.42f, 50.18f);
+                    });
+                }
+            }
         }
 
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) =>

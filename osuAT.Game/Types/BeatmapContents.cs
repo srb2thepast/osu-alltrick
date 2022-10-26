@@ -3,7 +3,6 @@ using System.Linq;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
 using osu.Framework.Audio;
 using osu.Framework.Extensions;
 using osu.Framework.Allocation;
@@ -21,66 +20,54 @@ namespace osuAT.Game.Types
 {
     public class BeatmapContents
     {
-        
-        private string folderLocation = default!;
-        
-        [JsonIgnore]
-        public string FolderLocation => folderLocation  // very likely to be null
+        public string FolderLocation { get; private set; }
 
-        [JsonIgnore]
-        public BeatmapDifficulty DifficultyInfo { get; set; } // also also very likely to be null (also depends on foldername)
+        public BeatmapDifficulty DifficultyInfo { get; set; }
 
         public ProcessorWorkingBeatmap Workmap { get; set; }
-        
-        private List<Mod> appliedMods { get; set; }
 
-        public Beatmap PlayableMap => Workmap.GetPlayableBeatmap(rulesetInstance.RulesetInfo, appliedMods);
-        [JsonIgnore]
-        public List<HitObject> HitObjects => Workmap.GetBeatmap .HitObjects.ToList(); // also very likely to be null (depends on foldername)
+        public IBeatmap PlayableMap { get; set; }
 
-        [JsonIgnore]
-        public List<DifficultyHitObject> DiffHitObjects => diffcalc.GetDifficultyHitObjects(PlayableMap, 1.0).ToList(); // also very likely to be null (depends on foldername)
+        public List<HitObject> HitObjects { get; set;  }
+   
 
-        [JsonIgnore]
+        public List<DifficultyHitObject> DiffHitObjects { get; set;  }
+
         public RulesetInfo ContentRuleset {get; set;}
 
         private IExtendedDifficultyCalculator diffcalc;
 
         /// <summary>
-        /// Creates a new BeatmapContents with default params. 
-        /// </summary>
-        public BeatmapContents() {
-            HitObjects = new List<HitObject> { };
-            DiffHitObjects = new List<DifficultyHitObject> { };
-            return null;
-        }
-
-        /// <summary>
         /// Creates a new BeatmapContents based off of a .osu file.
         /// </summary>
-        public BeatmapContents(string osufile,RulesetInfo ruleset = RulesetStore.Osu,List<ModInfo> mods = new List<ModInfo>()) {
+        public BeatmapContents(string osufile,RulesetInfo ruleset = null,List<ModInfo> mods = null)
+        {
+            string path = SaveStorage.ConcateOsuPath(osufile);
+            Console.WriteLine(path);
             if (!(File.Exists(path)))
             {
-                throw new ArgumentNullException($"The path of this beatmap does not exist!!! : {path}");
+                throw new ArgumentNullException($"The path of this beatmap does not exist!!! : {osufile}");
             }
-            folderLocation = osufile;
-            ContentRuleset = ruleset;
-            var rulesetInstance = RulesetStore.ConvertToOsuRuleset(ruleset);
 
-            string path = SaveStorage.SaveData.OsuPath + @"\" + osufile;
-            Console.WriteLine(path);
-            Workmap = ProcessorWorkingBeatmap.FromFileOrId(path);
-            DifficultyInfo = PlayableMap.Difficulty;
-
-            diffcalc = RulesetStore.GetDiffCalcObj(ruleset, Workmap);
-
+            ruleset ??= RulesetStore.Osu;
+            mods ??= new List<ModInfo>();
             List<Mod> osuModList = new List<Mod>();
-            foreach (ModInfo mod in mods) {
+            foreach (ModInfo mod in mods)
+            {
                 Console.WriteLine(mod);
                 osuModList.Add(ModStore.ConvertToOsuMod(mod));
                 Console.WriteLine(ModStore.ConvertToOsuMod(mod));
             }
-            appliedMods = osuModList;
+
+            FolderLocation = osufile;
+            ContentRuleset = ruleset;
+            Workmap = ProcessorWorkingBeatmap.FromFileOrId(path);
+            PlayableMap = Workmap.GetPlayableBeatmap(RulesetStore.ConvertToOsuRuleset(ContentRuleset).RulesetInfo, osuModList);
+            DifficultyInfo = PlayableMap.Difficulty;
+            diffcalc = RulesetStore.GetDiffCalcObj(ruleset, Workmap);
+            ContentRuleset = ruleset; 
+            HitObjects = Workmap.Beatmap.HitObjects.ToList();
+            DiffHitObjects = diffcalc.GetDifficultyHitObjects(PlayableMap, 1.0).ToList();
             
         }
     }

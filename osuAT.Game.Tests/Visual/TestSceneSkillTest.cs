@@ -1,3 +1,5 @@
+/*
+
 using System.Collections.Generic;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -37,7 +39,6 @@ namespace osuAT.Game.Tests.Visual
                 FolderLocation = @"Songs\771159 VINXIS - Sidetracked Day (Short Ver)\VINXIS - Sidetracked Day (Short Ver.) (Sotarks) [deathstream].osu"
             },
             Grade = "SH",
-            Accuracy = 99.51,
             AccuracyStats = new AccStat(285, 15, 0, 0),
             Combo = 300,
             TotalScore = 11627,
@@ -63,7 +64,6 @@ namespace osuAT.Game.Tests.Visual
                 FolderLocation = @"Songs\257607 xi - FREEDOM DiVE\xi - FREEDOM DiVE (elchxyrlia) [Arles].osu"
             },
             Grade = "SH",
-            Accuracy = 0.03,
             AccuracyStats = new AccStat(5, 0, 0, 2030),
             Combo = 5,
             TotalScore = 3250,
@@ -76,15 +76,15 @@ namespace osuAT.Game.Tests.Visual
             AddLabel($"---SCORE {scoreCount}---");
 
             AddLabel("---Beatmap Settings---");
-            AddSliderStep("HP Drain", 0f, 11f, score.BeatmapInfo.DifficultyInfo.DrainRate, v =>  score.BeatmapInfo.DifficultyInfo.DrainRate = v);
-            AddSliderStep("Circle Size", 0f, 10f, score.BeatmapInfo.DifficultyInfo.CircleSize, v => score.BeatmapInfo.DifficultyInfo.CircleSize = v);
-            AddSliderStep("Overall Difficulty", 0f, 10f, score.BeatmapInfo.DifficultyInfo.OverallDifficulty, v => score.BeatmapInfo.DifficultyInfo.OverallDifficulty = v);
-            AddSliderStep("Approach Rate", 0f, 11f, score.BeatmapInfo.DifficultyInfo.ApproachRate, v => { score.BeatmapInfo.DifficultyInfo.ApproachRate = v; });
-            // AddSliderStep("Slider Multiplier", 0.0, 11.0, score.BeatmapInfo.DifficultyInfo.SliderMultiplier, v => score.BeatmapInfo.DifficultyInfo.SliderMultiplier = v);
-            // AddSliderStep("Slider Tick Rate", 0.0, 11.0, score.BeatmapInfo.DifficultyInfo.SliderTickRate, v => score.BeatmapInfo.DifficultyInfo.SliderTickRate = v);
+            AddSliderStep("HP Drain", 0f, 11f, score.BeatmapInfo.Contents.DifficultyInfo.DrainRate, v =>  score.BeatmapInfo.Contents.DifficultyInfo.DrainRate = v);
+            AddSliderStep("Circle Size", 0f, 10f, score.BeatmapInfo.Contents.DifficultyInfo.CircleSize, v => score.BeatmapInfo.Contents.DifficultyInfo.CircleSize = v);
+            AddSliderStep("Overall Difficulty", 0f, 10f, score.BeatmapInfo.Contents.DifficultyInfo.OverallDifficulty, v => score.BeatmapInfo.Contents.DifficultyInfo.OverallDifficulty = v);
+            AddSliderStep("Approach Rate", 0f, 11f, score.BeatmapInfo.Contents.DifficultyInfo.ApproachRate, v => { score.BeatmapInfo.Contents.DifficultyInfo.ApproachRate = v; });
+            // AddSliderStep("Slider Multiplier", 0.0, 11.0, score.BeatmapInfo.Contents.DifficultyInfo.SliderMultiplier, v => score.BeatmapInfo.Contents.DifficultyInfo.SliderMultiplier = v);
+            // AddSliderStep("Slider Tick Rate", 0.0, 11.0, score.BeatmapInfo.Contents.DifficultyInfo.SliderTickRate, v => score.BeatmapInfo.Contents.DifficultyInfo.SliderTickRate = v);
 
             AddLabel("---Score Settings---");
-            AddSliderStep("Accuracy", 0f, 100f, score.Accuracy, v => score.Accuracy = v);
+            // AddSliderStep("Accuracy", 0f, 100f, score.Accuracy, v => score.Accuracy = v);
             AddSliderStep("Combo", 0, score.BeatmapInfo.MaxCombo, score.BeatmapInfo.MaxCombo, v => score.Combo = v);
             scoreCount++;
         }
@@ -144,3 +144,4 @@ namespace osuAT.Game.Tests.Visual
 
     }
 }
+*/

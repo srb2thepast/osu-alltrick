@@ -18,7 +18,6 @@ using osuAT.Game.Objects;
 namespace osuAT.Game
 {
 
-
     public class SettingsButton : CompositeDrawable
     {
         private SettingsBox settingsBox;

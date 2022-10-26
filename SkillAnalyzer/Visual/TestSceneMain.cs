@@ -71,7 +71,8 @@ namespace SkillAnalyzer.Visual
             {
                 FolderLocation = MapLocation
             };
-            WorkFocusedMap = osuatmap.LoadMapContents(ATRulesetStore.GetByIRulesetInfo(ruleset),audio: Audio);
+            osuatmap.LoadMapContents(ATRulesetStore.GetByIRulesetInfo(ruleset));
+            WorkFocusedMap = osuatmap.Contents.Workmap;
             FocusedBeatmap = WorkFocusedMap.Beatmap;
             WorkFocusedMap.LoadTrack();
             WorkFocusedMap.Track.Start();
@@ -85,10 +86,6 @@ namespace SkillAnalyzer.Visual
         public void TestSeekToFirst()
         {
             AddAssert("track not running", () => !EditorClock.IsRunning);
-        }
-
-        [Test]
-        public void PlayTrack() {
         }
 
         public override void SetUpSteps()

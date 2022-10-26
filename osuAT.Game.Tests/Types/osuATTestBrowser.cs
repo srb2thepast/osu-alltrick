@@ -14,10 +14,7 @@ namespace osuAT.Game.Tests.Types
         [Test]
         public void TestInvalidPare()
         {
-            var first = new SampleInfo("sample");
-            var second = new SampleInfo("sample");
-
-            assertEquality(first, second);
+            
         }
     }
 }

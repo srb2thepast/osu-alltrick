@@ -96,6 +96,11 @@ namespace osuAT.Game
                 lastScreen = gameData.OsuStatus;
                 apireqs -= TickDelay / 100;
                 await Task.Delay(2000); // wait a bit incase osu!servers are slow
+                var recent = OsuApi.GetUserRecent("srb2thepast");
+
+                // return if no recent scores have been set
+                if (recent == null)
+                    return;
                 var osuScore = OsuApi.GetUserRecent("srb2thepast")[0];
                 apireqs += 1;
                 Console.WriteLine(osuScore.Rank + " Rank");
@@ -132,7 +137,7 @@ namespace osuAT.Game
                     // check if a score on that diff has already been set, 
                     if (savedscore.BeatmapInfo.MapID == int.Parse(osuMap.BeatmapID)) {
                         // check if the just score set is higher than the one currently savd. 
-                        if (savedscore.TotalScore < osuScore.score) {
+                        if (savedscore.TotalScore < osuScore.Score) {
                             // if so delete it in preperation for replacement.
                             Console.WriteLine("New top score detected! Overwriting previous.");
                             SaveStorage.RemoveScore(savedscore.ID);
@@ -142,9 +147,9 @@ namespace osuAT.Game
                     }
                 }
 
-                string mapFolder = Directory.GetDirectories(SaveStorage.SaveData.OsuPath + "\\Songs\\").Where((folder) =>
+                string mapFolder = Directory.GetDirectories(SaveStorage.ConcateOsuPath(@"Songs\")).Where((folder) =>
                 {
-                    return (folder.StartsWith(SaveStorage.SaveData.OsuPath + "\\Songs\\" + osuMap.BeatmapSetID + ' '));
+                    return (folder.StartsWith(SaveStorage.ConcateOsuPath(@"Songs\" + osuMap.BeatmapSetID + ' ')));
                 }).ElementAt(0);
                 string osuFile = Directory.GetFiles(mapFolder, "*.osu").Where((file) =>
                 {
@@ -181,7 +186,6 @@ namespace osuAT.Game
                         MaxCombo = (int)osuMap.MaxCombo,
                         StarRating = (double)osuMap.Starrating
                     },
-                    Accuracy = accstats.CalcAcc(),
                     Combo = (int)osuScore.MaxCombo,
                     AccuracyStats = accstats,
                     TotalScore = osuScore.Score,
