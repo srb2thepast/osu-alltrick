@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json;
@@ -145,8 +146,8 @@ namespace osuAT.Game.Types
         {
 
             if (setGUID) {ID = Guid.NewGuid(); }
-            PerfectCombo = BeatmapInfo.MaxCombo == Combo;
             if (setDate) { DateCreated = DateTime.Today; }
+            PerfectCombo = BeatmapInfo.MaxCombo == Combo;
             ScoreRuleset ??= RulesetStore.GetByName(RulesetName);
             RulesetName = ScoreRuleset.Name;
             Mods = Mods;
@@ -164,19 +165,15 @@ namespace osuAT.Game.Types
                     if (mod == "None") continue;
                     Mods.Add(ModStore.GetByName(mod));
                 }
-                Console.WriteLine(Mods);
             }
 
-            if (BeatmapInfo.FolderLocation != "deleted" && BeatmapInfo.FolderLocation != default)
-            {
-                if (loadBeatmapContents || calcPP) { BeatmapInfo.LoadMapContents(ScoreRuleset,Mods); }
-                if (calcPP) { AlltrickPP = Skill.CalcAll(this); }
-            }
-            else
+            if (!File.Exists(SaveStorage.ConcateOsuPath(BeatmapInfo.FolderLocation)) || BeatmapInfo.FolderLocation == default)
             {
                 Console.WriteLine($"Deleted or unset folder detected: {OsuID}. Skipping beatmapinfo contents.");
-
+                return;
             }
+            if (loadBeatmapContents || calcPP) { BeatmapInfo.LoadMapContents(ScoreRuleset,Mods); }
+            if (calcPP) { AlltrickPP = Skill.CalcAll(this); }
         }
 
         public Score Clone() {

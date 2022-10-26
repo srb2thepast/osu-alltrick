@@ -254,7 +254,7 @@ namespace osuAT.Game.Tests.Visual
                 AccuracyStats = new AccStat(2020, 15, 0, 0),
                 Combo = 2333,
                 TotalScore = 116276034,
-                Mods = ModList,
+                Mods = new List<ModInfo>(),
                 DateCreated = System.DateTime.Today
             };
             dummyscore.Register();

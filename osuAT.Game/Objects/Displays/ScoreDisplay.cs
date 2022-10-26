@@ -343,7 +343,7 @@ namespace osuAT.Game.Objects.Displays
                                                 Alpha = 0.3f
 
                                             },
-                                            new PerformanceDisplay(Current.AlltrickPP[Skill.Identifier]) { Scale = new Vector2(0.75f)},
+                                            new PerformanceDisplay((int)Current.AlltrickPP[Skill.Identifier]) { Scale = new Vector2(0.75f)},
                                         }
                                     },
 

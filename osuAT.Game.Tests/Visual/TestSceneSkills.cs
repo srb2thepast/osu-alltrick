@@ -12,6 +12,12 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 using osuTK;
 using osuTK.Graphics;
+using osuAT.Game.Objects;
+using osuAT.Game.Objects.Displays;
+using osuAT.Game.Types;
+using osuAT.Game.Skills;
+using osuTK;
+using System;
 
 namespace osuAT.Game.Tests.Visual
 {
@@ -31,7 +37,7 @@ namespace osuAT.Game.Tests.Visual
                 {
                 background = new Box
                 {
-                    Colour = Color4.Teal,
+                    Colour = Color4.HotPink,
                     RelativeSizeAxes = Axes.Both,
                 },
                 new BasicScrollContainer
@@ -43,44 +49,36 @@ namespace osuAT.Game.Tests.Visual
                         Origin = Anchor.TopRight,
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,
-                        Spacing = new Vector2(5),
+                        Spacing = new Vector2(0),
                         Direction = FillDirection.Full,
                     },
                 }
                 }
             });
 
-            var weights = typeof(FontAwesome).GetNestedTypes();
+            loadBoxes(flow);
 
-            foreach (var w in weights)
+            AddStep("reload all", () => loadBoxes(flow));
+            AddStep("go to page 0", () => flow.Children.OfType<FullSkillBox>().ForEach(b => b.InfoBox.InfoBook.CurrentPage.Value = 0));
+            AddStep("go to page 1", () => flow.Children.OfType<FullSkillBox>().ForEach(b => b.InfoBox.InfoBook.CurrentPage.Value = 1));
+            AddStep("go to page 2", () => flow.Children.OfType<FullSkillBox>().ForEach(b => b.InfoBox.InfoBook.CurrentPage.Value = 2));
+        }
+
+        private void loadBoxes(FillFlowContainer flow) {
+            flow.RemoveAll(d => { return true; }, true);
+            foreach (ISkill skill in Skill.SkillList)
             {
-                flow.Add(new SpriteText
-                {
-                    Text = w.Name,
-                    Scale = new Vector2(4),
-                    RelativeSizeAxes = Axes.X,
-                    Padding = new MarginPadding(10),
-                });
-
-                foreach (var p in w.GetProperties(BindingFlags.Public | BindingFlags.Static))
-                {
-                    object propValue = p.GetValue(null);
-                    Debug.Assert(propValue != null);
-
-                    flow.Add(new Icon($"{nameof(FontAwesome)}.{w.Name}.{p.Name}", (IconUsage)propValue));
-                }
+                flow.Add(
+                    new FullSkillBox
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Skill = skill,
+                        Scale = new Vector2(2),
+                    }
+                );
             }
-
-            AddStep("toggle shadows", () => flow.Children.OfType<Icon>().ForEach(i => i.SpriteIcon.Shadow = !i.SpriteIcon.Shadow));
-            AddStep("change icons", () => flow.Children.OfType<Icon>().ForEach(i => i.SpriteIcon.Icon = new IconUsage((char)(i.SpriteIcon.Icon.Icon + 1))));
-            AddStep("white background", () => background.FadeColour(Color4.White, 200));
-            AddStep("move shadow offset", () => flow.Children.OfType<Icon>().ForEach(i => i.SpriteIcon.ShadowOffset += Vector2.One));
-            AddStep("change shadow colour", () => flow.Children.OfType<Icon>().ForEach(i => i.SpriteIcon.ShadowColour = Color4.Pink));
-            AddStep("add new icon with colour and offset", () =>
-                flow.Add(new Icon("FontAwesome.Regular.Handshake", FontAwesome.Regular.Handshake)
-                {
-                    SpriteIcon = { Shadow = true, ShadowColour = Color4.Orange, ShadowOffset = new Vector2(5, 1) }
-                }));
+            Schedule(() => flow.Children.OfType<FullSkillBox>().ForEach(b => b.Appear()));
         }
 
         private class Icon : Container, IHasTooltip

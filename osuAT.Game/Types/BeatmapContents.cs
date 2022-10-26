@@ -54,9 +54,7 @@ namespace osuAT.Game.Types
             List<Mod> osuModList = new List<Mod>();
             foreach (ModInfo mod in mods)
             {
-                Console.WriteLine(mod);
                 osuModList.Add(ModStore.ConvertToOsuMod(mod));
-                Console.WriteLine(ModStore.ConvertToOsuMod(mod));
             }
 
             FolderLocation = osufile;

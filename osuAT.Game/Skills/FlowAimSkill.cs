@@ -124,8 +124,6 @@ namespace osuAT.Game.Skills
 
                     if (curHighestPP >= focusedHighestPP)
                     {
-                        Console.WriteLine(curlength);
-                        Console.WriteLine(curAvgSpacing);
                         focusedAvgSpacing = curAvgSpacing;
                         focusedLength = curlength;
                         focusedAvgTimediff = curTimediffSum/curlength;
@@ -136,9 +134,8 @@ namespace osuAT.Game.Skills
                     curlength = 0;
                 }
             }
-            Console.WriteLine(score.BeatmapInfo.SongName + " LEN: " + focusedLength.ToString() + " ATD: " + focusedAvgTimediff.ToString() + " ASP: " + focusedAvgSpacing.ToString());
-            Console.WriteLine(((double)score.Combo / score.BeatmapInfo.MaxCombo));
-            return (int)focusedHighestPP;
+            Console.WriteLine(score.BeatmapInfo.SongName + " LEN: " + focusedLength.ToString() + " ATD: " + focusedAvgTimediff.ToString() + " ASP: " + focusedAvgSpacing.ToString() + " | PP: " + (int)focusedHighestPP);
+            return focusedHighestPP;
         }
     }
 }

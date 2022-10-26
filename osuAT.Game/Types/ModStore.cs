@@ -68,7 +68,7 @@ namespace osuAT.Game.Types
                 case "Suddendeath": return new OsuModSuddenDeath();
                 case "Perfect": return new OsuModPerfect();
                 case "Flashlight": return new OsuModFlashlight();
-                default: return new ModNoMod();
+                default: throw new NullReferenceException("Could not find a lazer-mod equivalent.");
             }
 
         }
