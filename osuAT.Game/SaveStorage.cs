@@ -388,7 +388,6 @@ namespace osuAT.Game
             SaveData.Scores[scoreID] = new Score()
             {
                 ScoreRuleset = RulesetStore.Osu,
-                IsLazer = false,
                 OsuID = -1,
                 BeatmapInfo = new Beatmap
                 {

@@ -21,7 +21,6 @@ namespace osuAT.Game.Tests.Visual.Display
             Score dummyscore = new Score()
             {
                 ScoreRuleset = RulesetStore.Osu,
-                IsLazer = false,
                 OsuID = 3152295822,
                 BeatmapInfo = new Beatmap
                 {

@@ -59,13 +59,6 @@ namespace osuAT.Game.Types
         public RulesetInfo ScoreRuleset { get; set; }
 
         /// <summary>
-        /// Whether or not the score was set in osu!lazer.
-        /// </summary>
-        // [!] Queued for removal (can be added in when a new save format is created.)
-        [JsonProperty("islazer")]
-        public bool IsLazer { get; set; }
-
-        /// <summary>
         /// The score's ID based on osu!web. It can be null depending on how the score is imported.
         /// </summary>
         [JsonProperty("osu_scoreid")]
@@ -192,7 +185,6 @@ namespace osuAT.Game.Types
                 ID = ID,
                 ScoreRuleset = ScoreRuleset,
                 RulesetName = RulesetName,
-                IsLazer =IsLazer,
                 OsuID = OsuID,
                 BeatmapInfo = BeatmapInfo,
                 Grade = Grade,

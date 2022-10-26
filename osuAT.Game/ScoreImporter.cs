@@ -172,7 +172,6 @@ namespace osuAT.Game
                 Score score = new Score
                 {
                     ScoreRuleset = RulesetStore.Osu,
-                    IsLazer = false,
                     OsuID = long.Parse(mapScore.ScoreID),
                     BeatmapInfo = new Beatmap
                     {

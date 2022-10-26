@@ -237,7 +237,6 @@ namespace osuAT.Game.Tests.Visual
             dummyscore = new Score()
             {
                 ScoreRuleset = RulesetStore.Osu,
-                IsLazer = false,
                 OsuID = 3152295822,
                 BeatmapInfo = new Beatmap
                 {
@@ -273,7 +272,6 @@ namespace osuAT.Game.Tests.Visual
             dummyscore = new Score()
             {
                 ScoreRuleset = RulesetStore.Osu,
-                IsLazer = false,
                 OsuID = 3152295822,
                 BeatmapInfo = new Beatmap
                 {
