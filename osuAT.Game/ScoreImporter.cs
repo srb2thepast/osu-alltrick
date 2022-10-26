@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -119,19 +119,26 @@ namespace osuAT.Game
                 if (false) // (mapScore?.ScoreID != osuScore.ScoreID)
                     return;
 
-                // check if the score has already been saved, if so return.
-                // check if the score is the new top on a map, if so delete it in preperation for replacement.
+                // already saved check + new top score check
                 foreach (Score savedscore in SaveStorage.SaveData.Scores.Values)
                 {
+                    // check if the score has already been saved, if so return.
                     if (savedscore.OsuID.ToString() == mapScore.ScoreID)
                     {
                         Console.WriteLine("Score " + savedscore.OsuID.ToString() + " (osu! id) has already been imported.");
                         lastScreen = (OsuMemoryStatus)gameData.RawStatus;
                         // return; [!]
                     }
+                    // check if a score on that diff has already been set, 
                     if (savedscore.BeatmapInfo.MapID == int.Parse(osuMap.BeatmapID)) {
-                        Console.WriteLine("New top score detected! Overwriting previous.");
-                        SaveStorage.RemoveScore(savedscore.ID);
+                        // check if the just score set is higher than the one currently savd. 
+                        if (savedscore.TotalScore < osuScore.score) {
+                            // if so delete it in preperation for replacement.
+                            Console.WriteLine("New top score detected! Overwriting previous.");
+                            SaveStorage.RemoveScore(savedscore.ID);
+                        } else { // if it's not the best, return.
+                            return;
+                        }
                     }
                 }
 

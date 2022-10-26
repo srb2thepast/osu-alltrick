@@ -316,6 +316,7 @@ namespace osuAT.Game
                         OsuApiKey.Key = apikeyText.Text;
                         apikeyText.FlashColour(Color4.Green, 3000, Easing.InOutCubic);
                         // Set UserID
+                        // [!] Make it so that the username box is grayed out and untypable until you put in the api key.
                         OsuUser player = OsuApi.GetUser(usernameText.Text);
                         if (player == default)
                         {
