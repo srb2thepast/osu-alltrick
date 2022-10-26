@@ -173,7 +173,7 @@ namespace osuAT.Game.Types
                 Console.WriteLine(Mods);
             }
 
-            if (BeatmapInfo.FolderName != "deleted" && BeatmapInfo.FolderName != default)
+            if (BeatmapInfo.FolderLocation != "deleted" && BeatmapInfo.FolderLocation != default)
             {
                 if (loadBeatmapContents || calcPP) { BeatmapInfo.LoadMapContents(ScoreRuleset,Mods); }
                 if (calcPP) { AlltrickPP = Skill.CalcAll(this); }

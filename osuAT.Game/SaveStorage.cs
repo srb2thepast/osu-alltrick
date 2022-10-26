@@ -121,8 +121,7 @@ namespace osuAT.Game
             return dict;
         }
 
-        static SaveStorage() {
-
+        public static void Init() {
             if (!(CheckSaveExists())) {
                 SaveData = new CSaveData {
                     PlayerID = -1,
@@ -338,7 +337,7 @@ namespace osuAT.Game
                     SongName = "deleted",
                     DifficultyName = "deleted",
                     MapsetCreator = "deleted",
-                    FolderName = "deleted",
+                    FolderLocation = "deleted",
                     StarRating = 0,
                     MaxCombo = 0
                 },

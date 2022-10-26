@@ -3,10 +3,15 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Platform;
 using osu.Framework.Testing;
 using osu.Framework.Allocation;
+using osu.Game;
+using osu.Game.Tests;
+using osu.Game.Tests.Visual;
+using osuAT.Game;
+using osuAT.Game.Tests;
 
-namespace osuAT.Game.Tests
+namespace SkillAnalyzer
 {
-    public class osuATTestBrowser : osuATGameBase
+    public class SkillAnalyzerTestBrowser : OsuGameBase
     {
         protected override void LoadComplete()
         {
@@ -14,7 +19,7 @@ namespace osuAT.Game.Tests
 
             AddRange(new Drawable[]
             {
-                new TestBrowser("osuAT"),
+                new TestBrowser("SkillAnalyzer"),
                 new CursorContainer()
             });
         }
@@ -22,8 +27,8 @@ namespace osuAT.Game.Tests
         [BackgroundDependencyLoader]
         private void load()
         {
-
-            this.Window.Title = "osu!alltrick";
+            
+            this.Window.Title = "osu!alltrick's SkillAnalyzer";
             SaveStorage.Init();
             ScoreImporter.Init();
         }

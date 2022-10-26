@@ -70,7 +70,7 @@ namespace osuAT.Game.Skills
         public double SkillCalc(Score score)
         {
             if (!SupportedRulesets.Contains(score.ScoreRuleset)) return -1;
-            if (score.BeatmapInfo.FolderName == default) return -2;
+            if (score.BeatmapInfo.FolderLocation == default) return -2;
             if (score.BeatmapInfo.HitObjects == default) return -3;
 
 

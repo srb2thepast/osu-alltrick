@@ -19,7 +19,7 @@ namespace osuAT.Game.Tests.Visual
     {
         private static int scoreCount = 1;
 
-        private Score scoreA = new Score()
+        private Score scoreA = new()
         {
             ScoreRuleset = RulesetStore.Osu,
             IsLazer = false,
@@ -34,18 +34,18 @@ namespace osuAT.Game.Tests.Visual
                 MapsetCreator = "Sotarks",
                 StarRating = 7.20,
                 MaxCombo = 300,
-                FolderName = @"Songs\771159 VINXIS - Sidetracked Day (Short Ver)\VINXIS - Sidetracked Day (Short Ver.) (Sotarks) [deathstream].osu"
+                FolderLocation = @"Songs\771159 VINXIS - Sidetracked Day (Short Ver)\VINXIS - Sidetracked Day (Short Ver.) (Sotarks) [deathstream].osu"
             },
             Grade = "SH",
             Accuracy = 99.51,
             AccuracyStats = new AccStat(285, 15, 0, 0),
             Combo = 300,
             TotalScore = 11627,
-            Mods = new List<ModInfo> {ModStore.Doubletime},
+            Mods = new List<ModInfo> {ModStore.Hardrock, ModStore.Doubletime},
             DateCreated = System.DateTime.Today
         };
 
-        private Score scoreB = new Score()
+        private Score scoreB = new()
         {
             ScoreRuleset = RulesetStore.Osu,
             IsLazer = false,
@@ -60,7 +60,7 @@ namespace osuAT.Game.Tests.Visual
                 MapsetCreator = "Naidaaka",
                 StarRating = 7.93,
                 MaxCombo = 2336,
-                FolderName = @"Songs\257607 xi - FREEDOM DiVE\xi - FREEDOM DiVE (elchxyrlia) [Arles].osu"
+                FolderLocation = @"Songs\257607 xi - FREEDOM DiVE\xi - FREEDOM DiVE (elchxyrlia) [Arles].osu"
             },
             Grade = "SH",
             Accuracy = 0.03,
@@ -73,7 +73,7 @@ namespace osuAT.Game.Tests.Visual
 
         private void createScoreSliders(Score score)
         {
-            AddLabel($"---SCORE {scoreCount.ToString()}---");
+            AddLabel($"---SCORE {scoreCount}---");
 
             AddLabel("---Beatmap Settings---");
             AddSliderStep("HP Drain", 0f, 11f, score.BeatmapInfo.DifficultyInfo.DrainRate, v =>  score.BeatmapInfo.DifficultyInfo.DrainRate = v);
@@ -95,8 +95,8 @@ namespace osuAT.Game.Tests.Visual
             {
                 ScoreDisplay scoreAdisplay;
                 ScoreDisplay scoreBdisplay;
-                scoreA.Register();
-                scoreB.Register();
+                //scoreA.Register();
+                //scoreB.Register();
                 Child = new Container
                 {
                     Anchor = Anchor.Centre,

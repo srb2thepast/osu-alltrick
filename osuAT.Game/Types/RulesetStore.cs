@@ -9,16 +9,17 @@ using osu.Framework.Graphics.Textures;
 using osuAT.Game.Objects;
 using osuAT.Game.Objects.LazerAssets;
 using osuAT.Game.Objects.LazerAssets.Mod;
+using osu.Game.Beatmaps;
+using osu.Game.Rulesets;
+using osu.Game.Rulesets.Osu;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
-using osuTK;
-using osu.Game.Rulesets;
-using osu.Game.Beatmaps;
-using osu.Game.Rulesets.Osu;
+using osu.Game.Rulesets.Difficulty.Skills;
 using osu.Game.Rulesets.Osu.Difficulty;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Objects.Legacy.Osu;
+using osuTK;
 namespace osuAT.Game.Types
 {
 
@@ -39,24 +40,19 @@ namespace osuAT.Game.Types
 
     }
 
-    
-
     public class RulesetStore
     {
-        public interface IDiffObjectGiver {
-
-            public IEnumerable<DifficultyHitObject> GetDiffHitobjects(IBeatmap beatmap);
-
-        }
-
-        public class OsuDiffCalc : OsuDifficultyCalculator, IDiffObjectGiver
+        #region Mode Difficulty Calculators
+        public class OsuDiffCalc : OsuDifficultyCalculator, IExtendedDifficultyCalculator
         {
 
             public OsuDiffCalc(IRulesetInfo ruleset, IWorkingBeatmap beatmap) : base(ruleset, beatmap)
             {
             }
 
-            protected override IEnumerable<DifficultyHitObject> CreateDifficultyHitObjects(IBeatmap beatmap, double clockRate) {
+            public Skill[] GetSkills() => throw new NotImplementedException();
+
+            protected IEnumerable<DifficultyHitObject> CreateDifficultyHitObjectsOld(IBeatmap beatmap, double clockRate) {
                 List<DifficultyHitObject> objects = new List<DifficultyHitObject>();
 
                 // The first jump is formed by the first two hitobjects of the map.
@@ -74,15 +70,18 @@ namespace osuAT.Game.Types
                 return objects;
              }
 
-            public IEnumerable<DifficultyHitObject> GetDiffHitobjects(IBeatmap beatmap)
+            public IEnumerable<DifficultyHitObject> GetDifficultyHitObjects(IBeatmap beatmap, double clockRate)
             {
-                var track = new TrackVirtual(10000);
-                var clockRate = track.Rate;
                 Console.WriteLine($"rate: {clockRate}");
-
                 return CreateDifficultyHitObjects(beatmap, clockRate);
             }
+
+            DifficultyHitObject[] IExtendedDifficultyCalculator.GetDifficultyHitObjects(IBeatmap beatmap, double clockRate)
+            {
+                return CreateDifficultyHitObjects(beatmap, clockRate).ToArray();
+            }
         }
+        #endregion
 
         public static RulesetInfo Osu = new RulesetInfo("osu", OsuIcon.RulesetOsu,0); 
         public static RulesetInfo Mania = new RulesetInfo("mania", OsuIcon.RulesetMania,1);
@@ -138,7 +137,7 @@ namespace osuAT.Game.Types
             throw new NotImplementedException();
         }
 
-        public static IDiffObjectGiver GetDiffCalcObj(RulesetInfo ruleset, IWorkingBeatmap map)
+        public static IExtendedDifficultyCalculator GetDiffCalcObj(RulesetInfo ruleset, IWorkingBeatmap map)
         {
             if (ruleset == Osu)
             {

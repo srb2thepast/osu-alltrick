@@ -19,7 +19,7 @@ namespace osuAT.Game
         // It allows for caching global dependencies that should be accessible to tests, or changing
         // the screen scaling for all components including the test browser and framework overlays.
         protected override Container<Drawable> Content { get; }
-        private DependencyContainer dependencies;
+        public static new DependencyContainer Dependencies;
         public static readonly EndpointConfiguration ENDPOINT_CONFIGURATION = new ProductionEndpointConfiguration();
 
         protected osuATGameBase()
@@ -45,7 +45,7 @@ namespace osuAT.Game
             return false;
         }
         */
-        
+
         [BackgroundDependencyLoader]
         private void load()
         {
@@ -58,15 +58,15 @@ namespace osuAT.Game
 
             var largeStore = new LargeTextureStore(Host.Renderer, Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"Textures")));
             largeStore.AddTextureSource(Host.CreateTextureLoaderStore(new OnlineStore()));
-            dependencies.Cache(largeStore);
-
-            dependencies.CacheAs(this);
+            Dependencies.Cache(largeStore);
+            Dependencies.CacheAs(this);
 
             this.Window.Title = "osu!alltrick";
+            SaveStorage.Init();
             ScoreImporter.Init();
         }
-            
+
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) =>
-            dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+            Dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
     }
 }

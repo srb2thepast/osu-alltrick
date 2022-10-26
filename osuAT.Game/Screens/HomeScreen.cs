@@ -7,6 +7,7 @@ using osu.Framework.Graphics.Effects;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Audio;
 using osuTK;
 using osuTK.Graphics;
 using osuAT.Game.Objects;
@@ -34,13 +35,17 @@ namespace osuAT.Game.Screens
             }
         }
 
+        [Resolved]
+        private AudioManager audio { get; set; }
+
         public SettingsButton SetButton;
         
 
         [BackgroundDependencyLoader]
         private void load(LargeTextureStore textures)
         {
-
+            SaveStorage.Init();
+            System.Console.WriteLine(audio);
             InternalChildren = new Drawable[]
             {
                 background = new Container

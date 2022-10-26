@@ -170,7 +170,7 @@ namespace osuAT.Game
                         SongName = osuMap.Title,
                         DifficultyName = osuMap.DifficultyName,
                         MapsetCreator = osuMap.Mapper,
-                        FolderName = osuFile.Remove(0, SaveStorage.SaveData.OsuPath.Length + 1),
+                        FolderLocation = osuFile.Remove(0, SaveStorage.SaveData.OsuPath.Length + 1),
                         MaxCombo = (int)osuMap.MaxCombo,
                         StarRating = (double)osuMap.Starrating
                     },
