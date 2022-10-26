@@ -9,6 +9,5 @@ namespace osuAT.Game.Types;
 
 public interface IExtendedDifficultyCalculator
 {
-    Skill[] GetSkills();
     DifficultyHitObject[] GetDifficultyHitObjects(IBeatmap beatmap, double clockRate);
 }

@@ -50,8 +50,6 @@ namespace osuAT.Game.Types
             {
             }
 
-            public Skill[] GetSkills() => throw new NotImplementedException();
-
             protected IEnumerable<DifficultyHitObject> CreateDifficultyHitObjectsOld(IBeatmap beatmap, double clockRate) {
                 List<DifficultyHitObject> objects = new List<DifficultyHitObject>();
 
