@@ -11,7 +11,7 @@ namespace SkillAnalyzer
         {
             
             using (GameHost host = Host.GetSuitableDesktopHost("SkillAnalyzer"))
-            using (var game = new SkillAnalyzerTestBrowser())
+            using (var game = new SkillAnalyzerTestBrowserLoader())
                 host.Run(game);
         }
     }

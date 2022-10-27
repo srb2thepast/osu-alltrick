@@ -11,6 +11,9 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Textures;
 using osu.Game;
 using osu.Game.Screens;
@@ -33,6 +36,14 @@ using ATBeatmap = osuAT.Game.Types.Beatmap;
 using ATRulesetStore = osuAT.Game.Types.RulesetStore;
 using osu.Framework.Testing;
 using osu.Game.Screens.Edit.Components.Timelines.Summary;
+using osu.Framework.Extensions.IEnumerableExtensions;
+using osu.Framework.Extensions.Color4Extensions;
+using osu.Game.Graphics.Cursor;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
+using osu.Game.Screens.Edit.Components;
+using osuTK;
+using osuTK.Graphics;
 
 namespace SkillAnalyzer.Visual
 {
@@ -44,10 +55,110 @@ namespace SkillAnalyzer.Visual
         // protected override bool IsolateSavingFromDatabase => false;
         protected override Ruleset CreateEditorRuleset() => new OsuRuleset();
 
-        protected class AnalyzerEditor : TestEditor {
+        protected class AnalyzerEditor : TestEditor
+        {
+            public AnalyzerEditor(EditorLoader loader) : base(loader) {
+
+            }
+            public class AnalyzerSummaryTimeline : SummaryTimeline
+            {
+                // add graph here
+            }
+
+            public class AnalyzerBottomBar : CompositeDrawable
+            {
+                
+
+                public TestGameplayButton TestGameplayButton { get; private set; }
+
+                [BackgroundDependencyLoader]
+                private void load(OverlayColourProvider colourProvider, Editor editor)
+                {
+                    Anchor = Anchor.BottomLeft;
+                    Origin = Anchor.BottomLeft;
+
+                    RelativeSizeAxes = Axes.X;
+
+                    Height = 60;
+
+                    Masking = true;
+                    EdgeEffect = new EdgeEffectParameters
+                    {
+                        Colour = Color4.Black.Opacity(0.2f),
+                        Type = EdgeEffectType.Shadow,
+                        Radius = 10f,
+                    };
+
+                    InternalChildren = new Drawable[]
+                    {
+                new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = colourProvider.Background4,
+                },
+                new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Child = new GridContainer
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        ColumnDimensions = new[]
+                        {
+                            new Dimension(GridSizeMode.Absolute, 170),
+                            new Dimension(),
+                            new Dimension(GridSizeMode.Absolute, 220),
+                            new Dimension(GridSizeMode.Absolute, 120),
+                        },
+                        Content = new[]
+                        {
+                            new Drawable[]
+                            {
+                                new TimeInfoContainer { RelativeSizeAxes = Axes.Both },
+                                new AnalyzerSummaryTimeline { RelativeSizeAxes = Axes.Both },
+                                new PlaybackControl { RelativeSizeAxes = Axes.Both },
+                                TestGameplayButton = new TestGameplayButton
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Padding = new MarginPadding { Left = 10 },
+                                    Size = new Vector2(1),
+                                    Action = editor.TestGameplay,
+                                }
+                            },
+                        }
+                    },
+                }
+                    };
+                }
+            }
+
+            private AnalyzerBottomBar bottomBar;
+
+            [BackgroundDependencyLoader]
+            private void load() {
+                OsuContextMenuContainer ContextMenu = (OsuContextMenuContainer)InternalChildren[2];
+                CompositeDrawable editBottomBar = (CompositeDrawable)ContextMenu[2];
+                ContextMenu.Remove(editBottomBar,true);
+                ContextMenu.Add(bottomBar = new AnalyzerBottomBar());
+
+            }
             SummaryTimeline timeline;
+            public new bool Save()
+            {
+                Console.WriteLine("heya");
+                return false;
+            }
+
         }
-        private TestEditorLoader editorLoader;
+
+        protected class AnalyzerEditorLoader : TestEditorLoader
+        {
+            protected override TestEditor CreateTestEditor(EditorLoader loader)
+            {
+                return new AnalyzerEditor(loader);
+            }
+        }
+
+        private AnalyzerEditorLoader editorLoader;
         protected new TestEditor Editor => editorLoader.Editor;
         protected new EditorBeatmap EditorBeatmap => Editor.ChildrenOfType<EditorBeatmap>().Single();
         protected new EditorClock EditorClock => Editor.ChildrenOfType<EditorClock>().Single();
@@ -62,7 +173,7 @@ namespace SkillAnalyzer.Visual
             base.Beatmap.Value = CreateWorkingBeatmap(base.Ruleset.Value);
 
 
-            LoadScreen(editorLoader = new TestEditorLoader());
+            LoadScreen(editorLoader = new AnalyzerEditorLoader());
         }
 
         protected override IBeatmap CreateBeatmap(OsuRulesetInfo ruleset)
@@ -77,7 +188,6 @@ namespace SkillAnalyzer.Visual
             WorkFocusedMap.LoadTrack();
             WorkFocusedMap.Track.Start();
             FocusedBeatmap.BeatmapInfo.BeatDivisor = 4;
-            Console.WriteLine(WorkFocusedMap.Track);
 
             return FocusedBeatmap;
         }

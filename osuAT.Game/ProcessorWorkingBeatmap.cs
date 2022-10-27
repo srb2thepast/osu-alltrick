@@ -27,6 +27,8 @@ using Beatmap = osu.Game.Beatmaps.Beatmap;
 using FileWebRequest = osu.Framework.IO.Network.FileWebRequest;
 using RulesetStore = osuAT.Game.Types.RulesetStore;
 using FileInfo = System.IO.FileInfo;
+using osu.Game.Resources.Localisation.Web;
+using osu.Game.Database;
 
 namespace osuAT.Game
 {
@@ -64,7 +66,10 @@ namespace osuAT.Game
 
             if (beatmapId.HasValue)
                 beatmap.BeatmapInfo.OnlineID = beatmapId.Value;
+
+            BeatmapSetInfo = beatmap.BeatmapInfo.BeatmapSet ?? new BeatmapSetInfo();
         }
+
 
         private static Beatmap readFromFile(string filename)
         {
@@ -214,6 +219,7 @@ namespace osuAT.Game
         }
 
 
+        public new readonly BeatmapSetInfo BeatmapSetInfo;
         protected override IBeatmap GetBeatmap() => beatmap;
         protected override Texture GetBackground() => null;
         protected override ISkin GetSkin() => null;
