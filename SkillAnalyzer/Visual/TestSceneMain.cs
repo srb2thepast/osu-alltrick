@@ -11,6 +11,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
@@ -29,8 +30,6 @@ using osu.Game.Overlays;
 using osu.Game.Tests;
 using osu.Game.Tests.Visual;
 using osuTK.Input;
-using osuAT.Game;
-using osuAT.Game.Types;
 using OsuRulesetInfo = osu.Game.Rulesets.RulesetInfo;
 using ATBeatmap = osuAT.Game.Types.Beatmap;
 using ATRulesetStore = osuAT.Game.Types.RulesetStore;
@@ -39,11 +38,18 @@ using osu.Game.Screens.Edit.Components.Timelines.Summary;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Game.Graphics.Cursor;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
+using osu.Game.Graphics.UserInterface;
+using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Screens.Edit.Components;
 using osuTK;
 using osuTK.Graphics;
+using osuAT.Game;
+using osuAT.Game.Types;
+using osuAT.Game.Skills;
+using osu.Framework.Bindables;
+using osu.Game.Rulesets.Difficulty.Skills;
+using static SkillAnalyzer.SkillAnalyzerTestBrowser;
+using Skill = osuAT.Game.Skills.Skill;
 
 namespace SkillAnalyzer.Visual
 {
@@ -54,7 +60,7 @@ namespace SkillAnalyzer.Visual
         protected WorkingBeatmap WorkFocusedMap;
         // protected override bool IsolateSavingFromDatabase => false;
         protected override Ruleset CreateEditorRuleset() => new OsuRuleset();
-
+        #region Classes + Hiding & Overrides
         protected class AnalyzerEditor : TestEditor
         {
             public AnalyzerEditor(EditorLoader loader) : base(loader) {
@@ -157,15 +163,150 @@ namespace SkillAnalyzer.Visual
                 return new AnalyzerEditor(loader);
             }
         }
-
+       
         private AnalyzerEditorLoader editorLoader;
         protected new TestEditor Editor => editorLoader.Editor;
         protected new EditorBeatmap EditorBeatmap => Editor.ChildrenOfType<EditorBeatmap>().Single();
         protected new EditorClock EditorClock => Editor.ChildrenOfType<EditorClock>().Single();
 
+        #endregion
+
+        
+        public static event EventHandler<List<ISkill>> ListChanged;
+
+
         [BackgroundDependencyLoader]
-        private void load(AudioManager audio) {
+        private void load(AudioManager audio)
+        {
+
+            ///
+            LabelledGraph skillGraph;
+            BindableWithCurrent<List<ISkill>> current = new BindableWithCurrent<List<ISkill>>(new List<ISkill>());
+
+            //
+            BasicScrollContainer buttonSelectScroll;
+            Add(new Container
+            {
+                RelativeSizeAxes = Axes.Y,
+                Size = new Vector2(200, 1),
+                Masking = true,
+                Children = new Drawable[]
+                {
+                    new SafeAreaContainer
+                    {
+                        SafeAreaOverrideEdges = Edges.Left | Edges.Top | Edges.Bottom,
+                        RelativeSizeAxes = Axes.Both,
+                        Child = new Box
+                        {
+                            Colour = new Color4(25, 25, 25, 255),
+                            RelativeSizeAxes = Axes.Both
+                        }
+                    },
+                    new FillFlowContainer
+                    {
+                        Direction = FillDirection.Vertical,
+                        RelativeSizeAxes = Axes.Both,
+                        Children = new Drawable[]
+                        {
+
+                            buttonSelectScroll = new BasicScrollContainer
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Masking = false,
+                            }
+
+                        }
+                    }
+                }
+            });
+            int BeatmapHighestSpike = 50;
+            Add(
+                skillGraph = new LabelledGraph(
+                new SpacedBarGraph
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.TopLeft,
+                    Origin = Anchor.TopLeft,
+                    Size = new Vector2(4, 3),
+                    Scale = new Vector2(0.2f,0.2f)*new Vector2(2, 1),
+                    MaxValue = BeatmapHighestSpike,
+                    BarSpacing = 1f
+                }) {
+                    Anchor = Anchor.TopLeft,
+                    Scale = new Vector2(0.9f)
+                });
+
+            int i = 0;
+            foreach (ISkill skill in Skill.SkillList)
+            {
+                buttonSelectScroll.Add(
+                    new Box
+                    {
+                        Size = new Vector2(190, 23),
+                        Y = i * 30 + 20,
+                        X = 3,
+                        Anchor = Anchor.TopLeft,
+                        Colour = new Color4(0.15f, 0.15f, 0.15f, 1)
+                    }
+                );
+                SkillCheckbox newbox = new SkillCheckbox(skill)
+                {
+                    Y = i * 30 + 20,
+
+                };
+                newbox.Current.ValueChanged += delegate (ValueChangedEvent<bool> Enabled)
+                {
+                    var newList = current.Current.Value;
+                    if (Enabled.NewValue)
+                    {
+                        newList.Add(newbox.Skill);
+                    }
+                    else
+                    {
+                        newList.Remove(newbox.Skill);
+                    }
+                    Console.WriteLine(current.Current.Value);
+                    current.Current.TriggerChange();
+                };
+                buttonSelectScroll.Add(newbox);
+                i++;
+            };
+
+            skillGraph.SetValues(new SortedList<string, float> {
+                {"flowaim",50 },
+                {"consistency",30 },
+                {"aim",80 },
+                {"speed",80 },
+            });
+
+            current.Current.ValueChanged += delegate (ValueChangedEvent<List<ISkill>> skillList)
+            {
+                Console.WriteLine("invoked");
+                skillList.NewValue.ForEach(d => Console.WriteLine(d.GetType()));
+                // ListChanged.Invoke(this, skillList.NewValue);
+                Console.WriteLine("catW");
+                //
+            };
+            /////
+
+            // BindableWithCurrent<List<ISkill>>
+            Console.WriteLine("hi");
+            Children.ForEach(d => { Console.WriteLine(d.GetType()); });
             Console.WriteLine(Audio);
+            /*
+            SkillAnalyzerTestBrowser.ListChanged += delegate (object sender, List<ISkill> skillList)
+            {
+                Console.WriteLine("catW");
+            };
+            */
+        }
+
+        protected void ReloadSkills(ValueChangedEvent<List<ISkill>> enabledList)
+        {
+            Console.WriteLine("Changed");
+            foreach (ISkill skill in enabledList.NewValue) {
+                Console.WriteLine(skill.GetType());
+            }
         }
 
         protected override void LoadEditor()
