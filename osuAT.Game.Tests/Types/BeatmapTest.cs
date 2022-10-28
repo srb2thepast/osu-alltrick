@@ -12,9 +12,12 @@ namespace osuAT.Game.Tests.Types
     public class BeatmapTest
     {
         [Test]
-        public void TestInvalidPare()
+        public void TestGetContents()
         {
-            
+            Beatmap map = new Beatmap() {
+                FolderLocation = "Hi"
+            }
+            Assert.Throws<NotSupportedException>("Throws from immediate access",() => {} ) 
         }
     }
 }
