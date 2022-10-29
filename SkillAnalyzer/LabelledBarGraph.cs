@@ -10,6 +10,7 @@ using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using osuAT.Game.Skills;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using static System.Net.Mime.MediaTypeNames;
+using osu.Framework.Graphics.Colour;
 
 namespace SkillAnalyzer
 {
@@ -20,6 +21,8 @@ namespace SkillAnalyzer
         protected Container GraphContainer;
 
         protected Container PresContainer;
+
+        protected Container BackerPresContainer;
 
         /// <summary>
         /// 
@@ -34,10 +37,16 @@ namespace SkillAnalyzer
                 Anchor = Anchor.Centre,
 
                 Size = new Vector2(500, 500),
-                Child = PresContainer = new DrawSizePreservingFillContainer
-                {
-                    Anchor = Anchor.TopLeft,
-                    Child = SBarGraph
+                Children = new Drawable[]{
+                    BackerPresContainer = new DrawSizePreservingFillContainer
+                    {
+                        Anchor = Anchor.TopLeft,
+                    },
+                    PresContainer = new DrawSizePreservingFillContainer
+                    {
+                        Anchor = Anchor.TopLeft,
+                        Child = SBarGraph
+                    }
                 }
             }
             );
@@ -47,19 +56,24 @@ namespace SkillAnalyzer
 
         }
 
-        public void SetValues(SortedList<string,float> values, List<Colour4> colors = null, List<float> Shadows = null)
+        public void SetValues(SortedList<string,float> values, List<ColourInfo> colors = null, List<float> Backers = null)
         {
-            colors ??= new List<Colour4> { Colour4.White };
+            colors ??= new List<ColourInfo> { Colour4.White };
             // colors.Count should be equal to values.Count
             // Console.WriteLine(((Container)GraphContainer.Child).Children[0].Size.X);
             List<Drawable> removeList = new List<Drawable>();
             PresContainer.RemoveAll(
-                (draw) => { return (draw is TextFlowContainer); },false
+                (draw) => { return (draw is TextFlowContainer || draw is Bar); }, false
+                );
+            BackerPresContainer.RemoveAll(
+                (draw) => { return (draw is TextFlowContainer || draw is Bar); }, false
                 );
 
             SBarGraph.NameValues = values;
             int i = 0;
             int amount = SBarGraph.Children.Count;
+            List<Bar> barsToAdd = new List<Bar>();
+
             foreach (Bar child in SBarGraph.Children)
             {
                 // Console.WriteLine(i.ToString() + values.Keys[i].ToString());
@@ -70,24 +84,35 @@ namespace SkillAnalyzer
                 // Console.WriteLine(scale.ToString() + "hei");
                 child.Colour = colors[(int)index % colors.Count];
                 TextFlowContainer textflow;
-                ((Container)GraphContainer.Child).Add(textflow = new TextFlowContainer()
+                PresContainer.Add(textflow = new TextFlowContainer()
                 {
                     Anchor = Anchor.BottomLeft,
                     Size = new Vector2(30f / amount * 12 * scale, 40),
-                    Position = new Vector2(((index) / amount * 415 * 2 * scale) * (SBarGraph.BarSpacing * 1 / 2f + 0.5f) + 510, 360),
+                    Position = new Vector2(((index) / amount * 410 * 2 * scale) * (SBarGraph.BarSpacing * 1 / 2f + 0.5f) + 510, 360),
                 });
                 textflow.AddText(
                     $"{values.Keys[(int)index]} \n ({(Math.Truncate((float)values.Values[(int)index] * 100)) / 100})",
                     t => t.Font = new FontUsage("VarelaRound", size: 18 * scale));
-                if (Shadows != default) {
-                    Bar newBar = child;
-                    newBar.Y = 40;
-                    SBarGraph.Add(newBar);
-                }
                 i++;
+                if (Backers != default)
+                {
+                    Bar newBar = new Bar()
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Size = new Vector2(child.Size.X, 1f),
+                        Length = child.Length/1.65f,
+                        Direction = SBarGraph.Direction,
+                        Position = new Vector2(((index) / amount * 410 * 2 * scale) * (SBarGraph.BarSpacing * 1 / 2f + 0.5f) + 412  , 342),
+                    };
+                    newBar.X += 100;
+                    newBar.X += 200;
+                    newBar.Colour = Colour4.DimGray.MultiplyAlpha(0.5f);
+                    barsToAdd.Add(newBar);
+                }
             }
-            foreach (KeyValuePair<string, float> pair in values) {
-                
+            foreach (Bar newBar in barsToAdd)
+            {
+                BackerPresContainer.Add(newBar);
             }
             RelativeSizeAxes = Axes.Both;
         }

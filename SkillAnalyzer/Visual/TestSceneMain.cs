@@ -59,6 +59,7 @@ using osuTK.Graphics.OpenGL;
 using NuGet.Packaging.Rules;
 using OsuMemoryDataProvider.OsuMemoryModels.Abstract;
 using osu.Game.Rulesets.Mods;
+using SixLabors.ImageSharp.Processing.Processors.Transforms;
 
 namespace SkillAnalyzer.Visual
 {
@@ -187,7 +188,6 @@ namespace SkillAnalyzer.Visual
         #endregion
 
         private Score dummyScore;
-        private Score dummyScoreFC;
 
         [BackgroundDependencyLoader]
         private void load(AudioManager audio)
@@ -216,7 +216,7 @@ namespace SkillAnalyzer.Visual
             
             currentSkillList = skillList;
             SortedList<string, float> skillNameList = new SortedList<string, float>();
-            List<Colour4> skillColors = new List<Colour4>();
+            List<ColourInfo> skillColors = new List<ColourInfo>();
 
             skillList.ForEach(
                 skill =>
@@ -224,7 +224,7 @@ namespace SkillAnalyzer.Visual
                     float skillpp = (float)skill.SkillCalc(dummyScore);
                     if (skillpp < 0) skillpp = 0;
                     skillNameList.Add(skill.Identifier, skillpp);
-                    skillColors.Add(skill.PrimaryColor);
+                    skillColors.Add(ColourInfo.GradientVertical(skill.PrimaryColor, skill.SecondaryColor));
                     if (largestPP < skillpp) largestPP = skillpp;
                     Console.WriteLine(skill.Identifier + ": " + skillpp);
                 }
@@ -232,8 +232,8 @@ namespace SkillAnalyzer.Visual
 
             // ListChanged.Invoke(this, skillList.NewValue);
             //  Console.WriteLine("catWa");
-            SkillGraph.SBarGraph.MaxValue = 299;
-            SkillGraph.SetValues(skillNameList, new List<Colour4> { Colour4.Blue, Colour4.BlueViolet });
+            SkillGraph.SBarGraph.MaxValue = (largestPP < 500)? 500 : largestPP;
+            SkillGraph.SetValues(skillNameList, skillColors);
         }
 
 
@@ -260,10 +260,10 @@ namespace SkillAnalyzer.Visual
                             
                             return d.Index <= closeindex;
                         }).ToList();
-                        dummyScoreFC = dummyScore.Clone();
-                        dummyScoreFC.Combo = dummyScoreFC.BeatmapInfo.MaxCombo;
-
+                        dummyScore.Combo = GetMaxCombo(dummyScore.BeatmapInfo); // calculated combo with current amount of hit objects
+                        dummyScore.BeatmapInfo.MaxCombo = dummyScore.Combo;
                         Console.WriteLine($"" +
+                            $"combo: {dummyScore.Combo} / {dummyScore.BeatmapInfo.MaxCombo} \n" +
                             $"editor time: {EditorClock.CurrentTime} \n" +
                             $"closest index: {closeindex} \n" +
                             $"cached diff: {CachedMapDiffHits.Count} \n" +
@@ -303,6 +303,7 @@ namespace SkillAnalyzer.Visual
 
         protected void FinishedLoading() {
             canUpdateBars = true;
+            UpdateBars(currentSkillList);
         }
 
         protected ATBeatmap ConvertWorkmapToATMap(WorkingBeatmap map) {
@@ -392,8 +393,6 @@ namespace SkillAnalyzer.Visual
                 Mods = new List<ModInfo>(),
                 AccuracyStats = new AccStat(ATFocusedMap.Contents.HitObjects.Count, 0, 0, 0),
             };
-            dummyScoreFC = dummyScore.Clone();
-            dummyScoreFC.Combo = ATFocusedMap.MaxCombo;
             return FocusedBeatmap;
         }
 
