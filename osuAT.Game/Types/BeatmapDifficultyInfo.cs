@@ -2,21 +2,73 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
-
+using osu.Game.Beatmaps;
+using osu.Game.Online.API.Requests.Responses;
+using osu.Game.Rulesets.Difficulty.Preprocessing;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Scoring;
+using ATBeatmap = osuAT.Game.Types.Beatmap;
 namespace osuAT.Game.Types
 {
-    public class BeatmapDifficultyInfo
-    {   
-        public float HPDrainRate { get; set; }
+    /// <summary>
+    /// Edited version of osu.Game.BeatmapExitensions
+    /// </summary>
+    public static class ATBeatmapExtensions
+    {
+        public static int GetMaxCombo(this List<DifficultyHitObject> hitObjs)
+        {
+            int combo2 = 0;
+            foreach (DifficultyHitObject hitObject in hitObjs)
+            {
+                addCombo(hitObject.BaseObject, ref combo2);
+            }
 
-        public float CircleSize { get; set; }
+            return combo2;
 
-        public float OverallDifficulty { get; set; }
-        
-        public float ApproachRate { get; set; }
+        }
 
-        public double SliderMultiplier { get; set; }
+        public static int GetMaxCombo(this ATBeatmap newmap)
+        {
+            int combo2 = 0;
+            foreach (DifficultyHitObject hitObject in newmap.Contents.DiffHitObjects)
+            {
+                addCombo(hitObject.BaseObject, ref combo2);
+            }
 
-        public double SliderTickRate { get; set; }
+            return combo2;
+        }
+
+        public static ATBeatmap ConvertToATMap(this WorkingBeatmap map,string folderlocation = "")
+        {
+            // [!] Add DiffHitObjects here
+            ATBeatmap newmap = new ATBeatmap()
+            {
+                MapID = map.BeatmapInfo.OnlineID,
+                MapsetID = map.BeatmapInfo.BeatmapSet.OnlineID,
+                SongArtist = map.BeatmapInfo.Metadata.ArtistUnicode,
+                SongName = map.BeatmapInfo.Metadata.TitleUnicode,
+                MapsetCreator = map.BeatmapInfo.BeatmapSet.Metadata.Author.Username,
+                DifficultyName = map.BeatmapInfo.Metadata.TitleUnicode,
+                StarRating = 1,
+                FolderLocation = folderlocation,
+            };
+            newmap.LoadMapContents(RulesetStore.Osu);
+            newmap.MaxCombo = newmap.GetMaxCombo();
+
+            return newmap;
+        }
+
+        private static void addCombo(HitObject hitObject, ref int combo)
+        {
+            if (hitObject.CreateJudgement().MaxResult.AffectsCombo())
+            {
+                combo++;
+            }
+
+            foreach (HitObject nestedHitObject in hitObject.NestedHitObjects)
+            {
+                addCombo(nestedHitObject, ref combo);
+            }
+        }
     }
 }

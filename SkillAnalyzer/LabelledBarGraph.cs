@@ -18,6 +18,8 @@ namespace SkillAnalyzer
     {
         public SpacedBarGraph SBarGraph { get; private set; }
 
+        protected Container BackgroundContainer;
+
         protected Container GraphContainer;
 
         protected Container PresContainer;
@@ -32,6 +34,9 @@ namespace SkillAnalyzer
         public LabelledBarGraph(SpacedBarGraph barGraph = null) {
             SBarGraph = barGraph ?? new SpacedBarGraph();
             SBarGraph.Anchor = Anchor.TopCentre;
+            Add(BackgroundContainer = new Container {
+
+            });
             Add(GraphContainer = new Container
             {
                 Anchor = Anchor.Centre,

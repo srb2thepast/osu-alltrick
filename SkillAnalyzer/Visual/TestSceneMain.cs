@@ -60,6 +60,8 @@ using NuGet.Packaging.Rules;
 using OsuMemoryDataProvider.OsuMemoryModels.Abstract;
 using osu.Game.Rulesets.Mods;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
+using HtmlAgilityPack;
+using System.Threading.Tasks;
 
 namespace SkillAnalyzer.Visual
 {
@@ -67,14 +69,23 @@ namespace SkillAnalyzer.Visual
     // [!] TODO: Get beatmap audio working
     public class TestSceneMain : EditorTestScene
     {
+        protected override Ruleset CreateEditorRuleset() => new OsuRuleset();
+
         protected string MapLocation = @"Songs\257607 xi - FREEDOM DiVE\xi - FREEDOM DiVE (elchxyrlia) [Arles].osu"; // @"Songs\1045600 MOMOIRO CLOVER Z - SANTA SAN\MOMOIRO CLOVER Z - SANTA SAN (A r M i N) [1-2-SANTA].osu";
         protected IBeatmap FocusedBeatmap;
         protected WorkingBeatmap WorkFocusedMap;
         protected ATBeatmap ATFocusedMap;
+        protected List<DifficultyHitObject> CachedMapDiffHits;
+        private Score dummyScore;
+
+        // settings //
+        private bool scaleByCombo = false;
+        // //////// //
 
         // protected override bool IsolateSavingFromDatabase => false;
-        protected override Ruleset CreateEditorRuleset() => new OsuRuleset();
         #region Classes + Hiding & Overrides
+
+        // Editor
         protected class AnalyzerEditor : TestEditor
         {
             public AnalyzerEditor(EditorLoader loader) : base(loader) {
@@ -170,6 +181,7 @@ namespace SkillAnalyzer.Visual
 
         }
 
+        // Editor Loader
         protected class AnalyzerEditorLoader : TestEditorLoader
         {
             public new AnalyzerEditor Editor;
@@ -179,33 +191,72 @@ namespace SkillAnalyzer.Visual
                 return Editor;
             }
         }
-
         private AnalyzerEditorLoader editorLoader;
+
+        // Hiding
         protected new TestEditor Editor => editorLoader.Editor;
         protected new EditorBeatmap EditorBeatmap => Editor.ChildrenOfType<EditorBeatmap>().Single();
         protected new EditorClock EditorClock => Editor.ChildrenOfType<EditorClock>().Single();
 
         #endregion
 
-        private Score dummyScore;
 
         [BackgroundDependencyLoader]
         private void load(AudioManager audio)
         {
-            
             /////
-            SkillAnalyzerTestBrowser.ListChanged += UpdateBars;
+            ListChanged += UpdateBars;
             // BindableWithCurrent<List<ISkill>>
-            Console.WriteLine("hi");
+            Console.WriteLine("hiaaaaa");
             Children.ForEach(d => { Console.WriteLine(d.GetType()); });
             Console.WriteLine(Audio);
-            /*
-            SkillAnalyzerTestBrowser.ListChanged += delegate (object sender, List<ISkill> skillList)
-            {
-                Console.WriteLine("catW");
-            };
-            */
         }
+
+        protected void FinishedLoading()
+        {
+            canUpdateBars = true;
+            UpdateBars(CurSkillList);
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            if (editorLoader != default)
+            {
+                if ((Editor?.ReadyForUse ?? false) == true && (!canUpdateBars)) { FinishedLoading(); Console.WriteLine("line"); }
+            }
+            if (canUpdateBars)
+            {
+                Schedule(() => {
+                    int closeindex = getClosestHitObjectIndex(EditorClock.CurrentTime);
+                    if (previoushitindex == closeindex)
+                        return;
+                    dummyScore.BeatmapInfo.Contents.DiffHitObjects = new List<DifficultyHitObject>(CachedMapDiffHits);
+                    dummyScore.BeatmapInfo.Contents.DiffHitObjects = dummyScore.BeatmapInfo.Contents.DiffHitObjects.Where(d => {
+                        return d.Index <= closeindex;
+                    }).ToList();
+                    dummyScore.Combo = dummyScore.BeatmapInfo.GetMaxCombo();// calculated combo with current amount of hit objects
+                    if (scaleByCombo)
+                    {
+                        dummyScore.BeatmapInfo.MaxCombo = CachedMapDiffHits.GetMaxCombo();
+                    }
+                    else
+                    {
+                        dummyScore.BeatmapInfo.MaxCombo = dummyScore.Combo;
+                    }
+                    Console.WriteLine($"" +
+                        $"combo: {dummyScore.Combo} / {dummyScore.BeatmapInfo.MaxCombo} \n" +
+                        $"editor time: {EditorClock.CurrentTime} \n" +
+                        $"closest index: {closeindex} \n" +
+                        $"cached diff: {CachedMapDiffHits.Count} \n" +
+                        $"score diff: {dummyScore.BeatmapInfo.Contents.DiffHitObjects.Count} \n" +
+                        $"map diff: {ATFocusedMap.Contents.DiffHitObjects.Count} \n" + "\n------------------");
+                    UpdateBars(currentSkillList);
+                });
+            }
+
+        }
+
         private List<ISkill> currentSkillList = new List<ISkill>();
 
         protected void UpdateBars(List<ISkill> skillList) {
@@ -224,11 +275,14 @@ namespace SkillAnalyzer.Visual
                     float skillpp = (float)skill.SkillCalc(dummyScore);
                     if (skillpp < 0) skillpp = 0;
                     skillNameList.Add(skill.Identifier, skillpp);
-                    skillColors.Add(ColourInfo.GradientVertical(skill.PrimaryColor, skill.SecondaryColor));
                     if (largestPP < skillpp) largestPP = skillpp;
                     Console.WriteLine(skill.Identifier + ": " + skillpp);
                 }
             );
+
+            skillNameList.ForEach(skillName => {
+                skillColors.Add(ColourInfo.GradientVertical(Skill.GetSkillByID(skillName.Key).PrimaryColor, Skill.GetSkillByID(skillName.Key).SecondaryColor));
+            });
 
             // ListChanged.Invoke(this, skillList.NewValue);
             //  Console.WriteLine("catWa");
@@ -243,111 +297,37 @@ namespace SkillAnalyzer.Visual
         }
 
 
-        protected List<DifficultyHitObject> CachedMapDiffHits;
-        protected List<HitObject> CachedMapHits;
+
         private bool canUpdateBars = false;
-        protected override void Update()
-        {
-            base.Update();
-            if (canUpdateBars) {
-                Schedule(() => {
-                    int closeindex = getClosestHitObjectIndex(EditorClock.CurrentTime);
-                    if (cachedlasthitindex != closeindex)
-                    {
-                        dummyScore.Combo = closeindex;
-                        dummyScore.BeatmapInfo.Contents.DiffHitObjects = new List<DifficultyHitObject>(CachedMapDiffHits);
-                        dummyScore.BeatmapInfo.Contents.DiffHitObjects = dummyScore.BeatmapInfo.Contents.DiffHitObjects.Where(d => {
-                            
-                            return d.Index <= closeindex;
-                        }).ToList();
-                        dummyScore.Combo = GetMaxCombo(dummyScore.BeatmapInfo); // calculated combo with current amount of hit objects
-                        dummyScore.BeatmapInfo.MaxCombo = dummyScore.Combo;
-                        Console.WriteLine($"" +
-                            $"combo: {dummyScore.Combo} / {dummyScore.BeatmapInfo.MaxCombo} \n" +
-                            $"editor time: {EditorClock.CurrentTime} \n" +
-                            $"closest index: {closeindex} \n" +
-                            $"cached diff: {CachedMapDiffHits.Count} \n" +
-                            $"score diff: {dummyScore.BeatmapInfo.Contents.DiffHitObjects.Count} \n" +
-                            $"map diff: {ATFocusedMap.Contents.DiffHitObjects.Count} \n" + "\n------------------");
-                        UpdateBars(currentSkillList);
-                    }
-                });
-            }
-
-        }
-
-
-        private int cachedlasthitindex = 0;
-        private int lasthitindex = 0;
+        private int previoushitindex = 0;
+        private int curhitindex = 0;
         private double cachedCurTime = 0;
         /// <summary>
         /// Returns the closest hitobject's time position to the editor clock's currenttime.
         /// </summary>
+        /// <remarks>It's possible for  could be heavily improved.</remarks>
         /// <returns></returns>
         private int getClosestHitObjectIndex(double currentTime) {
             var hitList = CachedMapDiffHits;
             if (cachedCurTime > currentTime) { // person seeked backwards, so just reset
-                lasthitindex = 0;
+                curhitindex = 0;
             }
             cachedCurTime = currentTime;
-            for (int i = lasthitindex; i < hitList.Count; i++) {
+            // starts at curhitindex to avoid constantly looping through the whole map
+            for (int i = curhitindex; i < hitList.Count; i++) { 
                 var time = hitList[i].StartTime;
                 if (time >= currentTime) {
-                    cachedlasthitindex = lasthitindex;
-                    lasthitindex = i;
+                    previoushitindex = curhitindex;
+                    curhitindex = i;
                     return i;
                 }
             }
-            return hitList.Count;
+            return hitList.Count-1;
         }
 
-        protected void FinishedLoading() {
-            canUpdateBars = true;
-            UpdateBars(currentSkillList);
-        }
 
-        protected ATBeatmap ConvertWorkmapToATMap(WorkingBeatmap map) {
-            // [!] Add DiffHitObjects here
-            ATBeatmap newmap = new ATBeatmap()
-            {
-                MapID = map.BeatmapInfo.OnlineID,
-                MapsetID = map.BeatmapInfo.BeatmapSet.OnlineID,
-                SongArtist = map.BeatmapInfo.Metadata.ArtistUnicode,
-                SongName = map.BeatmapInfo.Metadata.TitleUnicode,
-                MapsetCreator = map.BeatmapInfo.BeatmapSet.Metadata.Author.Username,
-                DifficultyName = map.BeatmapInfo.Metadata.TitleUnicode,
-                StarRating = 1,
-                FolderLocation = MapLocation,
-            };
-            newmap.LoadMapContents(RulesetStore.Osu);
-            newmap.MaxCombo = GetMaxCombo(newmap);
+        
 
-            return newmap;
-        }
-
-        public int GetMaxCombo(ATBeatmap newmap)
-        {
-            int combo2 = 0;
-            foreach (DifficultyHitObject hitObject in newmap.Contents.DiffHitObjects)
-            {
-                addCombo(hitObject.BaseObject, ref combo2);
-            }
-
-            return combo2;
-        }
-
-        private void addCombo(HitObject hitObject, ref int combo)
-        {
-            if (hitObject.CreateJudgement().MaxResult.AffectsCombo())
-            {
-                combo++;
-            }
-
-            foreach (HitObject nestedHitObject in hitObject.NestedHitObjects)
-            {
-                addCombo(nestedHitObject, ref combo);
-            }
-        }
 
 
         protected void ReloadSkills(ValueChangedEvent<List<ISkill>> enabledList)
@@ -381,9 +361,8 @@ namespace SkillAnalyzer.Visual
             WorkFocusedMap.LoadTrack();
             WorkFocusedMap.Track.Start();
             FocusedBeatmap.BeatmapInfo.BeatDivisor = 4;
-            ATFocusedMap = ConvertWorkmapToATMap(WorkFocusedMap);
+            ATFocusedMap = WorkFocusedMap.ConvertToATMap(MapLocation);
             CachedMapDiffHits = new List<DifficultyHitObject>(ATFocusedMap.Contents.DiffHitObjects);
-            CachedMapHits = ATFocusedMap.Contents.HitObjects;
             dummyScore = new Score
             {
                 RulesetName = atRuleset.Name,
@@ -395,19 +374,23 @@ namespace SkillAnalyzer.Visual
             };
             return FocusedBeatmap;
         }
+        [Test]
+        public async void Setup()
+        {
+            AddStep("load editor then enable bar", LoadEditor);
+            AddUntilStep("wait for beatmap updated", () => !base.Beatmap.IsDefault);
+
+        }
 
         [Test]
         public void TestSeekToFirst()
         {
-            AddAssert("track not running", () => !EditorClock.IsRunning);
+            AddAssert("SETTINGS:", () => false); // Added a false assert so that it doesn't automatically enable all settings
+            AddToggleStep("Overall Combo Scaling", (d) => { scaleByCombo = d; });
         }
 
         public override void SetUpSteps()
         {
-            AddStep("load editor", LoadEditor);
-            AddUntilStep("wait for editor to load", () => Editor?.ReadyForUse ?? false);
-            AddStep("do finished loading function", FinishedLoading);
-            AddUntilStep("wait for beatmap updated", () => !base.Beatmap.IsDefault);
         }
     }
 }

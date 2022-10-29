@@ -29,6 +29,7 @@ using NUnit.Framework;
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Catch.UI;
 using osu.Framework.Logging;
+using System.Threading.Tasks;
 
 namespace SkillAnalyzer
 {
@@ -38,7 +39,8 @@ namespace SkillAnalyzer
 
         }
 
-        private readonly BindableWithCurrent<List<ISkill>> current = new BindableWithCurrent<List<ISkill>>(new List<ISkill>());
+        private static BindableWithCurrent<List<ISkill>> current = new BindableWithCurrent<List<ISkill>>(new List<ISkill>());
+        public static List<ISkill> CurSkillList => current.Current.Value;
 
         public static event EventHandler<List<ISkill>> ListChanged;
 
@@ -47,7 +49,7 @@ namespace SkillAnalyzer
 
         protected void CreateSkillGraph()
         {
-            ListChanged += new EventHandler<List<ISkill>>(delegate (Object o, List<ISkill> skillList)
+            ListChanged += new EventHandler<List<ISkill>>(delegate (object o, List<ISkill> skillList)
             {
                 //snip
             });
@@ -107,7 +109,7 @@ namespace SkillAnalyzer
                     Scale = new Vector2(0.9f),
                     Position = new Vector2(-300, 200)
                 });
-
+            
             int i = 0;
             foreach (ISkill skill in Skill.SkillList)
             {
@@ -140,10 +142,10 @@ namespace SkillAnalyzer
                     Console.WriteLine(current.Current.Value);
                     ListChanged.Invoke(this, newList);
                 };
+                newbox.Current.Value = false;
                 buttonSelectScroll.Add(newbox);
                 i++;
             };
-
             SkillGraph.SetValues(
                 new SortedList<string, float> {
                     { "test",2},
@@ -162,10 +164,12 @@ namespace SkillAnalyzer
                     { "test",2},
                     { "testa",30},
                     { "testb",7},
-                    { "testc",50},
+                    { "testc",51},
                 }
             );
+
         }
+
 
         protected override void LoadComplete()
         {

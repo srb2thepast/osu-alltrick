@@ -61,7 +61,7 @@ namespace osuAT.Game.Skills
                 var DiffHitObj = score.BeatmapInfo.Contents.DiffHitObjects[i];
                 var HitObj = (OsuHitObject)DiffHitObj.BaseObject;
                 var LastHitObj = (OsuHitObject)DiffHitObj.LastObject;
-                totaldistavg += Math.Abs(HitObj.Position.Length) + Math.Abs(LastHitObj.Position.Length);
+                totaldistavg += Math.Abs(HitObj.Position.Length - LastHitObj.Position.Length);
             }
             return (totaldistavg / (score.BeatmapInfo.Contents.DiffHitObjects.Count+1));
         }

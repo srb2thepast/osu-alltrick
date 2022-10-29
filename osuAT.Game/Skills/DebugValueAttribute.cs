@@ -7,9 +7,11 @@ using JetBrains.Annotations;
 
 namespace osuAT.Game.Skills
 {
-    [MeansImplicitUse(ImplicitUseKindFlags.Assign)]
+    [MeansImplicitUse(ImplicitUseKindFlags.Access)]
     [AttributeUsage(AttributeTargets.Property)]
-    public class ResolvedAttribute : Attribute
+    public class DebugValueAttribute : Attribute
     {
+
     }
+    
 }
