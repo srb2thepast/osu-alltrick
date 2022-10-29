@@ -36,6 +36,7 @@ namespace SkillAnalyzer
         {
             set
             {
+                RemoveAll(d => { return true; },true) ;
                 List<Bar> bars = Children.ToList();
                 var selectedItems = value.Select((float length, int index) => new
                 {
@@ -78,12 +79,11 @@ namespace SkillAnalyzer
                         Size = new Vector2(num2* BarSpacing, 1f),
                         Length = num,
                         Direction = Direction,
-                        Colour = Colour4.Red.MultiplyAlpha(0.2f)
+                        Colour = Colour4.Red.MultiplyAlpha(0)
                     });
 
                 }
                 Size = new Vector2(2, 3);
-                Console.WriteLine(RelativeSizeAxes);
                 RemoveRange(base.Children.Where((Bar _, int index) => index >= value.Count()*2).ToList(), disposeImmediately: true);
             }
         }

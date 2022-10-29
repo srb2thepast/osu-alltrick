@@ -91,7 +91,7 @@ namespace osuAT.Game.Types
         /// </summary>
         public void LoadMapContents(RulesetInfo ruleset, List<ModInfo> mods = null)
         {
-                contents = new BeatmapContents(FolderLocation,ruleset,mods);
+            contents = new BeatmapContents(FolderLocation,ruleset,mods);
         }
 
         // [!] wip

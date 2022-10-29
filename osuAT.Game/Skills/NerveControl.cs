@@ -6,8 +6,9 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Textures;
 using osuAT.Game.Types;
 using osuAT.Game.Objects;
+using osu.Game.Rulesets.Osu.Objects;
 using osuTK;
-
+using osu.Game.Overlays.Comments;
 
 namespace osuAT.Game.Skills
 {
@@ -49,8 +50,20 @@ namespace osuAT.Game.Skills
         public double SkillCalc(Score score)
         {
             if (!SupportedRulesets.Contains(score.ScoreRuleset)) return -1;
+            if (score.BeatmapInfo.FolderLocation == default) return -2;
+            if (score.BeatmapInfo.Contents.HitObjects == default) return -3;
 
-            return new Random().Next(120000);
+
+            float totaldistavg = 0;
+            for (int i = 0; i < score.BeatmapInfo.Contents.DiffHitObjects.Count; i++)
+            {
+                // [!] add generic support based off of a mode's general hitobject class
+                var DiffHitObj = score.BeatmapInfo.Contents.DiffHitObjects[i];
+                var HitObj = (OsuHitObject)DiffHitObj.BaseObject;
+                var LastHitObj = (OsuHitObject)DiffHitObj.LastObject;
+                totaldistavg += Math.Abs(HitObj.Position.Length - LastHitObj.Position.Length);
+            }
+            return (totaldistavg / (score.BeatmapInfo.Contents.DiffHitObjects.Count+1));
         }
     }
 }

@@ -30,8 +30,9 @@ namespace osuAT.Game.Skills
         /// <summary>
         /// Returns the most pp possible in a map for this skill.
         /// </summary>
-        public double SkillCalc(Beatmap map, RulesetInfo ruleset, List<ModInfo> mods) 
+        public double SkillCalc(Beatmap map, RulesetInfo ruleset, List<ModInfo> mods = null) 
         {
+            mods ??= new List<ModInfo>();
             return SkillCalc(new Score
             {
                 RulesetName = ruleset.Name,
