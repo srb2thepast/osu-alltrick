@@ -179,7 +179,7 @@ namespace SkillAnalyzer.Visual
 
             [BackgroundDependencyLoader]
             private void load() {
-                
+
             }
 
             protected override void LoadComplete()
@@ -188,7 +188,7 @@ namespace SkillAnalyzer.Visual
                 OsuContextMenuContainer ContextMenu = (OsuContextMenuContainer)InternalChildren[2];
                 Container screenContainer = (Container)ContextMenu[0];
                 Container<EditorScreen> editorScreen = (Container<EditorScreen>)screenContainer.Child;
-                
+
                 CompositeDrawable editBottomBar = (CompositeDrawable)ContextMenu[2];
                 ContextMenu.Remove(editBottomBar, true);
                 ContextMenu.Add(bottomBar = new AnalyzerBottomBar());
@@ -227,6 +227,12 @@ namespace SkillAnalyzer.Visual
 
         #endregion
 
+        public TestSceneMain() {
+            debugContainer = new TextFlowContainer()
+            {
+                RelativeSizeAxes = Axes.Both,
+            };
+        }
 
         [BackgroundDependencyLoader]
         private void load(AudioManager audio)
@@ -234,7 +240,7 @@ namespace SkillAnalyzer.Visual
 
             ListChanged += UpdateBars;
             // BindableWithCurrent<List<ISkill>>
-            Console.WriteLine("hiaaaaaa");
+            Console.WriteLine("hiaaaaaaa");
             Children.ForEach(d => { Console.WriteLine(d.GetType()); });
             Console.WriteLine(Audio);
             Add(
@@ -248,10 +254,7 @@ namespace SkillAnalyzer.Visual
                             RelativeSizeAxes = Axes.Both,
                             Colour = FrameworkColour.GreenDarker
                         },
-                        debugContainer = new TextFlowContainer()
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                        }
+                        debugContainer
                     }
                 }
            );
@@ -324,7 +327,6 @@ namespace SkillAnalyzer.Visual
         protected void UpdateBars(List<ISkill> skillList) {
             if (skillList == default | editorLoader == null) return;
             if (!Editor?.ReadyForUse ?? false) return;
-            if (debugContainer == null) return;
 
             // Debug text section
             debugContainer.Text = "";
