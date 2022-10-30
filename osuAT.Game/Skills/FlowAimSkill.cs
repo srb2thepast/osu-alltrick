@@ -52,6 +52,12 @@ namespace osuAT.Game.Skills
 
         public RulesetInfo[] SupportedRulesets => new RulesetInfo[]{ RulesetStore.Osu };
 
+        [SkillDebugValue]
+        private double focusedHighestPP;
+
+        [SkillDebugValue]
+        private float curAvgSpacing;
+
         /// <summary>
         /// Returns a pp value based off of the most spaced out stream of a map.
         /// </summary>
@@ -76,7 +82,7 @@ namespace osuAT.Game.Skills
 
             float csMult = score.BeatmapInfo.Contents.DifficultyInfo.CircleSize / 4;
 
-            double focusedHighestPP = 0;
+            focusedHighestPP = 0;
 
             float curSpacingSum = 0;
             int curlength = 0;
@@ -94,9 +100,9 @@ namespace osuAT.Game.Skills
 
 
                 // if this circle appears within 150ms of the last one, it (might be) a circle in a stream!
-                // So it only runs if it's a circle and it appears within 150ms of the previous circle in the loop.
+                // So it only runs if it's a circle and it appears within 100ms of the previous circle in the loop.
                 // And also if it's not the first circle of the map (because there would be no previous circle).
-                if ((HitObj is HitCircle) && (DiffHitObj.StartTime - DiffHitObj.LastObject.StartTime) < 150)
+                if ((HitObj is HitCircle) && (DiffHitObj.StartTime - DiffHitObj.LastObject.StartTime) < 100)
                 {
                     curlength++;
                     curTimediffSum += DiffHitObj.StartTime - DiffHitObj.LastObject.StartTime;
@@ -106,7 +112,7 @@ namespace osuAT.Game.Skills
                 // Otherwise, it's considered the end of a stream.
                 else {
                     if (curlength == 0) continue;
-                    float curAvgSpacing = curSpacingSum / curlength;
+                    curAvgSpacing = curSpacingSum / curlength;
                     double curAvgTimediff = curTimediffSum / curlength;
 
                     // THIS LINE is where calculations are done.
@@ -133,6 +139,7 @@ namespace osuAT.Game.Skills
                     curTimediffSum = 0;
                     curlength = 0;
                 }
+                curAvgSpacing = curSpacingSum / curlength;
             }
             Console.WriteLine(score.BeatmapInfo.SongName + " LEN: " + focusedLength.ToString() + " ATD: " + focusedAvgTimediff.ToString() + " ASP: " + focusedAvgSpacing.ToString() + " | PP: " + (int)focusedHighestPP);
             return focusedHighestPP;

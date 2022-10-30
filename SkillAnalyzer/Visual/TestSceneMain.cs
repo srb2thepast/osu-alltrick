@@ -62,6 +62,12 @@ using osu.Game.Rulesets.Mods;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using HtmlAgilityPack;
 using System.Threading.Tasks;
+using osu.Game.Screens.Edit.Compose;
+using osu.Framework.Graphics.Sprites;
+using System.Runtime.InteropServices;
+using System.Reflection;
+using static System.Net.Mime.MediaTypeNames;
+using osu.Game.Graphics;
 
 namespace SkillAnalyzer.Visual
 {
@@ -76,7 +82,10 @@ namespace SkillAnalyzer.Visual
         protected WorkingBeatmap WorkFocusedMap;
         protected ATBeatmap ATFocusedMap;
         protected List<DifficultyHitObject> CachedMapDiffHits;
+        private TextFlowContainer debugContainer;
         private Score dummyScore;
+
+        protected static event EventHandler<bool> EditorLoaded;
 
         // settings //
         private bool scaleByCombo = false;
@@ -86,8 +95,12 @@ namespace SkillAnalyzer.Visual
         #region Classes + Hiding & Overrides
 
         // Editor
+        [Cached(typeof(IBeatSnapProvider), null)]
+        [Cached(typeof(Editor))]
         protected class AnalyzerEditor : TestEditor
         {
+            private TextFlowContainer debugTextFlow;
+
             public AnalyzerEditor(EditorLoader loader) : base(loader) {
 
             }
@@ -166,12 +179,26 @@ namespace SkillAnalyzer.Visual
 
             [BackgroundDependencyLoader]
             private void load() {
+                
+            }
+
+            protected override void LoadComplete()
+            {
+                base.LoadComplete();
                 OsuContextMenuContainer ContextMenu = (OsuContextMenuContainer)InternalChildren[2];
+                Container screenContainer = (Container)ContextMenu[0];
+                Container<EditorScreen> editorScreen = (Container<EditorScreen>)screenContainer.Child;
+                
                 CompositeDrawable editBottomBar = (CompositeDrawable)ContextMenu[2];
                 ContextMenu.Remove(editBottomBar, true);
                 ContextMenu.Add(bottomBar = new AnalyzerBottomBar());
 
+                EditorLoaded += (obj, ev) =>
+                {
+
+                };
             }
+
             SummaryTimeline timeline;
             public new bool Save()
             {
@@ -194,7 +221,7 @@ namespace SkillAnalyzer.Visual
         private AnalyzerEditorLoader editorLoader;
 
         // Hiding
-        protected new TestEditor Editor => editorLoader.Editor;
+        protected new AnalyzerEditor Editor => editorLoader.Editor;
         protected new EditorBeatmap EditorBeatmap => Editor.ChildrenOfType<EditorBeatmap>().Single();
         protected new EditorClock EditorClock => Editor.ChildrenOfType<EditorClock>().Single();
 
@@ -204,24 +231,54 @@ namespace SkillAnalyzer.Visual
         [BackgroundDependencyLoader]
         private void load(AudioManager audio)
         {
-            /////
+
             ListChanged += UpdateBars;
             // BindableWithCurrent<List<ISkill>>
-            Console.WriteLine("hiaaaaa");
+            Console.WriteLine("hiaaaaaa");
             Children.ForEach(d => { Console.WriteLine(d.GetType()); });
             Console.WriteLine(Audio);
+            Add(
+                new Container
+                {
+                    Size = new Vector2(135, 564),
+                    Y = 144,
+                    Children = new Drawable[]
+                    {
+                        new Box{
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = FrameworkColour.GreenDarker
+                        },
+                        debugContainer = new TextFlowContainer()
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                        }
+                    }
+                }
+           );
         }
 
         protected void FinishedLoading()
         {
             canUpdateBars = true;
             UpdateBars(CurSkillList);
+            EditorLoaded.Invoke(this,true);
         }
+
+
+        private bool sideBarLoaded = false;
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            sideBarLoaded = true;
+        }
+
 
         protected override void Update()
         {
             base.Update();
-            if (editorLoader != default)
+            if (!sideBarLoaded)
+                return;
+                if (editorLoader != default)
             {
                 if ((Editor?.ReadyForUse ?? false) == true && (!canUpdateBars)) { FinishedLoading(); Console.WriteLine("line"); }
             }
@@ -257,12 +314,60 @@ namespace SkillAnalyzer.Visual
 
         }
 
+
         private List<ISkill> currentSkillList = new List<ISkill>();
 
+        private void updateSideBar() {
+
+        }
+
         protected void UpdateBars(List<ISkill> skillList) {
-            // Console.WriteLine("invoked");
             if (skillList == default | editorLoader == null) return;
             if (!Editor?.ReadyForUse ?? false) return;
+            if (debugContainer == null) return;
+
+            // Debug text section
+            debugContainer.Text = "";
+            skillList.ForEach(skill =>
+            {
+                bool titlemade = false;
+                System.Console.WriteLine($"Cur Skill: {skill.GetType()}");
+                var props = skill.GetType().GetFields(
+                         BindingFlags.NonPublic |
+                         BindingFlags.Instance);
+                foreach (FieldInfo property in props)
+                {
+                    var attrs = property.GetCustomAttributes<SkillDebugValueAttribute>(true);
+
+                    if (attrs.Count() > 0 && titlemade == false) {
+                        debugContainer.AddText($"{skill.Identifier}", t => {
+                            t.Font = new FontUsage("VarelaRound", size: 23);
+                            t.Colour = skill.PrimaryColor;
+                            t.Shadow = true;
+                        });
+                        titlemade = true;
+                    }
+                    foreach (object attr in attrs)
+                    {
+                        var propval = property.GetValue(skill);
+                        if (propval is float floatval)
+                        {
+                            propval = Math.Truncate(floatval * 100) / 100;
+                        }
+                        if (propval is double dubval)
+                        {
+                            propval = Math.Truncate(dubval * 100) / 100;
+                        }
+                        debugContainer.AddText($"{property.Name}:\n   -> {propval}\n", t => {
+                            t.Font = new FontUsage("VarelaRound", size: 17);
+                            t.Colour = Colour4.White;
+                            t.Shadow = true;
+                        });
+                    }
+                }
+            });
+            
+            // Bar section
             float largestPP = 0;
             
             currentSkillList = skillList;
@@ -308,6 +413,8 @@ namespace SkillAnalyzer.Visual
         /// <remarks>It's possible for  could be heavily improved.</remarks>
         /// <returns></returns>
         private int getClosestHitObjectIndex(double currentTime) {
+            // [!] Big bug where the acutaly closest hit object isnt return due to the amount of time
+            // it takes for the clock to seek to a point.
             var hitList = CachedMapDiffHits;
             if (cachedCurTime > currentTime) { // person seeked backwards, so just reset
                 curhitindex = 0;
