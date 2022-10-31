@@ -84,6 +84,7 @@ namespace osuAT.Game.Skills
 
             focusedHighestPP = 0;
 
+            curAvgSpacing = 0;
             float curSpacingSum = 0;
             int curlength = 0;
             double curTimediffSum = 0;
@@ -91,7 +92,7 @@ namespace osuAT.Game.Skills
             float focusedAvgSpacing = 0; // the most streched out one is calculated
             int focusedLength = 0;
             double focusedAvgTimediff = 0; // the average difference between the starttime of each object
-
+            
             for (int i = 0; i < score.BeatmapInfo.Contents.DiffHitObjects.Count; i++) {
                 // [!] add generic support based off of a mode's general hitobject class
                 var DiffHitObj = score.BeatmapInfo.Contents.DiffHitObjects[i];
@@ -107,6 +108,7 @@ namespace osuAT.Game.Skills
                     curlength++;
                     curTimediffSum += DiffHitObj.StartTime - DiffHitObj.LastObject.StartTime;
                     curSpacingSum += Math.Abs((HitObj.Position - LastHitObj.Position).Length);
+                    curAvgSpacing = curSpacingSum / curlength;
                 }
 
                 // Otherwise, it's considered the end of a stream.
@@ -139,7 +141,6 @@ namespace osuAT.Game.Skills
                     curTimediffSum = 0;
                     curlength = 0;
                 }
-                curAvgSpacing = curSpacingSum / curlength;
             }
             Console.WriteLine(score.BeatmapInfo.SongName + " LEN: " + focusedLength.ToString() + " ATD: " + focusedAvgTimediff.ToString() + " ASP: " + focusedAvgSpacing.ToString() + " | PP: " + (int)focusedHighestPP);
             return focusedHighestPP;

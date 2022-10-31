@@ -3,6 +3,13 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Platform;
 using osu.Framework.Testing;
 using osu.Framework.Allocation;
+using NUnit.Framework.Internal;
+using NUnit.Framework;
+using osu.Framework.Testing.Drawables.Steps;
+using osuTK.Graphics;
+using System.Diagnostics;
+using System.Reflection;
+using System;
 
 namespace osuAT.Game.Tests
 {
@@ -22,7 +29,7 @@ namespace osuAT.Game.Tests
         [BackgroundDependencyLoader]
         private void load()
         {
-
+            
             this.Window.Title = "osu!alltrick";
             //SaveStorage.Init();
             //ScoreImporter.Init();
@@ -33,5 +40,7 @@ namespace osuAT.Game.Tests
             base.SetHost(host);
             host.Window.CursorState |= CursorState.Hidden;
         }
+
+
     }
 }

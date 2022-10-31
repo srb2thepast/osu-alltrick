@@ -24,14 +24,17 @@ namespace SkillAnalyzer.Visual
     {
 
         public ISkill Skill;
+        public float TextSize = 18;
         private Colour4 nubColor = Colour4.Cyan;
         private Colour4 textColor = Colour4.White;
 
-        public SkillCheckbox(ISkill skill) {
+        public SkillCheckbox(ISkill skill,float textSize=18) {
             Skill = skill;
-            LabelText = skill.Name;
+            TextSize = textSize;
             textColor = skill.PrimaryColor;
             nubColor = skill.PrimaryColor;
+            LabelText = skill.Name;
+
         }
 
         protected override void ApplyLabelParameters(SpriteText text)
@@ -40,7 +43,7 @@ namespace SkillAnalyzer.Visual
             text.Shadow = true;
             text.ShadowColour = Colour4.Gray;
             text.ShadowOffset = new Vector2(0,0.1f);
-            text.Font = new FontUsage("VarelaRound", size: 18);
+            text.Font = new FontUsage("VarelaRound", size: TextSize);
         }
 
         [BackgroundDependencyLoader]

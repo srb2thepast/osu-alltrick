@@ -68,13 +68,39 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using static System.Net.Mime.MediaTypeNames;
 using osu.Game.Graphics;
+using osuAT.Game.Tests.Visual;
+using osu.Framework.Graphics.Cursor;
+using osu.Game.Screens.Play.Break;
+using osu.Framework.Screens;
 
 namespace SkillAnalyzer.Visual
 {
 
-    // [!] TODO: Get beatmap audio working
-    public class TestSceneMain : EditorTestScene
+    public class TestSceneMain : osuATTestScene
     {
+
+        public TestSceneMain() {
+
+        }
+
+        [Test]
+        public void LoadEditor()
+        {
+            var scene = new MainScreen();
+            Add(
+                scene
+            );
+            AddStep("attempt to load", () => scene.ManuallyAddAttributeTests());
+            // AddStep("load", () => Add(new MainScreen()));
+        }
+
+        
+    }
+    // [!] TODO: Get beatmap audio working
+    internal class MainScreen : EditorTestScene
+    {
+
+
         protected override Ruleset CreateEditorRuleset() => new OsuRuleset();
 
         protected string MapLocation = @"Songs\257607 xi - FREEDOM DiVE\xi - FREEDOM DiVE (elchxyrlia) [Arles].osu"; // @"Songs\1045600 MOMOIRO CLOVER Z - SANTA SAN\MOMOIRO CLOVER Z - SANTA SAN (A r M i N) [1-2-SANTA].osu";
@@ -187,15 +213,71 @@ namespace SkillAnalyzer.Visual
                 base.LoadComplete();
                 OsuContextMenuContainer ContextMenu = (OsuContextMenuContainer)InternalChildren[2];
                 Container screenContainer = (Container)ContextMenu[0];
-                Container<EditorScreen> editorScreen = (Container<EditorScreen>)screenContainer.Child;
-
+                Container<EditorScreen> composeScreenContainer = (Container<EditorScreen>)screenContainer.Child;
+                
+                Container editTopBar = (Container)ContextMenu[1];
                 CompositeDrawable editBottomBar = (CompositeDrawable)ContextMenu[2];
+
+                
                 ContextMenu.Remove(editBottomBar, true);
                 ContextMenu.Add(bottomBar = new AnalyzerBottomBar());
 
+                //editorScreen.Scale = new Vector2(0.95f);
+                //editorScreen.X = editorScreen.Parent.BoundingBox.Width * editorScreen.Scale.X / 30;
+                //editorScreen.Y = editorScreen.Parent.BoundingBox.Height * editorScreen.Scale.X  / 20 ;
+
+                //editTopBar.Y = editTopBar.Height;
                 EditorLoaded += (obj, ev) =>
                 {
+                    EditorScreen composeScreen = (EditorScreen)composeScreenContainer.Child;
 
+                    var props = composeScreen.GetType().GetFields(
+                             BindingFlags.NonPublic |
+                             BindingFlags.Instance);
+                    // Lol
+                    HitObjectComposer popoverCont = null;
+                    foreach (FieldInfo property in props) {
+                        Console.WriteLine(property.Name + "=" + property.GetValue(composeScreen));
+                        if (property.Name == "composer")
+                        {
+                            popoverCont = (HitObjectComposer)property.GetValue(composeScreen);
+                        }
+                    }
+                    //
+                    Container leftBar = null;
+                    Container rightBar = null;
+                    Container centerField = null;
+                    Console.WriteLine($"-----++Cgaga:++-----\n");
+                    props = typeof(CompositeDrawable).GetFields(
+                             BindingFlags.NonPublic |
+                             BindingFlags.Instance);
+                    foreach (FieldInfo property in props)
+                    {
+                        Console.WriteLine(property.Name + "=-=" + property.GetValue(popoverCont));
+                        if (property.Name == "internalChildren")
+                        {
+                            IReadOnlyList<Drawable> intChildren = (IReadOnlyList<Drawable>)property.GetValue(popoverCont);
+                            
+                            centerField = (Container)intChildren[0];
+                            if (intChildren.Count == 1)
+                                break; // already removed
+                            leftBar = (Container)intChildren[1];
+                            rightBar = (Container)intChildren[2];
+                        }
+                    }
+                    centerField.Scale = new Vector2(0.8f);
+                    centerField.Position = new Vector2(110,75);
+                    leftBar?.RemoveAndDisposeImmediately();
+                    rightBar?.RemoveAndDisposeImmediately();
+                    Console.WriteLine(
+                    $"-----++Current editor path:++-----\n" +
+                    $"{ContextMenu}\n" +
+                    $"{screenContainer}\n" +
+                    $"{composeScreenContainer}\n" +
+                    $"{composeScreen}\n" +
+                    $"{popoverCont}\n" +
+                    $" \n");
+                    Console.WriteLine("++--------------++");
                 };
             }
 
@@ -227,17 +309,153 @@ namespace SkillAnalyzer.Visual
 
         #endregion
 
-        public TestSceneMain() {
-            debugContainer = new TextFlowContainer()
+        public static List<ISkill> CurSkillList = new List<ISkill>();
+
+        public static event EventHandler<List<ISkill>> ListChanged;
+
+        public static LabelledBarGraph SkillGraph;
+
+        protected void CreateSkillGraph()
+        {
+            ListChanged += new EventHandler<List<ISkill>>(delegate (object o, List<ISkill> skillList)
+            {
+                //snip
+            });
+            // graph
+            BasicScrollContainer buttonSelectScroll;
+            int beatmapHighestSpike = 500;
+            SkillGraph = new LabelledBarGraph(new SpacedBarGraph
             {
                 RelativeSizeAxes = Axes.Both,
+                Anchor = Anchor.TopLeft,
+                Origin = Anchor.TopLeft,
+                Y = 310,
+                Size = new Vector2(4, 3),
+                Scale = new Vector2(0.2f, 0.2f) * new Vector2(2, 0.5f),
+                MaxValue = beatmapHighestSpike,
+                BarSpacing = 0.2f
+            })
+            {
+                Anchor = Anchor.TopLeft,
+                Scale = new Vector2(0.9f),
+                Position = new Vector2(-200, 250)
             };
+            // skill select scroll
+            Add(new Container
+            {
+                Margin = new MarginPadding
+                {
+                    Top = 143,
+                    Bottom = 143 * 4,
+                },
+                Size = new Vector2(125, 678),
+                Masking = true,
+                Children = new Drawable[]
+                {
+                    new SafeAreaContainer
+                    {
+                        SafeAreaOverrideEdges = Edges.Left | Edges.Top | Edges.Bottom,
+                        RelativeSizeAxes = Axes.Both,
+                        Child = new Box
+                        {
+                            Colour = new Color4(25, 25, 25, 255),
+                            RelativeSizeAxes = Axes.Both
+                        }
+                    },
+                    new FillFlowContainer
+                    {
+                        Direction = FillDirection.Vertical,
+                        RelativeSizeAxes = Axes.Both,
+                        Children = new Drawable[]
+                        {
+
+                            buttonSelectScroll = new BasicScrollContainer
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Masking = false,
+                            }
+
+                        }
+                    }
+                }
+            });
+
+            Add(
+                SkillGraph
+            );
+
+            for (int i = 0; i<Skill.SkillList.Count; i++)
+            {
+                ISkill skill = Skill.SkillList[i];
+                SkillCheckbox newbox = new SkillCheckbox(skill)
+                {
+                    Y = i * 30 + 20,
+                    Scale = new Vector2(0.9f)
+                };
+                Box bgbox;
+                buttonSelectScroll.Add(
+                    bgbox = new Box
+                    {
+                        Size = new Vector2(190, 23),
+                        Scale = new Vector2(0.9f),
+                        Y = i * 30 + 20,
+                        X = 3,
+                        Anchor = Anchor.TopLeft,
+                        Colour = new Color4(0.15f, 0.15f, 0.15f, 1)
+                    }
+                );
+                newbox.Current.ValueChanged += delegate (ValueChangedEvent<bool> Enabled)
+                {
+                    if (Enabled.NewValue && !CurSkillList.Contains(newbox.Skill))
+                    {
+                        CurSkillList.Add(newbox.Skill);
+                    }
+                    if (!Enabled.NewValue && CurSkillList.Contains(newbox.Skill))
+                    {
+                        CurSkillList.Remove(newbox.Skill);
+                    }
+                    Console.WriteLine(CurSkillList);
+                    ListChanged.Invoke(this, CurSkillList);
+                };
+                newbox.Current.Value = CurSkillList.Contains(newbox.Skill);
+                buttonSelectScroll.Add(newbox);
+                bgbox.Height += newbox.Height * 0.2f;
+            };
+            SkillGraph.SetValues(
+                new SortedList<string, float> {
+                    { "test",2},
+                    { "testa",30},
+                    { "testb",7},
+                    { "testc",50},
+                    { "testd",2},
+                    { "teste",32},
+                    { "testf",7},
+                    { "testg",230},
+                }
+            );
+
+            SkillGraph.SetValues(
+                new SortedList<string, float> {
+                    { "test",2},
+                    { "testa",30},
+                    { "testb",7},
+                    { "testc",51},
+                }
+            );
+
+        }
+
+
+        public MainScreen() {
         }
 
         [BackgroundDependencyLoader]
         private void load(AudioManager audio)
         {
-
+            debugContainer = new TextFlowContainer()
+            {
+                RelativeSizeAxes = Axes.Both,
+            };
             ListChanged += UpdateBars;
             // BindableWithCurrent<List<ISkill>>
             Console.WriteLine("hiaaaaaaa");
@@ -246,11 +464,12 @@ namespace SkillAnalyzer.Visual
             Add(
                 new Container
                 {
-                    Size = new Vector2(135, 564),
+                    Size = new Vector2(125, 564),
+                    X = 898,
                     Y = 144,
                     Children = new Drawable[]
                     {
-                        new Box{
+                        new Box {
                             RelativeSizeAxes = Axes.Both,
                             Colour = FrameworkColour.GreenDarker
                         },
@@ -258,6 +477,7 @@ namespace SkillAnalyzer.Visual
                     }
                 }
            );
+            CreateSkillGraph();
         }
 
         protected void FinishedLoading()
@@ -275,58 +495,103 @@ namespace SkillAnalyzer.Visual
             sideBarLoaded = true;
         }
 
-
+        private double lastEditorTime;
         protected override void Update()
         {
-            base.Update();
             if (!sideBarLoaded)
                 return;
-                if (editorLoader != default)
+            if (editorLoader != default)
             {
                 if ((Editor?.ReadyForUse ?? false) == true && (!canUpdateBars)) { FinishedLoading(); Console.WriteLine("line"); }
             }
+            base.Update();
+            scheduledBarUpdate();
             if (canUpdateBars)
             {
-                Schedule(() => {
-                    int closeindex = getClosestHitObjectIndex(EditorClock.CurrentTime);
-                    if (previoushitindex == closeindex)
-                        return;
-                    dummyScore.BeatmapInfo.Contents.DiffHitObjects = new List<DifficultyHitObject>(CachedMapDiffHits);
-                    dummyScore.BeatmapInfo.Contents.DiffHitObjects = dummyScore.BeatmapInfo.Contents.DiffHitObjects.Where(d => {
-                        return d.Index <= closeindex;
-                    }).ToList();
-                    dummyScore.Combo = dummyScore.BeatmapInfo.GetMaxCombo();// calculated combo with current amount of hit objects
-                    if (scaleByCombo)
-                    {
-                        dummyScore.BeatmapInfo.MaxCombo = CachedMapDiffHits.GetMaxCombo();
-                    }
-                    else
-                    {
-                        dummyScore.BeatmapInfo.MaxCombo = dummyScore.Combo;
-                    }
-                    Console.WriteLine($"" +
-                        $"combo: {dummyScore.Combo} / {dummyScore.BeatmapInfo.MaxCombo} \n" +
-                        $"editor time: {EditorClock.CurrentTime} \n" +
-                        $"closest index: {closeindex} \n" +
-                        $"cached diff: {CachedMapDiffHits.Count} \n" +
-                        $"score diff: {dummyScore.BeatmapInfo.Contents.DiffHitObjects.Count} \n" +
-                        $"map diff: {ATFocusedMap.Contents.DiffHitObjects.Count} \n" + "\n------------------");
-                    UpdateBars(currentSkillList);
-                });
+                lastEditorTime = EditorClock.CurrentTime;
             }
-
         }
 
+        
 
-        private List<ISkill> currentSkillList = new List<ISkill>();
+        private void scheduledBarUpdate()
+        {
+            if (canUpdateBars)
+            {
+                
+
+                Schedule(() =>
+                {
+                    UpdateBars();
+                });
+            }
+        }
 
         private void updateSideBar() {
 
         }
 
+        protected void UpdateBars() => UpdateBars(CurSkillList);
+
         protected void UpdateBars(List<ISkill> skillList) {
-            if (skillList == default | editorLoader == null) return;
+
+            if (CurSkillList == default | editorLoader == null) return;
             if (!Editor?.ReadyForUse ?? false) return;
+            if (debugContainer.Parent == null) return;
+            
+
+            // update the score
+            int closeindex = getClosestHitObjectIndex(EditorClock.CurrentTime);
+
+            if (closeindex == previoushitindex)
+                return;
+
+            List<DifficultyHitObject> cachedClone = new List<DifficultyHitObject>(CachedMapDiffHits);
+            dummyScore.BeatmapInfo.Contents.DiffHitObjects = cachedClone.Where(d =>
+            {
+                return d.Index < closeindex;
+            }).ToList();
+            dummyScore.Combo = dummyScore.BeatmapInfo.GetMaxCombo(); // calculated combo with current amount of hit objects
+            if (scaleByCombo)
+            {
+                dummyScore.BeatmapInfo.MaxCombo = CachedMapDiffHits.GetMaxCombo();
+            }
+            else
+            {
+                dummyScore.BeatmapInfo.MaxCombo = dummyScore.Combo;
+            }
+
+            Console.WriteLine($"" +
+                    $"combo: {dummyScore.Combo} / {dummyScore.BeatmapInfo.MaxCombo} \n" +
+                    $"editor time: {EditorClock.CurrentTime} \n" +
+                    $"closest index: {closeindex} \n" +
+                    $"cached diff: {CachedMapDiffHits.Count} \n" +
+                    $"score diff: {dummyScore.BeatmapInfo.Contents.DiffHitObjects.Count} \n" +
+                    $"map diff: {ATFocusedMap.Contents.DiffHitObjects.Count}");
+
+            // Bar section
+            float largestPP = 0;
+            SortedList<string, float> skillNameList = new SortedList<string, float>();
+            List<ColourInfo> skillColors = new List<ColourInfo>();
+
+            skillList.ForEach(
+                skill =>
+                {
+                    float skillpp = (float)skill.SkillCalc(dummyScore);
+                    if (skillpp < 0) skillpp = 0;
+
+                    skillNameList.Add(skill.Identifier, skillpp);
+                    if (largestPP < skillpp) largestPP = skillpp;
+                    Console.WriteLine(skill.Identifier + ": " + skillpp);
+                }
+            );
+
+            skillNameList.ForEach(skillName => {
+                skillColors.Add(ColourInfo.GradientVertical(Skill.GetSkillByID(skillName.Key).PrimaryColor, Skill.GetSkillByID(skillName.Key).SecondaryColor));
+            });
+
+            SkillGraph.SBarGraph.MaxValue = (largestPP < 500) ? 500 : largestPP;
+            SkillGraph.SetValues(skillNameList, skillColors);
 
             // Debug text section
             debugContainer.Text = "";
@@ -368,33 +633,7 @@ namespace SkillAnalyzer.Visual
                     }
                 }
             });
-            
-            // Bar section
-            float largestPP = 0;
-            
-            currentSkillList = skillList;
-            SortedList<string, float> skillNameList = new SortedList<string, float>();
-            List<ColourInfo> skillColors = new List<ColourInfo>();
-
-            skillList.ForEach(
-                skill =>
-                {
-                    float skillpp = (float)skill.SkillCalc(dummyScore);
-                    if (skillpp < 0) skillpp = 0;
-                    skillNameList.Add(skill.Identifier, skillpp);
-                    if (largestPP < skillpp) largestPP = skillpp;
-                    Console.WriteLine(skill.Identifier + ": " + skillpp);
-                }
-            );
-
-            skillNameList.ForEach(skillName => {
-                skillColors.Add(ColourInfo.GradientVertical(Skill.GetSkillByID(skillName.Key).PrimaryColor, Skill.GetSkillByID(skillName.Key).SecondaryColor));
-            });
-
-            // ListChanged.Invoke(this, skillList.NewValue);
-            //  Console.WriteLine("catWa");
-            SkillGraph.SBarGraph.MaxValue = (largestPP < 500)? 500 : largestPP;
-            SkillGraph.SetValues(skillNameList, skillColors);
+            Console.WriteLine("------------------");
         }
 
 
@@ -418,6 +657,7 @@ namespace SkillAnalyzer.Visual
             // [!] Big bug where the acutaly closest hit object isnt return due to the amount of time
             // it takes for the clock to seek to a point.
             var hitList = CachedMapDiffHits;
+            previoushitindex = curhitindex;
             if (cachedCurTime > currentTime) { // person seeked backwards, so just reset
                 curhitindex = 0;
             }
@@ -426,7 +666,6 @@ namespace SkillAnalyzer.Visual
             for (int i = curhitindex; i < hitList.Count; i++) { 
                 var time = hitList[i].StartTime;
                 if (time >= currentTime) {
-                    previoushitindex = curhitindex;
                     curhitindex = i;
                     return i;
                 }
