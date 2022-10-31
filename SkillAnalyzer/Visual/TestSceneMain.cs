@@ -361,8 +361,8 @@ namespace SkillAnalyzer.Visual
             })
             {
                 Anchor = Anchor.TopLeft,
-                Scale = new Vector2(0.9f),
-                Position = new Vector2(-200, 250)
+                Scale = new Vector2(0.8f),
+                Position = new Vector2(-200, 280)
             };
             // skill select scroll
             Add(new Container
@@ -372,7 +372,7 @@ namespace SkillAnalyzer.Visual
                     Top = 143,
                     Bottom = 143 * 4,
                 },
-                Size = new Vector2(125, 678),
+                Size = new Vector2(155, 678),
                 Masking = true,
                 Children = new Drawable[]
                 {
@@ -411,23 +411,21 @@ namespace SkillAnalyzer.Visual
             for (int i = 0; i<Skill.SkillList.Count; i++)
             {
                 ISkill skill = Skill.SkillList[i];
+                Box bgbox = new Box
+                {
+                    Size = new Vector2(190,0),
+                    Y = (i) * 32+20,
+                    Scale = new Vector2(0.9f),
+                    Anchor = Anchor.TopLeft,
+                    Origin = Anchor.CentreLeft,
+                    Colour = new Color4(0.15f, 0.15f, 0.15f, 1)
+                };
                 SkillCheckbox newbox = new SkillCheckbox(skill)
                 {
-                    Y = i * 30 + 20,
-                    Scale = new Vector2(0.9f)
-                };
-                Box bgbox;
-                buttonSelectScroll.Add(
-                    bgbox = new Box
-                    {
-                        Size = new Vector2(190, 23),
-                        Scale = new Vector2(0.9f),
-                        Y = i * 30 + 20,
-                        X = 3,
-                        Anchor = Anchor.TopLeft,
-                        Colour = new Color4(0.15f, 0.15f, 0.15f, 1)
-                    }
-                );
+                    Y = i * 32 + 20,
+                    Scale = new Vector2(0.9f),
+                    Origin = Anchor.CentreLeft,
+                };  
                 newbox.Current.ValueChanged += delegate (ValueChangedEvent<bool> Enabled)
                 {
                     if (Enabled.NewValue && !CurSkillList.Contains(newbox.Skill))
@@ -438,12 +436,12 @@ namespace SkillAnalyzer.Visual
                     {
                         CurSkillList.Remove(newbox.Skill);
                     }
-                    Console.WriteLine(CurSkillList);
-										UpdateBars(CurSkillList);
+					UpdateBars(CurSkillList,true);
                 };
                 newbox.Current.Value = CurSkillList.Contains(newbox.Skill);
+                buttonSelectScroll.Add(bgbox);
                 buttonSelectScroll.Add(newbox);
-                bgbox.Height += newbox.Height * 0.2f;
+                bgbox.Height = newbox.Height/19 *23;
             };
             SkillGraph.SetValues(
                 new SortedList<string, float> {
@@ -530,25 +528,26 @@ namespace SkillAnalyzer.Visual
             }
         }
 
+        protected void UpdateBars(bool skipCurhitCheck) => UpdateBars(CurSkillList,true);
         protected void UpdateBars() => UpdateBars(CurSkillList);
 
-        protected void UpdateBars(List<ISkill> skillList) {
+        protected void UpdateBars(List<ISkill> skillList,bool skipCurhitCheck = false) {
 
+            if (!canUseEditor) return;
             if (CurSkillList == default | editorLoader == null) return;
-            if (!Editor?.ReadyForUse ?? false) return;
             if (debugContainer.Parent == null) return;
             
 
             // update the score
             updateClosestHitObjectIndex(EditorClock.CurrentTime);
 
-            if (curhitindex == previoushitindex)
+            if (curhitindex == previoushitindex && !skipCurhitCheck)
                 return;
 
             List<DifficultyHitObject> cachedClone = new List<DifficultyHitObject>(CachedMapDiffHits);
             dummyScore.BeatmapInfo.Contents.DiffHitObjects = cachedClone.Where(d =>
             {
-                return d.Index < closeindex;
+                return d.Index < curhitindex;
             }).ToList();
             dummyScore.Combo = dummyScore.BeatmapInfo.GetMaxCombo(); // calculated combo with current amount of hit objects
             
@@ -563,8 +562,8 @@ namespace SkillAnalyzer.Visual
 
             Console.WriteLine($"" +
                     $"combo: {dummyScore.Combo} / {dummyScore.BeatmapInfo.MaxCombo} \n" +
-                    $"editor time: {EditorClock.CurrentTime} \n" +
-                    $"closest index: {closeindex} \n" +
+                    $"editor timee: {EditorClock.CurrentTime} \n" +
+                    $"closest index: {curhitindex} \n" +
                     $"cached diff: {CachedMapDiffHits.Count} \n" +
                     $"score diff: {dummyScore.BeatmapInfo.Contents.DiffHitObjects.Count} \n" +
                     $"map diff: {ATFocusedMap.Contents.DiffHitObjects.Count}");

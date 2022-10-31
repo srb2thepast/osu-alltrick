@@ -80,7 +80,7 @@ namespace SkillAnalyzer
             foreach (Bar child in SBarGraph.Children)
             {
                 if (i % 2 == 1) { i++; continue; } // the gaps
-                int index = i / 2;
+                float index = i / 2;
                 float scale = SBarGraph.Scale.X * (1 / 0.2f);
                 child.Colour = colors[(int)index % colors.Count];
                 TextFlowContainer textflow;
