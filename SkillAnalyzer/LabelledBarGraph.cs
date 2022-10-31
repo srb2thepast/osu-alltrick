@@ -13,7 +13,11 @@ using static System.Net.Mime.MediaTypeNames;
 using osu.Framework.Graphics.Colour;
 
 namespace SkillAnalyzer
-{
+{   /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>This class is not intended for other works (it was designed very quickly)</remarks>
+    /// <param name="barGraph"></param>        
     public class LabelledBarGraph : Container
     {
         public SpacedBarGraph SBarGraph { get; private set; }
@@ -22,15 +26,10 @@ namespace SkillAnalyzer
 
         protected Container GraphContainer;
 
-        protected Container PresContainer;
+        protected DrawSizePreservingFillContainer PresContainer;
 
-        protected Container BackerPresContainer;
+        protected DrawSizePreservingFillContainer BackerPresContainer;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks>This class is not intended for other works (it was designed very quickly)</remarks>
-        /// <param name="barGraph"></param>
         public LabelledBarGraph(SpacedBarGraph barGraph = null) {
             SBarGraph = barGraph ?? new SpacedBarGraph();
             SBarGraph.Anchor = Anchor.TopCentre;
@@ -55,8 +54,7 @@ namespace SkillAnalyzer
                 }
             }
             );
-            GraphContainer.Y = -504;
-            GraphContainer.X = -504;
+            GraphContainer.Position = new Vector2(-504);
             SBarGraph.Position += new Vector2(0, GraphContainer.Height * 1.5f);
 
         }
@@ -81,12 +79,9 @@ namespace SkillAnalyzer
 
             foreach (Bar child in SBarGraph.Children)
             {
-                // Console.WriteLine(i.ToString() + values.Keys[i].ToString());
                 if (i % 2 == 1) { i++; continue; } // the gaps
-                float index = i / 2;
+                int index = i / 2;
                 float scale = SBarGraph.Scale.X * (1 / 0.2f);
-                // [!] Set color based on skill: child.Colour = Colour4.Red;
-                // Console.WriteLine(scale.ToString() + "hei");
                 child.Colour = colors[(int)index % colors.Count];
                 TextFlowContainer textflow;
                 PresContainer.Add(textflow = new TextFlowContainer()

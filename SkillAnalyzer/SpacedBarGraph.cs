@@ -9,7 +9,7 @@ namespace SkillAnalyzer
 {
 
     /// <summary>w
-    /// NOT how you're supposed to make this.
+    /// A spaced out bar graph.
     /// </summary>
     public class SpacedBarGraph : BarGraph
     {
