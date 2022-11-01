@@ -14,24 +14,38 @@ using osu.Game.Rulesets.Difficulty.Preprocessing;
 
 namespace osuAT.Game.Skills
 {
-
+    // [!] add a way to use a stream-like loop to calculate pp per hitobject (like curPP = SkillCalcStream.LoadNextHit())
+    // When a skill is ready to be used, dont forget to add it to Skill.cs   
     public interface ISkillCalcuator
     {
+        private Beatmap focusedMap;
+
         /// <summary>
         /// The rulesets this skill can support.
         /// </summary>
         public RulesetInfo[] SupportedRulesets { get; }
+
+        public ISkillCalcuator(Beatmap map) {
+            focusedMap = map
+        }
 
         /// <summary>
         /// This skill's PP Calculator System.
         /// </summary>
         public double SkillCalc(Score score) { return -1; }
 
+        // What to do for one object in a  
+        public void CalcObj(DifficultyHitObject) {
+            
+        }
+
         /// <summary>
         /// Returns the most pp possible in a map for this skill.
         /// </summary>
-        public double SkillCalc(Beatmap map, RulesetInfo ruleset, List<ModInfo> mods = null) 
+        public double GetCalcStream(Beatmap map, RulesetInfo ruleset, List<ModInfo> mods = null) 
         {
+
+
             mods ??= new List<ModInfo>();
             return SkillCalc(new Score
             {
@@ -42,7 +56,9 @@ namespace osuAT.Game.Skills
                 Mods = mods,
                 AccuracyStats = new AccStat(map.Contents.HitObjects.Count,0,0,0),
             });
+
         }
+
         /// <summary>
         /// The people who contributed to this skill's development.
         /// </summary>
@@ -56,4 +72,6 @@ namespace osuAT.Game.Skills
         }
 
     }
+
+    public class SkillCalcStream
 }
