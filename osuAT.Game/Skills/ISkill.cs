@@ -11,7 +11,7 @@ using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Colour;
 namespace osuAT.Game.Skills
 {
-
+    // [!] add a way to use a stream-like loop to calculate pp per hitobject (like curPP = SkillCalcStream.LoadNextHit())
     // When a skill is ready to be used, dont forget to add it to Skill.cs   
     public interface ISkill : ISkillCalcuator
     {

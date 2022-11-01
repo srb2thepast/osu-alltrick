@@ -72,6 +72,7 @@ using Beatmap = osu.Game.Beatmaps.Beatmap;
 using OsuRulesetInfo = osu.Game.Rulesets.RulesetInfo;
 using ATBeatmap = osuAT.Game.Types.Beatmap;
 using ATRulesetStore = osuAT.Game.Types.RulesetStore;
+using osu.Game.Graphics.Sprites;
 
 namespace SkillAnalyzer.Visual
 {
@@ -112,6 +113,9 @@ namespace SkillAnalyzer.Visual
 
         protected LabelledBarGraph SkillGraph;
         private TextFlowContainer debugContainer;
+        // Skill.Id<ParamName,Value>
+        private Dictionary<string, Dictionary<string, object>> skillDebugTextCached = new Dictionary<string, Dictionary<string, object>>();
+        private string debugTextCached;
 
         private bool sceneLoaded = false;
         private bool canUseEditor = false;
@@ -137,7 +141,45 @@ namespace SkillAnalyzer.Visual
             }
             public class AnalyzerSummaryTimeline : SummaryTimeline
             {
-                // add graph here
+                [BackgroundDependencyLoader]
+                private void load(OverlayColourProvider colourProvider) {
+                    //Add(new StrainVisualizer {
+
+                //});
+                }
+            }
+
+            public class AnalyzerTimeInfoContainer : TimeInfoContainer
+            {
+
+                [Resolved]
+                private EditorClock editorClock { get; set; }
+
+                OsuSpriteText msTime;
+                [BackgroundDependencyLoader]
+                private void load(OsuColour colours, OverlayColourProvider colourProvider)
+                {
+                    // [!] Torus License
+                    FontUsage torus2 = OsuFont.Numeric;
+                    msTime = new OsuSpriteText
+                    {
+                        Colour = colours.Orange1,
+                        Anchor = Anchor.CentreLeft,
+                        Font = torus2.With(null, 18f, FontWeight.SemiBold),
+                        Position = new Vector2(2f, 5f),
+                        Text = "| 00000ms",
+                        Scale = new Vector2(0.8f),
+                        X = 65,
+                        Y = 7
+                    };
+                    Add(msTime);
+                }
+
+                protected override void Update()
+                {
+                    base.Update();
+                    msTime.Text = $"| {Math.Truncate(editorClock.CurrentTime)}ms";
+                }
             }
 
             public class AnalyzerBottomBar : CompositeDrawable
@@ -188,7 +230,7 @@ namespace SkillAnalyzer.Visual
                         {
                             new Drawable[]
                             {
-                                new TimeInfoContainer { RelativeSizeAxes = Axes.Both },
+                                new AnalyzerTimeInfoContainer { RelativeSizeAxes = Axes.Both },
                                 new AnalyzerSummaryTimeline { RelativeSizeAxes = Axes.Both },
                                 new PlaybackControl { RelativeSizeAxes = Axes.Both },
                                 TestGameplayButton = new TestGameplayButton
@@ -223,10 +265,16 @@ namespace SkillAnalyzer.Visual
                 Container editTopBar = (Container)ContextMenu[1];
                 CompositeDrawable editBottomBar = (CompositeDrawable)ContextMenu[2];
 
-                
-                ContextMenu.Remove(editBottomBar, true);
-                ContextMenu.Add(bottomBar = new AnalyzerBottomBar());
 
+                ContextMenu.Remove(editBottomBar, true);
+                ContextMenu.Add(new Box()
+                {
+                    Colour = Colour4.FromHex("#404444"),
+                    RelativeSizeAxes = Axes.X,
+                    Height = editTopBar.Height,  
+                });
+                ContextMenu.Remove(editTopBar, true);
+                ContextMenu.Add(bottomBar = new AnalyzerBottomBar());
                 //editorScreen.Scale = new Vector2(0.95f);
                 //editorScreen.X = editorScreen.Parent.BoundingBox.Width * editorScreen.Scale.X / 30;
                 //editorScreen.Y = editorScreen.Parent.BoundingBox.Height * editorScreen.Scale.X  / 20 ;
@@ -281,6 +329,9 @@ namespace SkillAnalyzer.Visual
                     $"{popoverCont}\n" +
                     $" \n");
                     Console.WriteLine("++--------------++");
+
+
+
                 };
             }
 
@@ -314,6 +365,9 @@ namespace SkillAnalyzer.Visual
 
 
         public MainScreen() {
+            foreach (ISkill skill in Skill.SkillList) {
+                skillDebugTextCached.Add(skill.Identifier, new Dictionary<string, object>());    
+            }
         }
 
         protected override IBeatmap CreateBeatmap(OsuRulesetInfo ruleset)
@@ -470,7 +524,6 @@ namespace SkillAnalyzer.Visual
         [BackgroundDependencyLoader]
         private void load(AudioManager audio)
         {
-            
             Console.WriteLine("hiaaaaaaa");
             Console.WriteLine(Audio);
 
@@ -478,9 +531,10 @@ namespace SkillAnalyzer.Visual
             Add(
                 new Container
                 {
-                    Size = new Vector2(125, 564),
-                    X = 898,
+                    Size = new Vector2(140, 678),
+                    X = -140,
                     Y = 144,
+                    Anchor = Anchor.TopRight,
                     Children = new Drawable[]
                     {
                         new Box {
@@ -489,6 +543,7 @@ namespace SkillAnalyzer.Visual
                         },
                         debugContainer = new TextFlowContainer()
                         {
+                            Padding = new MarginPadding{ Left = 7},
                             RelativeSizeAxes = Axes.Both,
                         },
                     }
@@ -501,6 +556,7 @@ namespace SkillAnalyzer.Visual
         {
             base.LoadComplete();
             sceneLoaded = true;
+
         }
 
         protected void EditorFinishedLoading()
@@ -560,6 +616,7 @@ namespace SkillAnalyzer.Visual
                 dummyScore.BeatmapInfo.MaxCombo = dummyScore.Combo;
             }
 
+                    /* Debug
             Console.WriteLine($"" +
                     $"combo: {dummyScore.Combo} / {dummyScore.BeatmapInfo.MaxCombo} \n" +
                     $"editor timee: {EditorClock.CurrentTime} \n" +
@@ -567,7 +624,7 @@ namespace SkillAnalyzer.Visual
                     $"cached diff: {CachedMapDiffHits.Count} \n" +
                     $"score diff: {dummyScore.BeatmapInfo.Contents.DiffHitObjects.Count} \n" +
                     $"map diff: {ATFocusedMap.Contents.DiffHitObjects.Count}");
-
+                    */
             // Bar section
             float largestPP = 0;
             SortedList<string, float> skillNameList = new SortedList<string, float>();
@@ -581,7 +638,7 @@ namespace SkillAnalyzer.Visual
 
                     skillNameList.Add(skill.Identifier, skillpp);
                     if (largestPP < skillpp) largestPP = skillpp;
-                    Console.WriteLine(skill.Identifier + ": " + skillpp);
+                    // Console.WriteLine(skill.Identifier + ": " + skillpp);
                 }
             );
 
@@ -594,10 +651,11 @@ namespace SkillAnalyzer.Visual
 
             // Debug text section
             debugContainer.Text = "";
+            debugTextCached = "";
             skillList.ForEach(skill =>
             {
                 bool titlemade = false;
-                System.Console.WriteLine($"Cur Skill: {skill.GetType()}");
+                // Console.WriteLine($"Cur Skill: {skill.GetType()}");
                 var props = skill.GetType().GetFields(
                          BindingFlags.NonPublic |
                          BindingFlags.Instance);
@@ -611,6 +669,7 @@ namespace SkillAnalyzer.Visual
                             t.Colour = skill.PrimaryColor;
                             t.Shadow = true;
                         });
+                        debugTextCached += $"\n{skill.Identifier}";
                         titlemade = true;
                     }
                     foreach (object attr in attrs)
@@ -624,15 +683,17 @@ namespace SkillAnalyzer.Visual
                         {
                             propval = Math.Truncate(dubval * 100) / 100;
                         }
-                        debugContainer.AddText($"{property.Name}:\n   -> {propval}\n", t => {
+                        debugContainer.AddText($"{property.Name}:\n   -> {propval}", t => {
                             t.Font = new FontUsage("VarelaRound", size: 17);
                             t.Colour = Colour4.White;
                             t.Shadow = true;
                         });
+                        debugTextCached += $"\n{property.Name}:\n   -> {propval}";
+                        skillDebugTextCached[skill.Identifier][property.Name] = propval;
                     }
                 }
             });
-            Console.WriteLine("------------------");
+            // Console.WriteLine("------------------");
         }
 
         private int previoushitindex = 0;
@@ -675,12 +736,39 @@ namespace SkillAnalyzer.Visual
         [Test]
         public async void Setup()
         {
+            RunAllSteps();
             AddStep("load editor then enable bar", LoadEditor);
-            AddUntilStep("wait for beatmap updated", () => !base.Beatmap.IsDefault);
+            AddUntilStep("wait until editor is loaded", () => canUseEditor);
         }
 
         [Test]
-        public void TestSeekToFirst()
+        public void TestCheckCurAvgSpacing() {
+
+            AddStep("Seek to 2:12:404", () => EditorClock.Seek(convertTimeToMs("2:12:404")));
+            debugContainer.Text = "";
+            AddUntilStep("Add flowaim", () => {
+                if (!CurSkillList.Contains(Skill.Flowaim))
+                    CurSkillList.Add(Skill.Flowaim);
+                return CurSkillList.Contains(Skill.Flowaim);
+            });
+            AddAssert("curAvgSpacing > 50", () => {
+                Dictionary<string,object> directory = skillDebugTextCached[Skill.Flowaim.Identifier];
+                double amount = (double)directory["curAvgSpacing"];
+                return amount > 50;
+            });
+        }
+
+        private double convertTimeToMs(string time)
+        {
+            string[] split = time.Split(':');
+            int min = int.Parse(split[0]);
+            int sec = int.Parse(split[1]);
+            int ms = int.Parse(split[2]);
+            return min * 60 * 1000 + sec * 1000 + ms;
+        }
+
+        [Test]
+        public void Options()
         {
             AddAssert("SETTINGS:", () => false); // Added a false assert so that it doesn't automatically enable all settings
             AddToggleStep("Overall Combo Scaling", (d) => { scaleByCombo = d; });
