@@ -42,8 +42,10 @@ namespace osuAT.Game.Skills
         public static Dictionary<string, double> CalcAll(Score score)
         {
             Dictionary<string, double> dict = new Dictionary<string, double>();
-            foreach (ISkill skill in SkillList) {
-                dict.Add(skill.Identifier, skill.SkillCalc(score));
+            foreach (ISkill skill in SkillList)
+            {
+                SkillCalcuator calculator = skill.GetSkillCalc(score);
+                dict.Add(skill.Identifier,  calculator.SkillCalc());
             }
             return dict;
         }

@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Textures;
 using osuAT.Game.Types;
-using osuAT.Game.Objects;
 using osu.Game.Rulesets.Osu.Objects;
 using osuTK;
-using osu.Game.Overlays.Comments;
+using osu.Game.Rulesets.Difficulty.Preprocessing;
+using static osuAT.Game.Skills.AimSkill;
 
 namespace osuAT.Game.Skills
 {
     public class NerveControlSkill : ISkill
     {
 
+        #region Info
         public string Name => "Nerve Control";
 
         public string Identifier => "nervecontrol";
@@ -44,26 +43,29 @@ namespace osuAT.Game.Skills
         public Vector2 BoxPosition => new Vector2(0, -200);
 
         public SkillGoals Benchmarks => new SkillGoals(600, 1500,3000, 6000, 9000, 10000);
+        #endregion
 
-        public RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
-
-        public double SkillCalc(Score score)
+        public class NerveControlCalculator : SkillCalcuator
         {
-            if (!SupportedRulesets.Contains(score.ScoreRuleset)) return -1;
-            if (score.BeatmapInfo.FolderLocation == default) return -2;
-            if (score.BeatmapInfo.Contents.HitObjects == default) return -3;
+            public NerveControlCalculator(Score score) : base(score)
+            {
+            }
 
+            public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-            float totaldistavg = 0;
-            for (int i = 0; i < score.BeatmapInfo.Contents.DiffHitObjects.Count; i++)
+            private float totaldistavg = 0;
+
+            public override void CalcNext(DifficultyHitObject diffHitObj)
             {
                 // [!] add generic support based off of a mode's general hitobject class
-                var DiffHitObj = score.BeatmapInfo.Contents.DiffHitObjects[i];
+                var DiffHitObj = diffHitObj;
                 var HitObj = (OsuHitObject)DiffHitObj.BaseObject;
                 var LastHitObj = (OsuHitObject)DiffHitObj.LastObject;
                 totaldistavg += Math.Abs(HitObj.Position.Length - LastHitObj.Position.Length);
+                CurTotalPP = (totaldistavg / (FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count + 1));
             }
-            return (totaldistavg / (score.BeatmapInfo.Contents.DiffHitObjects.Count+1));
         }
+
+        public SkillCalcuator GetSkillCalc(Score score) => new NerveControlCalculator(score);
     }
 }

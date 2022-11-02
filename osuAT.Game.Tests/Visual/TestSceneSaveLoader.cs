@@ -25,6 +25,7 @@ using NUnit.Framework.Interfaces;
 using System;
 using NuGet.Packaging.Core;
 using osu.Game.Overlays.BeatmapSet;
+using static osuAT.Game.Skills.AimSkill;
 
 namespace osuAT.Game.Tests.Visual
 {
@@ -160,9 +161,7 @@ namespace osuAT.Game.Tests.Visual
 
             public SkillGoals Benchmarks => throw new NotImplementedException();
 
-            public double SkillCalc(Score score) { return 7270000; }
-
-            public RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
+            public SkillCalcuator GetSkillCalc(Score score) => new FlowAimSkill.FlowAimCalculator(score);
         }
 
         private testSkill skillInstance = new testSkill();

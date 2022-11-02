@@ -275,6 +275,7 @@ namespace SkillAnalyzer.Visual
                 });
                 ContextMenu.Remove(editTopBar, true);
                 ContextMenu.Add(bottomBar = new AnalyzerBottomBar());
+                ContextMenu.ChangeChildDepth(bottomBar, bottomBar.Depth - 2000);
                 //editorScreen.Scale = new Vector2(0.95f);
                 //editorScreen.X = editorScreen.Parent.BoundingBox.Width * editorScreen.Scale.X / 30;
                 //editorScreen.Y = editorScreen.Parent.BoundingBox.Height * editorScreen.Scale.X  / 20 ;
@@ -287,6 +288,7 @@ namespace SkillAnalyzer.Visual
                     var props = composeScreen.GetType().GetFields(
                              BindingFlags.NonPublic |
                              BindingFlags.Instance);
+
                     // Lol
                     HitObjectComposer popoverCont = null;
                     foreach (FieldInfo property in props) {
@@ -316,6 +318,7 @@ namespace SkillAnalyzer.Visual
                             rightBar = (Container)intChildren[2];
                         }
                     }
+                    // [!] maybe put the centerfield in a DrawSizeFillPerservingContaininer instead?
                     centerField.Scale = new Vector2(0.8f);
                     centerField.Position = new Vector2(110,75);
                     leftBar?.RemoveAndDisposeImmediately();
@@ -600,11 +603,6 @@ namespace SkillAnalyzer.Visual
             if (curhitindex == previoushitindex && !skipCurhitCheck)
                 return;
 
-            List<DifficultyHitObject> cachedClone = new List<DifficultyHitObject>(CachedMapDiffHits);
-            dummyScore.BeatmapInfo.Contents.DiffHitObjects = cachedClone.Where(d =>
-            {
-                return d.Index < curhitindex;
-            }).ToList();
             dummyScore.Combo = dummyScore.BeatmapInfo.GetMaxCombo(); // calculated combo with current amount of hit objects
             
             if (scaleByCombo)
@@ -616,65 +614,56 @@ namespace SkillAnalyzer.Visual
                 dummyScore.BeatmapInfo.MaxCombo = dummyScore.Combo;
             }
 
-                    /* Debug
-            Console.WriteLine($"" +
-                    $"combo: {dummyScore.Combo} / {dummyScore.BeatmapInfo.MaxCombo} \n" +
-                    $"editor timee: {EditorClock.CurrentTime} \n" +
-                    $"closest index: {curhitindex} \n" +
-                    $"cached diff: {CachedMapDiffHits.Count} \n" +
-                    $"score diff: {dummyScore.BeatmapInfo.Contents.DiffHitObjects.Count} \n" +
-                    $"map diff: {ATFocusedMap.Contents.DiffHitObjects.Count}");
-                    */
-            // Bar section
+            /* Debug
+    Console.WriteLine($"" +
+            $"combo: {dummyScore.Combo} / {dummyScore.BeatmapInfo.MaxCombo} \n" +
+            $"editor timee: {EditorClock.CurrentTime} \n" +
+            $"closest index: {curhitindex} \n" +
+            $"cached diff: {CachedMapDiffHits.Count} \n" +
+            $"score diff: {dummyScore.BeatmapInfo.Contents.DiffHitObjects.Count} \n" +
+            $"map diff: {ATFocusedMap.Contents.DiffHitObjects.Count}");
+            */
+
+
+            // Bar & debug section
             float largestPP = 0;
             SortedList<string, float> skillNameList = new SortedList<string, float>();
             List<ColourInfo> skillColors = new List<ColourInfo>();
+            debugContainer.Text = "";
+            debugTextCached = "";
 
             skillList.ForEach(
                 skill =>
                 {
-                    float skillpp = (float)skill.SkillCalc(dummyScore);
+                    // SkillBar Updater
+                    SkillCalcuator calculator = skill.GetSkillCalc(dummyScore);
+                    calculator.EndIndex = curhitindex;
+                    float skillpp = (float)calculator.SkillCalc();
                     if (skillpp < 0) skillpp = 0;
 
                     skillNameList.Add(skill.Identifier, skillpp);
                     if (largestPP < skillpp) largestPP = skillpp;
                     // Console.WriteLine(skill.Identifier + ": " + skillpp);
-                }
-            );
 
-            skillNameList.ForEach(skillName => {
-                skillColors.Add(ColourInfo.GradientVertical(Skill.GetSkillByID(skillName.Key).PrimaryColor, Skill.GetSkillByID(skillName.Key).SecondaryColor));
-            });
+                    // BarUpdater
+                    var props = calculator.GetType().GetFields(
+                             BindingFlags.NonPublic |
+                             BindingFlags.Instance);
 
-            SkillGraph.SBarGraph.MaxValue = (largestPP < 500) ? 500 : largestPP;
-            SkillGraph.SetValues(skillNameList, skillColors);
-
-            // Debug text section
-            debugContainer.Text = "";
-            debugTextCached = "";
-            skillList.ForEach(skill =>
-            {
-                bool titlemade = false;
-                // Console.WriteLine($"Cur Skill: {skill.GetType()}");
-                var props = skill.GetType().GetFields(
-                         BindingFlags.NonPublic |
-                         BindingFlags.Instance);
-                foreach (FieldInfo property in props)
-                {
-                    var attrs = property.GetCustomAttributes<SkillDebugValueAttribute>(true);
-
-                    if (attrs.Count() > 0 && titlemade == false) {
+                    if (props.Count() > 0)
+                    {
                         debugContainer.AddText($"{skill.Identifier}", t => {
                             t.Font = new FontUsage("VarelaRound", size: 23);
                             t.Colour = skill.PrimaryColor;
                             t.Shadow = true;
                         });
                         debugTextCached += $"\n{skill.Identifier}";
-                        titlemade = true;
-                    }
-                    foreach (object attr in attrs)
+                    }   
+                    foreach (FieldInfo property in props)
                     {
-                        var propval = property.GetValue(skill);
+                        if (property.GetCustomAttribute(typeof(HiddenDebugValueAttribute)) != default)
+                            continue;
+                        var propval = property.GetValue(calculator);
                         if (propval is float floatval)
                         {
                             propval = Math.Truncate(floatval * 100) / 100;
@@ -683,7 +672,7 @@ namespace SkillAnalyzer.Visual
                         {
                             propval = Math.Truncate(dubval * 100) / 100;
                         }
-                        debugContainer.AddText($"{property.Name}:\n   -> {propval}", t => {
+                        debugContainer.AddText($"{property.Name}:\n   -> {propval}\n", t => {
                             t.Font = new FontUsage("VarelaRound", size: 17);
                             t.Colour = Colour4.White;
                             t.Shadow = true;
@@ -692,7 +681,15 @@ namespace SkillAnalyzer.Visual
                         skillDebugTextCached[skill.Identifier][property.Name] = propval;
                     }
                 }
+            );
+
+
+            skillNameList.ForEach(skillName => {
+                skillColors.Add(ColourInfo.GradientVertical(Skill.GetSkillByID(skillName.Key).PrimaryColor, Skill.GetSkillByID(skillName.Key).SecondaryColor));
             });
+
+            SkillGraph.SBarGraph.MaxValue = (largestPP < 500) ? 500 : largestPP;
+            SkillGraph.SetValues(skillNameList, skillColors);
             // Console.WriteLine("------------------");
         }
 
@@ -744,7 +741,8 @@ namespace SkillAnalyzer.Visual
         [Test]
         public void TestCheckCurAvgSpacing() {
 
-            AddStep("Seek to 2:12:404", () => EditorClock.Seek(convertTimeToMs("2:12:404")));
+            AddStep("Seek to 2:12:404", () => { EditorClock.Seek(convertTimeToMs("2:12:404")); } ); // EditorClock.Stop(); 
+
             debugContainer.Text = "";
             AddUntilStep("Add flowaim", () => {
                 if (!CurSkillList.Contains(Skill.Flowaim))
@@ -775,5 +773,6 @@ namespace SkillAnalyzer.Visual
         }
 
         public override void SetUpSteps() {}
+
     }
 }

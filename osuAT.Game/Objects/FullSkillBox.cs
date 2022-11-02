@@ -23,7 +23,7 @@ namespace osuAT.Game.Objects
     public class FullSkillBox : CompositeDrawable
     {
 
-        public ISkill Skill;
+        public ISkill CurSkill;
         public SkillBox ParentBox;
         public SkillInfo InfoBox;
 
@@ -34,7 +34,7 @@ namespace osuAT.Game.Objects
 
         public class SkillInfo : CompositeDrawable
         {
-            public ISkill Skill;
+            public ISkill CurSkill;
             public int TextSize; // Text Size 
 
             public Texture Background; // Skill Background
@@ -69,7 +69,7 @@ namespace osuAT.Game.Objects
 
             private class ppBar : Container
             {
-                public ISkill Skill;
+                public ISkill CurSkill;
                 private readonly BindableWithCurrent<int> performance = new BindableWithCurrent<int>();
                 public Bindable<int> Performance
                 {
@@ -89,17 +89,17 @@ namespace osuAT.Game.Objects
                 {
                     ColourInfo VerticalGrad = new ColourInfo
                     {
-                        TopLeft = Skill.PrimaryColor,
-                        TopRight = Skill.PrimaryColor,
-                        BottomLeft = Skill.SecondaryColor,
-                        BottomRight = Skill.SecondaryColor,
+                        TopLeft = CurSkill.PrimaryColor,
+                        TopRight = CurSkill.PrimaryColor,
+                        BottomLeft = CurSkill.SecondaryColor,
+                        BottomRight = CurSkill.SecondaryColor,
                     };
                     ColourInfo HorizontalGrad = new ColourInfo
                     {
-                        TopLeft = Skill.PrimaryColor,
-                        BottomLeft = Skill.PrimaryColor,
-                        TopRight = Skill.SecondaryColor,
-                        BottomRight = Skill.SecondaryColor,
+                        TopLeft = CurSkill.PrimaryColor,
+                        BottomLeft = CurSkill.PrimaryColor,
+                        TopRight = CurSkill.SecondaryColor,
+                        BottomRight = CurSkill.SecondaryColor,
                     };
                     Child = new Container
                     {
@@ -113,7 +113,7 @@ namespace osuAT.Game.Objects
                                 Height = 10,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                Colour = Skill.SecondaryColor,
+                                Colour = CurSkill.SecondaryColor,
                                 Y = 2,
                             },
                             new Circle
@@ -122,10 +122,10 @@ namespace osuAT.Game.Objects
                                 Height = 10,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                Colour = Skill.PrimaryColor,
+                                Colour = CurSkill.PrimaryColor,
                             },
                             ppText = new SpriteText {
-                                Text = (Math.Truncate((double)performPoints.Value)).ToString() + "pp/" + ((Skill.Level < SkillLevel.Chosen)? Skill.Benchmarks.Mastery.ToString() : Skill.Benchmarks.Chosen.ToString())+"pp",
+                                Text = (Math.Truncate((double)performPoints.Value)).ToString() + "pp/" + ((CurSkill.Level < SkillLevel.Chosen)? CurSkill.Benchmarks.Mastery.ToString() : CurSkill.Benchmarks.Chosen.ToString())+"pp",
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
                                 Y = -0.5f,
@@ -169,10 +169,10 @@ namespace osuAT.Game.Objects
                 {
                     ColourInfo HorizontalGrad = new ColourInfo
                     {
-                        TopLeft = Skill.PrimaryColor,
-                        BottomLeft = Skill.PrimaryColor,
-                        TopRight = Skill.SecondaryColor,
-                        BottomRight = Skill.SecondaryColor,
+                        TopLeft = CurSkill.PrimaryColor,
+                        BottomLeft = CurSkill.PrimaryColor,
+                        TopRight = CurSkill.SecondaryColor,
+                        BottomRight = CurSkill.SecondaryColor,
                     };
                     Performance.BindValueChanged(c =>
                     {
@@ -183,7 +183,7 @@ namespace osuAT.Game.Objects
                     {
                         ppText = new SpriteText
                         {
-                            Text = pp.NewValue.ToLocalisableString("0") + "pp/" + ((Skill.Level < SkillLevel.Mastery) ? Skill.Benchmarks.Mastery.ToString() : Skill.Benchmarks.Chosen.ToString()) + "pp",
+                            Text = pp.NewValue.ToLocalisableString("0") + "pp/" + ((CurSkill.Level < SkillLevel.Mastery) ? CurSkill.Benchmarks.Mastery.ToString() : CurSkill.Benchmarks.Chosen.ToString()) + "pp",
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             Y = 9.5f,
@@ -221,7 +221,7 @@ namespace osuAT.Game.Objects
                                 Height = 10,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                Colour = Skill.SecondaryColor,
+                                Colour = CurSkill.SecondaryColor,
                             });
                         Add(
                             new Circle
@@ -231,7 +231,7 @@ namespace osuAT.Game.Objects
                                 Height = 10,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                Colour = Skill.PrimaryColor,
+                                Colour = CurSkill.PrimaryColor,
                             });
                         Add(ppText);
                         
@@ -240,7 +240,7 @@ namespace osuAT.Game.Objects
 
                 public void Appear()
                 {
-                    reloadPPText((int)Skill.SkillPP);
+                    reloadPPText((int)CurSkill.SkillPP);
                     
 
                 }
@@ -248,15 +248,15 @@ namespace osuAT.Game.Objects
                 {
                     ColourInfo HorizontalGrad = new ColourInfo
                     {
-                        TopLeft = Skill.PrimaryColor,
-                        BottomLeft = Skill.PrimaryColor,
-                        TopRight = Skill.SecondaryColor,
-                        BottomRight = Skill.SecondaryColor,
+                        TopLeft = CurSkill.PrimaryColor,
+                        BottomLeft = CurSkill.PrimaryColor,
+                        TopRight = CurSkill.SecondaryColor,
+                        BottomRight = CurSkill.SecondaryColor,
                     };
                     Remove(ppText,true);
                     ppText = new SpriteText
                     {
-                        Text = pp.ToLocalisableString("0") + "pp/" + ((Skill.Level < SkillLevel.Chosen) ? Skill.Benchmarks.Mastery.ToString() : Skill.Benchmarks.Chosen.ToString()) + "pp",
+                        Text = pp.ToLocalisableString("0") + "pp/" + ((CurSkill.Level < SkillLevel.Chosen) ? CurSkill.Benchmarks.Mastery.ToString() : CurSkill.Benchmarks.Chosen.ToString()) + "pp",
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         Y = -0.5f,
@@ -314,17 +314,17 @@ namespace osuAT.Game.Objects
 
                 ColourInfo VerticalGrad = new ColourInfo
                 {
-                    TopLeft = Skill.PrimaryColor,
-                    TopRight = Skill.PrimaryColor,
-                    BottomLeft = Skill.SecondaryColor,
-                    BottomRight = Skill.SecondaryColor,
+                    TopLeft = CurSkill.PrimaryColor,
+                    TopRight = CurSkill.PrimaryColor,
+                    BottomLeft = CurSkill.SecondaryColor,
+                    BottomRight = CurSkill.SecondaryColor,
                 };
                 ColourInfo HorizontalGrad = new ColourInfo
                 {
-                    TopLeft = Skill.PrimaryColor,
-                    BottomLeft = Skill.PrimaryColor,
-                    TopRight = Skill.SecondaryColor,
-                    BottomRight = Skill.SecondaryColor,
+                    TopLeft = CurSkill.PrimaryColor,
+                    BottomLeft = CurSkill.PrimaryColor,
+                    TopRight = CurSkill.SecondaryColor,
+                    BottomRight = CurSkill.SecondaryColor,
                 };
 
                 InternalChild = new Container
@@ -392,20 +392,20 @@ namespace osuAT.Game.Objects
                                     Size = new Vector2(100,20),
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Colour = Skill.PrimaryColor,
+                                    Colour = CurSkill.PrimaryColor,
                                     CornerRadius = 30,
                                     Alpha = 0.9f
                                 },
 
                                 // SkillText
                                 new SpriteText {
-                                    Text = Skill.Name,
+                                    Text = CurSkill.Name,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Font = new FontUsage("VarelaRound", size: Math.Clamp(Skill.BoxNameSize/3.8f,0,23)),
+                                    Font = new FontUsage("VarelaRound", size: Math.Clamp(CurSkill.BoxNameSize/3.8f,0,23)),
                                     Colour = Colour4.White,
                                     Shadow =true,
-                                    ShadowColour = Skill.PrimaryColor,
+                                    ShadowColour = CurSkill.PrimaryColor,
                                     Y = -0.5f,
                                     Padding = new MarginPadding
                                     {
@@ -418,7 +418,7 @@ namespace osuAT.Game.Objects
                                 {
                                     BlurSigma = new Vector2(1),
                                     Strength = 5,
-                                    Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
+                                    Colour = ColourInfo.GradientHorizontal(CurSkill.PrimaryColor, CurSkill.SecondaryColor),
                                     PadExtent = true,
 
                                 }).WithEffect(new OutlineEffect
@@ -465,7 +465,7 @@ namespace osuAT.Game.Objects
                                                     Size = new Vector2(60,60),
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.Centre,
-                                                    Colour = Skill.PrimaryColor,
+                                                    Colour = CurSkill.PrimaryColor,
                                                     Alpha = 0.1f
                                                 },
                                                 // SkillLevel CircularProgresses  
@@ -549,7 +549,7 @@ namespace osuAT.Game.Objects
                                                             Anchor = Anchor.Centre,
                                                             Origin = Anchor.Centre,
                                                             Colour = Colour4.Black.MultiplyAlpha(0.3f),
-                                                            Alpha = (Skill.Level >= SkillLevel.Mastery) ? 1 : 0
+                                                            Alpha = (CurSkill.Level >= SkillLevel.Mastery) ? 1 : 0
 
                                                         },
                                                         pfpBorder2 = new Circle{
@@ -557,7 +557,7 @@ namespace osuAT.Game.Objects
                                                             Anchor = Anchor.Centre,
                                                             Origin = Anchor.Centre,
                                                             Colour = Colour4.FromHex("EDEDED"),
-                                                            Alpha = (Skill.Level >= SkillLevel.Mastery) ? 0 : 1
+                                                            Alpha = (CurSkill.Level >= SkillLevel.Mastery) ? 0 : 1
                                                         },
                                                         // Chosen Progress
                                                         chosenprogress = new CircularProgress{
@@ -593,7 +593,7 @@ namespace osuAT.Game.Objects
                                         ppBox = new ppBar {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Skill = Skill,
+                                            CurSkill = CurSkill,
                                         },
 
                                         // Rulesets
@@ -602,7 +602,7 @@ namespace osuAT.Game.Objects
                                             Origin = Anchor.Centre,
                                             Scale = new Vector2(0.25f),
                                             Y = 29,
-                                            RulesetList = Skill.SupportedRulesets
+                                            RulesetList = CurSkill.GetSkillCalc(new Score() { }).SupportedRulesets
                                         },
 
                                         // Skill Description
@@ -622,7 +622,7 @@ namespace osuAT.Game.Objects
                                             Origin = Anchor.Centre,
                                             Scale = new Vector2(0.25f),
                                             Y = 73,
-                                            Skill = Skill
+                                            Skill = CurSkill
                                         }
                                     }
                                         },
@@ -715,7 +715,7 @@ namespace osuAT.Game.Objects
                                         {
                                             BlurSigma = new Vector2(0.5f),
                                             Strength = 5,
-                                            Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
+                                            Colour = ColourInfo.GradientHorizontal(CurSkill.PrimaryColor, CurSkill.SecondaryColor),
                                             PadExtent = true,
 
                                         }),
@@ -764,13 +764,13 @@ namespace osuAT.Game.Objects
                                         {
                                             BlurSigma = new Vector2(0.5f),
                                             Strength = 5,
-                                            Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
+                                            Colour = ColourInfo.GradientHorizontal(CurSkill.PrimaryColor, CurSkill.SecondaryColor),
                                             PadExtent = true,
 
                                         }),
                                     }
                                 },
-                                Page2 = Skill.ContributorPage
+                                Page2 = CurSkill.ContributorPage
                             }
                         },
                         
@@ -801,7 +801,7 @@ namespace osuAT.Game.Objects
                                             Size = new Vector2(9),
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Colour = Skill.PrimaryColor,
+                                            Colour = CurSkill.PrimaryColor,
                                         },
                                     }
                                 },
@@ -899,24 +899,24 @@ namespace osuAT.Game.Objects
 
                 #region set progresses
                 backprogress.Current.Value = 1;
-                learnerProg.Current.Value = (float)Skill.Benchmarks.Learner / Skill.Benchmarks.Mastery;
-                experiencedProg.Current.Value = (float)Skill.Benchmarks.Experienced / Skill.Benchmarks.Mastery;
-                confidentProg.Current.Value = (float)Skill.Benchmarks.Confident / Skill.Benchmarks.Mastery;
-                proficientProg.Current.Value = (float)Skill.Benchmarks.Proficient / Skill.Benchmarks.Mastery;
+                learnerProg.Current.Value = (float)CurSkill.Benchmarks.Learner / CurSkill.Benchmarks.Mastery;
+                experiencedProg.Current.Value = (float)CurSkill.Benchmarks.Experienced / CurSkill.Benchmarks.Mastery;
+                confidentProg.Current.Value = (float)CurSkill.Benchmarks.Confident / CurSkill.Benchmarks.Mastery;
+                proficientProg.Current.Value = (float)CurSkill.Benchmarks.Proficient / CurSkill.Benchmarks.Mastery;
                 masteryProg.Current.Value = 1;
                 #endregion
 
 
                 int i = 0;
-                foreach (string line in Skill.Summary.Split('\n'))
+                foreach (string line in CurSkill.Summary.Split('\n'))
                 {
                     skillDescription.Add(new SpriteText
                     {
-                        Y = Skill.SummarySize * i * 0.9f,
+                        Y = CurSkill.SummarySize * i * 0.9f,
                         Text = line,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Font = new FontUsage("VarelaRound", size: Skill.SummarySize),
+                        Font = new FontUsage("VarelaRound", size: CurSkill.SummarySize),
                         Colour = Colour4.White,
                         Shadow = true,
                         ShadowOffset = new Vector2(0, 0.05f),
@@ -931,7 +931,7 @@ namespace osuAT.Game.Objects
                     {
                         BlurSigma = new Vector2(0.5f),
                         Strength = 5,
-                        Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
+                        Colour = ColourInfo.GradientHorizontal(CurSkill.PrimaryColor, CurSkill.SecondaryColor),
                         PadExtent = true,
 
                     }).WithEffect(new OutlineEffect
@@ -949,19 +949,19 @@ namespace osuAT.Game.Objects
             public void Appear(float delay = 0)
             {
                 levelDisplay.Appear();
-                levelDisplay.SwitchLevel(Skill.Level);
+                levelDisplay.SwitchLevel(CurSkill.Level);
                 ColourInfo HorizontalGrad = new ColourInfo
                 {
-                    TopLeft = Skill.PrimaryColor,
-                    BottomLeft = Skill.PrimaryColor,
-                    TopRight = Skill.SecondaryColor,
-                    BottomRight = Skill.SecondaryColor,
+                    TopLeft = CurSkill.PrimaryColor,
+                    BottomLeft = CurSkill.PrimaryColor,
+                    TopRight = CurSkill.SecondaryColor,
+                    BottomRight = CurSkill.SecondaryColor,
                 };
-                skillprogress.Delay(300 + delay).FillTo((Skill.Level < SkillLevel.Mastery) ? (float)Skill.SkillPP / Skill.Benchmarks.Mastery : 1, 1000, Easing.InOutCubic);
-                chosenprogress.Delay(1000 + delay).FillTo((Skill.Level >= SkillLevel.Mastery) ? Math.Clamp((float)Skill.SkillPP / Skill.Benchmarks.Chosen, 0,1) : 0, 1000, Easing.InOutCubic);
-                ppBox.Performance.Value = (int)Skill.SkillPP;
+                skillprogress.Delay(300 + delay).FillTo((CurSkill.Level < SkillLevel.Mastery) ? (float)CurSkill.SkillPP / CurSkill.Benchmarks.Mastery : 1, 1000, Easing.InOutCubic);
+                chosenprogress.Delay(1000 + delay).FillTo((CurSkill.Level >= SkillLevel.Mastery) ? Math.Clamp((float)CurSkill.SkillPP / CurSkill.Benchmarks.Chosen, 0,1) : 0, 1000, Easing.InOutCubic);
+                ppBox.Performance.Value = (int)CurSkill.SkillPP;
 
-                if (Skill.Level >= SkillLevel.Mastery)
+                if (CurSkill.Level >= SkillLevel.Mastery)
                 {
                     pfpBorder1.FadeIn(600, Easing.InOutSine);
                     pfpBorder2.FadeOut(600,Easing.InOutSine);
@@ -983,7 +983,7 @@ namespace osuAT.Game.Objects
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
 
-            Skill = skill;
+            CurSkill = CurSkill;
             ParentBox = parentbox;
 
 
@@ -1005,13 +1005,13 @@ namespace osuAT.Game.Objects
                 Origin = Anchor.Centre,
 
                 Masking = true,
-                BorderThickness = ((Skill.Level < SkillLevel.Mastery) ? 0 : 3),
+                BorderThickness = ((CurSkill.Level < SkillLevel.Mastery) ? 0 : 3),
                 BorderColour = new ColourInfo
                 {
-                    TopLeft = Skill.PrimaryColor,
-                    BottomLeft = Skill.PrimaryColor,
-                    TopRight = Skill.SecondaryColor,
-                    BottomRight = Skill.SecondaryColor,
+                    TopLeft = CurSkill.PrimaryColor,
+                    BottomLeft = CurSkill.PrimaryColor,
+                    TopRight = CurSkill.SecondaryColor,
+                    BottomRight = CurSkill.SecondaryColor,
                 },
                 CornerRadius = 35,
 
@@ -1039,7 +1039,7 @@ namespace osuAT.Game.Objects
                                 Size = new Vector2(460.8f,259.2f), // reminder to set this as a changeable variable
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                Texture = textures.Get(Skill.Background),
+                                Texture = textures.Get(CurSkill.Background),
                                 Alpha = 0.4f
                             },
                                 
@@ -1057,14 +1057,14 @@ namespace osuAT.Game.Objects
                     },
 
                     // SkillInfo Box
-                    InfoBox = new SkillInfo{Skill = Skill,},
+                    InfoBox = new SkillInfo{CurSkill = CurSkill,},
 
                     // ScoreContainer Scrollbox
                     scoreContainer = new ScoreContainer {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         X = -80,
-                        Skill = Skill
+                        Skill = CurSkill
                     },
                     
                     // Back button

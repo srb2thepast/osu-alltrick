@@ -1,77 +1,88 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Textures;
-using osu.Framework.Graphics.Sprites;
 using osuAT.Game.Types;
 using osuAT.Game.Objects;
-using osuTK;
 using osu.Framework.Allocation;
-using osu.Framework.Graphics.Effects;
-using osu.Framework.Graphics.Colour;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
+using osuTK;
 
 namespace osuAT.Game.Skills
 {
     // [!] add a way to use a stream-like loop to calculate pp per hitobject (like curPP = SkillCalcStream.LoadNextHit())
     // When a skill is ready to be used, dont forget to add it to Skill.cs   
-    public interface ISkillCalcuator
+    public abstract class SkillCalcuator
     {
-        private Beatmap focusedMap;
 
         /// <summary>
         /// The rulesets this skill can support.
         /// </summary>
-        public RulesetInfo[] SupportedRulesets { get; }
-
-        public ISkillCalcuator(Beatmap map) {
-            focusedMap = map
-        }
+        public abstract RulesetInfo[] SupportedRulesets { get; }
 
         /// <summary>
-        /// This skill's PP Calculator System.
+        /// The score this SkillCalculator is assigned to process.
         /// </summary>
-        public double SkillCalc(Score score) { return -1; }
+        public Score FocusedScore { get; private set; }
 
-        // What to do for one object in a  
-        public void CalcObj(DifficultyHitObject) {
-            
-        }
+        public int StartIndex { get; set; }
+
+        public int EndIndex { get; set; }
 
         /// <summary>
-        /// Returns the most pp possible in a map for this skill.
+        /// Creates a new SkillCalculator that will calculate the value of the score given for this skill.
         /// </summary>
-        public double GetCalcStream(Beatmap map, RulesetInfo ruleset, List<ModInfo> mods = null) 
+        public SkillCalcuator(Score score)
         {
+            FocusedScore = score;
+            EndIndex = (EndIndex == default)? FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count:EndIndex;
+        }
 
+        /// <summary>
+        /// The amount of PP the current <see cref="FocusedScore"/> is worth.
+        /// </summary>
+        public double CurTotalPP { get; protected set; } = 0;
 
-            mods ??= new List<ModInfo>();
-            return SkillCalc(new Score
+        /// <summary>
+        /// Completes any necessary setup to calculate the skill (ex. variables that depend on info from the score or
+        /// initalizing any non-static variables).
+        /// </summary>
+        public virtual void Setup() {}
+
+        /// <summary>
+        /// Calculates the pp worth of the FocusedScore.
+        /// </summary>
+        public virtual double SkillCalc()
+        {
+            if (!SupportedRulesets.Contains(FocusedScore.ScoreRuleset)) return -1;
+            if (FocusedScore.BeatmapInfo.FolderLocation == default) return -2;
+            if (FocusedScore.BeatmapInfo.Contents.HitObjects == default) return -3;
+            Setup();
+            for (int i = StartIndex; i < EndIndex; i++)
             {
-                RulesetName = ruleset.Name,
-                ScoreRuleset = ruleset,
-                Combo = map.MaxCombo,
-                BeatmapInfo = map,
-                Mods = mods,
-                AccuracyStats = new AccStat(map.Contents.HitObjects.Count,0,0,0),
-            });
+                var diffHitObj = FocusedScore.BeatmapInfo.Contents.DiffHitObjects[i];
+                CalcNext(diffHitObj);
+            };
+            return CurTotalPP;
+        }
 
+
+        /// <summary>
+        /// Asynchronously calculates the pp worth of the FocusedScore.
+        /// </summary>
+        public virtual async Task<double> SkillCalcAsync()
+        {
+            await Task.Run(SkillCalc);
+            return CurTotalPP;
         }
 
         /// <summary>
-        /// The people who contributed to this skill's development.
+        /// Sets <see cref="CurTotalPP"/> to how much pp the hit object given is worth with respect to all objects coming before it.
         /// </summary>
-        public Contributor[] Contributors => new Contributor[] {};
+        /// <remarks>The code that goes here runs in the for-loop block in <see cref="SkillCalc()"/>.</remarks>
+        /// <param name="difficultyHitObject"></param>
+        public abstract void CalcNext(DifficultyHitObject diffHitObj);
 
-        /// <summary>
-        /// Returns a list of how the Skill's PP changes over the course of a list of hit
-        /// </summary>
-        public List<double> SkillCalcHitlist(Beatmap map, RulesetInfo ruleset, List<ModInfo> mods) {
-            throw new NotImplementedException("not done");
-        }
 
     }
-
-    public class SkillCalcStream
 }

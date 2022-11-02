@@ -12,31 +12,13 @@ using osu.Framework.Graphics.Colour;
 
 namespace osuAT.Game.Skills
 { 
-    public abstract class IStrainSkill : ISkillCalcuator
+    public abstract class StrainSkillCalculator : SkillCalcuator
     {
 
         protected double DecayWeight = 0.5;
 
-        /// <summary>
-        /// The rulesets this skill can support.
-        /// </summary>
-        public RulesetInfo[] SupportedRulesets { get; }
-
-        /// <summary>
-        /// This skill's PP Calculator System.
-        /// </summary>
-        public double SkillCalc(Score score) { return -1; }
-
-        /// <summary>
-        /// The people who contributed to this skill's development.
-        /// </summary>
-        public Contributor[] Contributors => new Contributor[] {};
-
-        public List<double> GetBeatmapStrains(DifficultyHitObject hitobject)  {
-            return null;
+        protected StrainSkillCalculator(Score score) : base(score)
+        {
         }
-
-        
-
     }
 }

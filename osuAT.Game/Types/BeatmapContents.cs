@@ -38,6 +38,13 @@ namespace osuAT.Game.Types
         private IExtendedDifficultyCalculator diffcalc;
 
         /// <summary>
+        /// Creates a an empty BeatmapContents. Should only be used for testing.
+        /// </summary>
+        public BeatmapContents() {
+
+        }
+
+        /// <summary>
         /// Creates a new BeatmapContents based off of a .osu file.
         /// </summary>
         public BeatmapContents(string osufile,RulesetInfo ruleset = null,List<ModInfo> mods = null)

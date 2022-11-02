@@ -9,10 +9,14 @@ using osuTK;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Colour;
+using osu.Game.Rulesets.Difficulty.Preprocessing;
+using AutoMapper.Internal;
+
 namespace osuAT.Game.Skills
 {
     public interface ISkill
     {
+        #region Info
         /// <summary>
         /// The displayed name of this skill.
         /// </summary>
@@ -29,11 +33,11 @@ namespace osuAT.Game.Skills
         /// <remarks>
         /// Updating this value will recalc all scores in the savedata for this skill.
         /// This value should always increment, and NEVER decrement.
-        /// If you are reverting changes, you must still increment the value.
-        /// </remarks>
-
+        /// Even if you are reverting changes, you must still increment the value.
         /// Major should be incremented when a full-scale rework is created.
         /// Minor should be incremented in all other cases.
+        /// </remarks>
+
         public string Version { get; }
 
         /// <summary>
@@ -89,11 +93,6 @@ namespace osuAT.Game.Skills
         public Vector2 BoxPosition { get; }
 
         /// <summary>
-        /// This skill's <see cref="SkillLevel"/> Benchmarks.
-        /// </summary>
-        public SkillGoals Benchmarks { get; }
-
-        /// <summary>
         /// The people who contributed to this skill.
         /// </summary>
         public Contributor[] Contributors => new Contributor[] {};
@@ -107,44 +106,79 @@ namespace osuAT.Game.Skills
         };
 
         /// <summary>
-        /// Returns the SkillPP of this skill from the SaveStorage.
+        /// This skill's <see cref="SkillLevel"/> Benchmarks.
         /// </summary>
-        public double SkillPP => SaveStorage.SaveData.TotalSkillPP[Identifier];
+        public SkillGoals Benchmarks { get; }
+        #endregion
+
+        #region Skill Calculations
+
+        /// <summary>
+        /// Returns this skill's PP Calculator System initalized to the score given.
+        /// </summary>
+        public abstract SkillCalcuator GetSkillCalc(Score score);
+
+        /// <summary>
+        /// Returns this skill's PP Calculator System initalized to a score with an SS on the map and mods given.
+        /// </summary>
+        public SkillCalcuator GetSkillCalc(Beatmap map, RulesetInfo ruleset, List<ModInfo> mods) {
+
+            mods ??= new List<ModInfo>();
+            return GetSkillCalc(new Score
+            {
+                RulesetName = ruleset.Name,
+                ScoreRuleset = ruleset,
+                Combo = map.MaxCombo,
+                BeatmapInfo = map,
+                Mods = mods,
+                AccuracyStats = new AccStat(map.Contents.HitObjects.Count, 0, 0, 0),
+            });
+        }
+
+        /// <summary>
+        /// Returns this skill's PP Calculator System initalized to a score with an SS based on the hitlist and mods given.
+        /// </summary>
+        public SkillCalcuator GetSkillCalc(List<DifficultyHitObject> hitobjects, RulesetInfo ruleset, List<ModInfo> mods)
+        {
+
+            mods ??= new List<ModInfo>();
+            Beatmap fakemap = new Beatmap(){ Contents = new BeatmapContents() { }};
+            fakemap.Contents.DiffHitObjects = hitobjects;
+            
+            return GetSkillCalc(new Score
+            {
+                RulesetName = ruleset.Name,
+                ScoreRuleset = ruleset,
+                Combo = fakemap.Contents.DiffHitObjects.GetMaxCombo(),
+                BeatmapInfo =fakemap,
+                Mods = mods,
+                AccuracyStats = new AccStat(fakemap.Contents.HitObjects.Count, 0, 0, 0),
+            });
+        }
 
         /// <summary>
         /// Returns the current SkillLevel based on the current Skill's SkillPP.
         /// </summary>
-        public SkillLevel Level
+        public SkillLevel GetSkillLevel(double skillPP)
         {
-            get
-            {
-                double skillPP = SkillPP;
-                if (skillPP > Benchmarks.Chosen) { return (SkillLevel.Chosen); }
-                if (skillPP > Benchmarks.Mastery) { return (SkillLevel.Mastery); }
-                if (skillPP > Benchmarks.Proficient) { return (SkillLevel.Proficient); }
-                if (skillPP > Benchmarks.Confident) { return (SkillLevel.Confident); }
-                if (skillPP > Benchmarks.Experienced) { return (SkillLevel.Experienced); }
-                if (skillPP > Benchmarks.Learner) { return (SkillLevel.Learner); }
-                return (SkillLevel.None);
-            }
+            if (skillPP > Benchmarks.Chosen) { return (SkillLevel.Chosen); }
+            if (skillPP > Benchmarks.Mastery) { return (SkillLevel.Mastery); }
+            if (skillPP > Benchmarks.Proficient) { return (SkillLevel.Proficient); }
+            if (skillPP > Benchmarks.Confident) { return (SkillLevel.Confident); }
+            if (skillPP > Benchmarks.Experienced) { return (SkillLevel.Experienced); }
+            if (skillPP > Benchmarks.Learner) { return (SkillLevel.Learner); }
+            return (SkillLevel.None);
         }
 
-        /// <summary>
-        /// The rulesets this skill can support.
-        /// </summary>
-        public RulesetInfo[] SupportedRulesets { get; }
+        public SkillLevel GetSkillLevel() => GetSkillLevel(SkillPP);
 
-
-        //////// SKill Calculator
-
-        protected class DefaultCalculator : ISkillCalcuator {
-            
-        }
+        public SkillLevel Level => GetSkillLevel();
 
         /// <summary>
-        /// This skill's PP Calculator System.
+        /// Returns the SkillPP of this skill from the SaveStorage.
         /// </summary>
-        public ISkillCalcuator GetSkillCalc => new DefaultCalculator
+        public double SkillPP => SaveStorage.SaveData.TotalSkillPP[Identifier];
 
+        #endregion
     }
 }

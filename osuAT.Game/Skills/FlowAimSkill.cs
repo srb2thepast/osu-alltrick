@@ -1,25 +1,19 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Textures;
-using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using osuAT.Game.Types;
-
 using osu.Game.Rulesets.Osu.Objects;
-using osu.Game.Rulesets.Osu.Difficulty;
-using osuAT.Game.Objects;
 using osuTK;
-
+using osu.Game.Rulesets.Difficulty.Preprocessing;
+using static osuAT.Game.Skills.AimSkill;
 
 namespace osuAT.Game.Skills
 {
     
     public class FlowAimSkill : ISkill
     {
-
+        #region Info
         public string Name => "Flow Aim";
 
         public string Identifier => "flowaim";
@@ -50,13 +44,7 @@ namespace osuAT.Game.Skills
 
         public SkillGoals Benchmarks => new SkillGoals(600, 1500,3000, 6000, 9000, 10000);
 
-        public RulesetInfo[] SupportedRulesets => new RulesetInfo[]{ RulesetStore.Osu };
-
-        [SkillDebugValue]
-        private double focusedHighestPP;
-
-        [SkillDebugValue]
-        private float curAvgSpacing;
+        #endregion
 
         /// <summary>
         /// Returns a pp value based off of the most spaced out stream of a map.
@@ -73,31 +61,43 @@ namespace osuAT.Game.Skills
         /// - No combo diff-spike
         /// - Jumps can be considered streams if they're fast enough
         /// </remarks>
-        public double SkillCalc(Score score)
+        public class FlowAimCalculator : SkillCalcuator
         {
-            if (!SupportedRulesets.Contains(score.ScoreRuleset)) return -1;
-            if (score.BeatmapInfo.FolderLocation == default) return -2;
-            if (score.BeatmapInfo.Contents.HitObjects == default) return -3;
+            public FlowAimCalculator(Score score) : base(score)
+            {
+            }
 
+            public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-            float csMult = score.BeatmapInfo.Contents.DifficultyInfo.CircleSize / 4;
+            private double lastobjectTimeDiff = 0;
 
-            focusedHighestPP = 0;
+            private float curAvgSpacing = 0;
+            [HiddenDebugValue]
+            private float curSpacingSum = 0;
+            private double curTimediff = 0;
+            private int curlength = 0;
+            [HiddenDebugValue]
+            private double curTimediffSum = 0;
 
-            curAvgSpacing = 0;
-            float curSpacingSum = 0;
-            int curlength = 0;
-            double curTimediffSum = 0;
+            private float focusedAvgSpacing = 0; // the most streched out one is calculated
+            private int focusedLength = 0;
+            private double focusedAvgTimediff = 0; // the average difference between the starttime of each object
+            [HiddenDebugValue]
+            private float csMult;
 
-            float focusedAvgSpacing = 0; // the most streched out one is calculated
-            int focusedLength = 0;
-            double focusedAvgTimediff = 0; // the average difference between the starttime of each object
-            
-            for (int i = 0; i < score.BeatmapInfo.Contents.DiffHitObjects.Count; i++) {
+            public override void Setup()
+            {
+                csMult = FocusedScore.BeatmapInfo.Contents.DifficultyInfo.CircleSize / 4;
+            }
+
+            public override void CalcNext(DifficultyHitObject diffHitObj)
+            {
+
                 // [!] add generic support based off of a mode's general hitobject class
-                var DiffHitObj = score.BeatmapInfo.Contents.DiffHitObjects[i];
+                var DiffHitObj = diffHitObj;
                 var HitObj = (OsuHitObject)DiffHitObj.BaseObject;
                 var LastHitObj = (OsuHitObject)DiffHitObj.LastObject;
+                lastobjectTimeDiff = DiffHitObj.StartTime - DiffHitObj.LastObject.StartTime;
 
 
                 // if this circle appears within 150ms of the last one, it (might be) a circle in a stream!
@@ -109,11 +109,12 @@ namespace osuAT.Game.Skills
                     curTimediffSum += DiffHitObj.StartTime - DiffHitObj.LastObject.StartTime;
                     curSpacingSum += Math.Abs((HitObj.Position - LastHitObj.Position).Length);
                     curAvgSpacing = curSpacingSum / curlength;
+                    curTimediff = curTimediffSum / curlength;
                 }
-
                 // Otherwise, it's considered the end of a stream.
-                else {
-                    if (curlength == 0) continue;
+                else
+                {
+                    if (curlength == 0) return;
                     curAvgSpacing = curSpacingSum / curlength;
                     double curAvgTimediff = curTimediffSum / curlength;
 
@@ -124,26 +125,28 @@ namespace osuAT.Game.Skills
                     double curHighestPP =
                         Math.Pow(
                         (Math.Pow((curAvgSpacing / 1.3 * Math.Log(curlength) / 3), 2.2) * csMult * // spacing and circle size (exponentional + shorter streams decrease this mult)
-                        Math.Log((curlength ) + 1, 10)) / 40 * // length of stream (logarithmic)
-                        ((double)score.Combo / score.BeatmapInfo.MaxCombo * // Combo Multiplier (linear)
-                        SharedMethods.MissPenalty(score.AccuracyStats.CountMiss, score.BeatmapInfo.MaxCombo) // Miss Multiplier
-                        ),
-                        (84/curAvgTimediff)); // BPM buff math.pow
+                        Math.Log((curlength) + 1, 10)) / 40 * // length of stream (logarithmic)
+                    ((double)FocusedScore.Combo / FocusedScore.BeatmapInfo.MaxCombo * // Combo Multiplier (linear)
+                    SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo) // Miss Multiplier
+                    ),
+                        (84 / curAvgTimediff)); // BPM buff math.pow
 
-                    if (curHighestPP >= focusedHighestPP)
+                    if (curHighestPP >= CurTotalPP)
                     {
                         focusedAvgSpacing = curAvgSpacing;
                         focusedLength = curlength;
-                        focusedAvgTimediff = curTimediffSum/curlength;
-                        focusedHighestPP = curHighestPP;
+                        focusedAvgTimediff = curTimediffSum / curlength;
+                        CurTotalPP = curHighestPP;
                     }
+                    curAvgSpacing = 0;
                     curSpacingSum = 0;
                     curTimediffSum = 0;
                     curlength = 0;
+                    curTimediff = 0;
                 }
             }
-            Console.WriteLine(score.BeatmapInfo.SongName + " LEN: " + focusedLength.ToString() + " ATD: " + focusedAvgTimediff.ToString() + " ASP: " + focusedAvgSpacing.ToString() + " | PP: " + (int)focusedHighestPP);
-            return focusedHighestPP;
         }
+
+        public SkillCalcuator GetSkillCalc(Score score) => new FlowAimCalculator(score);
     }
 }

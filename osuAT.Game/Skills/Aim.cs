@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Textures;
 using osuAT.Game.Types;
-using osuAT.Game.Objects;
+using osu.Game.Rulesets.Osu.Objects;
 using osuTK;
+using osu.Game.Rulesets.Difficulty.Preprocessing;
 
 
 namespace osuAT.Game.Skills
@@ -14,6 +13,7 @@ namespace osuAT.Game.Skills
     public class AimSkill : ISkill
     {
 
+        #region
         public string Name => "Aim";
 
         public string Identifier => "overallaim";
@@ -43,15 +43,24 @@ namespace osuAT.Game.Skills
         public Vector2 BoxPosition => new Vector2(2800, -1300);
 
         public SkillGoals Benchmarks => new SkillGoals(600, 1500, 3000, 6000, 9000, 10000);
+        #endregion
 
-        public RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
-
-        public double SkillCalc(Score score)
+        public class AimCalculator : SkillCalcuator
         {
-            if (!SupportedRulesets.Contains(score.ScoreRuleset)) return -1;
+            public AimCalculator(Score score) : base(score)
+            {
+            }
 
-            
-            return new Random().Next(120000);
+            public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
+
+            public override void CalcNext(DifficultyHitObject diffHitObj)
+            {
+                CurTotalPP = new Random().Next(120000);
+            }
         }
+
+        public Type SkillCalcType => typeof(AimCalculator);
+
+        public SkillCalcuator GetSkillCalc(Score score) => new AimCalculator(score);
     }
 }

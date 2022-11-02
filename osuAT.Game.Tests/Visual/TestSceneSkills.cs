@@ -72,7 +72,7 @@ namespace osuAT.Game.Tests.Visual
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Skill = skill,
+                        CurSkill = skill,
                         Scale = new Vector2(2),
                     }
                 );

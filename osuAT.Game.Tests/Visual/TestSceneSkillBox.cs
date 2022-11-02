@@ -25,7 +25,7 @@ namespace osuAT.Game.Tests.Visual
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Scale = new Vector2(2.7f),
-                    Skill = Skill.Flowaim,
+                    CurSkill = Skill.Flowaim,
                     
                     
                 };

@@ -82,7 +82,7 @@ namespace osuAT.Game.Types
                 }
                 return contents;
             }
-            private set => contents = value;
+            set => contents = value;
         }
 
         /// <summary>

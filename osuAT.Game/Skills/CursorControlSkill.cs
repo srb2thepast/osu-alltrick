@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Textures;
 using osuAT.Game.Types;
-using osuAT.Game.Objects;
+using osu.Game.Rulesets.Osu.Objects;
 using osuTK;
-
+using osu.Game.Rulesets.Difficulty.Preprocessing;
+using static osuAT.Game.Skills.AimSkill;
 
 namespace osuAT.Game.Skills
 {
     public class CursorControlSkill : ISkill
     {
-
+        #region
         public string Name => "Cursor Control";
 
         public string Identifier => "cursorcontrol";
@@ -43,14 +42,23 @@ namespace osuAT.Game.Skills
         public Vector2 BoxPosition => new Vector2(2000, -1300);
 
         public SkillGoals Benchmarks => new SkillGoals(600, 1500,3000, 6000, 9000, 10000);
+        #endregion
 
-        public RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-        public double SkillCalc(Score score)
+        public class CursorControlCalculator : SkillCalcuator
         {
-            if (!SupportedRulesets.Contains(score.ScoreRuleset)) return -1;
+            public CursorControlCalculator(Score score) : base(score)
+            {
+            }
 
-            return new Random().Next(1200);
+            public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
+
+            public override void CalcNext(DifficultyHitObject diffHitObj)
+            {
+                CurTotalPP = new Random().Next(1200);
+            }
         }
+
+        public SkillCalcuator GetSkillCalc(Score score) => new CursorControlCalculator(score);
     }
 }

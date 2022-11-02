@@ -201,9 +201,10 @@ namespace osuAT.Game
                     {
                         Console.WriteLine(score.ToString());
                         // check if the skill supports the score's ruleset
-                        if (skillInstance.SupportedRulesets.Contains(score.ScoreRuleset))
+                        SkillCalcuator calculator = skillInstance.GetSkillCalc(score);
+                        if (calculator.SupportedRulesets.Contains(score.ScoreRuleset))
                         {
-                            score.AlltrickPP[skillID] = skillInstance.SkillCalc(score);
+                            score.AlltrickPP[skillID] = calculator.SkillCalc();
                             Tuple<Guid, double> newTuple = new Tuple<Guid, double>(score.ID, score.AlltrickPP[skillID]);
 
                             tuplList["overall"].Add(newTuple);
@@ -260,9 +261,10 @@ namespace osuAT.Game
             foreach (Score score in SaveData.Scores.Values)
             {
                 // Calc the SkillPP of each score for the new skill if the skill supports the score's ruleset
-                if (skill.SupportedRulesets.Contains(score.ScoreRuleset))
+                SkillCalcuator calculator = skill.GetSkillCalc(score);
+                if (calculator.SupportedRulesets.Contains(score.ScoreRuleset))
                 {
-                    score.AlltrickPP.Add(skill.Identifier, skill.SkillCalc(score));
+                    score.AlltrickPP.Add(skill.Identifier, calculator.SkillCalc());
                     Tuple<Guid, double> newtupl = new Tuple<Guid, double>(score.ID, score.AlltrickPP[skill.Identifier]);
                     tuplList["overall"].Add(newtupl);
                     tuplList[score.ScoreRuleset.Name].Add(newtupl);
@@ -315,10 +317,11 @@ namespace osuAT.Game
             Console.WriteLine("removing from top (0/2)");
 
             // Loop through every score in SaveData.Scores
+            SkillCalcuator calculator = skill.GetSkillCalc(new Score() {});
             foreach (Score score in SaveData.Scores.Values)
             {
                 // Remove the AlltrickPP section of this skill
-                if (skill.SupportedRulesets.Contains(score.ScoreRuleset))
+                if (calculator.SupportedRulesets.Contains(score.ScoreRuleset))
                 {
                     score.AlltrickPP.Remove(skill.Identifier);
                 }

@@ -8,9 +8,23 @@ using JetBrains.Annotations;
 
 namespace osuAT.Game.Skills
 {
-    [AttributeUsage(AttributeTargets.Field)]
-    public class SkillDebugValueAttribute : Attribute
+    /// <summary>
+    /// Adds the method this attribute is applied to into the list of debug values in SkillAnalyzer.
+    /// The method is attribute is applied to must return a string.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property)]
+    public class GetsDebugValueAttribute : Attribute
     {
+
     }
-    
+
+    /// <summary>
+    /// Adds the field this attribute is applied into the list of debug values in SkillAnalyzer.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field)]
+    public class HiddenDebugValueAttribute : Attribute
+    {
+
+    }
+
 }
