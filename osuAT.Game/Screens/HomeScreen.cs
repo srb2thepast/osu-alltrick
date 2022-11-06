@@ -46,7 +46,7 @@ namespace osuAT.Game.Screens
 
 
         [BackgroundDependencyLoader]
-        private void load(LargeTextureStore textures)
+        private void load(LargeTextureStore textures,Texture defaultPFP)
         {
             System.Console.WriteLine(audio);
             InternalChildren = new Drawable[]
@@ -119,7 +119,7 @@ namespace osuAT.Game.Screens
                                 Child = new Sprite{
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Texture = textures.Get(@"avatar-guest"),
+                                    Texture = defaultPFP,
                                     Size = new Vector2(87,87)
                                 }
                             },

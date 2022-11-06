@@ -655,7 +655,7 @@ namespace osuAT.Game.Objects
                                                     Size = new Vector2(22),
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.Centre,
-                                                    Colour = Colour4.DimGray,
+                                                    Colour = Colour4.Orange,
                                                 },
                                                 new SpriteIcon{
                                                     Size = new Vector2(20),
@@ -672,7 +672,7 @@ namespace osuAT.Game.Objects
                                                     Colour = Colour4.White,
                                                     Font = new FontUsage("VarelaRound", size: 11),
                                                     Text = "Work In Progress",
-                                                    ShadowColour = Colour4.Gray,
+                                                    ShadowColour = Colour4.Orange,
                                                     Shadow = true
                                                         
                                                 }

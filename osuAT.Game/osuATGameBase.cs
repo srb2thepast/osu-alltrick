@@ -61,15 +61,18 @@ namespace osuAT.Game
             AddFont(Resources, @"Fonts/Venera");
             AddFont(Resources, @"Fonts/AveriaSansLibre");
 
+            // [!] how to use turn local images outside game directory to texture help plz
             var largeStore = new LargeTextureStore(Host.Renderer, Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"Textures")));
             largeStore.AddTextureSource(Host.CreateTextureLoaderStore(new OnlineStore()));
+            
             Dependencies.Cache(largeStore);
             Dependencies.CacheAs(this);
-
-            this.Window.Title = "osu!alltrick";
+            Window.Title = "osu!alltrick";
             SaveStorage.Init();
             ScoreImporter.Init();
-
+            Texture pfptxt = largeStore.Get($"http://a.ppy.sh/{SaveStorage.SaveData.PlayerID}");
+            Console.WriteLine($"https://a.ppy.sh/{SaveStorage.SaveData.PlayerID}");
+            Dependencies.CacheAs(pfptxt ?? largeStore.Get("avatar-guest"));
             foreach (var handler in Host.AvailableInputHandlers)
             {
                 if (handler is ITabletHandler tabhandler)

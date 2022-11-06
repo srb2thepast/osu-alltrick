@@ -87,7 +87,7 @@ namespace osuAT.Game.Objects
 
             // Boxes
             MiniBox.Slideout();
-            FullBox.Appear(400);    
+            FullBox.Appear(200);    
         }
 
         public void TransitionToMini()
@@ -99,7 +99,7 @@ namespace osuAT.Game.Objects
             ParentCont.Delay(100).ScaleTo(1f,600,Easing.InOutExpo);
             
             MiniBox.Slidein();
-            FullBox.Disappear(1000);
+            FullBox.Disappear(800);
             
         }
 
