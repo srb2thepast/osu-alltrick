@@ -38,9 +38,9 @@ namespace osuAT.Game.Types
             return combo2;
         }
 
+        [Obsolete]
         public static ATBeatmap ConvertToATMap(this WorkingBeatmap map,string folderlocation = "",List<ModInfo> mods = null)
         {
-            // [!] Add DiffHitObjects here
             ATBeatmap newmap = new ATBeatmap()
             {
                 MapID = map.BeatmapInfo.OnlineID,

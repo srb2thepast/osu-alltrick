@@ -9,7 +9,6 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuAT.Game.UserInterface;
-using osuAT.Game.Types;
 using osuAT.Game.Screens;
 using OsuApiHelper;
 using osuTK;
@@ -24,6 +23,7 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Game.Overlays.Changelog;
 using System.IO;
 using System.Linq;
+using osuAT.Game.API;
 
 namespace osuAT.Game
 {
@@ -244,8 +244,8 @@ namespace osuAT.Game
                 }
 
                 var osuScore = osuScorelist[0];
-                OsuBeatmap osuMap = default;
-                OsuBeatmap mapRet() { osuMap = OsuApi.GetBeatmap(beatmapidText.Text); return osuMap; };
+                OsuApiBeatmap osuMap = default;
+                OsuApiBeatmap mapRet() { osuMap = ApiScoreProcessor.OsuApiGetBeatmapWithMD5(beatmapidText.Text); return osuMap; };
                 ProcessResult result = ApiScoreProcessor.SaveToStorageIfValid(osuScore, mapRet);
                 if ((int)result < 1)
                 {

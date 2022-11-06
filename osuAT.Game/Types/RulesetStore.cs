@@ -23,8 +23,6 @@ using osuTK;
 namespace osuAT.Game.Types
 {
 
-    // [!] do this
-    // also add a way to get the main branch of DifficultyHitObject for that class.
     public class RulesetInfo {
 
         public int OnlineID { get; }
@@ -124,9 +122,8 @@ namespace osuAT.Game.Types
             return GetByName(ruleset.ShortName.ToLower().Split("!")[0]);
         }
 
-        public static DifficultyCalculator GetDiffCalc(RulesetInfo ruleset, IWorkingBeatmap map)
+        public static IExtendedDifficultyCalculator GetDiffCalcObj(RulesetInfo ruleset, IWorkingBeatmap map)
         {
-            Console.WriteLine(ruleset);
             if (ruleset == Osu)
             {
                 return new OsuDiffCalc(ConvertToOsuRuleset(ruleset).RulesetInfo, map);
@@ -134,11 +131,11 @@ namespace osuAT.Game.Types
             throw new NotImplementedException();
         }
 
-        public static IExtendedDifficultyCalculator GetDiffCalcObj(RulesetInfo ruleset, IWorkingBeatmap map)
+        public static Type GetDiffHitType(RulesetInfo ruleset)
         {
             if (ruleset == Osu)
             {
-                return new OsuDiffCalc(ConvertToOsuRuleset(ruleset).RulesetInfo, map);
+                return typeof(OsuDifficultyHitObject);
             }
             throw new NotImplementedException();
         }

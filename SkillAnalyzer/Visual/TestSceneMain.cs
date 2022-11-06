@@ -79,7 +79,7 @@ namespace SkillAnalyzer.Visual
 
         
     }
-    // [!] TODO: Get beatmap audio working
+    // [~] TODO: Get beatmap audio working
     public class SkillTestScene : EditorTestScene
     {
         protected override Ruleset CreateEditorRuleset() => new OsuRuleset();
@@ -144,7 +144,6 @@ namespace SkillAnalyzer.Visual
                 [BackgroundDependencyLoader]
                 private void load(OsuColour colours, OverlayColourProvider colourProvider)
                 {
-                    // [!] Torus License
                     FontUsage torus2 = OsuFont.Numeric;
                     msTime = new OsuSpriteText
                     {
@@ -309,7 +308,7 @@ namespace SkillAnalyzer.Visual
                             rightBar = (Container)intChildren[2];
                         }
                     }
-                    // [!] maybe put the centerfield in a DrawSizeFillPerservingContaininer instead?
+                    // [~] maybe put the centerfield in a DrawSizeFillPerservingContaininer instead?
                     //centerField.Scale = new Vector2(0.8f);
                     //centerField.Position = new Vector2(110,75);
                     leftBar?.RemoveAndDisposeImmediately();
@@ -700,8 +699,6 @@ namespace SkillAnalyzer.Visual
         /// <remarks>It's possible for  could be heavily improved.</remarks>
         /// <returns></returns>
         private int updateClosestHitObjectIndex(double currentTime) {
-            // [!] Big bug where the acutaly closest hit object isnt return due to the amount of time
-            // it takes for the clock to seek to a point.
             var hitList = CachedMapDiffHits;
             previoushitindex = curhitindex;
             if (cachedCurTime > currentTime) { // person seeked backwards, so just reset
@@ -709,7 +706,7 @@ namespace SkillAnalyzer.Visual
             }
             cachedCurTime = currentTime;
 
-            // [!]
+            // [~] this could be made a bit better
             // starts at curhitindex to avoid constantly looping through the whole map
             for (int i = curhitindex; i < hitList.Count; i++) {
                 var time = hitList[i].StartTime;

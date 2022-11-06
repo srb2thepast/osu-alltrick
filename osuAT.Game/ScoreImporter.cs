@@ -7,12 +7,12 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using osu.Framework;
-using osuAT.Game.Types;
 using osuAT.Game.Objects.LazerAssets;
 using OsuApiHelper;
 using OsuMemoryDataProvider;
 using OsuMemoryDataProvider.OsuMemoryModels.Abstract;
 using OsuMemoryDataProvider.OsuMemoryModels.Direct;
+using osuAT.Game.API;
 
 namespace osuAT.Game
 {
@@ -66,7 +66,7 @@ namespace osuAT.Game
                     play.Mode = mode;
                     if (generateBeatmaps)
                     {
-                        play.Beatmap = OsuApi.GetBeatmap(play.MapID, play.Mods, mode);
+                        play.Beatmap = ApiScoreProcessor.OsuApiGetBeatmapWithMD5(play.MapID, play.Mods, mode);
                     }
                 });
             }
@@ -112,7 +112,7 @@ namespace osuAT.Game
                     return;
 
                 var osuScore = OsuApi.GetUserRecent(SaveStorage.SaveData.PlayerID.ToString())[0];
-                OsuBeatmap mapRet() => OsuApi.GetBeatmap(osuScore.MapID, osuScore.Mods, osuScore.Mode);
+                OsuApiBeatmap mapRet() => ApiScoreProcessor.OsuApiGetBeatmapWithMD5(osuScore.MapID, osuScore.Mods, osuScore.Mode);
 
                 ApiScoreProcessor.SaveToStorageIfValid(osuScore,mapRet);
             } catch(Exception err) {
