@@ -112,8 +112,8 @@ namespace osuAT.Game
         }
         protected override void OnDrag(DragEvent e)
         {
-            Vector2 newPos = (-e.MousePosition + e.MouseDownPosition) + lastoffpos;
-            BoxContainer.MoveTo(-newPos);
+            Vector2 newPos = ((-e.MousePosition + e.MouseDownPosition)*(1/Child.Scale.X) + lastoffpos);
+            BoxContainer.MoveTo(-newPos );
             System.Console.WriteLine(BoxContainer.Position);
 
         }
@@ -126,11 +126,15 @@ namespace osuAT.Game
         }
         protected override bool OnScroll(ScrollEvent e)
         { // one day... scrolling will be good... right...!??!?!??!?!?
+            // we did it
+            // scrolling...
+            // is finally...
+            // GOOD!!!!!!!!!!!!!!!!!!!!!!!!!
             if (MainScreen.CurrentlyFocused == false) return false;
                 if (FocusedBox?.State == SkillBoxState.FullBox) { return false; }
                 Vector2 newScale = lastscale + new Vector2(e.ScrollDelta.Y / 10, e.ScrollDelta.Y / 10);
 
-            lastscale = ((newScale.X < 0.5 && newScale.Y < 0.5) || (newScale.X > 1.5 && newScale.Y > 1.5)) ? lastscale : newScale;
+            lastscale = ((newScale.X < 0.2 && newScale.Y < 0.2) || (newScale.X > 1.5 && newScale.Y > 1.5)) ? lastscale : newScale;
 
             Vector2 MouseWorldPos = new Vector2(
                 (e.MousePosition.X * Child.Scale.X) + Child.Position.X,
