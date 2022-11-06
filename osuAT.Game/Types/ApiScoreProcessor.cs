@@ -19,6 +19,7 @@ namespace osuAT.Game.Types
 
     public enum ProcessResult
     {
+        IDInvalid = 0,
         FailedScore = -1,
         AlreadySaved = -2,
         BetterScoreSaved = 2,
@@ -41,6 +42,9 @@ namespace osuAT.Game.Types
         /// <returns></returns>
         public static ProcessResult CheckScoreValidity(OsuPlay osuScore,bool deleteIfBetter = false)
         {
+            if (osuScore.ScoreID == null) {
+                return ProcessResult.IDInvalid;
+            }
             if (osuScore.Rank == "F")
             {
                 Console.WriteLine("Score is F ranked.");

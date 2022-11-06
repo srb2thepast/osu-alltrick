@@ -267,7 +267,7 @@ namespace osuAT.Game
                     infoText.FlashColour(Color4.Red, 3000, Easing.InOutCubic);
                     return;
                 }
-                infoText.Text = $"{osuMap.Title} has sucessfully been imported!";
+                infoText.Text = $"{osuMap.Title} imported sucessfully!";
                 beatmapidText.FlashColour(Color4.Green, 3000, Easing.InOutCubic);
             }
 

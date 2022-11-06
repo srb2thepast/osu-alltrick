@@ -25,17 +25,21 @@ namespace osuAT.Game
         private static Timer scoreSetTimer = new Timer(TickDelay);
         private static StructuredOsuMemoryReader osuReader;
         private static OsuMemoryStatus lastScreen = OsuMemoryStatus.Playing;
+        private static GeneralData gameData = new GeneralData();
+        private static int instances = 0;
 
-
-        public static void Init()
+        public static async void Init()
         {
             Console.WriteLine("initalised scoreimpoter");
+            instances += 1;
+            Console.WriteLine($"{instances} Instances.");
+            if (instances > 1)
+                return;
             osuReader = StructuredOsuMemoryReader.Instance.GetInstanceForWindowTitleHint("");
-            scoreSetTimer.Interval = TickDelay;
-            scoreSetTimer.Elapsed += scoreSetTimer_Elapsed;
-            scoreSetTimer.Enabled = true;
-            scoreSetTimer.AutoReset = true;
-            scoreSetTimer.Start();
+            while (true) {
+                await Task.Delay(TickDelay);
+                scoreSetTimer_Elapsed();
+            }
         }
 
         public static List<OsuPlay> OsuApiGetScores(string beatmapid, string username, OsuMode mode = OsuMode.Standard, int limit = 1, bool generateBeatmaps = false)
@@ -75,25 +79,32 @@ namespace osuAT.Game
             return data;
         }
 
-        private static async void scoreSetTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private static async void scoreSetTimer_Elapsed()
         {
-            ApiScoreProcessor.ApiReqs += 1;
             if (OsuApiKey.Key == default || !(OsuApi.IsKeyValid())) return;
             if (ApiScoreProcessor.ApiReqs >= 30) {
                 Console.WriteLine($"Automatic Rate limiting begun ({ApiScoreProcessor.ApiReqs} API Requests were sent!!!!)");
+                return;
             }
             try
             {
                 GeneralData gameData = new GeneralData();
                 osuReader.TryRead(gameData);
 
-                // Console.WriteLine("last: " + lastScreen + " | current: " + gameData.OsuStatus);
-                lastScreen = gameData.OsuStatus;
+                Console.WriteLine("last: " + lastScreen + " | current: " + gameData.OsuStatus);
                 ApiScoreProcessor.ApiReqs = Math.Max(0, ApiScoreProcessor.ApiReqs - TickDelay / 150);
 
-                if (!(lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.ResultsScreen || (lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.MultiplayerResultsscreen)))
-                return;
-
+                // if the play went from playing to the results screen, continue, otherwise, return.
+                if (!(lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.ResultsScreen)
+                    || !(lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.MultiplayerResultsscreen))
+                {
+                    lastScreen = gameData.OsuStatus;
+                    Console.WriteLine(lastScreen);
+                    Console.WriteLine(gameData.OsuStatus);
+                    return;
+                }
+                lastScreen = gameData.OsuStatus;
+                Console.WriteLine("Importation begun.");
                 await Task.Delay(2000); // wait a bit incase osu!servers are behind
                 ApiScoreProcessor.ApiReqs += 1;
                 var recent = OsuApi.GetUserRecent(SaveStorage.SaveData.PlayerID.ToString());
