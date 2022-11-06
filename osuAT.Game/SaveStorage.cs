@@ -67,11 +67,10 @@ namespace osuAT.Game
         /// The cached top-scores for each skill.
         /// </summary>
         /// <remarks> The dictonary follows a format of
-        /// (<see cref="ISkill.Identifier"/> : Dict(Ruleset.Name (or "overall") : List( Tuple(<see cref="Score.ID"/>, ScorePP))) ).
+        /// (<see cref="ISkill.Identifier"/> : Dict(Ruleset.Name : List( Tuple(<see cref="Score.ID"/>, ScorePP))) ),
+        /// so inputting a skill gives you a dictonary for each mode and then inputing a mode into that dictonary will give you a
+        /// list of each score set in that mode.
         /// </remarks>
-        // what if it was seperated this by ruleset so ruleset based leaderboards are possible?
-        // then you could become an all-trick in every ruleset and it could glow on the SkillInfo
-        // board. (update: i just did that.)
         [JsonProperty("alltrickTop")]
         public Dictionary<string, Dictionary<string,List<Tuple<Guid, double>>>> AlltrickTop { get; set; }
 
@@ -134,17 +133,17 @@ namespace osuAT.Game
         public static void Init() {
             if (!(CheckSaveExists())) {
                 SaveData = new CSaveData {
-                    PlayerID = -1,
-                    APIKey = "null",
+                    PlayerID = default,
+                    PlayerUsername = default,
+                    APIKey = default,
                     TotalSkillPP = getDefaultTotal(),
                     AlltrickTop = getDefaultTop(),
                     SkillVersions = getDefaultSkillVer(),
-                    Scores = new Dictionary<Guid, Score>()
+                    Scores = new Dictionary<Guid, Score>(),
                 };
                 Save();
                 return;
             }
-
 
             SaveData = JsonConvert.DeserializeObject<CSaveData>(Read());
             OsuApiKey.Key = SaveData.APIKey;

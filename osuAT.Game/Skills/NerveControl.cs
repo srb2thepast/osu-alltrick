@@ -57,7 +57,6 @@ namespace osuAT.Game.Skills
 
             public override void CalcNext(DifficultyHitObject diffHitObj)
             {
-                // [!] add generic support based off of a mode's general hitobject class
                 var DiffHitObj = diffHitObj;
                 var HitObj = (OsuHitObject)DiffHitObj.BaseObject;
                 var LastHitObj = (OsuHitObject)DiffHitObj.LastObject;

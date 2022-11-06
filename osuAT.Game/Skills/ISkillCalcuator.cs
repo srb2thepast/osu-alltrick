@@ -10,7 +10,6 @@ using osuTK;
 
 namespace osuAT.Game.Skills
 {
-    // [!] add a way to use a stream-like loop to calculate pp per hitobject (like curPP = SkillCalcStream.LoadNextHit())
     // When a skill is ready to be used, dont forget to add it to Skill.cs   
     public abstract class SkillCalcuator
     {
@@ -76,6 +75,7 @@ namespace osuAT.Game.Skills
             return CurTotalPP;
         }
 
+        // [~] Find out a way to structure multi-mode support based off of a mode's general DiffHitObj class when the time comes.
         /// <summary>
         /// Sets <see cref="CurTotalPP"/> to how much pp the hit object given is worth with respect to all objects coming before it.
         /// </summary>

@@ -42,43 +42,6 @@ namespace osuAT.Game
             }
         }
 
-        public static List<OsuPlay> OsuApiGetScores(string beatmapid, string username, OsuMode mode = OsuMode.Standard, int limit = 1, bool generateBeatmaps = false)
-        {
-            string[] obj = new string[11]
-            {
-                "https://osu.ppy.sh/api/",
-                "get_scores?k=",
-                OsuApiKey.Key,
-                "&b=",
-                beatmapid,
-                "&u=",
-                username,
-                "&m=",
-                (((int)mode).ToString()),
-                "&limit=",
-                limit.ToString(),
-            };
-            List<OsuPlay> data = APIHelper<List<OsuPlay>>.GetData(string.Concat(obj));
-            if (data != null && data.Count > 0)
-            {
-                data.ForEach(delegate (OsuPlay play)
-                {
-                    play.Mode = mode;
-                    if (generateBeatmaps)
-                    {
-                        play.Beatmap = ApiScoreProcessor.OsuApiGetBeatmapWithMD5(play.MapID, play.Mods, mode);
-                    }
-                });
-            }
-
-            if (data == null || data.Count <= 0)
-            {
-                return null;
-            }
-
-            return data;
-        }
-
         private static async void scoreSetTimer_Elapsed()
         {
             if (OsuApiKey.Key == default || !(OsuApi.IsKeyValid())) return;
@@ -96,11 +59,9 @@ namespace osuAT.Game
 
                 // if the play went from playing to the results screen, continue, otherwise, return.
                 if (!(lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.ResultsScreen)
-                    || !(lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.MultiplayerResultsscreen))
+                    && !(lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.MultiplayerResultsscreen))
                 {
                     lastScreen = gameData.OsuStatus;
-                    Console.WriteLine(lastScreen);
-                    Console.WriteLine(gameData.OsuStatus);
                     return;
                 }
                 lastScreen = gameData.OsuStatus;

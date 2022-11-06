@@ -232,7 +232,7 @@ namespace osuAT.Game
                 });
                 if (invalidID) return;
                 ApiScoreProcessor.ApiReqs += 1;
-                var osuScorelist = ScoreImporter.OsuApiGetScores(mapID, SaveStorage.SaveData.PlayerID.ToString());
+                var osuScorelist = ApiScoreProcessor.OsuApiGetScores(mapID, SaveStorage.SaveData.PlayerID.ToString());
 
                 // return if no scores were set on this map by the player
                 if (osuScorelist == null || !(osuScorelist.Count >= 0))
