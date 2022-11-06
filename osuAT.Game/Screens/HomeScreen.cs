@@ -28,10 +28,13 @@ namespace osuAT.Game.Screens
             get => allowbuttons;
             set {
                 SetButton.CanOpen = value;
+                ImpButton.CanOpen = value;
                 if (!value)
                 {
                     SetButton.HideBox();
+                    ImpButton.HideBox();
                 }
+                allowbuttons = value;
             }
         }
 
@@ -39,7 +42,8 @@ namespace osuAT.Game.Screens
         private AudioManager audio { get; set; }
 
         public SettingsButton SetButton;
-        
+        public ImportButton ImpButton;
+
 
         [BackgroundDependencyLoader]
         private void load(LargeTextureStore textures)
@@ -174,6 +178,12 @@ namespace osuAT.Game.Screens
                                 Origin = Anchor.Centre,
                                 Y = 65,
                                 X = 250,
+                            },
+                            ImpButton = new ImportButton(this) {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Y = 65,
+                                X = -250,
                             },
                         }
                     },

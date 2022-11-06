@@ -53,7 +53,7 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-            private float totaldistavg = 0;
+            private float totaldist = 0;
 
             public override void CalcNext(DifficultyHitObject diffHitObj)
             {
@@ -61,8 +61,8 @@ namespace osuAT.Game.Skills
                 var DiffHitObj = diffHitObj;
                 var HitObj = (OsuHitObject)DiffHitObj.BaseObject;
                 var LastHitObj = (OsuHitObject)DiffHitObj.LastObject;
-                totaldistavg += Math.Abs(HitObj.Position.Length - LastHitObj.Position.Length);
-                CurTotalPP = (totaldistavg / (FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count + 1));
+                totaldist += Math.Abs(HitObj.Position.Length - LastHitObj.Position.Length);
+                CurTotalPP = (totaldist / (FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count + 1));
             }
         }
 

@@ -69,13 +69,13 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-            private double lastobjectTimeDiff = 0;
+            private double lastObjectTimeDiff = 0;
 
             private float curAvgSpacing = 0;
             [HiddenDebugValue]
             private float curSpacingSum = 0;
-            private double curTimediff = 0;
-            private int curlength = 0;
+            private double curTimeDiff = 0;
+            private int curLength = 0;
             [HiddenDebugValue]
             private double curTimediffSum = 0;
 
@@ -97,26 +97,26 @@ namespace osuAT.Game.Skills
                 var DiffHitObj = diffHitObj;
                 var HitObj = (OsuHitObject)DiffHitObj.BaseObject;
                 var LastHitObj = (OsuHitObject)DiffHitObj.LastObject;
-                lastobjectTimeDiff = DiffHitObj.StartTime - DiffHitObj.LastObject.StartTime;
+                lastObjectTimeDiff = DiffHitObj.StartTime - DiffHitObj.LastObject.StartTime;
 
 
                 // if this circle appears within 150ms of the last one, it (might be) a circle in a stream!
                 // So it only runs if it's a circle and it appears within 100ms of the previous circle in the loop.
                 // And also if it's not the first circle of the map (because there would be no previous circle).
-                if ((HitObj is HitCircle) && (DiffHitObj.StartTime - DiffHitObj.LastObject.StartTime) < 100)
+                if (diffHitObj.Index < FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count-1 && HitObj is HitCircle && (DiffHitObj.StartTime - DiffHitObj.LastObject.StartTime) < 100)
                 {
-                    curlength++;
+                    curLength++;
                     curTimediffSum += DiffHitObj.StartTime - DiffHitObj.LastObject.StartTime;
                     curSpacingSum += Math.Abs((HitObj.Position - LastHitObj.Position).Length);
-                    curAvgSpacing = curSpacingSum / curlength;
-                    curTimediff = curTimediffSum / curlength;
+                    curAvgSpacing = curSpacingSum / curLength;
+                    curTimeDiff = curTimediffSum / curLength;
                 }
                 // Otherwise, it's considered the end of a stream.
                 else
                 {
-                    if (curlength == 0) return;
-                    curAvgSpacing = curSpacingSum / curlength;
-                    double curAvgTimediff = curTimediffSum / curlength;
+                    if (curLength == 0) return;
+                    curAvgSpacing = curSpacingSum / curLength;
+                    double curAvgTimediff = curTimediffSum / curLength;
 
                     // THIS LINE is where calculations are done.
                     // The reason it's in the loop is so that the stream that outputs the most PP is the one
@@ -124,8 +124,8 @@ namespace osuAT.Game.Skills
                     // Preferably (and by standard), the total pp should be calculated outside the loop.
                     double curHighestPP =
                         Math.Pow(
-                        (Math.Pow((curAvgSpacing / 1.3 * Math.Log(curlength) / 3), 2.2) * csMult * // spacing and circle size (exponentional + shorter streams decrease this mult)
-                        Math.Log((curlength) + 1, 10)) / 40 * // length of stream (logarithmic)
+                        (Math.Pow((curAvgSpacing / 1.3 * Math.Log(curLength) / 3), 2.2) * csMult * // spacing and circle size (exponentional + shorter streams decrease this mult)
+                        Math.Log((curLength) + 1, 10)) / 40 * // length of stream (logarithmic)
                     ((double)FocusedScore.Combo / FocusedScore.BeatmapInfo.MaxCombo * // Combo Multiplier (linear)
                     SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo) // Miss Multiplier
                     ),
@@ -134,15 +134,15 @@ namespace osuAT.Game.Skills
                     if (curHighestPP >= CurTotalPP)
                     {
                         focusedAvgSpacing = curAvgSpacing;
-                        focusedLength = curlength;
-                        focusedAvgTimediff = curTimediffSum / curlength;
+                        focusedLength = curLength;
+                        focusedAvgTimediff = curTimediffSum / curLength;
                         CurTotalPP = curHighestPP;
                     }
                     curAvgSpacing = 0;
                     curSpacingSum = 0;
                     curTimediffSum = 0;
-                    curlength = 0;
-                    curTimediff = 0;
+                    curLength = 0;
+                    curTimeDiff = 0;
                 }
             }
         }

@@ -201,6 +201,7 @@ namespace osuAT.Game
                     {
                         Console.WriteLine(score.ToString());
                         // check if the skill supports the score's ruleset
+                        score.BeatmapInfo.LoadMapContents(score.ScoreRuleset, score.Mods);
                         SkillCalcuator calculator = skillInstance.GetSkillCalc(score);
                         if (calculator.SupportedRulesets.Contains(score.ScoreRuleset))
                         {
@@ -261,6 +262,7 @@ namespace osuAT.Game
             foreach (Score score in SaveData.Scores.Values)
             {
                 // Calc the SkillPP of each score for the new skill if the skill supports the score's ruleset
+                score.BeatmapInfo.LoadMapContents(score.ScoreRuleset, score.Mods);
                 SkillCalcuator calculator = skill.GetSkillCalc(score);
                 if (calculator.SupportedRulesets.Contains(score.ScoreRuleset))
                 {

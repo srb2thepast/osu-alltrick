@@ -27,16 +27,12 @@ using osu.Game.Rulesets;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Osu;
 using osu.Game.Overlays;
-using osu.Game.Tests;
 using osu.Game.Tests.Visual;
-using osuTK.Input;
 using osu.Framework.Testing;
 using osu.Game.Screens.Edit.Components.Timelines.Summary;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Game.Graphics.Cursor;
-using osu.Game.Graphics.UserInterface;
-using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Screens.Edit.Components;
 using osuTK;
 using osuTK.Graphics;
@@ -44,40 +40,26 @@ using osuAT.Game;
 using osuAT.Game.Types;
 using osuAT.Game.Skills;
 using osu.Framework.Bindables;
-using osu.Game.Rulesets.Difficulty.Skills;
-using static SkillAnalyzer.SkillAnalyzerTestBrowser;
-using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
-using osuTK.Graphics.OpenGL;
-using NuGet.Packaging.Rules;
-using OsuMemoryDataProvider.OsuMemoryModels.Abstract;
-using osu.Game.Rulesets.Mods;
-using SixLabors.ImageSharp.Processing.Processors.Transforms;
-using HtmlAgilityPack;
-using System.Threading.Tasks;
 using osu.Game.Screens.Edit.Compose;
 using osu.Framework.Graphics.Sprites;
-using System.Runtime.InteropServices;
 using System.Reflection;
-using static System.Net.Mime.MediaTypeNames;
 using osu.Game.Graphics;
 using osuAT.Game.Tests.Visual;
-using osu.Framework.Graphics.Cursor;
-using osu.Game.Screens.Play.Break;
-using osu.Framework.Screens;
 using Skill = osuAT.Game.Skills.Skill;
-using RulesetStore = osuAT.Game.Types.RulesetStore;
-using Beatmap = osu.Game.Beatmaps.Beatmap;
 using OsuRulesetInfo = osu.Game.Rulesets.RulesetInfo;
+using OsuBeatmap = osu.Game.Beatmaps.Beatmap;
 using ATBeatmap = osuAT.Game.Types.Beatmap;
 using ATRulesetStore = osuAT.Game.Types.RulesetStore;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Extensions;
+using osu.Game.Rulesets.Mods;
+using OsuMemoryDataProvider.OsuMemoryModels.Abstract;
 
 namespace SkillAnalyzer.Visual
 {
 
-    public class TestSceneMain : osuATTestScene
+    internal class TestSceneMain : osuATTestScene
     {
 
         public TestSceneMain() {
@@ -87,7 +69,7 @@ namespace SkillAnalyzer.Visual
         [Test]
         public void LoadEditor()
         {
-            var scene = new MainScreen();
+            var scene = new SkillTestScene();
             Add(
                 scene
             );
@@ -98,48 +80,51 @@ namespace SkillAnalyzer.Visual
         
     }
     // [!] TODO: Get beatmap audio working
-    internal class MainScreen : EditorTestScene
+    public class SkillTestScene : EditorTestScene
     {
-
+        protected override Ruleset CreateEditorRuleset() => new OsuRuleset();
+        protected string MapLocation = @"Songs\257607 xi - FREEDOM DiVE\xi - FREEDOM DiVE (elchxyrlia) [Arles].osu";
+        protected List<ModInfo> AppliedMods = new List<ModInfo> { };
 
         public static List<ISkill> CurSkillList = new List<ISkill>();
-        protected override Ruleset CreateEditorRuleset() => new OsuRuleset();
-        protected string MapLocation = @"Songs\257607 xi - FREEDOM DiVE\xi - FREEDOM DiVE (elchxyrlia) [Arles].osu"; // @"Songs\1045600 MOMOIRO CLOVER Z - SANTA SAN\MOMOIRO CLOVER Z - SANTA SAN (A r M i N) [1-2-SANTA].osu";
         protected IBeatmap FocusedBeatmap;
         protected WorkingBeatmap WorkFocusedMap;
         protected ATBeatmap ATFocusedMap;
         protected List<DifficultyHitObject> CachedMapDiffHits;
-        private Score dummyScore;
+        protected Score DummyScore;
 
-        protected LabelledBarGraph SkillGraph;
+        private LabelledBarGraph skillGraph;
         private TextFlowContainer debugContainer;
-        // Skill.Id<ParamName,Value>
-        private Dictionary<string, Dictionary<string, object>> skillDebugTextCached = new Dictionary<string, Dictionary<string, object>>();
-        private string debugTextCached;
-
+        private Dictionary<string, Dictionary<string, object>> skillDebugTextCached = new Dictionary<string, Dictionary<string, object>>(); // <Skill.Id,<ParamName,Value>>
         private bool sceneLoaded = false;
         private bool canUseEditor = false;
-
         protected static event EventHandler<bool> EditorLoaded;
 
         // settings //
         private bool scaleByCombo = false;
         // //////// //
+        public SkillTestScene()
+        {
+            foreach (ISkill skill in Skill.SkillList)
+            {
+                skillDebugTextCached.Add(skill.Identifier, new Dictionary<string, object>());
+            }
+        }
 
-        // protected override bool IsolateSavingFromDatabase => false;
         #region Classes + Hiding & Overrides
+
+        protected override bool IsolateSavingFromDatabase => true;
 
         // Editor
         [Cached(typeof(IBeatSnapProvider), null)]
         [Cached(typeof(Editor))]
         protected class AnalyzerEditor : TestEditor
         {
-            private TextFlowContainer debugTextFlow;
-
             public AnalyzerEditor(EditorLoader loader) : base(loader) {
 
             }
-            public class AnalyzerSummaryTimeline : SummaryTimeline
+
+            protected class AnalyzerSummaryTimeline : SummaryTimeline
             {
                 [BackgroundDependencyLoader]
                 private void load(OverlayColourProvider colourProvider) {
@@ -149,7 +134,7 @@ namespace SkillAnalyzer.Visual
                 }
             }
 
-            public class AnalyzerTimeInfoContainer : TimeInfoContainer
+            protected class AnalyzerTimeInfoContainer : TimeInfoContainer
             {
 
                 [Resolved]
@@ -182,7 +167,7 @@ namespace SkillAnalyzer.Visual
                 }
             }
 
-            public class AnalyzerBottomBar : CompositeDrawable
+            protected class AnalyzerBottomBar : CompositeDrawable
             {
 
 
@@ -223,8 +208,9 @@ namespace SkillAnalyzer.Visual
                         {
                             new Dimension(GridSizeMode.Absolute, 170),
                             new Dimension(),
-                            new Dimension(GridSizeMode.Absolute, 220),
-                            new Dimension(GridSizeMode.Absolute, 120),
+                            new Dimension(GridSizeMode.Absolute, 160),
+                            new Dimension(GridSizeMode.Absolute, 10),
+                            //new Dimension(GridSizeMode.Absolute, 120),
                         },
                         Content = new[]
                         {
@@ -232,14 +218,15 @@ namespace SkillAnalyzer.Visual
                             {
                                 new AnalyzerTimeInfoContainer { RelativeSizeAxes = Axes.Both },
                                 new AnalyzerSummaryTimeline { RelativeSizeAxes = Axes.Both },
-                                new PlaybackControl { RelativeSizeAxes = Axes.Both },
-                                TestGameplayButton = new TestGameplayButton
+                                new PlaybackControl { RelativeSizeAxes = Axes.Both, Width = 1.1f,X = -10},
+                                Drawable.Empty()
+                                /*TestGameplayButton = new TestGameplayButton
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Padding = new MarginPadding { Left = 10 },
                                     Size = new Vector2(1),
                                     Action = editor.TestGameplay,
-                                }
+                                }*/
                             },
                         }
                     },
@@ -261,7 +248,7 @@ namespace SkillAnalyzer.Visual
                 OsuContextMenuContainer ContextMenu = (OsuContextMenuContainer)InternalChildren[2];
                 Container screenContainer = (Container)ContextMenu[0];
                 Container<EditorScreen> composeScreenContainer = (Container<EditorScreen>)screenContainer.Child;
-                
+
                 Container editTopBar = (Container)ContextMenu[1];
                 CompositeDrawable editBottomBar = (CompositeDrawable)ContextMenu[2];
 
@@ -271,10 +258,14 @@ namespace SkillAnalyzer.Visual
                 {
                     Colour = Colour4.FromHex("#404444"),
                     RelativeSizeAxes = Axes.X,
-                    Height = editTopBar.Height,  
+                    Height = editTopBar.Height,
                 });
                 ContextMenu.Remove(editTopBar, true);
                 ContextMenu.Add(bottomBar = new AnalyzerBottomBar());
+                bottomBar.Width = 0.73f;
+                bottomBar.X = -375;
+                bottomBar.Anchor = Anchor.BottomCentre;
+                bottomBar.RelativeSizeAxes = Axes.X;
                 ContextMenu.ChangeChildDepth(bottomBar, bottomBar.Depth - 2000);
                 //editorScreen.Scale = new Vector2(0.95f);
                 //editorScreen.X = editorScreen.Parent.BoundingBox.Width * editorScreen.Scale.X / 30;
@@ -319,8 +310,8 @@ namespace SkillAnalyzer.Visual
                         }
                     }
                     // [!] maybe put the centerfield in a DrawSizeFillPerservingContaininer instead?
-                    centerField.Scale = new Vector2(0.8f);
-                    centerField.Position = new Vector2(110,75);
+                    //centerField.Scale = new Vector2(0.8f);
+                    //centerField.Position = new Vector2(110,75);
                     leftBar?.RemoveAndDisposeImmediately();
                     rightBar?.RemoveAndDisposeImmediately();
                     Console.WriteLine(
@@ -367,58 +358,61 @@ namespace SkillAnalyzer.Visual
         #endregion
 
 
-        public MainScreen() {
-            foreach (ISkill skill in Skill.SkillList) {
-                skillDebugTextCached.Add(skill.Identifier, new Dictionary<string, object>());    
-            }
-        }
 
         protected override IBeatmap CreateBeatmap(OsuRulesetInfo ruleset)
         {
-            var osuatmap = new ATBeatmap()
+            ATFocusedMap = new ATBeatmap()
             {
                 FolderLocation = MapLocation
             };
             var atRuleset = ATRulesetStore.GetByIRulesetInfo(ruleset);
-            osuatmap.LoadMapContents(atRuleset);
-            WorkFocusedMap = osuatmap.Contents.Workmap;
-            FocusedBeatmap = WorkFocusedMap.Beatmap;
+            ATFocusedMap.LoadMapContents(atRuleset, AppliedMods);
+            WorkFocusedMap = ATFocusedMap.Contents.Workmap;
+            List<Mod> osuModList = new List<Mod>();
+            foreach (ModInfo mod in AppliedMods)
+            {
+                osuModList.Add(ModStore.ConvertToOsuMod(mod));
+            }
+            FocusedBeatmap = WorkFocusedMap.GetPlayableBeatmap(ruleset,osuModList);
             WorkFocusedMap.LoadTrack();
             WorkFocusedMap.Track.Start();
             FocusedBeatmap.BeatmapInfo.BeatDivisor = 4;
-            ATFocusedMap = WorkFocusedMap.ConvertToATMap(MapLocation);
             CachedMapDiffHits = new List<DifficultyHitObject>(ATFocusedMap.Contents.DiffHitObjects);
-            dummyScore = new Score
+            Console.WriteLine("Diffhits: " + ATFocusedMap.Contents.DiffHitObjects[0].StartTime + " | playable: " + ATFocusedMap.Contents.HitObjects[1].StartTime);
+            Console.WriteLine("FB Diffhits: " + FocusedBeatmap.HitObjects[1].StartTime);
+            DummyScore = new Score
             {
                 RulesetName = atRuleset.Name,
                 ScoreRuleset = atRuleset,
                 Combo = 0,
                 BeatmapInfo = ATFocusedMap,
-                Mods = new List<ModInfo>(),
+                Mods = AppliedMods,
                 AccuracyStats = new AccStat(ATFocusedMap.Contents.HitObjects.Count, 0, 0, 0),
             };
             return FocusedBeatmap;
         }
 
-        protected void CreateSkillGraph()
+        #region Loading
+
+        protected void CreateskillGraph()
         {
             // graph
             BasicScrollContainer buttonSelectScroll;
             int beatmapHighestSpike = 500;
-            SkillGraph = new LabelledBarGraph(new SpacedBarGraph
+            skillGraph = new LabelledBarGraph(new SpacedBarGraph
             {
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.TopLeft,
                 Origin = Anchor.TopLeft,
                 Y = 310,
                 Size = new Vector2(4, 3),
-                Scale = new Vector2(0.2f, 0.2f) * new Vector2(2, 0.5f),
+                Scale = new Vector2(0.17f, 0.17f) * new Vector2(2, 0.5f),
                 MaxValue = beatmapHighestSpike,
                 BarSpacing = 0.2f
             })
             {
                 Anchor = Anchor.TopLeft,
-                Scale = new Vector2(0.8f),
+                Scale = new Vector2(0.77f),
                 Position = new Vector2(-200, 280)
             };
             // skill select scroll
@@ -431,6 +425,7 @@ namespace SkillAnalyzer.Visual
                 },
                 Size = new Vector2(155, 678),
                 Masking = true,
+                RelativeSizeAxes = Axes.Y,
                 Children = new Drawable[]
                 {
                     new SafeAreaContainer
@@ -462,7 +457,7 @@ namespace SkillAnalyzer.Visual
             });
 
             Add(
-                SkillGraph
+                skillGraph
             );
 
             for (int i = 0; i<Skill.SkillList.Count; i++)
@@ -500,7 +495,7 @@ namespace SkillAnalyzer.Visual
                 buttonSelectScroll.Add(newbox);
                 bgbox.Height = newbox.Height/19 *23;
             };
-            SkillGraph.SetValues(
+            skillGraph.SetValues(
                 new SortedList<string, float> {
                     { "test",2},
                     { "testa",30},
@@ -513,7 +508,7 @@ namespace SkillAnalyzer.Visual
                 }
             );
 
-            SkillGraph.SetValues(
+            skillGraph.SetValues(
                 new SortedList<string, float> {
                     { "test",2},
                     { "testa",30},
@@ -537,7 +532,9 @@ namespace SkillAnalyzer.Visual
                     Size = new Vector2(140, 678),
                     X = -140,
                     Y = 144,
+                    Margin = new MarginPadding { Bottom = -60 },
                     Anchor = Anchor.TopRight,
+                    RelativeSizeAxes = Axes.Y,
                     Children = new Drawable[]
                     {
                         new Box {
@@ -546,13 +543,15 @@ namespace SkillAnalyzer.Visual
                         },
                         debugContainer = new TextFlowContainer()
                         {
-                            Padding = new MarginPadding{ Left = 7},
+                        Masking = false,
+                        Margin = new MarginPadding { Left = 4 },
                             RelativeSizeAxes = Axes.Both,
+                            LineSpacing = -0f,
                         },
                     }
                 }
            );
-            CreateSkillGraph();
+            CreateskillGraph();
         }
 
         protected override void LoadComplete()
@@ -568,6 +567,8 @@ namespace SkillAnalyzer.Visual
             UpdateBars(CurSkillList);
             EditorLoaded.Invoke(this,true);
         }
+
+        #endregion
 
         protected override void Update()
         {
@@ -603,24 +604,24 @@ namespace SkillAnalyzer.Visual
             if (curhitindex == previoushitindex && !skipCurhitCheck)
                 return;
 
-            dummyScore.Combo = dummyScore.BeatmapInfo.GetMaxCombo(); // calculated combo with current amount of hit objects
+            DummyScore.Combo = DummyScore.BeatmapInfo.GetMaxCombo(); // calculated combo with current amount of hit objects
             
             if (scaleByCombo)
             {
-                dummyScore.BeatmapInfo.MaxCombo = CachedMapDiffHits.GetMaxCombo();
+                DummyScore.BeatmapInfo.MaxCombo = CachedMapDiffHits.GetMaxCombo();
             }
             else
             {
-                dummyScore.BeatmapInfo.MaxCombo = dummyScore.Combo;
+                DummyScore.BeatmapInfo.MaxCombo = DummyScore.Combo;
             }
 
             /* Debug
-    Console.WriteLine($"" +
-            $"combo: {dummyScore.Combo} / {dummyScore.BeatmapInfo.MaxCombo} \n" +
+            Console.WriteLine($"" +
+            $"combo: {DummyScore.Combo} / {DummyScore.BeatmapInfo.MaxCombo} \n" +
             $"editor timee: {EditorClock.CurrentTime} \n" +
             $"closest index: {curhitindex} \n" +
             $"cached diff: {CachedMapDiffHits.Count} \n" +
-            $"score diff: {dummyScore.BeatmapInfo.Contents.DiffHitObjects.Count} \n" +
+            $"score diff: {DummyScore.BeatmapInfo.Contents.DiffHitObjects.Count} \n" +
             $"map diff: {ATFocusedMap.Contents.DiffHitObjects.Count}");
             */
 
@@ -630,13 +631,12 @@ namespace SkillAnalyzer.Visual
             SortedList<string, float> skillNameList = new SortedList<string, float>();
             List<ColourInfo> skillColors = new List<ColourInfo>();
             debugContainer.Text = "";
-            debugTextCached = "";
 
             skillList.ForEach(
                 skill =>
                 {
                     // SkillBar Updater
-                    SkillCalcuator calculator = skill.GetSkillCalc(dummyScore);
+                    SkillCalcuator calculator = skill.GetSkillCalc(DummyScore);
                     calculator.EndIndex = curhitindex;
                     float skillpp = (float)calculator.SkillCalc();
                     if (skillpp < 0) skillpp = 0;
@@ -657,7 +657,6 @@ namespace SkillAnalyzer.Visual
                             t.Colour = skill.PrimaryColor;
                             t.Shadow = true;
                         });
-                        debugTextCached += $"\n{skill.Identifier}";
                     }   
                     foreach (FieldInfo property in props)
                     {
@@ -677,7 +676,6 @@ namespace SkillAnalyzer.Visual
                             t.Colour = Colour4.White;
                             t.Shadow = true;
                         });
-                        debugTextCached += $"\n{property.Name}:\n   -> {propval}";
                         skillDebugTextCached[skill.Identifier][property.Name] = propval;
                     }
                 }
@@ -688,8 +686,8 @@ namespace SkillAnalyzer.Visual
                 skillColors.Add(ColourInfo.GradientVertical(Skill.GetSkillByID(skillName.Key).PrimaryColor, Skill.GetSkillByID(skillName.Key).SecondaryColor));
             });
 
-            SkillGraph.SBarGraph.MaxValue = (largestPP < 500) ? 500 : largestPP;
-            SkillGraph.SetValues(skillNameList, skillColors);
+            skillGraph.SBarGraph.MaxValue = (largestPP < 500) ? 500 : largestPP;
+            skillGraph  .SetValues(skillNameList, skillColors);
             // Console.WriteLine("------------------");
         }
 
@@ -710,15 +708,18 @@ namespace SkillAnalyzer.Visual
                 curhitindex = 0;
             }
             cachedCurTime = currentTime;
+
+            // [!]
             // starts at curhitindex to avoid constantly looping through the whole map
-            for (int i = curhitindex; i < hitList.Count; i++) { 
+            for (int i = curhitindex; i < hitList.Count; i++) {
                 var time = hitList[i].StartTime;
-                if (time >= currentTime) {
+                if (time > currentTime) {
                     curhitindex = i;
                     return i;
                 }
             }
-            return hitList.Count-1;
+            curhitindex = hitList.Count;
+            return hitList.Count;
         }
 
         
@@ -730,29 +731,47 @@ namespace SkillAnalyzer.Visual
             LoadScreen(editorLoader = new AnalyzerEditorLoader());
         }
 
+        #region Step Methods
+
         [Test]
-        public async void Setup()
+        public void Setup()
         {
             RunAllSteps();
             AddStep("load editor then enable bar", LoadEditor);
             AddUntilStep("wait until editor is loaded", () => canUseEditor);
         }
-
-        [Test]
-        public void TestCheckCurAvgSpacing() {
-
-            AddStep("Seek to 2:12:404", () => { EditorClock.Seek(convertTimeToMs("2:12:404")); } ); // EditorClock.Stop(); 
-
-            debugContainer.Text = "";
-            AddUntilStep("Add flowaim", () => {
-                if (!CurSkillList.Contains(Skill.Flowaim))
-                    CurSkillList.Add(Skill.Flowaim);
-                return CurSkillList.Contains(Skill.Flowaim);
+        
+        protected delegate bool DebugValAssert(object obj);
+        protected void AddDebugValueAssert(string description,ISkill skill,string key, DebugValAssert assert)
+        {
+            AddAssert(description, () => {
+                Dictionary<string, object> directory = skillDebugTextCached[skill.Identifier];
+                var amount = (double)directory[key];
+                return assert(amount);
             });
-            AddAssert("curAvgSpacing > 50", () => {
-                Dictionary<string,object> directory = skillDebugTextCached[Skill.Flowaim.Identifier];
-                double amount = (double)directory["curAvgSpacing"];
-                return amount > 50;
+        }
+        
+        protected void AddSeekStep(string time, bool stopclock = true)
+        {
+            AddSeekStep(convertTimeToMs(time),stopclock);
+        }
+        protected void AddSeekStep(double miliseconds, bool stopclock = true)
+        {
+            AddStep("Seek to " + miliseconds.ToEditorFormattedString(), () => {
+                EditorClock.Seek(miliseconds);
+                if (stopclock)
+                    EditorClock.Stop();
+
+            });
+        }
+
+        protected void AddSkillAdderStep(ISkill skill)
+        {
+            AddUntilStep("Add flowaim", () => {
+                if (!CurSkillList.Contains(skill))
+                    CurSkillList.Add(skill);
+                UpdateBars(true);
+                return CurSkillList.Contains(skill);
             });
         }
 
@@ -764,6 +783,7 @@ namespace SkillAnalyzer.Visual
             int ms = int.Parse(split[2]);
             return min * 60 * 1000 + sec * 1000 + ms;
         }
+        #endregion
 
         [Test]
         public void Options()
@@ -774,5 +794,18 @@ namespace SkillAnalyzer.Visual
 
         public override void SetUpSteps() {}
 
+
+
+        [Test]
+        public void TestCheckCurAvgSpacing()
+        {
+
+
+            AddSkillAdderStep(Skill.Flowaim);
+            AddSeekStep("2:21:200");
+            AddDebugValueAssert("curavgspacing > 50", Skill.Flowaim, "curAvgSpacing", (val) => {
+                return (double)val > 50;
+            });
+        }
     }
 }

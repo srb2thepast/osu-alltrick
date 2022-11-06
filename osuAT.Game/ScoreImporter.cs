@@ -23,7 +23,6 @@ namespace osuAT.Game
         // looks like timers dont go to well with hot reload in o!f. alternative is needed
         public static int TickDelay = 1500;
         private static Timer scoreSetTimer = new Timer(TickDelay);
-        private static double apireqs = 0;
         private static StructuredOsuMemoryReader osuReader;
         private static OsuMemoryStatus lastScreen = OsuMemoryStatus.Playing;
 
@@ -52,7 +51,7 @@ namespace osuAT.Game
                 username,
                 "&m=",
                 (((int)mode).ToString()),
-                "&limit=",  
+                "&limit=",
                 limit.ToString(),
             };
             List<OsuPlay> data = APIHelper<List<OsuPlay>>.GetData(string.Concat(obj));
@@ -75,130 +74,36 @@ namespace osuAT.Game
 
             return data;
         }
-            
 
         private static async void scoreSetTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (!(OsuApi.IsKeyValid())) return;
-            if (apireqs >= 30) return;
+            ApiScoreProcessor.ApiReqs += 1;
+            if (OsuApiKey.Key == default || !(OsuApi.IsKeyValid())) return;
+            if (ApiScoreProcessor.ApiReqs >= 30) {
+                Console.WriteLine($"Automatic Rate limiting begun ({ApiScoreProcessor.ApiReqs} API Requests were sent!!!!)");
+            }
             try
             {
                 GeneralData gameData = new GeneralData();
                 osuReader.TryRead(gameData);
-                Console.WriteLine("last: " + lastScreen + " | current: " + gameData.OsuStatus);
-                var cachedscreen = gameData.OsuStatus;
-                // if the play went from playing to the results screen, continue, otherwise, return.
-                if (!(lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.ResultsScreen || (lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.MultiplayerResultsscreen)))
-                {
-                    lastScreen = gameData.OsuStatus;
-                    return;
-                }
-                lastScreen = gameData.OsuStatus;
-                apireqs -= TickDelay / 100;
-                await Task.Delay(2000); // wait a bit incase osu!servers are slow
-                var recent = OsuApi.GetUserRecent("srb2thepast");
 
-                // return if no recent scores have been set
+                Console.WriteLine("last: " + lastScreen + " | current: " + gameData.OsuStatus);
+                lastScreen = gameData.OsuStatus;
+                ApiScoreProcessor.ApiReqs = Math.Max(0, ApiScoreProcessor.ApiReqs - TickDelay / 150);
+
+                if (!(lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.ResultsScreen || (lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.MultiplayerResultsscreen)))
+                return;
+
+                await Task.Delay(2000); // wait a bit incase osu!servers are behind
+                ApiScoreProcessor.ApiReqs += 1;
+                var recent = OsuApi.GetUserRecent("srb2thepast");
                 if (recent == null)
                     return;
+
                 var osuScore = OsuApi.GetUserRecent("srb2thepast")[0];
-                apireqs += 1;
-                Console.WriteLine(osuScore.Rank + " Rank");
+                OsuBeatmap mapRet() => OsuApi.GetBeatmap(osuScore.MapID, osuScore.Mods, osuScore.Mode);
 
-                // return if score was an F rank
-                if (osuScore.Rank == "F")
-                    return;
-
-                var osuMap = OsuApi.GetBeatmap(osuScore.MapID, osuScore.Mods, osuScore.Mode);
-                apireqs += 1;
-
-                Console.WriteLine(osuMap.BeatmapSetID + " is " + osuMap.Status);
-                // return if the map is not ranked/approved
-                if (!(osuMap.Status == BeatmapStatus.Ranked || osuMap.Status == BeatmapStatus.Approved))
-                    return;
-                var mapScore = OsuApiGetScores(osuScore.MapID, "srb2thepast")[0];
-                apireqs += 1;
-
-                Console.WriteLine("Locally set ID: " + osuScore.ScoreID, "Beatmap top ID: " + mapScore.ScoreID);
-                // if the score set was not the user's best score on the map, return.
-                if (false) // (mapScore?.ScoreID != osuScore.ScoreID)
-                    return;
-
-                // already saved check + new top score check
-                foreach (Score savedscore in SaveStorage.SaveData.Scores.Values)
-                {
-                    // check if the score has already been saved, if so return.
-                    if (savedscore.OsuID.ToString() == mapScore.ScoreID)
-                    {
-                        Console.WriteLine("Score " + savedscore.OsuID.ToString() + " (osu! id) has already been imported.");
-                        lastScreen = (OsuMemoryStatus)gameData.RawStatus;
-                        // return; [!]
-                    }
-                    // check if a score on that diff has already been set, 
-                    if (savedscore.BeatmapInfo.MapID == int.Parse(osuMap.BeatmapID)) {
-                        // check if the just score set is higher than the one currently savd. 
-                        if (savedscore.TotalScore < osuScore.Score) {
-                            // if so delete it in preperation for replacement.
-                            Console.WriteLine("New top score detected! Overwriting previous.");
-                            SaveStorage.RemoveScore(savedscore.ID);
-                        } else { // if it's not the best, return.
-                            return;
-                        }
-                    }
-                }
-
-                string mapFolder = Directory.GetDirectories(SaveStorage.ConcateOsuPath(@"Songs\")).Where((folder) =>
-                {
-                    return (folder.StartsWith(SaveStorage.ConcateOsuPath(@"Songs\" + osuMap.BeatmapSetID + ' ')));
-                }).ElementAt(0);
-                string osuFile = Directory.GetFiles(mapFolder, "*.osu").Where((file) =>
-                {
-                    Console.WriteLine(file);
-                    string[] text = File.ReadAllLines(file);
-                    string filemapid = default;
-
-                    foreach (string line in text)
-                    {
-                        if (line.StartsWith("BeatmapID:")) filemapid = line.Split("BeatmapID:")[1];
-                        if (line == "[Difficulty]") break;
-                    }
-
-                    System.Console.WriteLine(filemapid, osuMap.BeatmapID);
-                    return (filemapid == osuMap.BeatmapID);
-                }).ElementAt(0);
-                Console.WriteLine(mapFolder);
-;
-                AccStat accstats = new AccStat((int)osuScore.C300, (int)osuScore.C100, (int)osuScore.C50, (int)osuScore.CMiss);
-                Score score = new Score
-                {
-                    ScoreRuleset = RulesetStore.Osu,
-                    OsuID = long.Parse(mapScore.ScoreID),
-                    BeatmapInfo = new Beatmap
-                    {
-                        MapID = int.Parse(osuMap.BeatmapID),
-                        MapsetID = int.Parse(osuMap.BeatmapSetID),
-                        SongArtist = osuMap.Artist,
-                        SongName = osuMap.Title,
-                        DifficultyName = osuMap.DifficultyName,
-                        MapsetCreator = osuMap.Mapper,
-                        FolderLocation = osuFile.Remove(0, SaveStorage.SaveData.OsuPath.Length + 1),
-                        MaxCombo = (int)osuMap.MaxCombo,
-                        StarRating = (double)osuMap.Starrating
-                    },
-                    Combo = (int)osuScore.MaxCombo,
-                    AccuracyStats = accstats,
-                    TotalScore = osuScore.Score,
-                    ModsString = osuScore.Mods.ToString().Split(", ").ToList(),
-                    Grade = osuScore.Rank
-
-
-                };
-                score.Register();
-                SaveStorage.AddScore(score);
-                SaveStorage.Save();
-
-
-                lastScreen = cachedscreen;
+                ApiScoreProcessor.SaveToStorageIfValid(osuScore,mapRet);
             } catch(Exception err) {
                 // remove this section when scoreimporter is converted to osu!of's schedule
                 File.WriteAllText("errlog_scoreimp.txt", err.StackTrace + "\n ----------- ERROR MESSAGE: \n ----------- " + err.Message);
@@ -207,6 +112,7 @@ namespace osuAT.Game
             finally { }
 
         }
+
 
 
         public void ImportScore() {

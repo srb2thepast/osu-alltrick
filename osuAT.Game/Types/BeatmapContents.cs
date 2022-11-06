@@ -71,9 +71,9 @@ namespace osuAT.Game.Types
             DifficultyInfo = PlayableMap.Difficulty;
             diffcalc = RulesetStore.GetDiffCalcObj(ruleset, Workmap);
             ContentRuleset = ruleset; 
-            HitObjects = Workmap.Beatmap.HitObjects.ToList();
             DiffHitObjects = diffcalc.GetDifficultyHitObjects(PlayableMap, 1.0).ToList();
-            
+            HitObjects = PlayableMap.HitObjects.ToList();
+
         }
     }
 }

@@ -35,7 +35,7 @@ namespace osuAT.Game.Skills
         public SkillCalcuator(Score score)
         {
             FocusedScore = score;
-            EndIndex = (EndIndex == default)? FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count:EndIndex;
+            EndIndex = (EndIndex == default)? ((FocusedScore.BeatmapInfo != null)? FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count: 0):EndIndex;
         }
 
         /// <summary>

@@ -983,7 +983,7 @@ namespace osuAT.Game.Objects
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
 
-            CurSkill = CurSkill;
+            CurSkill = skill;
             ParentBox = parentbox;
 
 

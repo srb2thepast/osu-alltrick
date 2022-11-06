@@ -21,7 +21,7 @@ namespace osuAT.Game
         // It allows for caching global dependencies that should be accessible to tests, or changing
         // the screen scaling for all components including the test browser and framework overlays.
         protected override Container<Drawable> Content { get; }
-        public static new DependencyContainer Dependencies;
+        public new static DependencyContainer Dependencies;
         public static readonly EndpointConfiguration ENDPOINT_CONFIGURATION = new ProductionEndpointConfiguration();
 
         protected osuATGameBase()

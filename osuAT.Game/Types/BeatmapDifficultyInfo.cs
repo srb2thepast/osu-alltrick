@@ -38,7 +38,7 @@ namespace osuAT.Game.Types
             return combo2;
         }
 
-        public static ATBeatmap ConvertToATMap(this WorkingBeatmap map,string folderlocation = "")
+        public static ATBeatmap ConvertToATMap(this WorkingBeatmap map,string folderlocation = "",List<ModInfo> mods = null)
         {
             // [!] Add DiffHitObjects here
             ATBeatmap newmap = new ATBeatmap()
@@ -52,7 +52,7 @@ namespace osuAT.Game.Types
                 StarRating = 1,
                 FolderLocation = folderlocation,
             };
-            newmap.LoadMapContents(RulesetStore.Osu);
+            newmap.LoadMapContents(RulesetStore.Osu,mods);
             newmap.MaxCombo = newmap.GetMaxCombo();
 
             return newmap;

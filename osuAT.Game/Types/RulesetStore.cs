@@ -70,7 +70,6 @@ namespace osuAT.Game.Types
 
             public IEnumerable<DifficultyHitObject> GetDifficultyHitObjects(IBeatmap beatmap, double clockRate)
             {
-                Console.WriteLine($"rate: {clockRate}");
                 return CreateDifficultyHitObjects(beatmap, clockRate);
             }
 
