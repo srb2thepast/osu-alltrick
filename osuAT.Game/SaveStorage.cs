@@ -89,6 +89,8 @@ namespace osuAT.Game
         public static CSaveData SaveData;
         public static string SaveFile = "savedata\\data.json";
         public static bool IsSaving = false;
+        [Resolved]
+        private static osuATGameBase game { get; set; }
 
         private static Dictionary<string, double> getDefaultTotal()
         {
@@ -354,7 +356,7 @@ namespace osuAT.Game
         public static string Read()
         {
             if (!CheckSaveExists()) return null;
-
+            
             string decodedtext = "";
             foreach (char chara in File.ReadAllText(SaveFile))
             {

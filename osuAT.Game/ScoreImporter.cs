@@ -87,7 +87,7 @@ namespace osuAT.Game
                 GeneralData gameData = new GeneralData();
                 osuReader.TryRead(gameData);
 
-                Console.WriteLine("last: " + lastScreen + " | current: " + gameData.OsuStatus);
+                // Console.WriteLine("last: " + lastScreen + " | current: " + gameData.OsuStatus);
                 lastScreen = gameData.OsuStatus;
                 ApiScoreProcessor.ApiReqs = Math.Max(0, ApiScoreProcessor.ApiReqs - TickDelay / 150);
 
@@ -96,11 +96,11 @@ namespace osuAT.Game
 
                 await Task.Delay(2000); // wait a bit incase osu!servers are behind
                 ApiScoreProcessor.ApiReqs += 1;
-                var recent = OsuApi.GetUserRecent("srb2thepast");
+                var recent = OsuApi.GetUserRecent(SaveStorage.SaveData.PlayerID.ToString());
                 if (recent == null)
                     return;
 
-                var osuScore = OsuApi.GetUserRecent("srb2thepast")[0];
+                var osuScore = OsuApi.GetUserRecent(SaveStorage.SaveData.PlayerID.ToString())[0];
                 OsuBeatmap mapRet() => OsuApi.GetBeatmap(osuScore.MapID, osuScore.Mods, osuScore.Mode);
 
                 ApiScoreProcessor.SaveToStorageIfValid(osuScore,mapRet);

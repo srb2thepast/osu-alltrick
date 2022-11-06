@@ -16,6 +16,7 @@ using osu.Game.Rulesets.Mods;
 using OsuBeatmap = osu.Game.Beatmaps.Beatmap;
 using osu.Game.Rulesets.Osu.Difficulty;
 using OsuApiHelper;
+using osu.Framework.Graphics.Primitives;
 
 namespace osuAT.Game.Types
 {
@@ -169,7 +170,8 @@ namespace osuAT.Game.Types
 
         public Texture GetLocalBackground(LargeTextureStore textures)
         {
-            return textures.Get(GetLocalBackgroundFile(textures));
+            return textures.Get("TestBG");
+            // return textures.Get(SaveStorage.ConcateOsuPath(GetLocalBackgroundFile(textures)));
         }
         
     }

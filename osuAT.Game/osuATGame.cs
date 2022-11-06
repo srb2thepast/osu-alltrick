@@ -10,6 +10,7 @@ namespace osuAT.Game
 {
     public class osuATGame : osuATGameBase
     {
+        
         public ScreenStack ScreenStack;
         public HomeScreen MainScreen = new HomeScreen();
         //private Storage storage { get; set; };
@@ -20,7 +21,6 @@ namespace osuAT.Game
             // Add your top-level game components here.
             // A screen stack and sample screen has been provided for convenience, but you can replace it if you don't want to use screens.
             Child = ScreenStack = new ScreenStack(baseScreen: MainScreen) { RelativeSizeAxes = Axes.Both };
-            
         }
 
         protected override void LoadComplete()

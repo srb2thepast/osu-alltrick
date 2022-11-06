@@ -232,7 +232,7 @@ namespace osuAT.Game
                 });
                 if (invalidID) return;
                 ApiScoreProcessor.ApiReqs += 1;
-                var osuScorelist = ScoreImporter.OsuApiGetScores(mapID, "srb2thepast");
+                var osuScorelist = ScoreImporter.OsuApiGetScores(mapID, SaveStorage.SaveData.PlayerID.ToString());
 
                 // return if no scores were set on this map by the player
                 if (osuScorelist == null || !(osuScorelist.Count >= 0))
@@ -257,7 +257,7 @@ namespace osuAT.Game
                             infoText.Text = "A better score has already been saved!";
                             break;
                         case ProcessResult.FailedScore:
-                        infoText.Text = "This score is a failed score!";
+                        infoText.Text = "This is a failed score!";
                             break;
                         case ProcessResult.UnrankedMap:
                         infoText.Text = "This map is unranked!";

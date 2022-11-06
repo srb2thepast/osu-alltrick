@@ -35,6 +35,7 @@ namespace osuAT.Game.Tests
             //ScoreImporter.Init();
         }
 
+        public new Storage GetStorage() => Host.GetStorage("osu!AT-Tests");
         public override void SetHost(GameHost host)
         {
             base.SetHost(host);

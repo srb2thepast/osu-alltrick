@@ -12,6 +12,7 @@ using osuAT.Resources;
 using osuTK.Graphics.ES30;
 using osu.Framework;
 using osu.Framework.Input.Handlers.Tablet;
+using osu.Framework.Platform;
 
 namespace osuAT.Game
 {
@@ -80,6 +81,8 @@ namespace osuAT.Game
                 }
             }
         }
+
+        public Storage GetStorage() => Host.GetStorage("osu!AT");
 
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) =>
             Dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

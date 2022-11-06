@@ -14,6 +14,9 @@ using OsuApiHelper;
 using osuTK;
 using osuTK.Graphics;
 using osuAT.Game.Objects;
+using System;
+using System.Runtime.CompilerServices;
+using Markdig.Extensions.SelfPipeline;
 
 namespace osuAT.Game
 {
@@ -36,7 +39,13 @@ namespace osuAT.Game
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
+            UsernameChanged += () =>
+            {
+
+            };
         }
+
+        public static event Action UsernameChanged;
         public void HideBox()
         {
             settingsBox.Hide();
@@ -90,6 +99,7 @@ namespace osuAT.Game
 
 
             private SuperPasswordTextBox apikeyText;
+            private SpriteText  usernameDisplayText;
             private SuperTextBox usernameText;
             private ArrowedContainer langOption;
             private ArrowedContainer asiOption; // AutoScoreImportation Text
@@ -154,8 +164,8 @@ namespace osuAT.Game
                                 Position = new Vector2(216,65),
                                 Colour = Colour4.White,
                                 Masking =true,
-                                CornerRadius = 20,
-                                Size = new Vector2(500,50), 
+                                CornerRadius = 5,
+                                Size = new Vector2(500,50),
                                 Text = "",
                                 TextFont = new FontUsage("VarelaRound", size: 50),
                                 Shadow = true,
@@ -163,12 +173,12 @@ namespace osuAT.Game
                             },
 
                             // Username
-                            new SpriteText {
+                            usernameDisplayText = new SpriteText {
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.CentreLeft,
                                 Position = new Vector2(60,115),
                                 Font = new FontUsage("VarelaRound", size: 50),
-                                Colour = Colour4.White,
+                                Colour = OsuApi.IsKeyValid()? Colour4.White : Colour4.Gray,
                                 Shadow = true,
                                 ShadowOffset = new Vector2(0,0.1f),
                                 Text = "Username:"
@@ -179,13 +189,14 @@ namespace osuAT.Game
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.CentreLeft,
                                 Position = new Vector2(256,110),
-                                Colour = Colour4.White,
+                                Colour = OsuApi.IsKeyValid()? Colour4.White : Colour4.Gray,
                                 Masking =true,
-                                CornerRadius = 20,
+                                CornerRadius = 5,
                                 Size = new Vector2(500,50),
-                                Text = "",
+                                Text = "Please set your api key first.",
                                 TextFont = new FontUsage("VarelaRound", size: 50),
                                 Shadow = true,
+                                ReadOnly = OsuApi.IsKeyValid()? false : true,
                                 ShadowOffset = new Vector2(0,0.1f),
                             },
 
@@ -303,7 +314,6 @@ namespace osuAT.Game
                 };
                 apikeyText.Text = SaveStorage.SaveData.APIKey;
                 usernameText.Text = SaveStorage.SaveData.PlayerUsername;
-
                 apikeyText.OnCommit += new TextBox.OnCommitHandler((TextBox box, bool target) => {
 
                     // check if it's a valid api key. if it is, display a checkmark
@@ -314,18 +324,17 @@ namespace osuAT.Game
                         SaveStorage.SaveData.APIKey = apikeyText.Text;
                         OsuApiKey.Key = apikeyText.Text;
                         apikeyText.FlashColour(Color4.Green, 3000, Easing.InOutCubic);
-                        // Set UserID
-                        // [!] Make it so that the username box is grayed out and untypable until you put in the api key.
-                        OsuUser player = OsuApi.GetUser(usernameText.Text);
-                        if (player == default)
-                        {
-                            usernameText.FlashColour(Color4.Red, 3000, Easing.InOutCubic);
-                            return;
-                        }
-                        SaveStorage.SaveData.PlayerUsername = usernameText.Text;
+
+                        usernameText.ReadOnly = false;
+                        usernameText.Colour = Colour4.White;
+                        usernameText.Text = "";
+                        usernameDisplayText.Colour = Colour4.White;
                         return;
                     }
-                    OsuApiKey.Key = SaveStorage.SaveData.APIKey;
+                    usernameText.ReadOnly = true;
+                    usernameText.Colour = Colour4.Gray;
+                    usernameText.Text = "Please set your api key first.";
+                    usernameDisplayText.Colour = Colour4.Gray;
                     apikeyText.FlashColour(Color4.Red, 2000, Easing.InOutCubic);
 
                 });
@@ -340,9 +349,9 @@ namespace osuAT.Game
                             return;
                         }
                         SaveStorage.SaveData.PlayerID = player.ID;
-                        System.Console.WriteLine(OsuApi.GetUser(usernameText.Text).CountryCode);
+                        SaveStorage.SaveData.PlayerUsername = usernameText.Text;
+                        UsernameChanged.Invoke();
                     }
-                    SaveStorage.SaveData.PlayerUsername = usernameText.Text;
                     usernameText.FlashColour(Color4.Green, 3000, Easing.InOutCubic);    
                 });
             }

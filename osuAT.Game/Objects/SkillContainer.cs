@@ -21,7 +21,7 @@ namespace osuAT.Game
         public Dictionary<ISkill, SkillBox> SkillDict = new Dictionary<ISkill, SkillBox>();
         public SkillBox FocusedBox;
         public HomeScreen MainScreen;
-            
+        protected Container BoxContainer;
         public SkillContainer(HomeScreen mainscreen)
         {
             Size = new Vector2(8000,6000);
@@ -60,25 +60,21 @@ namespace osuAT.Game
                         RelativeSizeAxes = Axes.Both,
                         Alpha = 0.3f
                     },
-                    /* Nerve Control
-                    new SkillBox {
+                    BoxContainer = new Container {
                         Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        SkillName = "Nerve Control",
-                        SkillPrimaryColor = Colour4.FromHex("#99FF69"),
-                        SkillSecondaryColor = Colour4.FromHex("#00FFF0"),
-                        MiniHeight = 100,
-                        TextSize = 63,
-                    }, */
-
+                        Origin = Anchor.CentreLeft,
+                        RelativeSizeAxes = Axes.Both,
+                    }
                 }
             };
             // load each skill
             foreach (var box in SkillDict.Values)
             {
                 box.ParentCont = this;
-                container.Add(box);
+                BoxContainer.Add(box);
+                
             }
+            lastoffpos = new Vector2(Size.X / 2,0);
         }
 
         protected override void LoadComplete()
@@ -88,10 +84,12 @@ namespace osuAT.Game
 
         public void FocusOnBox(SkillBox box) {
             Vector2 BoxScreenPos = new Vector2(
-                -(box.Position.X * Child.Scale.X) ,
-                -(box.Position.Y * Child.Scale.Y)
-                );
-            Child.MoveTo(BoxScreenPos, 400,Easing.OutCubic);
+                (Size.X/2+box.Position.X),
+                (box.Position.Y));
+            Console.WriteLine(BoxScreenPos);
+            Console.WriteLine(BoxContainer.Size);
+            Console.WriteLine(box.Position);
+            BoxContainer.MoveTo(-BoxScreenPos, 400,Easing.OutCubic);
 
             FocusedBox = box;
             lastoffpos = BoxScreenPos;
@@ -114,16 +112,15 @@ namespace osuAT.Game
         }
         protected override void OnDrag(DragEvent e)
         {
-            Vector2 newPos = (e.MousePosition - e.MouseDownPosition) + lastoffpos;
-            Child.MoveTo(newPos);
+            Vector2 newPos = (-e.MousePosition + e.MouseDownPosition) + lastoffpos;
+            BoxContainer.MoveTo(-newPos);
+            System.Console.WriteLine(BoxContainer.Position);
 
         }
         protected override void OnDragEnd(DragEndEvent e)
         {
             base.OnDragEnd(e);
-            lastoffpos = Child.Position;
-
-            System.Console.WriteLine(Parent.Parent.Position);
+            lastoffpos = -BoxContainer.Position;
             System.Console.WriteLine(lastoffpos);
 
         }

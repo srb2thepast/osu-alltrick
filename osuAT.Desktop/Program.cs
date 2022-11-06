@@ -10,6 +10,7 @@ namespace osuAT.Desktop
     {
         public static void Main()
         {
+            
             using (GameHost host = Host.GetSuitableDesktopHost(@"osuAT"))
             using (osu.Framework.Game game = new osuATGame())
                 try

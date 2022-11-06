@@ -192,6 +192,10 @@ namespace osuAT.Game.Screens
 
             };
 
+           SettingsButton.UsernameChanged += () =>
+            {
+                UsernameText.Text = SaveStorage.SaveData.PlayerUsername;
+            };
         }
 
         private class HomeBackground : Container {

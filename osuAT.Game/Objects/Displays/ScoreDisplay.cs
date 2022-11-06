@@ -134,7 +134,7 @@ namespace osuAT.Game.Objects.Displays
                                         X = 20,
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
-                                        Texture = textures.Get("TestBG"),
+                                        Texture = Current.BeatmapInfo.GetLocalBackground(textures),
                                     },
 
                                     // Gradient
