@@ -213,6 +213,12 @@ namespace osuAT.Game
 
             private void processMap(string mapID)
             {
+                if (!SaveStorage.OsuPathIsValid())
+                {
+                    infoText.Text = "Invalid OsuPath! Please set it in the settings.";
+                    beatmapidText.FlashColour(Color4.Red, 2000, Easing.InOutCubic);
+                    infoText.FlashColour(Color4.Red, 2000, Easing.InOutCubic);
+                }
                 if (ApiScoreProcessor.ApiReqs >= 30)
                 {
                     beatmapidText.FlashColour(Color4.Red, 2000, Easing.InOutCubic);

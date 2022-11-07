@@ -94,9 +94,9 @@ namespace osuAT.Game.Types
 
         public string GetLocalBackgroundFile(LargeTextureStore textures)
         {
-            if (FolderLocation == default || FolderLocation == "deleted")
+            if (FolderLocation == default || FolderLocation == "deleted"|| !SaveStorage.OsuPathIsValid())
             {
-                Console.WriteLine("No folder provided.");
+                Console.WriteLine("No folder/invalid folder provided.");
                 return null;
             }
             using (var stream = File.OpenRead(SaveStorage.ConcateOsuPath(FolderLocation)))

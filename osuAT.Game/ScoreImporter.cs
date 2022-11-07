@@ -44,7 +44,7 @@ namespace osuAT.Game
 
         private static async void scoreSetTimer_Elapsed()
         {
-            if (OsuApiKey.Key == default || !(OsuApi.IsKeyValid())) return;
+            if (!SaveStorage.OsuPathIsValid() || OsuApiKey.Key == default || !(OsuApi.IsKeyValid())) return;
             if (ApiScoreProcessor.ApiReqs >= 30) {
                 Console.WriteLine($"Automatic Rate limiting begun ({ApiScoreProcessor.ApiReqs} API Requests were sent!!!!)");
                 return;

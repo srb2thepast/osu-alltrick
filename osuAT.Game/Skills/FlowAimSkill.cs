@@ -7,6 +7,7 @@ using osu.Game.Rulesets.Osu.Objects;
 using osuTK;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using static osuAT.Game.Skills.AimSkill;
+using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 
 namespace osuAT.Game.Skills
 {
@@ -92,20 +93,19 @@ namespace osuAT.Game.Skills
 
             public override void CalcNext(DifficultyHitObject diffHitObj)
             {
-                var DiffHitObj = diffHitObj;
-                var HitObj = (OsuHitObject)DiffHitObj.BaseObject;
-                var LastHitObj = (OsuHitObject)DiffHitObj.LastObject;
-                lastObjectTimeDiff = DiffHitObj.StartTime - DiffHitObj.LastObject.StartTime;
-
+                var diffHit = (OsuDifficultyHitObject)diffHitObj;
+                var hitObj = (OsuHitObject)diffHit.BaseObject;
+                var lastHitObj = (OsuHitObject)diffHit.LastObject;
+                lastObjectTimeDiff = diffHit.StartTime - diffHit.LastObject.StartTime;
 
                 // if this circle appears within 150ms of the last one, it (might be) a circle in a stream!
                 // So it only runs if it's a circle and it appears within 100ms of the previous circle in the loop.
                 // And also if it's not the first circle of the map (because there would be no previous circle).
-                if (diffHitObj.Index < FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count-1 && HitObj is HitCircle && (DiffHitObj.StartTime - DiffHitObj.LastObject.StartTime) < 100)
+                if (diffHit.Index < FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count-1 && hitObj is HitCircle && (diffHit.StartTime - diffHit.LastObject.StartTime) < 100)
                 {
                     curLength++;
-                    curTimediffSum += DiffHitObj.StartTime - DiffHitObj.LastObject.StartTime;
-                    curSpacingSum += Math.Abs((HitObj.Position - LastHitObj.Position).Length);
+                    curTimediffSum += diffHit.StartTime - diffHit.LastObject.StartTime;
+                    curSpacingSum += Math.Abs((hitObj.Position - lastHitObj.Position).Length);
                     curAvgSpacing = curSpacingSum / curLength;
                     curTimeDiff = curTimediffSum / curLength;
                 }

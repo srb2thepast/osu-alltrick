@@ -22,4 +22,12 @@ namespace osuAT.Game.Skills
             return .97 * Math.Pow((1 - Math.Pow(Misses / MaxCombo, .775)), Misses);
         }
     }
+
+    /// <summary>
+    /// Methods that return data based on a difficulty hit object for
+    /// a specific ruleset (ex. OsuDifficiultyHitObject.GetAngle())
+    /// </summary>
+    public static class DiffHitObjectExtensions {
+        
+    }
 }

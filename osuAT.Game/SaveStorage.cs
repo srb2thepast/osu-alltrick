@@ -22,7 +22,7 @@ namespace osuAT.Game
         /// The path of the player's osu! folder.
         /// </summary>
         [JsonProperty("osupath")]
-        public string OsuPath { get; set; } = @"C:\Users\alexh\AppData\Local\osu!";
+        public string OsuPath { get; set; } = "";
 
         /// <summary>
         /// The save data version.
@@ -119,6 +119,8 @@ namespace osuAT.Game
         }
 
         public static string ConcateOsuPath(string str) {
+            if (!OsuPathIsValid())
+                return default;
             return SaveData.OsuPath + @"\" + str;
         }
 
@@ -553,7 +555,10 @@ namespace osuAT.Game
             }
 
             return true;
-        } 
-        
+        }
+
+        public static bool OsuPathIsValid() {
+            return File.Exists(SaveData.OsuPath + @"\osu!.exe");
+        }
     }
 }

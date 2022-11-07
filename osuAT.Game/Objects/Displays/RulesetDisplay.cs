@@ -74,7 +74,7 @@ namespace osuAT.Game.Objects.Displays
                 RulesetInfo ruleset = RulesetList[i];
                 SpriteIcon newIcon = new SpriteIcon
                 {
-                    X = RulesetList.Length % 2 == 1 ? i * 60 + (-30 * (RulesetList.Length - 1)) : i * 60 + (-60 * (RulesetList.Length - 2) / 2 - 30),
+                    X = (RulesetList.Length % 2 == 1)? i * 60 + (-30 * (RulesetList.Length - 1)) : i * 60 + (-60 * (RulesetList.Length - 2) / 2 - 30),
                     Y = 25, // starts at 25, moves to 0 in the animation
                     Icon = ruleset.Icon,
 

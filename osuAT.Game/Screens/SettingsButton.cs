@@ -17,6 +17,8 @@ using osuAT.Game.Objects;
 using System;
 using System.Runtime.CompilerServices;
 using Markdig.Extensions.SelfPipeline;
+using System.IO;
+using osu.Framework.Bindables;
 
 namespace osuAT.Game
 {
@@ -103,7 +105,75 @@ namespace osuAT.Game
             private SuperTextBox usernameText;
             private ArrowedContainer langOption;
             private ArrowedContainer asiOption; // AutoScoreImportation Text
+            private FileSelector fileSelect;
+            private Container fileSelectContainer;
 
+            // [!] add exit button
+            private class osuATFileSelector : BasicFileSelector {
+                public osuATFileSelector() {
+                    ShowHiddenItems.Value = true;
+                    CurrentPath.ValueChanged += (ValueChangedEvent<DirectoryInfo> pathinfo) =>
+                    {
+                        foundexe = false;
+                        foundsongsfolder = false;
+                        if (selectButton != default)
+                        {
+                            RemoveInternal(selectButton,true);
+                            selectButton = default;
+                        }
+                    };
+                }
+
+                public Action OnOsuPathFound = () => { };
+                private bool foundexe = false;
+                private bool foundsongsfolder = false;
+                private Button selectButton;
+
+                protected override DirectorySelectorDirectory CreateDirectoryItem(DirectoryInfo directory, string displayName = null)
+                {
+                    Console.WriteLine(directory.Name);
+                    if (directory.Name == "Songs") {
+                        foundsongsfolder = true;
+                        Console.WriteLine("songs found");
+                    }
+                    CheckButtonFound();
+                    return new BasicDirectorySelectorDirectory(directory, displayName);
+                }
+
+                protected override DirectoryListingFile CreateFileItem(FileInfo file) {
+                    var fileitem = base.CreateFileItem(file);
+                    Console.WriteLine(file.Name);
+                    if (file.Name == "osu!.exe")
+                    {
+                        foundexe = true;
+                        Console.WriteLine("osu! found");
+                    }
+                    CheckButtonFound();
+                    return fileitem;
+                }
+
+                protected void CheckButtonFound() {
+                    if (foundexe && foundsongsfolder && selectButton == default)
+                    {
+                        AddInternal(selectButton = new BasicButton
+                        {
+                            Anchor = Anchor.BottomRight,
+                            Text = "Select this directory",
+                            Position = new Vector2(-300, -100),
+                            Size = new Vector2(230, 40),
+                            FlashColour = Colour4.Goldenrod,
+                            Margin = new MarginPadding(10),
+                            Action = OnOsuPathFound
+                        });
+                        selectButton.Enabled.Value = true;
+                        Console.WriteLine(CurrentFile);
+                        Console.WriteLine(CurrentPath);
+                        Console.WriteLine("both found");
+                    }
+                }
+
+                protected override Drawable CreateHiddenToggleButton() => Empty();
+            }
 
             public SettingsBox(bool forcecompletion = false)
             {
@@ -277,7 +347,6 @@ namespace osuAT.Game
                                     },
                                 }
                             },
-
                             // Credit
                             new SpriteText {
                                 Anchor = Anchor.BottomRight,
@@ -311,6 +380,33 @@ namespace osuAT.Game
                         Scale = new Vector2(0.4f),
                         Texture = textures.Get("OATlogo"),
                     },
+                    fileSelectContainer = new Container {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Masking = true,
+                        CornerRadius = 20,
+                        Y = 100,
+                        Scale = new Vector2(1.5f),
+                        RelativeSizeAxes = Axes.Both,
+                        Children = new Drawable[] {
+                            new Box {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Colour = Colour4.Black,
+                                RelativeSizeAxes = Axes.Both,
+                            },
+                            fileSelect = new osuATFileSelector {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Scale = new Vector2(0.98f),
+                                RelativeSizeAxes = Axes.Both,
+                                OnOsuPathFound = () => {
+                                    SaveStorage.SaveData.OsuPath = fileSelect.CurrentPath.Value.FullName;
+                                }
+
+                            },
+                        }
+                    }
                 };
                 apikeyText.Text = SaveStorage.SaveData.APIKey;
                 usernameText.Text = SaveStorage.SaveData.PlayerUsername;
@@ -354,6 +450,7 @@ namespace osuAT.Game
                     }
                     usernameText.FlashColour(Color4.Green, 3000, Easing.InOutCubic);    
                 });
+                
             }
 
             protected override bool OnClick(ClickEvent e)

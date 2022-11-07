@@ -98,6 +98,8 @@ namespace osuAT.Game
         }
         public static string GetMapFolder(OsuBeatmap osuMap)
         {
+            if (!SaveStorage.OsuPathIsValid())
+                return default;
 
             var mapFolder = Directory.GetDirectories(SaveStorage.ConcateOsuPath(@"Songs\")).Where((folder) =>
             {
