@@ -27,6 +27,7 @@ namespace osuAT.Game
         private static OsuMemoryStatus lastScreen = OsuMemoryStatus.Playing;
         private static GeneralData gameData = new GeneralData();
         private static int instances = 0;
+        public static bool Enabled = true;
 
         public static async void Init()
         {
@@ -38,7 +39,10 @@ namespace osuAT.Game
             osuReader = StructuredOsuMemoryReader.Instance.GetInstanceForWindowTitleHint("");
             while (true) {
                 await Task.Delay(TickDelay);
-                scoreSetTimer_Elapsed();
+                if (Enabled)
+                {
+                    scoreSetTimer_Elapsed();
+                }
             }
         }
 

@@ -19,6 +19,7 @@ using System.Runtime.CompilerServices;
 using Markdig.Extensions.SelfPipeline;
 using System.IO;
 using osu.Framework.Bindables;
+using osu.Game.Overlays.BeatmapListing;
 
 namespace osuAT.Game
 {
@@ -101,12 +102,33 @@ namespace osuAT.Game
 
 
             private SuperPasswordTextBox apikeyText;
-            private SpriteText  usernameDisplayText;
+            private SpriteText usernameDisplayText;
             private SuperTextBox usernameText;
             private ArrowedContainer langOption;
             private ArrowedContainer asiOption; // AutoScoreImportation Text
             private FileSelector fileSelect;
             private Container fileSelectContainer;
+            private SpriteText locationText;
+
+            public class OsuATButton : BasicButton
+            {
+
+                [BackgroundDependencyLoader]
+                private void load()
+                {
+
+                }
+                protected override SpriteText CreateText() => new SpriteText
+                {
+                    Depth = -1,
+                    Origin = Anchor.Centre,
+                    Anchor = Anchor.Centre,
+                    Font = new FontUsage("VarelaRound", size: 45),
+                    Colour = Colour4.White,
+                    Shadow = true,
+                    ShadowOffset = new Vector2(0, 0.1f),
+                };
+            }
 
             // [!] add exit button
             private class osuATFileSelector : BasicFileSelector {
@@ -118,13 +140,31 @@ namespace osuAT.Game
                         foundsongsfolder = false;
                         if (selectButton != default)
                         {
-                            RemoveInternal(selectButton,true);
+                            RemoveInternal(selectButton, true);
                             selectButton = default;
                         }
                     };
                 }
 
+                [BackgroundDependencyLoader]
+                private void load() {
+                    AddInternal(new OsuATButton()
+                    {
+                        Masking = true,
+                        CornerRadius = 10,
+                        Anchor = Anchor.Centre,
+                        Text = "Exit",
+                        Position = new Vector2(350, -290),
+                        Size = new Vector2(80, 50),
+                        Scale = new Vector2(0.95f),
+                        BackgroundColour = Colour4.LightPink,
+                        FlashColour = Colour4.Black,
+                        Action = OnExitClicked
+                    });
+                }
+
                 public Action OnOsuPathFound = () => { };
+                public Action OnExitClicked = () => { };
                 private bool foundexe = false;
                 private bool foundsongsfolder = false;
                 private Button selectButton;
@@ -155,12 +195,16 @@ namespace osuAT.Game
                 protected void CheckButtonFound() {
                     if (foundexe && foundsongsfolder && selectButton == default)
                     {
-                        AddInternal(selectButton = new BasicButton
+                        AddInternal(selectButton = new OsuATButton
                         {
+                            Masking = true,
+                            CornerRadius = 10,
                             Anchor = Anchor.BottomRight,
                             Text = "Select this directory",
                             Position = new Vector2(-300, -100),
-                            Size = new Vector2(230, 40),
+                            Size = new Vector2(330, 60),
+                            Scale = new Vector2(0.75f),
+                            BackgroundColour = Colour4.Plum,
                             FlashColour = Colour4.Goldenrod,
                             Margin = new MarginPadding(10),
                             Action = OnOsuPathFound
@@ -333,7 +377,7 @@ namespace osuAT.Game
                                         Colour = Colour4.White,
                                         Shadow = true,
                                         ShadowOffset = new Vector2(0,0.1f),
-                                        Text = "OFF"
+                                        Text = "ON"
                                     },
                                     new SpriteText {
                                         Anchor = Anchor.TopLeft,
@@ -343,10 +387,40 @@ namespace osuAT.Game
                                         Colour = Colour4.White,
                                         Shadow = true,
                                         ShadowOffset = new Vector2(0,0.1f),
-                                        Text = "ON"
+                                        Text = "OFF"
                                     },
+                                },
+                                OnObjectSwitched = delegate(Drawable focusedObject) {
+                                    if (focusedObject is SpriteText textObject) {
+                                        ScoreImporter.Enabled = textObject.Text == "ON";
+                                    }
                                 }
                             },
+                            // Path option
+                            locationText = new SpriteText {
+                                Anchor = Anchor.TopLeft,
+                                Origin = Anchor.CentreLeft,
+                                Position = new Vector2(60,290),
+                                Font = new FontUsage("VarelaRound", size: 50),
+                                Colour = Colour4.White,
+                                Shadow = true,
+                                ShadowOffset = new Vector2(0,0.1f),
+                                Text = $"osu! path: {SaveStorage.SaveData.OsuPath}",
+                            },
+                            new OsuATButton {
+                                Masking = true,
+                                CornerRadius = 15,
+                                Anchor = Anchor.TopLeft,
+                                Origin = Anchor.CentreLeft,
+                                Size = new Vector2(150,50),
+                                Position = new Vector2(60,350),
+                                Colour = Colour4.White,
+                                FlashColour = Colour4.White,
+                                BackgroundColour = Colour4.LightPink,
+                                Text = "Select",
+                                Action = () => { fileSelectContainer.FadeIn(400,Easing.OutCubic); }
+                            },
+
                             // Credit
                             new SpriteText {
                                 Anchor = Anchor.BottomRight,
@@ -401,13 +475,16 @@ namespace osuAT.Game
                                 Scale = new Vector2(0.98f),
                                 RelativeSizeAxes = Axes.Both,
                                 OnOsuPathFound = () => {
+                                    locationText.Text = $"osu! path: {fileSelect.CurrentPath.Value.FullName}";
                                     SaveStorage.SaveData.OsuPath = fileSelect.CurrentPath.Value.FullName;
-                                }
-
+                                    fileSelectContainer.FadeOut(400,Easing.OutCubic);
+                                },
+                                OnExitClicked = () => { fileSelectContainer.FadeOut(400,Easing.OutCubic); }
                             },
                         }
                     }
                 };
+                fileSelectContainer.Hide();
                 apikeyText.Text = SaveStorage.SaveData.APIKey;
                 usernameText.Text = SaveStorage.SaveData.PlayerUsername;
                 apikeyText.OnCommit += new TextBox.OnCommitHandler((TextBox box, bool target) => {

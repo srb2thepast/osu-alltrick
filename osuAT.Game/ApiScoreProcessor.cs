@@ -67,12 +67,13 @@ namespace osuAT.Game
                     // check if the just score set is higher than the one currently savd. 
                     if (savedscore.TotalScore < osuScore.Score)
                     {
-                        Console.WriteLine("New top score detected!");
+                        Console.Write("New top score detected!");
                         if (deleteIfBetter)
                         {
-                            Console.Write(" Overwriting previous.");
+                            Console.WriteLine(" Overwriting previous.");
                             SaveStorage.RemoveScore(savedscore.ID);
                         }
+                        Console.WriteLine("");
                         return ProcessResult.WorseScoreSaved;
                     }
                     else

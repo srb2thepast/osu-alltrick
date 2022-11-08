@@ -28,7 +28,8 @@ namespace osuAT.Game.UserInterface
 
         public bool Shadow = false;
         public Vector2 ShadowOffset = new Vector2(0, 0.05f);
-
+        public ObjectSwitched OnObjectSwitched = delegate(Drawable focusedObject) { };
+        public delegate void ObjectSwitched(Drawable focusedObject);
         public new int Spacing = 3;
 
         private Container objcontainer;
@@ -55,7 +56,7 @@ namespace osuAT.Game.UserInterface
             focusIndex--;
             FocusedObject = Objects[focusIndex];
             objcontainer[focusIndex].Show();
-
+            OnObjectSwitched(FocusedObject);
         }
 
         protected void RightArrowClick()
@@ -65,6 +66,7 @@ namespace osuAT.Game.UserInterface
             focusIndex++;
             FocusedObject = Objects[focusIndex];
             objcontainer[focusIndex].Show();
+            OnObjectSwitched(FocusedObject);
 
         }
 
