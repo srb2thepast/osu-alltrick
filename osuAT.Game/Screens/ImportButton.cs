@@ -218,7 +218,8 @@ namespace osuAT.Game
                 if (ApiScoreProcessor.ApiReqs > 30) {
                     // Please wait text
                 }
-                beatmapidText.OnCommit += new TextBox.OnCommitHandler(async (TextBox box, bool target) => {
+                beatmapidText.OnCommit += new TextBox.OnCommitHandler((TextBox box, bool target) =>
+                {
                     Console.WriteLine("commit");
 
                     ApiScoreProcessor.ApiReqs += 1;
@@ -230,7 +231,7 @@ namespace osuAT.Game
                         {
                             if (!"1234567890".Contains(ch))
                             {
-                                beatmapidText.FlashColour(Color4.Red, 2000, Easing.InOutCubic);                                                                                         
+                                beatmapidText.FlashColour(Color4.Red, 2000, Easing.InOutCubic);
                                 return;
                             }
                         });

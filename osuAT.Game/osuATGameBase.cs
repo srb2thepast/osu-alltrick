@@ -73,13 +73,18 @@ namespace osuAT.Game
             Texture pfptxt = largeStore.Get($"http://a.ppy.sh/{SaveStorage.SaveData.PlayerID}");
             Console.WriteLine($"https://a.ppy.sh/{SaveStorage.SaveData.PlayerID}");
             Dependencies.CacheAs(pfptxt ?? largeStore.Get("avatar-guest"));
+            // DisableTablets();
+        }
+
+        // [!] do this
+        public async void DisableTablets() {
+            await Task.Delay(2200);
             foreach (var handler in Host.AvailableInputHandlers)
             {
                 if (handler is ITabletHandler tabhandler)
                 {
                     Schedule(() => {
-                        tabhandler.AreaSize.Value = new Vector2(75.6f, 48.17f);
-                        tabhandler.AreaOffset.Value = new Vector2(73.42f, 50.18f);
+                        tabhandler.Enabled.Value = false;
                     });
                 }
             }

@@ -32,7 +32,6 @@ namespace osuAT.Game.Objects
         private Container mainbox;
         private Container stars;
         private Container outerstars;
-        private bool transitioning = false;
         public MiniSkillBox(ISkill skill,SkillBox parentbox)
         {   
             Origin = Anchor.Centre;
@@ -323,7 +322,6 @@ namespace osuAT.Game.Objects
         private void fireTransition() {
             if (ParentBox.ParentCont.FocusedBox == ParentBox && ParentBox.State == SkillBoxState.MiniBox)
             {
-                transitioning = true;
                 ParentBox.TransitionToFull();
             }
             else

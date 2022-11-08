@@ -137,7 +137,7 @@ namespace osuAT.Game.Screens
 
                             },
                             new SpriteText {
-                                Text = "version 0.15.5",
+                                Text = $"version {Updater.CurrentVersion.Split("v")[1]}",
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.CentreLeft,
                                 Spacing = new Vector2(10),

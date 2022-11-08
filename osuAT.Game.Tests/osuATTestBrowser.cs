@@ -29,8 +29,7 @@ namespace osuAT.Game.Tests
         [BackgroundDependencyLoader]
         private void load()
         {
-            
-            this.Window.Title = "osu!alltrick";
+            Window.Title = "osu!alltrick";
             //SaveStorage.Init();
             //ScoreImporter.Init();
         }

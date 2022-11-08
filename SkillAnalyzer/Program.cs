@@ -9,7 +9,6 @@ namespace SkillAnalyzer
     {
         public static void Main()
         {
-            
             using (GameHost host = Host.GetSuitableDesktopHost("SkillAnalyzer"))
             using (var game = new SkillAnalyzerTestBrowserLoader())
                 host.Run(game);
