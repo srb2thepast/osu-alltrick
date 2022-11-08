@@ -402,7 +402,7 @@ namespace osuAT.Game
                                 Origin = Anchor.CentreLeft,
                                 Position = new Vector2(60,290),
                                 Font = new FontUsage("VarelaRound", size: 50),
-                                Colour = Colour4.White,
+                                Colour = (SaveStorage.OsuPathIsValid())? Colour4.White : Colour4.Red,
                                 Shadow = true,
                                 ShadowOffset = new Vector2(0,0.1f),
                                 Text = $"osu! path: {SaveStorage.SaveData.OsuPath}",
@@ -477,6 +477,7 @@ namespace osuAT.Game
                                 OnOsuPathFound = () => {
                                     locationText.Text = $"osu! path: {fileSelect.CurrentPath.Value.FullName}";
                                     SaveStorage.SaveData.OsuPath = fileSelect.CurrentPath.Value.FullName;
+                                    locationText.Colour = (SaveStorage.OsuPathIsValid())? Colour4.White : Colour4.Red;
                                     fileSelectContainer.FadeOut(400,Easing.OutCubic);
                                 },
                                 OnExitClicked = () => { fileSelectContainer.FadeOut(400,Easing.OutCubic); }
