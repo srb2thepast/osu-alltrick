@@ -82,7 +82,7 @@ namespace osuAT.Game
                         },
                     },
                 },
-                beatmapBox = new MapIDBox{ Anchor = Anchor.Centre,X = 250,Y = 140, Alpha = 0, BypassAutoSizeAxes = Axes.Both}
+                beatmapBox = new MapIDBox{ Anchor = Anchor.Centre,X = 250,Y = 180, Alpha = 0, BypassAutoSizeAxes = Axes.Both}
             };
             Size = InternalChildren[0].Size;
         }
@@ -117,6 +117,38 @@ namespace osuAT.Game
                         BorderThickness = 10,
                         BorderColour = Colour4.White,
                         Children = new Drawable[] {}
+                    },
+                    // Top text
+                    background = new Container
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Masking = true,
+                        Position = new Vector2(100,-110),
+                        Size = new Vector2(300,80),
+                        CornerRadius = 20,
+                        BorderThickness = 10,
+                        BorderColour = Colour4.White,
+                        Children = new Drawable[] {
+                            new Box {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Size = new Vector2(300,80),
+                                Colour = Colour4.FromHex("FF56A2")
+                            },
+                            new SpriteText {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Colour = Colour4.White,
+                                Position = new Vector2(32,20),
+                                Size = new Vector2(300,80),
+                                Text = "Map Score Importer",
+                                Font = new FontUsage("VarelaRound", size: 33),
+                                Shadow = true,
+                                ShadowOffset = new Vector2(0,0.1f),
+                            },
+
+                        }
                     },
 
                     new Container{
