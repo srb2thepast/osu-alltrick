@@ -75,6 +75,7 @@ namespace osuAT.Game
                 
             }
             lastoffpos = new Vector2(Size.X / 2,0);
+            FocusOnBox(SkillDict[Skill.Flowaim]);
         }
 
         protected override void LoadComplete()
