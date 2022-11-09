@@ -9,6 +9,7 @@ It's simple, really!!!
 5. - **If your settings look something like this, you're be done!** Now play a map on osu, set that 223000pp Aim Skill top play, and make the world proud!!!
 ![aimage-removebg-preview (6)](https://user-images.githubusercontent.com/19241426/200733022-36f6aba6-dc27-43a1-940c-75493831dea7.png)
 
+Make sure you have one window of osu!at open at a time. Opening multiple may end up in the osu! website invalidating your API key.
 Currently, only windows is supported... Mac and Linux are incoming as soon as I can find a way to test and develop for the two.
 # Controls!
 - Drag to look around!
