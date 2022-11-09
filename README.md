@@ -1,3 +1,13 @@
+
+![oatlogo](https://user-images.githubusercontent.com/19241426/200944429-65748f64-e1e8-415d-b5a6-1291331385b3.png)
+**osu!alltrick is an app aimed to give every single skill from osu!phd it's own pp system.** 
+It's inspried by [DigitalHypno's osu!phd video.](https://www.youtube.com/watch?v=uc99yWeP1h4) 
+
+https://user-images.githubusercontent.com/19241426/200956928-d7465949-5004-44c3-b7f7-724dc69ffc09.mp4
+
+<sub> - The current FlowAim pp calculator as of 9/11/2022, made in 30 minutes, wonderfully being broken by the power of Guess Who is Back. </sub>
+
+#
 # How do I use this!?!?!?!?!?!?!?
 It's simple, really!!!
 1. - **Open the settings menu**, It'll be the gray cog to the right of the top bar.
@@ -34,7 +44,14 @@ Simply make an issue with:
 ![image](https://user-images.githubusercontent.com/19241426/200729079-14b2911b-9cca-46af-bba4-86d9488c93dd.png)
 
 # Contributing
-If you want to contribute to the development of a skill, [check out the wiki!](https://github.com/srb2thepast/osu-alltrick/wiki) It's been crafted so that even the beginners to programming and the greatest haters of math will enjoy it. If you want to contribute to making the wiki better, just go ahead! DM or ping me on discord (srb2thepast#7380) when you want your edits to become offical.
+If you want to contribute to the development of a skill, [check out the wiki!](https://github.com/srb2thepast/osu-alltrick/wiki) It's been crafted so that even the beginners to programming and the greatest haters of math will enjoy it. 
+
+There's also an Analyzer that lets you visualize the changes you make to your calculator and test them instantly:
+
+https://user-images.githubusercontent.com/19241426/200947927-0d00020e-1d20-41d3-a26b-f056b11b59bf.mp4
+
+
+If you want to contribute to making the wiki better, just go ahead! DM or ping me on discord (srb2thepast#7380) when you want your edits to become offical.
 
 If you want to contribute to the base, just git clone the repository and install the necessary nuget packages. There should be a list in the credits down below, so you can manually install them if you're using something that doesn't install them automatically. 
 Make sure to create an issue before starting to make something if you want your edits to be merged!!
