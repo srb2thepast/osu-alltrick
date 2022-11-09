@@ -1,75 +1,39 @@
-# osu-alltrick
+# How do I use this!?!?!?!?!?!?!?
+It's simple, really!!!
+1. - **Open the settings menu**, It'll be the gray cog to the right of the top bar.
+2. - **Copy your API key** from https://osu.ppy.sh/p/api and paste it into the API Key box by clicking to the right of the text. 
+2. - - **MAKE SURE YOU DO NOT PUBLICLY SHARE YOUR KEY OR YOUR OSU!AT SAVEFILE. READ ALL OF THE WARNINGS ON THE PAGE.** osu!alltrick only uses your API key in order to get details on the scores you set so it can be displayed in each skill. That api key is also saved to your savefile so you don't have to type it in every time, but that means if you give your savefile to someone else they will also have your api key.
+3. - **Type your username into the Username box.** If you change your username, you might have to input it again.
+4. - **Set your osu! path location.** Click on "Select" and navigate! The button to select that path will not show up until you are in your osu! install folder. 
+4. - - Usually, the path is "C:/Users/AppData/Local/osu!".
+5. - **If your settings look something like this, you're be done!** Now play a map on osu, set that 223000pp Aim Skill top play, and make the world proud!!!
+![aimage-removebg-preview (6)](https://user-images.githubusercontent.com/19241426/200733022-36f6aba6-dc27-43a1-940c-75493831dea7.png)
 
-A trainer for every skill in the rhythm game osu! 
+Currently, only windows is supported... Mac and Linux are incoming as soon as I can find a way to test and develop for the two.
+# Controls!
+- Drag to look around!
+- Scroll to zoom!
+- Double click the boxes to open them!... wait, these are more like bentos than boxes...
 
-## How to download & use
+## Importing a score set on a specific map
+If you want to import a score you set, just click on the download icon to the left of the top bar and input in the beatmap ID the score was set on. Currently, osu!alltrick is only able to import the play with the best score, regardless of what mods are applied.
 
-## How to contribute
+The beatmap ID is the very last set of the 2 IDs in the link, for example, "osu.ppy.sh/beatmapsets/1229091#osu/**2555568**". If you cant find the second set, reselect the difficulty on the website.
 
-## How to build
+## Updating
+If there's ever a new update, the releases page will automatically open in your default browser when you open osu!alltrick. Just install the new release then drag and drop the savedata folder from your current install into your new install so you can keep your scores.
+![image](https://user-images.githubusercontent.com/19241426/200728966-db8ed2fc-f62a-4271-8046-3dcb47c0f8c4.png)
 
-### NuGET Packages
+# Reporting Bugs
+Simply make an issue with:
+- The problem (preferably as your issue's title)
+- Directions to reproduce 
+- The contents of your errlog.txt file
+- - (which is located in the same place as your exe.)
+![image](https://user-images.githubusercontent.com/19241426/200729079-14b2911b-9cca-46af-bba4-86d9488c93dd.png)
 
-## Credits:
-```csharp
+# Contributing
+If you want to contribute to the development of a skill, [check out the wiki!](https://github.com/srb2thepast/osu-alltrick/wiki) It's been crafted so that even the beginners to programming and the greatest haters of math will enjoy it. If you want to contribute to making the wiki better, just go ahead! DM or ping me on discord (srb2thepast#7380) when you want your edits to become offical.
 
-# ppy Pty Ltd | osu-framework [MIT License]
-    - Assets used: "osu!framework"
-
-# ppy Pty Ltd | osu! [MIT License]
-    - Assets used: "StarRatingDisplay.cs" [Modified]
-      |            "osu.Game" [Namespace]
-      |             |   with dependencies from : "OsuColour.cs", "ColourUtils.cs"
-      |             |   |
-      |            "ColourUtils.cs" [SampleFromLinearGradient() method]
-      |             |   |
-      |            "TestSceneStarRatingDisplay.cs" [Modified]
-      |             |   |
-      |            "StarDifficulty.cs" [Modified] 
-      |             |   with dependencies from : "DifficultyRating.cs"
-      |             |   |
-      |            "ModIcon.cs" [Modified]
-      |             |   with dependencies from : "ModType.cs", "OsuColour.cs" 
-      |             |   |   
-      |            "OsuIcon.cs"
-      |             |   |
-      |            "ModDisplay.cs" [Modified]
-      |             |   with dependencies from : "ReverseChildIDFillFlowContainer.cs"
-      |             |   |
-      |            "TestSceneModDisplay.cs" [Modified]
-      |             |   |
-      |            "DrawableRank.cs" [Modified]
-      |             |   with dependencies from : "OsuColour.cs"
-
-    
-# Piotrekol | OsuMemoryDataProvider [GNU General Public License v3.0]
-    - Assets used: "OsuMemoryDataProvider"
-
-# ppy Pty Ltd | osu-resources [Creative Commons Attribution-NonCommercial 4.0 International]
-    - Assets used: "osuFont.bin"
-      |             |
-      |            "osuFont_0.png"
-
-# ppy Pty Ltd | osu-tools [MIT License]
-    - Assets used: "ProcessorWorkingBeatmap"
-      |             |   with dependencies from : "WorkingBeatmap.cs"
-
-# [- Fonts - ] #
-
-# Dan Sayers | Averia Sans Libre [Open Font License]
-    - Assets used: "Averia Sans Libre Font"
-
-# Joe Prince | Varela Round [Open Font License]
-    - Assets used: "Varela Round Font"
-
-# Joe Prince | Venera [Personal Use License]
-    - Assets used: "Venera Font" 
-
-# Haley Fiege | Sniglet [Open Font License]
-    - Assets used: "Sniglet Font"
-
-# [ - DigitalHypno - ] #
-
-# DigitalHypno | osu!phd [YouTube Standard License]
-    - Assets used: "osu!phd"
-```
+If you want to contribute to the base, just git clone the repository and install the necessary nuget packages. There should be a list in the credits down below, so you can manually install them if you're using something that doesn't install them automatically. 
+Make sure to create an issue before starting to make something if you want your edits to be merged!!
