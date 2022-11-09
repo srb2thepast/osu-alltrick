@@ -7,7 +7,6 @@ https://user-images.githubusercontent.com/19241426/200956928-d7465949-5004-44c3-
 
 <sub> - The current FlowAim pp calculator as of 9/11/2022, made in 30 minutes, wonderfully being broken by the power of Guess Who is Back. </sub>
 
-#
 # How do I use this!?!?!?!?!?!?!?
 It's simple, really!!!
 1. - **Open the settings menu**, It'll be the gray cog to the right of the top bar.
