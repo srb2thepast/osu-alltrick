@@ -11,8 +11,12 @@ using osuTK;
 using osuAT.Resources;
 using osuTK.Graphics.ES30;
 using osu.Framework;
-using osu.Framework.Input.Handlers.Tablet;
 using osu.Framework.Platform;
+using osu.Framework.Utils;
+using osu.Framework.Input;
+using osu.Framework.Input.Handlers.Mouse;
+using osu.Framework.Input.Handlers.Tablet;
+using System.Linq;
 
 namespace osuAT.Game
 {
@@ -64,7 +68,7 @@ namespace osuAT.Game
             // [!] how to use turn local images outside game directory to texture help plz
             var largeStore = new LargeTextureStore(Host.Renderer, Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"Textures")));
             largeStore.AddTextureSource(Host.CreateTextureLoaderStore(new OnlineStore()));
-            
+
             Dependencies.Cache(largeStore);
             Dependencies.CacheAs(this);
             Window.Title = "osu!alltrick";
@@ -73,19 +77,27 @@ namespace osuAT.Game
             Texture pfptxt = largeStore.Get($"http://a.ppy.sh/{SaveStorage.SaveData.PlayerID}");
             Console.WriteLine($"https://a.ppy.sh/{SaveStorage.SaveData.PlayerID}");
             Dependencies.CacheAs(pfptxt ?? largeStore.Get("avatar-guest"));
-            // DisableTablets();
+
+            FixTabletCursorDrift();
         }
 
         // [!] do this
-        public async void DisableTablets() {
-            await Task.Delay(2200);
+        public void FixTabletCursorDrift()
+        {
             foreach (var handler in Host.AvailableInputHandlers)
             {
+                Console.WriteLine(handler);
                 if (handler is ITabletHandler tabhandler)
                 {
                     Schedule(() => {
-                        tabhandler.Enabled.Value = false;
+                        Console.WriteLine(tabhandler.Tablet.Value.Name);
+
                     });
+                }
+                if (handler is MouseHandler mousehandle)
+                {
+                    mousehandle.UseRelativeMode.Value = false;
+                    Console.WriteLine("----------------- " + mousehandle.UseRelativeMode.Value);
                 }
             }
         }
