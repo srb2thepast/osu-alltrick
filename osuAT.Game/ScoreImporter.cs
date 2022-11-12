@@ -13,6 +13,8 @@ using OsuMemoryDataProvider;
 using OsuMemoryDataProvider.OsuMemoryModels.Abstract;
 using OsuMemoryDataProvider.OsuMemoryModels.Direct;
 using osuAT.Game.API;
+using osu.Framework.Allocation;
+using osu.Framework.Platform;
 
 namespace osuAT.Game
 {
@@ -31,6 +33,8 @@ namespace osuAT.Game
 
         public static async void Init()
         {
+            var gamestore = osuATGameBase.Dependencies.Get<osuATGameBase>();
+            
             Console.WriteLine("initalised scoreimpoter");
             instances += 1;
             Console.WriteLine($"{instances} Instances.");
@@ -39,7 +43,7 @@ namespace osuAT.Game
             osuReader = StructuredOsuMemoryReader.Instance.GetInstanceForWindowTitleHint("");
             while (true) {
                 await Task.Delay(TickDelay);
-                if (Enabled)
+                if (Enabled && !gamestore.Window.Focused)
                 {
                     scoreSetTimer_Elapsed();
                 }
@@ -57,8 +61,9 @@ namespace osuAT.Game
             {
                 GeneralData gameData = new GeneralData();
                 osuReader.TryRead(gameData);
-
+#if DEBUG
                 Console.WriteLine("last: " + lastScreen + " | current: " + gameData.OsuStatus);
+#endif
                 ApiScoreProcessor.ApiReqs = Math.Max(0, ApiScoreProcessor.ApiReqs - TickDelay / 150);
 
                 // if the play went from playing to the results screen, continue, otherwise, return.
@@ -81,8 +86,6 @@ namespace osuAT.Game
 
                 ApiScoreProcessor.SaveToStorageIfValid(osuScore,mapRet);
             } catch(Exception err) {
-                // remove this section when scoreimporter is converted to osu!of's schedule
-                File.WriteAllText("errlog_scoreimp.txt", err.StackTrace + "\n ----------- ERROR MESSAGE: \n ----------- " + err.Message);
                 lastScreen = OsuMemoryStatus.Unknown;
             }
             finally { }

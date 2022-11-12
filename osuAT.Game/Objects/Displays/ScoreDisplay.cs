@@ -198,7 +198,7 @@ namespace osuAT.Game.Objects.Displays
                                             },
                                         }
                                     },
-                                    (Current.BeatmapInfo.FolderLocation != default && File.Exists(SaveStorage.ConcateOsuPath(Current.BeatmapInfo.FolderLocation)) )? 
+                                    (Current.BeatmapInfo.FolderLocation != default && Current.BeatmapInfo.FolderLocationIsValid(true))? 
                                     // Icon
                                     new Container {
                                         AutoSizeAxes = Axes.Both,

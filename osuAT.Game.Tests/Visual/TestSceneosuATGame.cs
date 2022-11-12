@@ -24,7 +24,6 @@ namespace osuAT.Game.Tests.Visual
         {
             game = new osuATGame();
             game.SetHost(host);
-
             AddGame(game);
         }
 

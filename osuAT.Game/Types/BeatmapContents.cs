@@ -51,9 +51,9 @@ namespace osuAT.Game.Types
         {
             string path = SaveStorage.ConcateOsuPath(osufile);
             Console.WriteLine(path);
-            if (!(File.Exists(path)))
+            if (!SaveStorage.ExistsInOsuDirectory(osufile,true))
             {
-                throw new ArgumentNullException($"The path of this beatmap does not exist!!! : {osufile}");
+                throw new ArgumentNullException($"The path of this beatmap does not exist or is invalid!!! : {osufile}");
             }
 
             ruleset ??= RulesetStore.Osu;

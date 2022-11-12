@@ -115,10 +115,10 @@ namespace osuAT.Game.Types
         /// <summary>
         /// Fills in all the missing properties that are not supposed to be set while constructing.
         /// </summary>
-        public void Register(bool calcPP = true, bool setDate = true, int index = -1,bool setGUID = true,bool loadBeatmapContents = true)
+        public void Register(bool calcPP = true, bool setDate = true, int index = -1, bool setGUID = true, bool loadBeatmapContents = true)
         {
 
-            if (setGUID) {ID = Guid.NewGuid(); }
+            if (setGUID) { ID = Guid.NewGuid(); }
             if (setDate) { DateCreated = DateTime.Today; }
             PerfectCombo = BeatmapInfo.MaxCombo == Combo;
             ScoreRuleset ??= RulesetStore.GetByName(RulesetName);
@@ -140,13 +140,13 @@ namespace osuAT.Game.Types
                 }
             }
 
-            if (!File.Exists(SaveStorage.ConcateOsuPath(BeatmapInfo.FolderLocation)) || BeatmapInfo.FolderLocation == default)
-            {
-                Console.WriteLine($"Deleted or unset folder detected: {OsuID}. Skipping beatmapinfo contents.");
+            if ((calcPP || loadBeatmapContents) && !BeatmapInfo.FolderLocationIsValid(true)) {
+                Console.WriteLine($"Deleted or unset folder detected for map {OsuID}, {BeatmapInfo.FolderLocation}. Skipping beatmapinfo contents.");
+                if (calcPP) { AlltrickPP = Skill.CalcAll(this); }
                 return;
             }
             if (loadBeatmapContents || calcPP) { BeatmapInfo.LoadMapContents(ScoreRuleset,Mods); }
-            if (calcPP) { AlltrickPP = Skill.CalcAll(this); }
+            if (calcPP) {AlltrickPP = Skill.CalcAll(this); }
         }
 
         public Score Clone() {

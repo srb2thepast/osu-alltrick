@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Textures;
 using osuAT.Game.Types;
 using osuAT.Game.Objects;
 using osuTK;
-
+using System.IO;
 
 namespace osuAT.Game.Skills
 {
@@ -41,11 +41,26 @@ namespace osuAT.Game.Skills
         /// </summary>
         public static Dictionary<string, double> CalcAll(Score score)
         {
+            if (!File.Exists(SaveStorage.ConcateOsuPath(score.BeatmapInfo.FolderLocation)))
+            {
+                Console.WriteLine($"Could not calculate {score.ID} (osu: {score.OsuID}). Resetting values.");
+                return GetEmptyAlltrickPP();
+            }
             Dictionary<string, double> dict = new Dictionary<string, double>();
             foreach (ISkill skill in SkillList)
             {
                 SkillCalcuator calculator = skill.GetSkillCalc(score);
                 dict.Add(skill.Identifier,  calculator.SkillCalc());
+            }
+            return dict;
+        }
+
+        public static Dictionary<string, double> GetEmptyAlltrickPP()
+        {
+            Dictionary<string, double> dict = new Dictionary<string, double>();
+            foreach (ISkill skill in SkillList)
+            {
+                dict.Add(skill.Identifier, 0);
             }
             return dict;
         }

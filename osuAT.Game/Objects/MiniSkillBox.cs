@@ -351,12 +351,5 @@ namespace osuAT.Game.Objects
             outerstars.Delay(500).ScaleTo(1, 600, Easing.InOutCubic);
         }
 
-        protected override bool OnDoubleClick(DoubleClickEvent e)
-        {
-            System.Console.WriteLine("hihi");
-
-            return base.OnDoubleClick(e);
-        }
-
     }
 }

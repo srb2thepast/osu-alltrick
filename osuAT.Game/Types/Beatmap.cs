@@ -67,10 +67,6 @@ namespace osuAT.Game.Types
         {
             get
             {
-                if (contents == null)
-                {
-                    throw new NotSupportedException("You must call LoadMapContents before tryig to access.");
-                }
                 return contents;
             }
             set => contents = value;
@@ -82,7 +78,13 @@ namespace osuAT.Game.Types
         /// </summary>
         public void LoadMapContents(RulesetInfo ruleset, List<ModInfo> mods = null)
         {
-            contents = new BeatmapContents(FolderLocation,ruleset,mods);
+            if (!SaveStorage.ExistsInOsuDirectory(FolderLocation, true))
+            {
+                contents = null;
+                return;
+            }
+            contents = new BeatmapContents(FolderLocation, ruleset, mods);
+
         }
 
         public Beatmap()
@@ -112,7 +114,7 @@ namespace osuAT.Game.Types
                         if (line.Trim() == "//Background and Video events")
                         {
                             line = reader.ReadLine();
-                            List<string> FolderSplit = FolderLocation.Split("\\").ToList();
+                            List<string> FolderSplit = FolderLocation.Split(@"\").ToList();
                             FolderSplit.RemoveAt(FolderSplit.Count-1);
                             return string.Join(@"\",FolderSplit) + @"\" + line.Split(",")[2].Trim('"').ToStandardisedPath();
                         }

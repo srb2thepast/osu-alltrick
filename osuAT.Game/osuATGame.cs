@@ -5,6 +5,8 @@ using osu.Framework.Graphics;
 using osu.Framework.Screens;
 using osu.Framework.Platform;
 using osuAT.Game.Screens;
+using osu.Game.Database;
+using Realms;
 
 namespace osuAT.Game
 {
@@ -13,7 +15,7 @@ namespace osuAT.Game
         
         public ScreenStack ScreenStack;
         public HomeScreen MainScreen = new HomeScreen();
-        //private Storage storage { get; set; };
+        private Storage storage { get; set; }
 
         [BackgroundDependencyLoader]
         private void load()

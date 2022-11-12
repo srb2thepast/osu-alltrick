@@ -38,6 +38,11 @@ namespace osuAT.Game.Types
             return combo2;
         }
 
+        public static bool FolderLocationIsValid(this ATBeatmap map, bool checkisbeatmap = true)
+        {
+            return SaveStorage.ExistsInOsuDirectory(map.FolderLocation, checkisbeatmap);
+        }
+
         [Obsolete]
         public static ATBeatmap ConvertToATMap(this WorkingBeatmap map,string folderlocation = "",List<ModInfo> mods = null)
         {

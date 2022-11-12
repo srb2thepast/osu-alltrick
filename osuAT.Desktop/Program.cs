@@ -21,10 +21,14 @@ namespace osuAT.Desktop
                 Logger.Log("Failed to update.");
             }
 
-            using (GameHost host = Host.GetSuitableDesktopHost(@"osuAT"))
+            using (GameHost host = Host.GetSuitableDesktopHost(@"osuAT", new HostOptions { BindIPC = true }))
             using (osu.Framework.Game game = new osuATGame())
             try
             {
+                if (!host.IsPrimaryInstance)
+                {
+                    return;
+                }
                 host.Run(game);
             }
             catch (Exception err)

@@ -26,7 +26,9 @@ namespace osuAT.Game
 
     public static class Updater
     {
-        public static string CurrentVersion => "v0.82.0";
+        public static string CurrentVersion => ((DevelopmentBuild) ? "vDEV" : "v") + "0.82.0";
+
+        public static bool DevelopmentBuild => true;
 
         public static string RepoUrl = @"https://github.com/srb2thepast/osu-alltrick/";
 
@@ -47,6 +49,7 @@ namespace osuAT.Game
 
         public static async void CheckForUpdates()
         {
+            if (DevelopmentBuild) return;
             var releases = new JsonWebRequest<List<GithubRelease>>(@"https://api.github.com/repos/srb2thepast/osu-alltrick/releases");
             await releases.PerformAsync();
             var latest = releases.ResponseObject[0];

@@ -24,6 +24,7 @@ using System;
 using NuGet.Packaging.Core;
 using osu.Game.Overlays.BeatmapSet;
 using static osuAT.Game.Skills.AimSkill;
+using osu.Framework.Platform;
 
 namespace osuAT.Game.Tests.Visual
 {
@@ -49,7 +50,7 @@ namespace osuAT.Game.Tests.Visual
         }
 
         private void ReloadText(string savepath = null) {
-            savepath ??= Path.GetFullPath(SaveStorage.SaveFile);
+            savepath ??= Path.GetFullPath(SaveStorage.SaveFileFullPath);
             string content = SaveStorage.Read();
             string contentstring = content.Replace(",", "\n").Replace("{", "\n {").Replace("}", "}\n");
             savelocation.Text = savepath;
@@ -58,7 +59,9 @@ namespace osuAT.Game.Tests.Visual
         }
 
         [SetUp]
-        public void SetUp() {
+        public void SetUp()
+        {
+            SaveStorage.Init(new NativeStorage("testing"));
             Child = new Container
             {
                 Origin = Anchor.Centre,
@@ -173,7 +176,7 @@ namespace osuAT.Game.Tests.Visual
                 Skill.SkillList.Add(skillInstance);
             });
             AddStep("re-initalize savestorage", () => {
-                SaveStorage.Init();
+                SaveStorage.Init(new NativeStorage("testing"));
                 ReloadText();
             });
             AddAssert("skill added", () => { return SaveStorage.SaveData.TotalSkillPP.ContainsKey(skillInstance.Identifier); });
@@ -187,6 +190,13 @@ namespace osuAT.Game.Tests.Visual
             AddStep("save the storage", saveSStorage);
             
 
+        }
+
+        [Test]
+        public void TestDeleteSaveFile() {
+            AddStep("delete test save file", () => {
+                File.Delete(SaveStorage.SaveFileFullPath);
+            });
         }
 
         private bool checkScoreRemovedFromTop() {
@@ -296,4 +306,3 @@ namespace osuAT.Game.Tests.Visual
     }
 }
 
-// () => {}

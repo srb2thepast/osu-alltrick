@@ -1128,7 +1128,7 @@ namespace osuAT.Game.Objects
                     },
                 }
             };
-            backBut.Action = () => { ParentBox.TransitionToMini(); System.Console.WriteLine("hieoihjergji"); };
+            backBut.Action = () => { ParentBox.TransitionToMini(); };
             
         }
 

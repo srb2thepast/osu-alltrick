@@ -65,7 +65,6 @@ namespace SkillAnalyzer
         {
             // Logger.Level = LogLevel.Verbose;
             this.Window.Title = "osu!alltrick's SkillAnalyzer";
-            SaveStorage.Init();
             ScoreImporter.Init();
             foreach (var handler in Host.AvailableInputHandlers)
             {

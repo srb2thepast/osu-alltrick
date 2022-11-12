@@ -87,9 +87,9 @@ namespace osuAT.Game
         public static NativeStorage GameStorage = new NativeStorage("savedata");
         public static CSaveData SaveData;
         public static string SaveFile = "savedata\\data.json";
+        public static Storage InternalStorage { get; private set; }
+        public static string SaveFileFullPath => InternalStorage.GetFullPath(SaveFile);
         public static bool IsSaving = false;
-        [Resolved]
-        private static osuATGameBase game { get; set; }
 
         private static Dictionary<string, double> getDefaultTotal()
         {
@@ -120,8 +120,15 @@ namespace osuAT.Game
 
         public static string ConcateOsuPath(string str) {
             if (!OsuPathIsValid())
-                return default;
+                return "";
             return SaveData.OsuPath + @"\" + str;
+        }
+
+        public static bool ExistsInOsuDirectory(string path, bool checkisbeatmap = false)
+        {
+            return OsuPathIsValid() && !(path == default) && File.Exists(ConcateOsuPath(path))
+                && (checkisbeatmap? path.EndsWith(".osu") : true)
+                ;
         }
 
         private static Dictionary<string, string> getDefaultSkillVer() {
@@ -132,7 +139,8 @@ namespace osuAT.Game
             return dict;
         }
 
-        public static void Init() {
+        public static void Init(Storage storage) {
+            InternalStorage = storage;
             if (!(CheckSaveExists())) {
                 SaveData = new CSaveData {
                     PlayerID = default,
@@ -203,6 +211,17 @@ namespace osuAT.Game
                     foreach (Score score in scorelist)
                     {
                         Console.WriteLine(score.ToString());
+                        // set pp to 0 if the location is invalid
+                        if (!score.BeatmapInfo.FolderLocationIsValid(true))
+                        {
+                            score.AlltrickPP[skillID] = 0;
+                            Tuple<Guid, double> newTuple = new Tuple<Guid, double>(score.ID, score.AlltrickPP[skillID]);
+                            tuplList["overall"].Add(newTuple);
+                            tuplList[score.ScoreRuleset.Name].Add(newTuple);
+                            Console.WriteLine(score.ID.ToString() + " | Invalid Folder Location, could not calculate.");
+                            continue;
+                        }
+
                         // check if the skill supports the score's ruleset
                         score.BeatmapInfo.LoadMapContents(score.ScoreRuleset, score.Mods);
                         SkillCalcuator calculator = skillInstance.GetSkillCalc(score);
@@ -264,6 +283,16 @@ namespace osuAT.Game
             // Loop through every score in SaveData.Scores
             foreach (Score score in SaveData.Scores.Values)
             {
+                // set pp to 0 if the location is invalid
+                if (!score.BeatmapInfo.FolderLocationIsValid(true))
+                {
+                    score.AlltrickPP.Add(skill.Identifier, 0);
+                    Tuple<Guid, double> newtupl = new Tuple<Guid, double>(score.ID, score.AlltrickPP[skill.Identifier]);
+                    tuplList["overall"].Add(newtupl);
+                    tuplList[score.ScoreRuleset.Name].Add(newtupl);
+                    continue;
+                }
+
                 // Calc the SkillPP of each score for the new skill if the skill supports the score's ruleset
                 score.BeatmapInfo.LoadMapContents(score.ScoreRuleset, score.Mods);
                 SkillCalcuator calculator = skill.GetSkillCalc(score);
@@ -359,7 +388,7 @@ namespace osuAT.Game
             if (!CheckSaveExists()) return null;
             
             string decodedtext = "";
-            foreach (char chara in File.ReadAllText(SaveFile))
+            foreach (char chara in File.ReadAllText(SaveFileFullPath))
             {
                 decodedtext += (char)((chara) + 20);
             }
@@ -376,9 +405,9 @@ namespace osuAT.Game
                 var newchar = (char)(chara - 20);
                 encodedtext += newchar;
             }
-            File.WriteAllText(SaveFile, encodedtext);
+            File.WriteAllText(SaveFileFullPath, encodedtext);
             IsSaving = false;
-            return new FileInfo(SaveFile);
+            return new FileInfo(SaveFileFullPath);
         }
 
         /// <summary>
@@ -545,12 +574,14 @@ namespace osuAT.Game
             return scorelist;
         }
             
-        public static bool CheckSaveExists() {
-            if (!Directory.Exists("savedata")) {
-                Directory.CreateDirectory("savedata");
+        public static bool CheckSaveExists()
+        {
+            var gamestore = osuATGameBase.Dependencies.Get<Storage>();
+            if (!Directory.Exists(Path.GetFullPath(Path.Combine(SaveFileFullPath, @"..\")))) {
+                Directory.CreateDirectory(Path.GetFullPath(Path.Combine(SaveFileFullPath, @"..\")));
                 return false;
             }
-            if (!File.Exists("savedata\\data.json")) {
+            if (!File.Exists(SaveFileFullPath)) {
                 return false;
             }
 

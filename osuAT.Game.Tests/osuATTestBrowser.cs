@@ -30,8 +30,6 @@ namespace osuAT.Game.Tests
         private void load()
         {
             Window.Title = "osu!alltrick";
-            //SaveStorage.Init();
-            //ScoreImporter.Init();
         }
 
         public new Storage GetStorage() => Host.GetStorage("osu!AT-Tests");

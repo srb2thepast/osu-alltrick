@@ -87,9 +87,6 @@ namespace osuAT.Game
             Vector2 BoxScreenPos = new Vector2(
                 (Size.X/2+box.Position.X),
                 (box.Position.Y));
-            Console.WriteLine(BoxScreenPos);
-            Console.WriteLine(BoxContainer.Size);
-            Console.WriteLine(box.Position);
             BoxContainer.MoveTo(-BoxScreenPos, 400,Easing.OutCubic);
 
             FocusedBox = box;
@@ -115,14 +112,12 @@ namespace osuAT.Game
         {
             Vector2 newPos = ((-e.MousePosition + e.MouseDownPosition)*(1/Child.Scale.X) + lastoffpos);
             BoxContainer.MoveTo(-newPos );
-            System.Console.WriteLine(BoxContainer.Position);
 
         }
         protected override void OnDragEnd(DragEndEvent e)
         {
             base.OnDragEnd(e);
             lastoffpos = -BoxContainer.Position;
-            System.Console.WriteLine(lastoffpos);
 
         }
         protected override bool OnScroll(ScrollEvent e)
@@ -150,15 +145,6 @@ namespace osuAT.Game
             //Child.MoveTo(BoxScreenPos, 300, Easing.OutExpo);
             //lastoffpos = BoxScreenPos;
             Child.ScaleTo(lastscale, 300, Easing.OutExpo);
-
-            System.Console.Write("World: ");
-            System.Console.WriteLine(BoxScreenPos);
-            System.Console.Write("Mouse World: ");
-            System.Console.WriteLine(MouseWorldPos);
-            System.Console.WriteLine(e.MousePosition);
-            System.Console.WriteLine(Child.Position);
-            
-
             return true;
         }
         #endregion

@@ -17,6 +17,8 @@ using osu.Framework.Input;
 using osu.Framework.Input.Handlers.Mouse;
 using osu.Framework.Input.Handlers.Tablet;
 using System.Linq;
+using NuGet.Protocol.Core.Types;
+using System.ComponentModel.Design;
 
 namespace osuAT.Game
 {
@@ -57,7 +59,6 @@ namespace osuAT.Game
         private void load()
         {
             Console.WriteLine(Host.AvailableInputHandlers);
-
             Resources.AddStore(new DllResourceStore(typeof(osuATResources).Assembly));
             AddFont(Resources, @"Fonts/osuFont");
             AddFont(Resources, @"Fonts/VarelaRound");
@@ -70,14 +71,15 @@ namespace osuAT.Game
             largeStore.AddTextureSource(Host.CreateTextureLoaderStore(new OnlineStore()));
 
             Dependencies.Cache(largeStore);
-            Dependencies.CacheAs(this);
+            Storage storage = (Updater.DevelopmentBuild)? new NativeStorage("dev_savedata") : Host.Storage;
+            Dependencies.CacheAs(storage);
             Window.Title = "osu!alltrick";
-            SaveStorage.Init();
+            Dependencies.CacheAs<osuATGameBase>(this);
+            SaveStorage.Init(storage);
             ScoreImporter.Init();
             Texture pfptxt = largeStore.Get($"http://a.ppy.sh/{SaveStorage.SaveData.PlayerID}");
             Console.WriteLine($"https://a.ppy.sh/{SaveStorage.SaveData.PlayerID}");
             Dependencies.CacheAs(pfptxt ?? largeStore.Get("avatar-guest"));
-
             FixTabletCursorDrift();
         }
 
@@ -90,8 +92,7 @@ namespace osuAT.Game
                 if (handler is ITabletHandler tabhandler)
                 {
                     Schedule(() => {
-                        Console.WriteLine(tabhandler.Tablet.Value.Name);
-
+                        tabhandler.Enabled.Value = false;
                     });
                 }
                 if (handler is MouseHandler mousehandle)
@@ -102,7 +103,6 @@ namespace osuAT.Game
             }
         }
 
-        public Storage GetStorage() => Host.GetStorage("osu!AT");
 
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) =>
             Dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

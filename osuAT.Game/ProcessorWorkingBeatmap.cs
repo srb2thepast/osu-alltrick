@@ -88,7 +88,7 @@ namespace osuAT.Game
 
                 return new ProcessorWorkingBeatmap(fileOrId, null, audioManager?? audio);
             }
-            throw new NotImplementedException("osu!apiv2 is not currently supported. Getting by ID requires osu!apiv2.");
+            throw new NotImplementedException("file did not end in .osu, if this was intended, osu!apiv2 is not currently supported. Getting by ID requires osu!apiv2.");
             /*
             if (!int.TryParse(fileOrId, out var beatmapId))
                 throw new ArgumentException("Could not parse provided beatmap ID.");

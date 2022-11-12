@@ -171,7 +171,6 @@ namespace osuAT.Game
 
                 protected override DirectorySelectorDirectory CreateDirectoryItem(DirectoryInfo directory, string displayName = null)
                 {
-                    Console.WriteLine(directory.Name);
                     if (directory.Name == "Songs") {
                         foundsongsfolder = true;
                         Console.WriteLine("songs found");
@@ -182,7 +181,6 @@ namespace osuAT.Game
 
                 protected override DirectoryListingFile CreateFileItem(FileInfo file) {
                     var fileitem = base.CreateFileItem(file);
-                    Console.WriteLine(file.Name);
                     if (file.Name == "osu!.exe")
                     {
                         foundexe = true;
@@ -494,14 +492,15 @@ namespace osuAT.Game
                     // then, save it to savestorage.
                     // otherwise, display a red X
                     OsuApiKey.Key = apikeyText.Text;
-                    if (OsuApi.IsKeyValid()) {
+                    bool requestedReset = apikeyText.Text.ToUpper().Contains("RESET");
+                    if (OsuApi.IsKeyValid())
+                    {
                         SaveStorage.SaveData.APIKey = apikeyText.Text;
                         OsuApiKey.Key = apikeyText.Text;
                         apikeyText.FlashColour(Color4.Green, 3000, Easing.InOutCubic);
-
                         usernameText.ReadOnly = false;
                         usernameText.Colour = Colour4.White;
-                        usernameText.Text = "";
+                        usernameText.Text = (usernameText.Text == "Please set your api key first.") ? "" : usernameText.Text;
                         usernameDisplayText.Colour = Colour4.White;
                         return;
                     }
@@ -509,8 +508,15 @@ namespace osuAT.Game
                     usernameText.Colour = Colour4.Gray;
                     usernameText.Text = "Please set your api key first.";
                     usernameDisplayText.Colour = Colour4.Gray;
+                    if (requestedReset)
+                    {
+                        SaveStorage.SaveData.APIKey = "RESET";
+                        OsuApiKey.Key = "RESET";
+                        SaveStorage.Save();
+                        apikeyText.FlashColour(Color4.Yellow, 3000, Easing.InOutCubic);
+                        return;
+                    }
                     apikeyText.FlashColour(Color4.Red, 2000, Easing.InOutCubic);
-
                 });
                 usernameText.OnCommit += new TextBox.OnCommitHandler((TextBox box, bool target) =>
                 {
