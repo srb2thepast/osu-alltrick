@@ -12,16 +12,15 @@ https://user-images.githubusercontent.com/19241426/200956928-d7465949-5004-44c3-
 It's simple, really!!!
 1. - **Open the settings menu**, It'll be the gray cog to the right of the top bar.
 2. - **Copy your API key** from https://osu.ppy.sh/p/api and paste it into the API Key box by clicking to the right of the text. 
-2. - - **MAKE SURE YOU DO NOT PUBLICLY SHARE YOUR KEY OR YOUR OSU!AT SAVEFILE. READ ALL OF THE WARNINGS ON THE PAGE.** osu!alltrick only uses your API key in order to get details on the scores you set so it can be displayed in each skill. That api key is also saved to your savefile so you don't have to type it in every time, but that means if you give your savefile to someone else they will also have your api key.
-3. - **Type your username into the Username box.** If you change your username, you might have to input it again.
-4. - **Set your osu! path location.** Click on "Select" and navigate! The button to select that path will not show up until you are in your osu! install folder. 
-4. - - Usually, the path is "C:/Users/AppData/Local/osu!".
-5. - **If your settings look something like this, you're be done!** Now play a map on osu, set that 223000pp Aim Skill top play, and make the world proud!!!
-5. - - Also, scores you set are only able to get submitted to osu!alltrick if it's submitted to osu! as well. That means if you set a play with lower score than another play with the same mods, it wont submit to osu!alltrick since osu! doesn't record those scores online.
+3. - - **MAKE SURE YOU DO NOT PUBLICLY SHARE YOUR KEY OR YOUR OSU!AT SAVEFILE. READ ALL OF THE WARNINGS ON THE PAGE.** osu!alltrick only uses your API key in order to get details on the scores you set so it can be displayed in each skill. That api key is automatically saved to your savefile, but that means if you give your savefile to someone else they will also have your api key. **If you want to share your savefile, you can prevent accidentally leaking your apikey however by entering "RESET" into the API Key box.** If your key was removed successfully, the box should flash <span style="color:yellow">yellow</span> rather than green or red.
+4. - **Type your username into the Username box.** If you change your username, you might have to input it again.
+5. - **Set your osu! path location.** Click on "Select" and navigate! The button to select that path will not show up until you are in your osu! install folder. 
+6. - - Usually, the path is "AppData/Local/osu!".
+7. - **If your settings look something like this, you're be done!** Now play a map on osu, set that 223000pp Aim Skill top play, and make the world proud!!!
+8. - - Also, scores you set are only able to get submitted to osu!alltrick if it's submitted to osu! as well. That means if you set a play with lower score than another play with the same mods, it wont submit to osu!alltrick since osu! doesn't record those scores online.
 
 ![aimage-removebg-preview (6)](https://user-images.githubusercontent.com/19241426/200733022-36f6aba6-dc27-43a1-940c-75493831dea7.png)
 
-Make sure you have one window of osu!at open at a time. Opening multiple may end up in the osu! website invalidating your API key.
 # Controls!
 - Drag to look around!
 - Scroll to zoom!
@@ -54,8 +53,8 @@ https://user-images.githubusercontent.com/19241426/200947927-0d00020e-1d20-41d3-
 
 If you want to contribute to making the wiki better, just go ahead! DM or ping me on discord (srb2thepast#7380) when you want your edits to become offical.
 
-If you want to contribute to the base, just git clone the repository and install the necessary nuget packages. There should be a list in the credits down below, so you can manually install them if you're using something that doesn't install them automatically. 
-Make sure to create an issue before starting to make something if you're planning to have it be merged!!
+If you want to contribute to the base, just follow the directions given below. 
+**Make sure to create an issue before starting to make something if you're planning make a pull request!!**
 
 # Compiling
 
@@ -64,7 +63,7 @@ You will need three things:
 * * **If you don't have an IDE installed** you can start out by downloading the [.NET Coding Pack bundle of Visual Studio Code](https://code.visualstudio.com/learn/educators/installers#_net-coding-pack). The pack already contains .NET as well, so you can just skip step 2.
 2. .NET Framework
 * * Download [.NET6.0](https://dotnet.microsoft.com/en-us/download). (If you downloaded the .NET Coding Pack bundle from above, you already have it installed into VS Code.)
-3. GIT
+3. Git
 * * Download it [here](https://git-scm.com/downloads).
 
 
@@ -76,7 +75,7 @@ dotnet build
 ```
 
 Then, if you're using VS Code, right click the folder you downloaded osu!AT into and click "Open With Code", then press Ctrl+Shift+` to open a terminal there for ease of access. 
-* * If not, on windows, you can navigate to the directory you want osuAT to be installed to then type "cmd" into the path bar to open Command Prompt quickly.
+* * If not, on windows you can navigate to the directory you want osuAT to be installed to then type "cmd" into the path bar to open Command Prompt quickly.
     
     
     https://user-images.githubusercontent.com/19241426/201435627-7dc87b73-7a31-4862-8544-9c4690daa810.mp4
@@ -98,3 +97,4 @@ And finally, **run osuAT!**
 ```
 dotnet run
 ```
+Also, the savefile is stored in a seperate folder while testing, usually "osuAT.Game.Tests/bin/Debug/net6.0/dev_savedata", so that the main save file in AppData doesn't get overriden while testing.
