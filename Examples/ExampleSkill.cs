@@ -76,12 +76,12 @@ namespace osuAT.Game.Skills
                 
                 if (HitObj is OsuParser.Circle)
                 {
-                    totalCount++
+                    totalCount++;
                 }
 
                 if (HitObj is OsuParser.Slider)
                     // SpanCount is the amount of times a slider repeats added by 1.
-                    totalCount += HitObj.SpanCount
+                    totalCount += HitObj.SpanCount;
                 }
             }
             return totalCount;

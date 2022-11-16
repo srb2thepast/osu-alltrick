@@ -6,6 +6,7 @@ using osuAT.Game.Types;
 using osuAT.Game.Objects;
 using osu.Framework.Allocation;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
+using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using osuTK;
 
 namespace osuAT.Game.Skills
@@ -81,7 +82,23 @@ namespace osuAT.Game.Skills
         /// </summary>
         /// <remarks>The code that goes here runs in the for-loop block in <see cref="SkillCalc()"/>.</remarks>
         /// <param name="difficultyHitObject"></param>
-        public abstract void CalcNext(DifficultyHitObject diffHitObj);
+
+        public virtual void CalcNext(OsuDifficultyHitObject diffHitObj) => throw new NotImplementedException($"Calculations for ruleset {FocusedScore.RulesetName} is not supported.");
+        
+        /*
+        public virtual void CalcNext(CatchDifficultyHitObject diffHitObj) => throw new NotImplementedException($"Calculations for ruleset {FocusedScore.RulesetName} is not supported.");
+        public virtual void CalcNext(ManiaDifficultyHitObject diffHitObj) => throw new NotImplementedException($"Calculations for ruleset {FocusedScore.RulesetName} is not supported.");
+        public virtual void CalcNext(TaikoDifficultyHitObject diffHitObj) => throw new NotImplementedException($"Calculations for ruleset {FocusedScore.RulesetName} is not supported.");
+        */
+        
+        public virtual void CalcNext(DifficultyHitObject diffHitObj) {
+            if (FocusedScore.ScoreRuleset == RulesetStore.Osu) {
+                CalcNext((OsuDifficultyHitObject)diffHitObj);
+                return;
+            }
+
+            throw new NotSupportedException("Attempted to calculate for ruleset that is not implemented by default.");
+        }
 
 
     }

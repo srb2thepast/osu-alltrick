@@ -6,6 +6,7 @@ using osuAT.Game.Types;
 using osu.Game.Rulesets.Osu.Objects;
 using osuTK;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
+using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using static osuAT.Game.Skills.AimSkill;
 
 namespace osuAT.Game.Skills
@@ -53,7 +54,7 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-            public override void CalcNext(DifficultyHitObject diffHitObj)
+            public override void CalcNext(OsuDifficultyHitObject diffHitObj)
             {
                 CurTotalPP = new Random().Next(1200);
             }

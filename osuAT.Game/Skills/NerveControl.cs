@@ -6,6 +6,7 @@ using osuAT.Game.Types;
 using osu.Game.Rulesets.Osu.Objects;
 using osuTK;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
+using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using static osuAT.Game.Skills.AimSkill;
 
 namespace osuAT.Game.Skills
@@ -55,7 +56,7 @@ namespace osuAT.Game.Skills
 
             private float totaldist = 0;
 
-            public override void CalcNext(DifficultyHitObject diffHitObj)
+            public override void CalcNext(OsuDifficultyHitObject diffHitObj)
             {
                 var DiffHitObj = diffHitObj;
                 var HitObj = (OsuHitObject)DiffHitObj.BaseObject;

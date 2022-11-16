@@ -91,7 +91,7 @@ namespace osuAT.Game.Skills
                 csMult = FocusedScore.BeatmapInfo.Contents.DifficultyInfo.CircleSize / 4;
             }
 
-            public override void CalcNext(DifficultyHitObject diffHitObj)
+            public override void CalcNext(OsuDifficultyHitObject diffHitObj)
             {
                 var diffHit = (OsuDifficultyHitObject)diffHitObj;
                 var hitObj = (OsuHitObject)diffHit.BaseObject;
