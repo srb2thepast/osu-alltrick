@@ -8,6 +8,7 @@ using osuTK;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using static osuAT.Game.Skills.AimSkill;
+using osu.Framework.Utils;
 
 namespace osuAT.Game.Skills
 {
@@ -18,7 +19,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "cursorcontrol";
 
-        public string Version => "0.001";
+        public string Version => "0.002";
 
         public string Summary => "Ability to control the movement \n of your aim.";
 
@@ -54,9 +55,54 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-            public override void CalcNext(OsuDifficultyHitObject diffHitObj)
+
+            [HiddenDebugValue]
+            private List<double> hitAngleDiffs;
+            [HiddenDebugValue]
+            private double distTotal;
+            private double avgDist;
+            private double curAngle;
+            private double timeDiffSum;
+            private double curBPM;
+            private double avgAng;
+            [HiddenDebugValue]
+            private double angTotal;
+            private int angCount;
+
+            public override void Setup()
             {
-                CurTotalPP = new Random().Next(1200);
+                hitAngleDiffs = new List<double>() {};
+                avgDist = 0;
+                distTotal = 0;
+                avgAng = 0;
+                angTotal = 0;
+                angCount = 0;
+                curAngle = 0;
+                timeDiffSum = 0;
+                curBPM = 0;
+            }
+
+            public override void CalcNext(OsuDifficultyHitObject diffHit) { 
+                var hitObj = (OsuHitObject)diffHit.BaseObject;
+                var lastHitObj = (OsuHitObject)diffHit.LastObject;
+
+                var angle = (diffHit.Angle);
+
+                if (angle != default) {
+                    hitAngleDiffs.Add((double)angle);
+                    curAngle = (180 / Math.PI) * (double)angle;
+                    angTotal += (double)angle;
+                    angCount++;
+                    avgAng   = angTotal / angCount;
+                }
+                curBPM = 120 / (timeDiffSum / (CurrentIndex + 1));
+                timeDiffSum += hitObj.StartTime - lastHitObj.StartTime;
+                distTotal += (hitObj.Position - lastHitObj.Position).Length; 
+                CurTotalPP = Math.Pow(SharedMethods.StandardDeviation(hitAngleDiffs, avgAng)
+                        * (avgDist/2)
+                    ,curBPM
+                );
+                avgDist = distTotal / (CurrentIndex+1);
             }
         }
 

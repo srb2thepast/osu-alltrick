@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Text;
+using Microsoft.Diagnostics.Runtime.Windows;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Osu.Objects;
 
@@ -20,6 +23,15 @@ namespace osuAT.Game.Skills
         /// <returns></returns>
         public static double MissPenalty(int Misses,int MaxCombo) {
             return .97 * Math.Pow((1 - Math.Pow(Misses / MaxCombo, .775)), Misses);
+        }
+
+        public static double StandardDeviation(IEnumerable<double> NumList, double sub, bool Sample = false) {
+            double total = 0;
+            foreach (var num in NumList) {
+                total += Math.Pow(num - sub, 2);
+            }
+            total /= Math.Max(1,(NumList.Count() - (Sample? 1 : 0)));
+            return total;
         }
     }
 

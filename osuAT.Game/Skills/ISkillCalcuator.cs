@@ -29,6 +29,8 @@ namespace osuAT.Game.Skills
 
         public int EndIndex { get; set; }
 
+        public int CurrentIndex { get; set; }
+
         /// <summary>
         /// Creates a new SkillCalculator that will calculate the value of the score given for this skill.
         /// </summary>
@@ -61,6 +63,7 @@ namespace osuAT.Game.Skills
             for (int i = StartIndex; i < EndIndex; i++)
             {
                 var diffHitObj = FocusedScore.BeatmapInfo.Contents.DiffHitObjects[i];
+                CurrentIndex = i;
                 CalcNext(diffHitObj);
             };
             return CurTotalPP;

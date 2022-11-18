@@ -58,33 +58,14 @@ using OsuMemoryDataProvider.OsuMemoryModels.Abstract;
 
 namespace SkillAnalyzer.Visual
 {
-
-    internal class TestSceneMain : osuATTestScene
-    {
-
-        public TestSceneMain() {
-
-        }
-
-        [Test]
-        public void LoadEditor()
-        {
-            var scene = new SkillTestScene();
-            Add(
-                scene
-            );
-            AddStep("attempt to load", () => scene.ManuallyAddAttributeTests());
-            // AddStep("load", () => Add(new MainScreen()));
-        }
-
-        
-    }
     // [~] TODO: Get beatmap audio working
-    public class SkillTestScene : EditorTestScene
+    // [!] Make SkillTestScene more of an abstract class
+    public abstract class SkillAnalyzeScene : EditorTestScene
     {
+        protected string OsuPath = @"C:\Users\alexh\AppData\Local\osu!";
         protected override Ruleset CreateEditorRuleset() => new OsuRuleset();
-        protected string MapLocation = @"Songs\257607 xi - FREEDOM DiVE\xi - FREEDOM DiVE (elchxyrlia) [Arles].osu";
-        protected List<ModInfo> AppliedMods = new List<ModInfo> { };
+        protected virtual string MapLocation => @"Songs\975881 ShinRa-Bansho - Mugen Shitto Gekijou 666 [no video]\ShinRa-Bansho - Mugen Shitto Gekijou 666 (Hey lululu) [Jealous Theater 666th Act].osu";
+        protected virtual List<ModInfo> AppliedMods => new List<ModInfo> { ModStore.Doubletime };
 
         public static List<ISkill> CurSkillList = new List<ISkill>();
         protected IBeatmap FocusedBeatmap;
@@ -103,8 +84,9 @@ namespace SkillAnalyzer.Visual
         // settings //
         private bool scaleByCombo = false;
         // //////// //
-        public SkillTestScene()
+        public SkillAnalyzeScene()
         {
+            SaveStorage.SaveData.OsuPath = OsuPath;
             foreach (ISkill skill in Skill.SkillList)
             {
                 skillDebugTextCached.Add(skill.Identifier, new Dictionary<string, object>());
@@ -140,7 +122,7 @@ namespace SkillAnalyzer.Visual
                 [Resolved]
                 private EditorClock editorClock { get; set; }
 
-                OsuSpriteText msTime;
+                private OsuSpriteText msTime;
                 [BackgroundDependencyLoader]
                 private void load(OsuColour colours, OverlayColourProvider colourProvider)
                 {
@@ -328,7 +310,7 @@ namespace SkillAnalyzer.Visual
                 };
             }
 
-            SummaryTimeline timeline;
+            private SummaryTimeline timeline;
             public new bool Save()
             {
                 Console.WriteLine("heya");
@@ -551,13 +533,15 @@ namespace SkillAnalyzer.Visual
                 }
            );
             CreateskillGraph();
+
+            LoadDefaultSteps();
         }
+
 
         protected override void LoadComplete()
         {
             base.LoadComplete();
             sceneLoaded = true;
-
         }
 
         protected void EditorFinishedLoading()
@@ -719,7 +703,6 @@ namespace SkillAnalyzer.Visual
             return hitList.Count;
         }
 
-        
         protected override void LoadEditor()
         {
             base.Beatmap.Value = CreateWorkingBeatmap(base.Ruleset.Value);
@@ -728,16 +711,30 @@ namespace SkillAnalyzer.Visual
             LoadScreen(editorLoader = new AnalyzerEditorLoader());
         }
 
-        #region Step Methods
+        protected void LoadDefaultSteps()
+        {
 
-        [Test]
+            AddLabel($"Setup");
+            Setup();
+            AddLabel("Options");
+            Options();
+        }
+
         public void Setup()
         {
             RunAllSteps();
             AddStep("load editor then enable bar", LoadEditor);
             AddUntilStep("wait until editor is loaded", () => canUseEditor);
         }
-        
+
+        public virtual void Options()
+        {
+            AddAssert("SETTINGS:", () => false); // Added a false assert so that it doesn't automatically enable all settings
+            AddToggleStep("Overall Combo Scaling", (d) => { scaleByCombo = d; });
+        }
+
+        #region Step Methods
+
         protected delegate bool DebugValAssert(object obj);
         protected void AddDebugValueAssert(string description,ISkill skill,string key, DebugValAssert assert)
         {
@@ -762,7 +759,7 @@ namespace SkillAnalyzer.Visual
             });
         }
 
-        protected void AddSkillAdderStep(ISkill skill)
+        protected void EnableSkillStep(ISkill skill)
         {
             AddUntilStep("Add flowaim", () => {
                 if (!CurSkillList.Contains(skill))
@@ -782,27 +779,7 @@ namespace SkillAnalyzer.Visual
         }
         #endregion
 
-        [Test]
-        public void Options()
-        {
-            AddAssert("SETTINGS:", () => false); // Added a false assert so that it doesn't automatically enable all settings
-            AddToggleStep("Overall Combo Scaling", (d) => { scaleByCombo = d; });
-        }
 
         public override void SetUpSteps() {}
-
-
-
-        [Test]
-        public void TestCheckCurAvgSpacing()
-        {
-
-
-            AddSkillAdderStep(Skill.Flowaim);
-            AddSeekStep("2:21:200");
-            AddDebugValueAssert("curavgspacing > 50", Skill.Flowaim, "curAvgSpacing", (val) => {
-                return (double)val > 50;
-            });
-        }
     }
 }

@@ -576,7 +576,6 @@ namespace osuAT.Game
             
         public static bool CheckSaveExists()
         {
-            var gamestore = osuATGameBase.Dependencies.Get<Storage>();
             if (!Directory.Exists(Path.GetFullPath(Path.Combine(SaveFileFullPath, @"..\")))) {
                 Directory.CreateDirectory(Path.GetFullPath(Path.Combine(SaveFileFullPath, @"..\")));
                 return false;

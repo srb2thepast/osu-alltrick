@@ -16,6 +16,7 @@ namespace osuAT.Game.Skills
         public static CursorControlSkill CursorControl= new CursorControlSkill();
         public static AimSkill Aim = new AimSkill();
         public static NerveControlSkill NerveControl = new NerveControlSkill();
+        public static SliderAimSkill SliderAim = new SliderAimSkill();
 
         /// <summary>
         /// A list of every skill currently supported.
@@ -24,7 +25,8 @@ namespace osuAT.Game.Skills
             Flowaim,
             CursorControl,
             Aim,
-            NerveControl
+            NerveControl,
+            SliderAim
         };
 
         public static ISkill GetSkillByID(string skillid) {

@@ -65,7 +65,7 @@ namespace SkillAnalyzer
         {
             // Logger.Level = LogLevel.Verbose;
             this.Window.Title = "osu!alltrick's SkillAnalyzer";
-            ScoreImporter.Init();
+            SaveStorage.Init(new NativeStorage("SkillAnalyzer"));
             foreach (var handler in Host.AvailableInputHandlers)
             {
                 if (handler is ITabletHandler tabhandler)

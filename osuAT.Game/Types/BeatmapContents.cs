@@ -66,6 +66,7 @@ namespace osuAT.Game.Types
 
             FolderLocation = osufile;
             ContentRuleset = ruleset;
+            // [!] ProcessorWorkingBeatmap does not scale the Slider Velocity of base objects in osu! correctly.
             Workmap = ProcessorWorkingBeatmap.FromFileOrId(path);
             PlayableMap = Workmap.GetPlayableBeatmap(RulesetStore.ConvertToOsuRuleset(ContentRuleset).RulesetInfo, osuModList);
             DifficultyInfo = PlayableMap.Difficulty;

@@ -68,7 +68,8 @@ namespace osuAT.Game
 
                 // if the play went from playing to the results screen, continue, otherwise, return.
                 if (!(lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.ResultsScreen)
-                    && !(lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.MultiplayerResultsscreen))
+                    && !(lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.MultiplayerResultsscreen)
+                    && !(lastScreen == OsuMemoryStatus.Playing && gameData.OsuStatus == OsuMemoryStatus.MultiplayerRoom))
                 {
                     lastScreen = gameData.OsuStatus;
                     return;
@@ -85,7 +86,7 @@ namespace osuAT.Game
                 OsuApiBeatmap mapRet() => ApiScoreProcessor.OsuApiGetBeatmapWithMD5(osuScore.MapID, osuScore.Mods, osuScore.Mode);
 
                 ApiScoreProcessor.SaveToStorageIfValid(osuScore,mapRet);
-            } catch(Exception err) {
+            } catch {
                 lastScreen = OsuMemoryStatus.Unknown;
             }
             finally { }

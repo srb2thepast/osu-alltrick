@@ -89,6 +89,11 @@ namespace osuAT.Game.Skills
             public override void Setup()
             {
                 csMult = FocusedScore.BeatmapInfo.Contents.DifficultyInfo.CircleSize / 4;
+                curAvgSpacing = 0;
+                curSpacingSum = 0;
+                curTimeDiff = 0;
+                curLength = 0;
+                curTimediffSum = 0;
             }
 
             public override void CalcNext(OsuDifficultyHitObject diffHitObj)
