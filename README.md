@@ -44,8 +44,13 @@ Simply make an issue with:
 - - (which is located in the same place as your exe.)
 - - ![image](https://user-images.githubusercontent.com/19241426/200729079-14b2911b-9cca-46af-bba4-86d9488c93dd.png)
 
+# Wiki
+[![image](https://user-images.githubusercontent.com/19241426/202961627-bdb72750-281a-4ddb-91c4-60f299d9554b.png)](https://www.notion.so/srb2thepast/o-at-Wiki-66777027010443759a7f0274fcae4322)
+
+The wiki contains information on how every skill works and even on how to make your own skill! (Maybe one day there will be community guides on how to improve your skills as well!) Click on the logo above to check it out!
+
 # Contributing
-If you want to contribute to the development of a skill, [check out the wiki!](https://github.com/srb2thepast/osu-alltrick/wiki) It (will be) crafted so that even the beginners to programming and the greatest haters of math will enjoy it. 
+If you want to contribute to the development of a skill, [check out the guide in the wiki!](https://github.com/srb2thepast/osu-alltrick/wiki) It (will be) crafted so that even the beginners to programming and the greatest haters of math will enjoy it. 
 
 There's also an Analyzer that lets you visualize the changes you make to your calculator and test them instantly:
 
