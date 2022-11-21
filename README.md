@@ -49,6 +49,9 @@ Simply make an issue with:
 
 The wiki contains information on how every skill works and even on how to make your own skill! (Maybe one day there will be community guides on how to improve your skills as well!) Click on the logo above to check it out!
 
+# Community
+Join the discord server over [here!](https://discord.gg/C7TGBUzndN)
+
 # Contributing
 If you want to contribute to the development of a skill, [check out the guide in the wiki!](https://github.com/srb2thepast/osu-alltrick/wiki) It (will be) crafted so that even the beginners to programming and the greatest haters of math will enjoy it. 
 
