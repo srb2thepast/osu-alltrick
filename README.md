@@ -45,7 +45,7 @@ Simply make an issue with:
 - - ![image](https://user-images.githubusercontent.com/19241426/200729079-14b2911b-9cca-46af-bba4-86d9488c93dd.png)
 
 # Wiki
-[![image](https://user-images.githubusercontent.com/19241426/202961627-bdb72750-281a-4ddb-91c4-60f299d9554b.png)](https://www.notion.so/srb2thepast/o-at-Wiki-66777027010443759a7f0274fcae4322)
+[![image](https://user-images.githubusercontent.com/19241426/202961627-bdb72750-281a-4ddb-91c4-60f299d9554b.png)](https://srb2thepast.notion.site/o-at-Wiki-66777027010443759a7f0274fcae4322)
 
 The wiki contains information on how every skill works and even on how to make your own skill! (Maybe one day there will be community guides on how to improve your skills as well!) Click on the logo above to check it out!
 
