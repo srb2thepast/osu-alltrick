@@ -65,131 +65,128 @@ namespace osuAT.Game.Screens
 
 
                 TopBar = new Container {
-                        AutoSizeAxes = Axes.Both,
-                        Anchor = Anchor.TopCentre,
-                        Origin = Anchor.Centre,
-                        Y = 60,
-                        Scale = new Vector2(0.8f,0.8f),
+                    AutoSizeAxes = Axes.Both,
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.Centre,
+                    Y = 60,
+                    Scale = new Vector2(0.8f,0.8f),
 
-                        Children = new Drawable[] {
+                    Children = new Drawable[] {
 
-                            // Username Section Background
-                            new Circle {
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Size = new Vector2(601,63),
-                                Y = 60
-                            },
+                        // Username Section Background
+                        new Circle {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Size = new Vector2(601,63),
+                            Y = 60
+                        },
                         
 
 
-                            // Title Background 
-                            new Circle {
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Size = new Vector2(1110,93),
-                            },
-                            new Circle {
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Size = new Vector2(1100,83),
-                                Colour = Colour4.FromHex("#FF59A4")
-                            },
-                            /////////////
+                        // Title Background 
+                        new Circle {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Size = new Vector2(1110,93),
+                        },
+                        new Circle {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Size = new Vector2(1100,83),
+                            Colour = Colour4.FromHex("#FF59A4")
+                        },
+                        /////////////
 
-                            // PFP
-                            new Circle {
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Size = new Vector2(100,100)
+                        // PFP
+                        new Circle {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Size = new Vector2(100,100)
 
-                            },
-                            new Circle {
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Size = new Vector2(90,90),
-                                Colour = Colour4.FromHex("#FF66AB")
+                        },
+                        new Circle {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Size = new Vector2(90,90),
+                            Colour = Colour4.FromHex("#FF66AB")
 
-                            },
-                            new CircularContainer {
+                        },
+                        new CircularContainer {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Size = new Vector2(85,85),
+                            Masking = true,
+                            Child = new Sprite{
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                Size = new Vector2(85,85),
-                                Masking = true,
-                                Child = new Sprite{
-                                    Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre,
-                                    Texture = defaultPFP,
-                                    Size = new Vector2(87,87)
-                                }
-                            },
-                            /////////////
+                                Texture = defaultPFP,
+                                Size = new Vector2(87,87)
+                            }
+                        },
+                        /////////////
                         
-                            // Title text
-                            new SpriteText {
-                                Text = "osu!alltrick",
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.CentreLeft,
-                                Spacing = new Vector2(16),
-                                Y = -3,
-                                X = -500,
-                                Font = FontUsage.Default.With(size: 60),
+                        // Title text
+                        new SpriteText {
+                            Text = "osu!alltrick",
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.CentreLeft,
+                            Spacing = new Vector2(16),
+                            Y = -3,
+                            X = -500,
+                            Font = FontUsage.Default.With(size: 60),
 
-                            },
-                            new SpriteText {
-                                Text = $"version {Updater.CurrentVersion.Split("v")[1]}",
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.CentreLeft,
-                                Spacing = new Vector2(10),
-                                Y = -3,
-                                X = 70,
-                                Font = FontUsage.Default.With(size: 60),
+                        },
+                        new SpriteText {
+                            Text = $"version {Updater.CurrentVersion.Split("v")[1]}",
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.CentreLeft,
+                            Spacing = new Vector2(10),
+                            Y = -3,
+                            X = 70,
+                            Font = FontUsage.Default.With(size: 60),
 
-                            },
+                        },
 
-                            // Username text
-                            UsernameText = new SpriteText {
-                                Text = SaveStorage.SaveData.PlayerUsername,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Y = 65,
-                                Font = FontUsage.Default.With(size: 40),
-                                Colour = Colour4.FromHex("#FF66AB"),
-                            },
-                            new Sprite{
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Y = 80,
-                                X = -350,
-                                Size = new Vector2(50),
-                                Texture = textures.Get("FigmaVectors/StarFull")
-                            },
-                            new Sprite{
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Y = 80,
-                                X = 350,
-                                Size = new Vector2(50),
-                                Texture = textures.Get("FigmaVectors/StarFull")
-                            },
-                            // Buttons
-                            SetButton = new SettingsButton(this) {
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Y = 65,
-                                X = 250,
-                            },
-                            ImpButton = new ImportButton(this) {
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Y = 65,
-                                X = -250,
-                            },
-                        }
-                    },
-
-                
-
+                        // Username text
+                        UsernameText = new SpriteText {
+                            Text = SaveStorage.SaveData.PlayerUsername,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Y = 65,
+                            Font = FontUsage.Default.With(size: 40),
+                            Colour = Colour4.FromHex("#FF66AB"),
+                        },
+                        new Sprite{
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Y = 80,
+                            X = -350,
+                            Size = new Vector2(50),
+                            Texture = textures.Get("FigmaVectors/StarFull")
+                        },
+                        new Sprite{
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Y = 80,
+                            X = 350,
+                            Size = new Vector2(50),
+                            Texture = textures.Get("FigmaVectors/StarFull")
+                        },
+                        // Buttons
+                        ImpButton = new ImportButton(this) {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Y = 65,
+                            X = -250,
+                        },
+                        SetButton = new SettingsButton(this) {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Y = 65,
+                            X = 250,
+                        },
+                    }
+                },
             };
 
            SettingsButton.UsernameChanged += () =>
