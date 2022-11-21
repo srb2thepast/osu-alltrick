@@ -10,14 +10,15 @@ https://user-images.githubusercontent.com/19241426/200956928-d7465949-5004-44c3-
 <sub> Currently, only windows is supported... Mac and Linux are incoming as soon as I can find a way to test and develop for the two.<sub>
 
 It's simple, really!!!
-1. - **Open the settings menu**, It'll be the gray cog to the right of the top bar.
-2. - **Copy your API key** from https://osu.ppy.sh/p/api and paste it into the API Key box by clicking to the right of the text. 
-3. - - **MAKE SURE YOU DO NOT PUBLICLY SHARE YOUR KEY OR YOUR OSU!AT SAVEFILE. READ ALL OF THE WARNINGS ON THE PAGE.** osu!alltrick only uses your API key in order to get details on the scores you set so it can be displayed in each skill. That api key is automatically saved to your savefile, but that means if you give your savefile to someone else they will also have your api key. **If you want to share your savefile, you can prevent accidentally leaking your apikey however by entering "RESET" into the API Key box.** If your key was removed successfully, the box should flash <span style="color:yellow">yellow</span> rather than green or red.
-4. - **Type your username into the Username box.** If you change your username, you might have to input it again.
-5. - **Set your osu! path location.** Click on "Select" and navigate! The button to select that path will not show up until you are in your osu! install folder. 
-6. - - Usually, the path is "AppData/Local/osu!".
-7. - **If your settings look something like this, you're be done!** Now play a map on osu, set that 223000pp Aim Skill top play, and make the world proud!!!
-8. - - Also, scores you set are only able to get submitted to osu!alltrick if it's submitted to osu! as well. That means if you set a play with lower score than another play with the same mods, it wont submit to osu!alltrick since osu! doesn't record those scores online.
+1. - **Download the latest release** over [here.](https://github.com/srb2thepast/osu-alltrick/releases/latest)
+2. - **Open the settings menu**, It'll be the gray cog to the right of the top bar.
+3. - **Copy your API key** from https://osu.ppy.sh/p/api and paste it into the API Key box by clicking to the right of the text. 
+4. - - **MAKE SURE YOU DO NOT PUBLICLY SHARE YOUR KEY OR YOUR OSU!AT SAVEFILE. READ ALL OF THE WARNINGS ON THE PAGE.** osu!alltrick only uses your API key in order to get details on the scores you set so it can be displayed in each skill. That api key is automatically saved to your savefile, but that means if you give your savefile to someone else they will also have your api key. **If you want to share your savefile, you can prevent accidentally leaking your apikey however by entering "RESET" into the API Key box.** If your key was removed successfully, the box should flash <span style="color:yellow">yellow</span> rather than green or red.
+5. - **Type your username into the Username box.** If you change your username, you might have to input it again.
+6. - **Set your osu! path location.** Click on "Select" and navigate! The button to select that path will not show up until you are in your osu! install folder. 
+7. - - Usually, the path is "AppData/Local/osu!".
+8. - **If your settings look something like this, you're be done!** Now play a map on osu, set that 223000pp Aim Skill top play, and make the world proud!!!
+9. - - Also, scores you set are only able to get submitted to osu!alltrick if it's submitted to osu! as well. That means if you set a play with lower score than another play with the same mods, it wont submit to osu!alltrick since osu! doesn't record those scores online.
 
 ![aimage-removebg-preview (6)](https://user-images.githubusercontent.com/19241426/200733022-36f6aba6-dc27-43a1-940c-75493831dea7.png)
 
