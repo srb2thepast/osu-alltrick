@@ -8,6 +8,7 @@ using osuTK;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using osu.Framework.Utils;
+using osu.Game.Rulesets.Objects.Types;
 
 namespace osuAT.Game.Skills
 {
@@ -18,7 +19,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "slideraim";
 
-        public string Version => "0.001";
+        public string Version => "0.002";
 
         public string Summary => "Ability to follow slider bodies \n accurately.";
 
@@ -60,16 +61,28 @@ namespace osuAT.Game.Skills
 
             protected override double DecayFactor => 0.01;
 
-            public override void CalcNext(OsuDifficultyHitObject osuHit) { 
+            private double curWorth = 0;
+            [HiddenDebugValue]
+            private double lastSliderApperance = 0;
+
+            public override void CalcNext(OsuDifficultyHitObject osuHit) {
 
                 // Slider velocity buff:
                 // https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Osu/Difficulty/Evaluators/AimEvaluator.cs
-                Console.WriteLine(osuHit.TravelDistance + "/" + osuHit.TravelTime);
-                if (osuHit.BaseObject is Slider && osuHit.TravelTime > 0)
-                { 
-                    TotalStrainWorth += (osuHit.TravelDistance / osuHit.TravelTime)  *100;
+                if (osuHit.BaseObject is Slider slideHit && osuHit.TravelTime > 0)
+                {
+                    lastSliderApperance = CurrentIndex;
+                    double sliderWorth = (osuHit.TravelDistance/2) / (osuHit.TravelTime) * 80;
+                    curWorth = sliderWorth;
+                    TotalStrainWorth += sliderWorth;
+                    // If sliderWorth is more than 80, you get an overall strain buff!
+                    StrainPosition += 0.8 - sliderWorth/100;
+                    CurTotalPP = GetPositionAppliedStrain(TotalStrainWorth);
+                    if (CurrentIndex == EndIndex-1) {
+                        Console.WriteLine($"{osuHit.TravelDistance}/{osuHit.TravelTime} | " + sliderWorth + " pos:" + (StrainPosition) + $" reps: {slideHit.SpanCount()}");
+                    }
+                    return;
                 }
-                CurTotalPP = GetAppliedStrain(osuHit, TotalStrainWorth);
             }
         }
 

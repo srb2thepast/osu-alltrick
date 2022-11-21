@@ -55,11 +55,18 @@ using osu.Game.Graphics.Sprites;
 using osu.Game.Extensions;
 using osu.Game.Rulesets.Mods;
 using OsuMemoryDataProvider.OsuMemoryModels.Abstract;
+using MongoDB.Bson.Serialization.Serializers;
+using NuGet.Configuration;
+using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Input.Events;
+using osu.Game.Graphics.UserInterface;
+using osuTK.Input;
 
 namespace SkillAnalyzer.Visual
 {
     // [~] TODO: Get beatmap audio working
     // [!] Make SkillTestScene more of an abstract class
+    // [!] Remove AnalyzerPlaybackControl 
     public abstract class SkillAnalyzeScene : EditorTestScene
     {
         protected string OsuPath = @"C:\Users\alexh\AppData\Local\osu!";
@@ -102,6 +109,8 @@ namespace SkillAnalyzer.Visual
         [Cached(typeof(Editor))]
         protected class AnalyzerEditor : TestEditor
         {
+            public AnalyzerPlaybackControl Playback;
+
             public AnalyzerEditor(EditorLoader loader) : base(loader) {
 
             }
@@ -147,12 +156,44 @@ namespace SkillAnalyzer.Visual
                     msTime.Text = $"| {Math.Truncate(editorClock.CurrentTime)}ms";
                 }
             }
+            public class AnalyzerPlaybackControl : PlaybackControl
+            {
+                [Resolved]
+                private EditorClock editorClock { get; set; }
+
+                private BindableNumber<double> freqAdjust = new BindableDouble(1);
+
+                private Track track;
+
+                public double RateMult = 1;
+
+                public void SetRateMult(double value)
+                {
+                    RateMult = value;
+
+                    track?.RemoveAdjustment(AdjustableProperty.Frequency, freqAdjust);
+                    freqAdjust.Value *= RateMult;
+                    Console.WriteLine(RateMult + "| " + freqAdjust.Value);
+                    track?.AddAdjustment(AdjustableProperty.Frequency, freqAdjust);
+                    editorClock.Seek(editorClock.Clock.CurrentTime);
+                }
+
+                [BackgroundDependencyLoader]
+                private void load()
+                {
+                    Track.BindValueChanged(tr => {
+                        track = tr.NewValue;
+                        SetRateMult(RateMult);
+                    }, true);
+                }
+            }
 
             protected class AnalyzerBottomBar : CompositeDrawable
             {
 
 
                 public TestGameplayButton TestGameplayButton { get; private set; }
+                public AnalyzerPlaybackControl Playback { get; private set; }
 
                 [BackgroundDependencyLoader]
                 private void load(OverlayColourProvider colourProvider, Editor editor)
@@ -199,7 +240,7 @@ namespace SkillAnalyzer.Visual
                             {
                                 new AnalyzerTimeInfoContainer { RelativeSizeAxes = Axes.Both },
                                 new AnalyzerSummaryTimeline { RelativeSizeAxes = Axes.Both },
-                                new PlaybackControl { RelativeSizeAxes = Axes.Both, Width = 1.1f,X = -10},
+                                Playback = new AnalyzerPlaybackControl { RelativeSizeAxes = Axes.Both, Width = 1.1f,X = -10},
                                 Drawable.Empty()
                                 /*TestGameplayButton = new TestGameplayButton
                                 {
@@ -215,6 +256,7 @@ namespace SkillAnalyzer.Visual
                     };
                 }
             }
+
 
             private AnalyzerBottomBar bottomBar;
 
@@ -248,6 +290,7 @@ namespace SkillAnalyzer.Visual
                 bottomBar.Anchor = Anchor.BottomCentre;
                 bottomBar.RelativeSizeAxes = Axes.X;
                 ContextMenu.ChangeChildDepth(bottomBar, bottomBar.Depth - 2000);
+                Playback = bottomBar.Playback;
                 //editorScreen.Scale = new Vector2(0.95f);
                 //editorScreen.X = editorScreen.Parent.BoundingBox.Width * editorScreen.Scale.X / 30;
                 //editorScreen.Y = editorScreen.Parent.BoundingBox.Height * editorScreen.Scale.X  / 20 ;
@@ -548,6 +591,19 @@ namespace SkillAnalyzer.Visual
         {
             canUseEditor = true;
             UpdateBars(CurSkillList);
+
+            double rate = 1;
+            List<Mod> osuModList = new List<Mod>();
+            foreach (ModInfo mod in AppliedMods)
+            {
+                Mod osuMod;
+                osuModList.Add(osuMod = ModStore.ConvertToOsuMod(mod));
+                if (osuMod is IApplicableToRate rateMod)
+                {
+                    rate = rateMod.ApplyToRate(0, rate);
+                }
+            }
+            Editor.Playback.SetRateMult(rate);
             EditorLoaded.Invoke(this,true);
         }
 
@@ -689,12 +745,12 @@ namespace SkillAnalyzer.Visual
                 curhitindex = 0;
             }
             cachedCurTime = currentTime;
-
+            
             // [~] this could be made a bit better
             // starts at curhitindex to avoid constantly looping through the whole map
             for (int i = curhitindex; i < hitList.Count; i++) {
                 var time = hitList[i].StartTime;
-                if (time > currentTime) {
+                if (time * EditorClock.Track.Value.Rate > currentTime) {
                     curhitindex = i;
                     return i;
                 }

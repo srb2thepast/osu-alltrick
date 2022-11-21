@@ -26,9 +26,9 @@ namespace osuAT.Game
 
     public static class Updater
     {
-        public static string CurrentVersion => ((DevelopmentBuild) ? "vDEV" : "v") + "0.82.0";
+        public static string CurrentVersion => ((DevelopmentBuild) ? "vDEV" : "v") + "0.84.0";
 
-        public static bool DevelopmentBuild => true;
+        public static bool DevelopmentBuild => false;
 
         public static string RepoUrl = @"https://github.com/srb2thepast/osu-alltrick/";
 

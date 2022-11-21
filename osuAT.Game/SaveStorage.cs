@@ -162,10 +162,7 @@ namespace osuAT.Game
                 score.Register(index: i, setGUID: false, calcPP: false,loadBeatmapContents: false);
                 i += 1;
             }
-
-            // these two loops can be easily turned into one but im too tired to fix them rn
-
-            /// Check the verions in the SaveFile for:
+            /// Check the skill verions in the SaveFile for:
             ///     1. If it doesnt exist in the savefile
             foreach (ISkill skill in Skill.SkillList) {
 
@@ -178,7 +175,7 @@ namespace osuAT.Game
                 }
             }
 
-            /// Check the verions in the SaveFile for:
+            /// Check the skill verions in the SaveFile for:
             ///     1. If it's different than the code (recalcs scores)
             ///     2. If it doesnt exist in the code (does nothing)
             foreach (KeyValuePair<string, string> skillVer in SaveData.SkillVersions) {

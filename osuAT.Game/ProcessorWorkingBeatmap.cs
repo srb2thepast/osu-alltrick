@@ -35,6 +35,7 @@ namespace osuAT.Game
     /// <summary>
     /// A <see cref="WorkingBeatmap"/> which reads from a .osu file.
     /// </summary>
+    /// <remarks>Taken and modified from osu-tools.</remarks>
     public class ProcessorWorkingBeatmap : WorkingBeatmap
     {
         private readonly Beatmap beatmap;
@@ -199,21 +200,14 @@ namespace osuAT.Game
                 }
             }
 
-            foreach (IApplicableToRate item6 in mods.OfType<IApplicableToRate>())
-            {
-                foreach (HitObject hitObject3 in beatmap.HitObjects)
-                {
-                    token.ThrowIfCancellationRequested();
-                    hitObject3.StartTime = beatmap.HitObjects.FirstOrDefault().StartTime + (hitObject3.StartTime - beatmap.HitObjects.FirstOrDefault().StartTime) * 1/item6.ApplyToRate(hitObject3.StartTime);
-                }
-            }
-
             beatmapProcessor?.PostProcess();
             foreach (IApplicableToBeatmap item6 in mods.OfType<IApplicableToBeatmap>())
             {
                 token.ThrowIfCancellationRequested();
                 item6.ApplyToBeatmap(beatmap);
             }
+
+
 
             return beatmap;
         }

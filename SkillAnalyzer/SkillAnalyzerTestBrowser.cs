@@ -80,6 +80,7 @@ namespace SkillAnalyzer
 
         public override void SetHost(GameHost host)
         {
+            Logger.Level = LogLevel.Important;
             base.SetHost(host);
             host.Window.CursorState |= CursorState.Hidden;
         }

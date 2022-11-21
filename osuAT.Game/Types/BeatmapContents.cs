@@ -59,9 +59,15 @@ namespace osuAT.Game.Types
             ruleset ??= RulesetStore.Osu;
             mods ??= new List<ModInfo>();
             List<Mod> osuModList = new List<Mod>();
+
+            double rate = 1;
             foreach (ModInfo mod in mods)
             {
-                osuModList.Add(ModStore.ConvertToOsuMod(mod));
+                Mod osuMod;
+                osuModList.Add(osuMod = ModStore.ConvertToOsuMod(mod));
+                if (osuMod is IApplicableToRate rateMod) {
+                    rate = rateMod.ApplyToRate(0, rate);
+                }
             }
 
             FolderLocation = osufile;
@@ -71,8 +77,8 @@ namespace osuAT.Game.Types
             PlayableMap = Workmap.GetPlayableBeatmap(RulesetStore.ConvertToOsuRuleset(ContentRuleset).RulesetInfo, osuModList);
             DifficultyInfo = PlayableMap.Difficulty;
             diffcalc = RulesetStore.GetDiffCalcObj(ruleset, Workmap);
-            ContentRuleset = ruleset; 
-            DiffHitObjects = diffcalc.GetDifficultyHitObjects(PlayableMap, 1.0).ToList();
+            ContentRuleset = ruleset;
+            DiffHitObjects = diffcalc.GetDifficultyHitObjects(PlayableMap, rate).ToList();
             HitObjects = PlayableMap.HitObjects.ToList();
 
         }
