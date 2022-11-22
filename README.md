@@ -46,7 +46,6 @@ Simply make an issue with:
 
 # Wiki & Community
 [![image](https://user-images.githubusercontent.com/19241426/202961627-bdb72750-281a-4ddb-91c4-60f299d9554b.png)](https://srb2thepast.notion.site/o-at-Wiki-66777027010443759a7f0274fcae4322)
-    
 The wiki contains information on how every skill works and even on how to make your own skill! (Maybe one day there will be community guides on how to improve your skills as well!) Click on the logo above to check it out!
 
 [![image](https://user-images.githubusercontent.com/19241426/203195729-773a4514-bd70-44cd-bba2-1131e0ebf0cd.png)](https://discord.gg/C7TGBUzndN)
