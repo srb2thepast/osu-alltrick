@@ -58,9 +58,6 @@ There's also an Analyzer that lets you visualize the changes you make to your ca
 
 https://user-images.githubusercontent.com/19241426/200947927-0d00020e-1d20-41d3-a26b-f056b11b59bf.mp4
 
-
-If you want to contribute to making the wiki better, just go ahead! DM or ping me on discord (srb2thepast#7380) when you want your edits to become offical.
-
 If you want to contribute to the base, just follow the directions given below. 
 **Make sure to create an issue before starting to make something if you're planning make a pull request!!**
 
