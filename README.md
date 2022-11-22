@@ -44,13 +44,12 @@ Simply make an issue with:
 - - (which is located in the same place as your exe.)
 - - ![image](https://user-images.githubusercontent.com/19241426/200729079-14b2911b-9cca-46af-bba4-86d9488c93dd.png)
 
-# Wiki
+# Wiki & Community
 [![image](https://user-images.githubusercontent.com/19241426/202961627-bdb72750-281a-4ddb-91c4-60f299d9554b.png)](https://srb2thepast.notion.site/o-at-Wiki-66777027010443759a7f0274fcae4322)
-
 The wiki contains information on how every skill works and even on how to make your own skill! (Maybe one day there will be community guides on how to improve your skills as well!) Click on the logo above to check it out!
 
-# Community
-Join the discord server over [here!](https://discord.gg/C7TGBUzndN)
+[![image](https://user-images.githubusercontent.com/19241426/203195729-773a4514-bd70-44cd-bba2-1131e0ebf0cd.png)](https://discord.gg/C7TGBUzndN)
+Join the discord server by clicking the icon above!
 
 # Contributing
 If you want to contribute to the development of a skill, [check out the guide in the wiki!](https://github.com/srb2thepast/osu-alltrick/wiki) It (will be) crafted so that even the beginners to programming and the greatest haters of math will enjoy it. 
