@@ -74,10 +74,10 @@ namespace osuAT.Game.Skills
                     lastSliderApperance = CurrentIndex;
                     double sliderWorth = (osuHit.TravelDistance/2) / (osuHit.TravelTime) * 80;
                     curWorth = sliderWorth;
-                    TotalStrainWorth += sliderWorth;
+                    TotalStrainWorth += sliderWorth/3;
                     // If sliderWorth is more than 80, you get an overall strain buff!
                     StrainPosition += 0.8 - sliderWorth/100;
-                    CurTotalPP = GetPositionAppliedStrain(TotalStrainWorth);
+                    CurTotalPP = GetPositionAppliedStrain(TotalStrainWorth)*4;
                     if (CurrentIndex == EndIndex-1) {
                         Console.WriteLine($"{osuHit.TravelDistance}/{osuHit.TravelTime} | " + sliderWorth + " pos:" + (StrainPosition) + $" reps: {slideHit.SpanCount()}");
                     }

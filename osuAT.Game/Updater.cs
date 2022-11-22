@@ -10,8 +10,6 @@ using HidSharp.Reports;
 using Newtonsoft.Json;
 using osu.Framework.IO.Network;
 using SQLitePCL;
-using Squirrel;
-using Squirrel.Sources;
 
 namespace osuAT.Game
 {
@@ -26,26 +24,13 @@ namespace osuAT.Game
 
     public static class Updater
     {
-        public static string CurrentVersion => ((DevelopmentBuild) ? "vDEV" : "v") + "0.84.0";
+        private static string version = "0.84.0";
 
-        public static bool DevelopmentBuild => false;
+        public static string CurrentVersion => ((DevelopmentBuild) ? "vDEV" : "v") + version;
+
+        public static bool DevelopmentBuild => true;
 
         public static string RepoUrl = @"https://github.com/srb2thepast/osu-alltrick/";
-
-        [Obsolete("WIP, Does not work atm.",true)]
-        [SupportedOSPlatform("windows")]
-        public static async void CheckForUpdatesWindows()
-        {
-            var updateManager = new GithubUpdateManager(repoUrl: RepoUrl);
-            Console.WriteLine($"Current version : {updateManager.CurrentlyInstalledVersion}");
-
-            var newVersion = await updateManager.UpdateApp();
-            if (newVersion != null)
-            {
-                Console.WriteLine($"Installing new update {newVersion.Version}");
-                UpdateManager.RestartApp();
-            }
-        }
 
         public static async void CheckForUpdates()
         {

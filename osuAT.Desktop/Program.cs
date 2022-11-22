@@ -6,13 +6,17 @@ using osu.Framework;
 using osuAT.Game;
 using Squirrel;
 using osu.Framework.Logging;
+using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 namespace osuAT.Desktop
 {
+    [SupportedOSPlatform("windows")]
     public static class Program
     {
         public static void Main()
         {
+            
             try
             {
                 Updater.CheckForUpdates();
