@@ -103,11 +103,7 @@ And finally, **run osuAT!**
 dotnet run
 ```
 Also, the savefile is stored in a seperate folder while testing, usually "osuAT.Game.Tests/bin/Debug/net6.0/dev_savedata", so that the main save file in AppData doesn't get overriden while testing.
-
-# Special Thanks
-### **DigitalHypno -** For creating osu!phd and everything you've done for the community
-
-
+    
 # Credits
 ```csharp
 
@@ -150,7 +146,7 @@ Also, the savefile is stored in a seperate folder while testing, usually "osuAT.
 # ppy Pty Ltd | osu-tools [MIT License]
     - Assets used: "ProcessorWorkingBeatmap"
       |             |   with dependencies from : "LegacyHelper.cs"
-      |            "StrainVisualizer.cs'
+      |            "StrainVisualizer.cs"
 ```
 ```csharp
 # [- Fonts - ] #
@@ -167,3 +163,7 @@ Also, the savefile is stored in a seperate folder while testing, usually "osuAT.
 # Haley Fiege | Sniglet [Open Font License]
     - Assets used: "Sniglet Font"
 ```
+
+# Special Thanks
+### **DigitalHypno -** For creating osu!phd and everything you've done for the community
+
