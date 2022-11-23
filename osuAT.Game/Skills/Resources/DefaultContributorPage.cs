@@ -12,11 +12,12 @@ using osuAT.Game.Objects;
 using osuAT.Game.Objects.Displays;
 using osuTK;
 
-namespace osuAT.Game.Skills
+namespace osuAT.Game.Skills.Resources
 {
     // When a skill is ready to be used, dont forget to add it to Skill.cs   
-    internal class DefaultContributorPage : Page {
-        public ISkill Skill;    
+    internal class DefaultContributorPage : Page
+    {
+        public ISkill Skill;
         public Contributor[] Contribs;
         public DefaultContributorPage()
         {
@@ -31,12 +32,12 @@ namespace osuAT.Game.Skills
         [BackgroundDependencyLoader]
         private void load(LargeTextureStore textures)
         {
-            FillFlowContainer flow = new FillFlowContainer
+            var flow = new FillFlowContainer
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Y = 20,
-                Size = new Vector2(63,180),
+                Size = new Vector2(63, 180),
                 Spacing = new Vector2(54),
                 Direction = FillDirection.Full,
             };
@@ -96,7 +97,7 @@ namespace osuAT.Game.Skills
                 flow
                 };
 
-            Vector2 position = new Vector2(-35, 10);
+            var position = new Vector2(-35, 10);
             if (Contribs.Length == 0)
             {
                 Add(new SpriteText
@@ -149,8 +150,9 @@ namespace osuAT.Game.Skills
                 });
                 return;
             }
-            int i = 0;
-            foreach (Contributor Contrib in Contribs) {
+            var i = 0;
+            foreach (var Contrib in Contribs)
+            {
                 i++;
                 flow.Add(new ContributorDisplay
                 {
@@ -163,10 +165,10 @@ namespace osuAT.Game.Skills
                     Cont = Contrib,
                     ProfileSize = new Vector2(34),
                 });
-                position = ((i-1) % 2 == 0) ? new Vector2(position.X+(i), position.Y) : new Vector2(position.X, position.Y + (i ));
+                position = (i - 1) % 2 == 0 ? new Vector2(position.X + i, position.Y) : new Vector2(position.X, position.Y + i);
 
             }
-            
+
         }
     }
 }

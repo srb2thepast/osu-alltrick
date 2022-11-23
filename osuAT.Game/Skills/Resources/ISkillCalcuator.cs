@@ -9,7 +9,7 @@ using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using osuTK;
 
-namespace osuAT.Game.Skills
+namespace osuAT.Game.Skills.Resources
 {
     // When a skill is ready to be used, dont forget to add it to Skill.cs   
     public abstract class SkillCalcuator
@@ -37,7 +37,7 @@ namespace osuAT.Game.Skills
         public SkillCalcuator(Score score)
         {
             FocusedScore = score;
-            EndIndex = (EndIndex == default)? ((FocusedScore.BeatmapInfo != null)? FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count: 0):EndIndex;
+            EndIndex = EndIndex == default ? FocusedScore.BeatmapInfo != null ? FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count : 0 : EndIndex;
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace osuAT.Game.Skills
         /// Completes any necessary setup to calculate the skill (ex. variables that depend on info from the score or
         /// initalizing any non-static variables).
         /// </summary>
-        public virtual void Setup() {}
+        public virtual void Setup() { }
 
         /// <summary>
         /// Calculates the pp worth of the FocusedScore.
@@ -60,7 +60,7 @@ namespace osuAT.Game.Skills
             if (FocusedScore.BeatmapInfo.FolderLocation == default) return -2;
             if (FocusedScore.BeatmapInfo.Contents.HitObjects == default) return -3;
             Setup();
-            for (int i = StartIndex; i < EndIndex; i++)
+            for (var i = StartIndex; i < EndIndex; i++)
             {
                 var diffHitObj = FocusedScore.BeatmapInfo.Contents.DiffHitObjects[i];
                 CurrentIndex = i;
@@ -87,15 +87,17 @@ namespace osuAT.Game.Skills
         /// <param name="difficultyHitObject"></param>
 
         public virtual void CalcNext(OsuDifficultyHitObject diffHitObj) => throw new NotImplementedException($"Calculations for ruleset {FocusedScore.RulesetName} is not supported.");
-        
+
         /*
         public virtual void CalcNext(CatchDifficultyHitObject diffHitObj) => throw new NotImplementedException($"Calculations for ruleset {FocusedScore.RulesetName} is not supported.");
         public virtual void CalcNext(ManiaDifficultyHitObject diffHitObj) => throw new NotImplementedException($"Calculations for ruleset {FocusedScore.RulesetName} is not supported.");
         public virtual void CalcNext(TaikoDifficultyHitObject diffHitObj) => throw new NotImplementedException($"Calculations for ruleset {FocusedScore.RulesetName} is not supported.");
         */
-        
-        public virtual void CalcNext(DifficultyHitObject diffHitObj) {
-            if (FocusedScore.ScoreRuleset == RulesetStore.Osu) {
+
+        public virtual void CalcNext(DifficultyHitObject diffHitObj)
+        {
+            if (FocusedScore.ScoreRuleset == RulesetStore.Osu)
+            {
                 CalcNext((OsuDifficultyHitObject)diffHitObj);
                 return;
             }

@@ -9,6 +9,7 @@ using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using static osuAT.Game.Skills.AimSkill;
 using osu.Framework.Utils;
+using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Skills
 {

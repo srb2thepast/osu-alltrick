@@ -8,10 +8,10 @@ using System.IO;
 using osu.Framework.Platform; // Reminder: consider using osu.Framework.Platform.Storage for safe file writing.
 using OsuApiHelper;
 using osuAT.Game.Types;
-using osuAT.Game.Skills;
 using osu.Game.Rulesets.Difficulty.Skills;
 using Skill = osuAT.Game.Skills.Skill;
 using osu.Framework.Allocation;
+using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game
 {

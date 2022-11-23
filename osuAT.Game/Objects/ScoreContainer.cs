@@ -8,8 +8,8 @@ using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Effects;
 using osuAT.Game.Objects.Displays;
 using osuAT.Game.Types;
-using osuAT.Game.Skills;
 using osuTK;
+using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game
 {

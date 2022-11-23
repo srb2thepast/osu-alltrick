@@ -38,7 +38,6 @@ using osuTK;
 using osuTK.Graphics;
 using osuAT.Game;
 using osuAT.Game.Types;
-using osuAT.Game.Skills;
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Screens.Edit.Compose;
@@ -61,6 +60,7 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Game.Graphics.UserInterface;
 using osuTK.Input;
+using osuAT.Game.Skills.Resources;
 
 namespace SkillAnalyzer.Visual
 {

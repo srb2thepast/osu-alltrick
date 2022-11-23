@@ -6,7 +6,7 @@ using osuAT.Game.Types;
 using osuAT.Game.Objects;
 using osuTK;
 
-namespace osuAT.Game.Skills
+namespace osuAT.Game.Skills.Resources
 {
 
     // Just a concept.

@@ -10,6 +10,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Colour;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
+using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Skills
 {

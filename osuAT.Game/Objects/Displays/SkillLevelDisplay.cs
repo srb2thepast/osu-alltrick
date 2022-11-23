@@ -6,9 +6,10 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Effects;
-using osuAT.Game.Skills;
 using osuAT.Game.Types;
 using osuTK;
+using osuAT.Game.Skills.Resources;
+
 namespace osuAT.Game.Objects.Displays
 {
     public class SkillLevelDisplay : CompositeDrawable

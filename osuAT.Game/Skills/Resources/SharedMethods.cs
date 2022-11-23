@@ -7,7 +7,7 @@ using Microsoft.Diagnostics.Runtime.Windows;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Osu.Objects;
 
-namespace osuAT.Game.Skills
+namespace osuAT.Game.Skills.Resources
 {
     /// <summary>
     /// Methods that multiple calcs would use (ex. Combo Multiplier) go here.
@@ -21,16 +21,19 @@ namespace osuAT.Game.Skills
         /// <param name="Misses">The amount of misses on the map.</param>
         /// <param name="MaxCombo">The maximum amount of combo possible from the map.</param>
         /// <returns></returns>
-        public static double MissPenalty(int Misses,int MaxCombo) {
-            return .97 * Math.Pow((1 - Math.Pow(Misses / MaxCombo, .775)), Misses);
+        public static double MissPenalty(int Misses, int MaxCombo)
+        {
+            return .97 * Math.Pow(1 - Math.Pow(Misses / MaxCombo, .775), Misses);
         }
 
-        public static double StandardDeviation(IEnumerable<double> NumList, double sub, bool Sample = false) {
+        public static double StandardDeviation(IEnumerable<double> NumList, double sub, bool Sample = false)
+        {
             double total = 0;
-            foreach (var num in NumList) {
+            foreach (var num in NumList)
+            {
                 total += Math.Pow(num - sub, 2);
             }
-            total /= Math.Max(1,(NumList.Count() - (Sample? 1 : 0)));
+            total /= Math.Max(1, NumList.Count() - (Sample ? 1 : 0));
             return total;
         }
     }
@@ -39,7 +42,8 @@ namespace osuAT.Game.Skills
     /// Methods that return data based on a difficulty hit object for
     /// a specific ruleset (ex. OsuDifficiultyHitObject.GetAngle())
     /// </summary>
-    public static class DiffHitObjectExtensions {
-        
+    public static class DiffHitObjectExtensions
+    {
+
     }
 }

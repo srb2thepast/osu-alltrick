@@ -13,8 +13,8 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Localisation;
 using osuAT.Game.Objects;
 using osuAT.Game.Types;
-using osuAT.Game.Skills;
 using osuTK;
+using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Objects
 {

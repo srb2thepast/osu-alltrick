@@ -12,10 +12,10 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Extensions.LocalisationExtensions;
 using osuAT.Game.Types;
-using osuAT.Game.Skills;
 using osuAT.Game.Objects.Displays;
 using osu.Framework.Input.Events;
 using osuTK;
+using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Objects
 {

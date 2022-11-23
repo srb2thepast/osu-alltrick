@@ -11,11 +11,9 @@ using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Graphics.Colour;
 using osuAT.Game.Types;
-using osuAT.Game.Skills;
 using osu.Framework.Input.Events;
 using osuTK;
-
-
+using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Objects.Displays
 {

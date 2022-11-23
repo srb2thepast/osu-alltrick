@@ -7,6 +7,7 @@ using osuAT.Game.Types;
 using osuAT.Game.Objects;
 using osuTK;
 using System.IO;
+using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Skills
 {
@@ -17,6 +18,7 @@ namespace osuAT.Game.Skills
         public static AimSkill Aim = new AimSkill();
         public static NerveControlSkill NerveControl = new NerveControlSkill();
         public static SliderAimSkill SliderAim = new SliderAimSkill();
+        public static TappingStaminaSkill TappingStamina = new TappingStaminaSkill();
 
         /// <summary>
         /// A list of every skill currently supported.
@@ -26,7 +28,8 @@ namespace osuAT.Game.Skills
             CursorControl,
             Aim,
             NerveControl,
-            SliderAim
+            SliderAim,
+            TappingStamina
         };
 
         public static ISkill GetSkillByID(string skillid) {

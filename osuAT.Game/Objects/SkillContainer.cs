@@ -12,6 +12,7 @@ using osuAT.Game.Screens;
 using osuAT.Game.Objects;
 using osuAT.Game.Skills;
 using osuTK;
+using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game
 {

@@ -17,7 +17,7 @@ using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays.Settings;
-using osuAT.Game.Skills;
+using osuAT.Game.Skills.Resources;
 using osuTK;
 using osuTK.Graphics;
 

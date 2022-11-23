@@ -12,7 +12,7 @@ using osu.Framework.Graphics.Colour;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using AutoMapper.Internal;
 
-namespace osuAT.Game.Skills
+namespace osuAT.Game.Skills.Resources
 {
     public interface ISkill
     {
@@ -95,12 +95,13 @@ namespace osuAT.Game.Skills
         /// <summary>
         /// The people who contributed to this skill.
         /// </summary>
-        public Contributor[] Contributors => new Contributor[] {};
+        public Contributor[] Contributors => new Contributor[] { };
 
         /// <summary>
         /// This skill's (possibly custom) Contributor Page.
         /// </summary>
-        public Page ContributorPage => new DefaultContributorPage {
+        public Page ContributorPage => new DefaultContributorPage
+        {
             Skill = this,
             Contribs = Contributors
         };
@@ -121,7 +122,8 @@ namespace osuAT.Game.Skills
         /// <summary>
         /// Returns this skill's PP Calculator System initalized to a score with an SS on the map and mods given.
         /// </summary>
-        public SkillCalcuator GetSkillCalc(Beatmap map, RulesetInfo ruleset, List<ModInfo> mods) {
+        public SkillCalcuator GetSkillCalc(Beatmap map, RulesetInfo ruleset, List<ModInfo> mods)
+        {
 
             mods ??= new List<ModInfo>();
             return GetSkillCalc(new Score
@@ -142,15 +144,15 @@ namespace osuAT.Game.Skills
         {
 
             mods ??= new List<ModInfo>();
-            Beatmap fakemap = new Beatmap(){ Contents = new BeatmapContents() { }};
+            var fakemap = new Beatmap() { Contents = new BeatmapContents() { } };
             fakemap.Contents.DiffHitObjects = hitobjects;
-            
+
             return GetSkillCalc(new Score
             {
                 RulesetName = ruleset.Name,
                 ScoreRuleset = ruleset,
                 Combo = fakemap.Contents.DiffHitObjects.GetMaxCombo(),
-                BeatmapInfo =fakemap,
+                BeatmapInfo = fakemap,
                 Mods = mods,
                 AccuracyStats = new AccStat(fakemap.Contents.HitObjects.Count, 0, 0, 0),
             });
@@ -161,13 +163,13 @@ namespace osuAT.Game.Skills
         /// </summary>
         public SkillLevel GetSkillLevel(double skillPP)
         {
-            if (skillPP > Benchmarks.Chosen) { return (SkillLevel.Chosen); }
-            if (skillPP > Benchmarks.Mastery) { return (SkillLevel.Mastery); }
-            if (skillPP > Benchmarks.Proficient) { return (SkillLevel.Proficient); }
-            if (skillPP > Benchmarks.Confident) { return (SkillLevel.Confident); }
-            if (skillPP > Benchmarks.Experienced) { return (SkillLevel.Experienced); }
-            if (skillPP > Benchmarks.Learner) { return (SkillLevel.Learner); }
-            return (SkillLevel.None);
+            if (skillPP > Benchmarks.Chosen) { return SkillLevel.Chosen; }
+            if (skillPP > Benchmarks.Mastery) { return SkillLevel.Mastery; }
+            if (skillPP > Benchmarks.Proficient) { return SkillLevel.Proficient; }
+            if (skillPP > Benchmarks.Confident) { return SkillLevel.Confident; }
+            if (skillPP > Benchmarks.Experienced) { return SkillLevel.Experienced; }
+            if (skillPP > Benchmarks.Learner) { return SkillLevel.Learner; }
+            return SkillLevel.None;
         }
 
         public SkillLevel GetSkillLevel() => GetSkillLevel(SkillPP);

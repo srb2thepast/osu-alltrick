@@ -12,8 +12,8 @@ using osuAT.Game.Objects.LazerAssets.StarRating;
 using osuAT.Game.Objects.LazerAssets.Mod;
 using osuAT.Game.Objects.LazerAssets;
 using osuAT.Game.Types;
-using osuAT.Game.Skills;
 using osuTK;
+using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Objects.Displays
 {

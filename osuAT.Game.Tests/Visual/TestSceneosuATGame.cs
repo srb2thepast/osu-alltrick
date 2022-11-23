@@ -8,6 +8,7 @@ using osuAT.Game.Skills;
 using osuAT.Game.Screens;
 using NUnit.Framework;
 using Newtonsoft.Json;
+using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Tests.Visual
 {

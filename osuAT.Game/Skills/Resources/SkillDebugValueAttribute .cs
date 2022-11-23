@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 
-namespace osuAT.Game.Skills
+namespace osuAT.Game.Skills.Resources
 {
     /// <summary>
     /// Adds the method this attribute is applied to into the list of debug values in SkillAnalyzer.

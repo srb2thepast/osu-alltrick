@@ -13,22 +13,22 @@ using osuAT.Game.Skills.Resources;
 namespace osuAT.Game.Skills
 {
 
-    public class FlowAimSkill : ISkill
+    public class TappingStaminaSkill : ISkill
     {
         #region Info
-        public string Name => "Flow Aim";
+        public string Name => "Tapping Stamina";
 
-        public string Identifier => "flowaim";
+        public string Identifier => "tapstamina";
 
-        public string Version => "0.003";
+        public string Version => "0.001";
 
-        public string Summary => "The ability to move your cursor \n in a fluid motion.";
+        public string Summary => "The ability for your tapping to \n endure continuous strain";
 
         public int SummarySize => 9;
 
-        public Colour4 PrimaryColor => Colour4.FromHex("#99FF69");
+        public Colour4 PrimaryColor => Colour4.FromHex("#ff9385");
 
-        public Colour4 SecondaryColor => Colour4.FromHex("#00FFF0");
+        public Colour4 SecondaryColor => Colour4.FromHex("#ffabc6");
 
         public string Background => "SkillBG/Flowaim2";
 
@@ -40,9 +40,9 @@ namespace osuAT.Game.Skills
 
         public float MiniHeight => 224;
 
-        public int BoxNameSize => 83;
+        public int BoxNameSize => 54;
 
-        public Vector2 BoxPosition => new Vector2(00, 400);
+        public Vector2 BoxPosition => new Vector2(-2400, 100);
 
         public SkillGoals Benchmarks => new SkillGoals(600, 1500,3000, 6000, 9000, 10000);
 

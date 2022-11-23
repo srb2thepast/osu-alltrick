@@ -17,6 +17,7 @@ using osuAT.Game.Types;
 using osuAT.Game.Skills;
 using osuTK;
 using System;
+using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Tests.Visual
 {

@@ -25,6 +25,7 @@ using NuGet.Packaging.Core;
 using osu.Game.Overlays.BeatmapSet;
 using static osuAT.Game.Skills.AimSkill;
 using osu.Framework.Platform;
+using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Tests.Visual
 {
