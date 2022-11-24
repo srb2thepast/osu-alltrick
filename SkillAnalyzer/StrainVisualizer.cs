@@ -20,7 +20,7 @@ using osu.Game.Rulesets.Difficulty.Skills;
 using osu.Game.Screens.Edit.Compose.Components.Timeline;
 using osuTK;
 
-namespace SkillAnalyzer.Visual
+namespace SkillAnalyzer
 {
     public class StrainBar : Bar, IHasTooltip
     {
@@ -50,7 +50,7 @@ namespace SkillAnalyzer.Visual
 
                 foreach (var (val, tooltip) in value)
                 {
-                    float length = MaxValue ?? value.Max(x => x.val);
+                    var length = MaxValue ?? value.Max(x => x.val);
                     if (length != 0)
                         length = val / length;
 
@@ -116,7 +116,7 @@ namespace SkillAnalyzer.Visual
 
                 var skillStrainList = new List<(float val, string tooltip)>();
 
-                for (int i = 0; i < strains.Length; i++)
+                for (var i = 0; i < strains.Length; i++)
                 {
                     var strain = strains[i];
                     var strainTime = TimeSpan.FromMilliseconds(TimeUntilFirstStrain.Value + i * 400); // 400 is strain length in StrainSkill
@@ -129,7 +129,7 @@ namespace SkillAnalyzer.Visual
 
             var strainMaxValue = strainLists.Max(list => list.Max(x => x.val));
 
-            for (int i = 0; i < skills.Length; i++)
+            for (var i = 0; i < skills.Length; i++)
             {
                 graphsContainer.AddRange(new Drawable[]
                 {
@@ -161,7 +161,7 @@ namespace SkillAnalyzer.Visual
                 graphToggles.Clear();
 
                 // we do Children - 1 because max strain value is in the graphsContainer too and we don't want it to have a toggle
-                for (int i = 0; i < graphsContainer.Children.Count - 1; i++)
+                for (var i = 0; i < graphsContainer.Children.Count - 1; i++)
                 {
                     // this is ugly, but it works
                     var graphToggleBindable = new Bindable<bool>();
@@ -209,7 +209,7 @@ namespace SkillAnalyzer.Visual
             else
             {
                 // skill list is the same, keep graph toggles
-                for (int i = 0; i < graphsContainer.Children.Count - 1; i++)
+                for (var i = 0; i < graphsContainer.Children.Count - 1; i++)
                 {
                     // graphs are visible by default, we want to hide ones that were disabled before
                     if (!graphToggles[i].Value)

@@ -37,7 +37,7 @@ namespace osuAT.Game
             base.Content.Add(Content = new DrawSizePreservingFillContainer
             {
                 // You may want to change TargetDrawSize to your "default" resolution, which will decide how things scale and position when using absolute coordinates.
-                TargetDrawSize = new Vector2(1366, 968)
+                TargetDrawSize = new Vector2(1366, 968),
             });
         }
 
@@ -59,6 +59,7 @@ namespace osuAT.Game
         private void load()
         {
             Console.WriteLine(Host.AvailableInputHandlers);
+            Window.WindowMode.Value = osu.Framework.Configuration.WindowMode.Windowed;
             Resources.AddStore(new DllResourceStore(typeof(osuATResources).Assembly));
             AddFont(Resources, @"Fonts/osuFont");
             AddFont(Resources, @"Fonts/VarelaRound");
@@ -83,7 +84,6 @@ namespace osuAT.Game
             FixTabletCursorDrift();
         }
 
-        // [!] do this
         public void FixTabletCursorDrift()
         {
             foreach (var handler in Host.AvailableInputHandlers)

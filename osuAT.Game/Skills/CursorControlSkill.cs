@@ -20,7 +20,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "cursorcontrol";
 
-        public string Version => "0.002";
+        public string Version => "0.003";
 
         public string Summary => "Ability to control the movement \n of your aim.";
 
@@ -94,15 +94,19 @@ namespace osuAT.Game.Skills
                     curAngle = (180 / Math.PI) * (double)angle;
                     angTotal += (double)angle;
                     angCount++;
-                    avgAng   = angTotal / angCount;
+                    avgAng = angTotal / angCount;
                 }
                 curBPM = 120 / (timeDiffSum / (CurrentIndex + 1));
                 timeDiffSum += hitObj.StartTime - lastHitObj.StartTime;
                 distTotal += (hitObj.Position - lastHitObj.Position).Length; 
                 CurTotalPP = Math.Pow(SharedMethods.StandardDeviation(hitAngleDiffs, avgAng)
-                        * (avgDist/2)
-                    ,curBPM
+                        * (avgDist/2),curBPM
                 );
+
+                // Miss and combo scaling
+                CurTotalPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
+                CurTotalPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
+
                 avgDist = distTotal / (CurrentIndex+1);
             }
         }

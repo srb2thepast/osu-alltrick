@@ -157,6 +157,7 @@ namespace osuAT.Game
 
             SaveData = JsonConvert.DeserializeObject<CSaveData>(Read());
             OsuApiKey.Key = SaveData.APIKey;
+            ApiScoreProcessor.UpdateKeyValid();
             int i = 0;
             foreach (Score score in SaveData.Scores.Values) {
                 score.Register(index: i, setGUID: false, calcPP: false,loadBeatmapContents: false);

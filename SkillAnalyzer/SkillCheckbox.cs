@@ -21,7 +21,7 @@ using osuAT.Game.Skills.Resources;
 using osuTK;
 using osuTK.Graphics;
 
-namespace SkillAnalyzer.Visual
+namespace SkillAnalyzer
 {
     public class SkillCheckbox : OsuCheckbox
     {
@@ -31,7 +31,7 @@ namespace SkillAnalyzer.Visual
         private Colour4 nubColor = Colour4.Cyan;
         private Colour4 textColor = Colour4.White;
 
-        public SkillCheckbox(ISkill skill,float textSize=18)
+        public SkillCheckbox(ISkill skill, float textSize = 18)
         {
             Skill = skill;
             TextSize = textSize;
@@ -49,19 +49,20 @@ namespace SkillAnalyzer.Visual
             text.Colour = nubColor;
             text.Shadow = true;
             text.ShadowColour = Colour4.Gray;
-            text.ShadowOffset = new Vector2(0,0.1f);
+            text.ShadowOffset = new Vector2(0, 0.1f);
             text.Font = new FontUsage("VarelaRound", size: TextSize);
             text.Truncate = true;
         }
 
         [BackgroundDependencyLoader]
-        private void load() {
+        private void load()
+        {
             X = 10;
             Nub.X -= -5;
-            Nub.Y = 2*(LineCount-1);
+            Nub.Y = 2 * (LineCount - 1);
             Nub.AccentColour = nubColor;
             Nub.GlowColour = nubColor.Lighten(0.5f);
-            Nub.GlowingAccentColour = nubColor.Lighten(0.5f); 
+            Nub.GlowingAccentColour = nubColor.Lighten(0.5f);
         }
 
     }

@@ -24,7 +24,7 @@ namespace osuAT.Game
 
     public static class Updater
     {
-        private static string version = "0.84.0";
+        private static string version = "0.85.0";
 
         public static string CurrentVersion => ((DevelopmentBuild) ? "vDEV" : "v") + version;
 

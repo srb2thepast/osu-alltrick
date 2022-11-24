@@ -223,7 +223,7 @@ namespace osuAT.Game
                     Console.WriteLine("commit");
 
                     ApiScoreProcessor.ApiReqs += 1;
-                    if (OsuApi.IsKeyValid())
+                    if (ApiScoreProcessor.ApiKeyValid)
                     {
 
                         ApiScoreProcessor.ApiReqs += 1;
@@ -239,8 +239,9 @@ namespace osuAT.Game
                         return;
                     }
 
-                    beatmapidText.Text = "Please input your API Key first.";
+                    infoText.Text = "Please add your API Key into    the settings first.";
                     beatmapidText.FlashColour(Color4.Red, 2000, Easing.InOutCubic);
+                    infoText.FlashColour(Color4.Red, 2000, Easing.InOutCubic);
                 });
             }
 

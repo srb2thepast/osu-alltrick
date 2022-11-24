@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NuGet.Protocol.Core.Types;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Osu.Mods;
 using osu.Game.Rulesets.Osu.Scoring;
@@ -118,7 +119,7 @@ namespace osuAT.Game
                     if (line.StartsWith("BeatmapID:")) filemapid = line.Split("BeatmapID:")[1];
                     if (line == "[Difficulty]") break;
                 }
-                Console.WriteLine(filemapid, osuMap.BeatmapID);
+                Console.WriteLine(filemapid + "|" + osuMap.BeatmapID);
                 return filemapid == osuMap.BeatmapID;
             }).ElementAt(0);
 
@@ -258,6 +259,11 @@ namespace osuAT.Game
             return data[0];
         }
 
+        public static bool ApiKeyValid = false;
 
+        public static bool UpdateKeyValid() {
+            ApiKeyValid = OsuApi.IsKeyValid();
+            return ApiKeyValid;
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "slideraim";
 
-        public string Version => "0.002";
+        public string Version => "0.003";
 
         public string Summary => "Ability to follow slider bodies \n accurately.";
 
@@ -76,12 +76,16 @@ namespace osuAT.Game.Skills
                     double sliderWorth = (osuHit.TravelDistance/2) / (osuHit.TravelTime) * 80;
                     curWorth = sliderWorth;
                     TotalStrainWorth += sliderWorth/3;
-                    // If sliderWorth is more than 80, you get an overall strain buff!
+                    // If sliderWorth is more than 100, you get an overall strain buff!
                     StrainPosition += 0.8 - sliderWorth/100;
                     CurTotalPP = GetPositionAppliedStrain(TotalStrainWorth)*4;
                     if (CurrentIndex == EndIndex-1) {
                         Console.WriteLine($"{osuHit.TravelDistance}/{osuHit.TravelTime} | " + sliderWorth + " pos:" + (StrainPosition) + $" reps: {slideHit.SpanCount()}");
                     }
+
+                    // Miss and combo scaling
+                    CurTotalPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
+                    CurTotalPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo,FocusedScore.BeatmapInfo.MaxCombo);
                     return;
                 }
             }

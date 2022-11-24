@@ -20,6 +20,8 @@ using Markdig.Extensions.SelfPipeline;
 using System.IO;
 using osu.Framework.Bindables;
 using osu.Game.Overlays.BeatmapListing;
+using System.Linq;
+using osu.Framework.Extensions.ObjectExtensions;
 
 namespace osuAT.Game
 {
@@ -290,7 +292,7 @@ namespace osuAT.Game
                                 Origin = Anchor.CentreLeft,
                                 Position = new Vector2(60,115),
                                 Font = new FontUsage("VarelaRound", size: 50),
-                                Colour = OsuApi.IsKeyValid()? Colour4.White : Colour4.Gray,
+                                Colour = ApiScoreProcessor.ApiKeyValid? Colour4.White : Colour4.Gray,
                                 Shadow = true,
                                 ShadowOffset = new Vector2(0,0.1f),
                                 Text = "Username:"
@@ -301,14 +303,14 @@ namespace osuAT.Game
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.CentreLeft,
                                 Position = new Vector2(256,110),
-                                Colour = OsuApi.IsKeyValid()? Colour4.White : Colour4.Gray,
+                                Colour = ApiScoreProcessor.ApiKeyValid? Colour4.White : Colour4.Gray,
                                 Masking =true,
                                 CornerRadius = 5,
                                 Size = new Vector2(500,50),
                                 Text = "Please set your api key first.",
                                 TextFont = new FontUsage("VarelaRound", size: 50),
                                 Shadow = true,
-                                ReadOnly = OsuApi.IsKeyValid()? false : true,
+                                ReadOnly = ApiScoreProcessor.ApiKeyValid? false : true,
                                 ShadowOffset = new Vector2(0,0.1f),
                             },
 
@@ -360,12 +362,12 @@ namespace osuAT.Game
                                 Colour = Colour4.White,
                                 Shadow = true,
                                 ShadowOffset = new Vector2(0,0.1f),
-                                Text = "Automatic Score Importation: "
+                                Text = "Auto Score Importing: "
                             },
                             asiOption = new ArrowedContainer{
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.CentreLeft,
-                                Position = new Vector2(610,230),
+                                Position = new Vector2(470,230),
                                 Objects = new Drawable[] {
                                     new SpriteText {
                                         Anchor = Anchor.TopLeft,
@@ -485,15 +487,17 @@ namespace osuAT.Game
                 };
                 fileSelectContainer.Hide();
                 apikeyText.Text = SaveStorage.SaveData.APIKey;
-                usernameText.Text = SaveStorage.SaveData.PlayerUsername;
+                Console.WriteLine(SaveStorage.SaveData.PlayerUsername);
+                usernameText.Text = (SaveStorage.SaveData.PlayerUsername == "")? SaveStorage.SaveData.PlayerUsername : "Please set your api key first.";
                 apikeyText.OnCommit += new TextBox.OnCommitHandler((TextBox box, bool target) => {
 
                     // check if it's a valid api key. if it is, display a checkmark
                     // then, save it to savestorage.
                     // otherwise, display a red X
                     OsuApiKey.Key = apikeyText.Text;
+                    ApiScoreProcessor.UpdateKeyValid();
                     bool requestedReset = apikeyText.Text.ToUpper().Contains("RESET");
-                    if (OsuApi.IsKeyValid())
+                    if (ApiScoreProcessor.ApiKeyValid)
                     {
                         SaveStorage.SaveData.APIKey = apikeyText.Text;
                         OsuApiKey.Key = apikeyText.Text;
@@ -520,7 +524,7 @@ namespace osuAT.Game
                 });
                 usernameText.OnCommit += new TextBox.OnCommitHandler((TextBox box, bool target) =>
                 {
-                    if (OsuApi.IsKeyValid())
+                    if (ApiScoreProcessor.ApiKeyValid)
                     {
                         OsuUser player = OsuApi.GetUser(usernameText.Text);
                         if (player == default)

@@ -9,6 +9,7 @@ using osu.Game.Rulesets.Difficulty.Preprocessing;
 using static osuAT.Game.Skills.AimSkill;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using osuAT.Game.Skills.Resources;
+using Sentry.Infrastructure;
 
 namespace osuAT.Game.Skills
 {
@@ -20,9 +21,9 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "tapstamina";
 
-        public string Version => "0.001";
+        public string Version => "0.002";
 
-        public string Summary => "The ability for your tapping to \n endure continuous strain";
+        public string Summary => "The ability of your tapping to \n endure continuous strain";
 
         public int SummarySize => 9;
 
@@ -71,30 +72,14 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-            private double lastObjectTimeDiff = 0;
-
-            private float curAvgSpacing = 0;
-            [HiddenDebugValue]
-            private float curSpacingSum = 0;
-            private double curTimeDiff = 0;
-            private int curLength = 0;
-            [HiddenDebugValue]
-            private double curTimediffSum = 0;
-
-            private float focusedAvgSpacing = 0; // the most streched out one is calculated
-            private int focusedLength = 0;
-            private double focusedAvgTimediff = 0; // the average difference between the starttime of each object
-            [HiddenDebugValue]
-            private float csMult;
-
+            private double CurStreamLength = 0;
+            private double CurMSSpeed = 0;
+            private double BPMBuff = 0;
+            private double LenMult = 0;
+            private double CurWorth = 0;
             public override void Setup()
             {
-                csMult = FocusedScore.BeatmapInfo.Contents.DifficultyInfo.CircleSize / 4;
-                curAvgSpacing = 0;
-                curSpacingSum = 0;
-                curTimeDiff = 0;
-                curLength = 0;
-                curTimediffSum = 0;
+                CurStreamLength = 0;
             }
 
             public override void CalcNext(OsuDifficultyHitObject diffHitObj)
@@ -102,52 +87,30 @@ namespace osuAT.Game.Skills
                 var diffHit = (OsuDifficultyHitObject)diffHitObj;
                 var hitObj = (OsuHitObject)diffHit.BaseObject;
                 var lastHitObj = (OsuHitObject)diffHit.LastObject;
-                lastObjectTimeDiff = diffHit.StartTime - diffHit.LastObject.StartTime;
+                var lastDiffHit = diffHit.Previous(0);
+                if (lastDiffHit == null) return;
 
-                // if this circle appears within 150ms of the last one, it (might be) a circle in a stream!
-                // So it only runs if it's a circle and it appears within 100ms of the previous circle in the loop.
-                // And also if it's not the first circle of the map (because there would be no previous circle).
-                if (diffHit.Index < FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count-1 && hitObj is HitCircle && (diffHit.StartTime - diffHit.LastObject.StartTime) < 100)
-                {
-                    curLength++;
-                    curTimediffSum += diffHit.StartTime - diffHit.LastObject.StartTime;
-                    curSpacingSum += Math.Abs((hitObj.Position - lastHitObj.Position).Length);
-                    curAvgSpacing = curSpacingSum / curLength;
-                    curTimeDiff = curTimediffSum / curLength;
-                }
-                // Otherwise, it's considered the end of a stream.
-                else
-                {
-                    if (curLength == 0) return;
-                    curAvgSpacing = curSpacingSum / curLength;
-                    double curAvgTimediff = curTimediffSum / curLength;
+                // Strain-based Stream Length
+                CurStreamLength += Math.Clamp(SharedMethods.BPMToMS(180, 4) / (hitObj.StartTime - lastHitObj.StartTime), 0, 1);
+                CurStreamLength -= CurStreamLength * (1-Math.Clamp(SharedMethods.BPMToMS(100) / (hitObj.StartTime - lastHitObj.StartTime), 0,1));
+                CurMSSpeed = diffHit.StartTime - lastDiffHit.StartTime;
 
-                    // THIS LINE is where calculations are done.
-                    // The reason it's in the loop is so that the stream that outputs the most PP is the one
-                    // that's returned.
-                    // Preferably (and by standard), the total pp should be calculated outside the loop.
-                    double curHighestPP =
-                        Math.Pow(
-                        (Math.Pow((curAvgSpacing / 1.3 * Math.Log(curLength) / 3), 2.2) * csMult * // spacing and circle size (exponentional + shorter streams decrease this mult)
-                        Math.Log((curLength) + 1, 10)) / 40 * // length of stream (logarithmic)
-                    ((double)FocusedScore.Combo / FocusedScore.BeatmapInfo.MaxCombo * // Combo Multiplier (linear)
-                    SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo) // Miss Multiplier
-                    ),
-                        (84 / curAvgTimediff)); // BPM buff math.pow
+                // Length multiplier
+                LenMult = 2 * Math.Log((CurStreamLength* 1 / 40) + 1);
 
-                    if (curHighestPP >= CurTotalPP)
-                    {
-                        focusedAvgSpacing = curAvgSpacing;
-                        focusedLength = curLength;
-                        focusedAvgTimediff = curTimediffSum / curLength;
-                        CurTotalPP = curHighestPP;
-                    }
-                    curAvgSpacing = 0;
-                    curSpacingSum = 0;
-                    curTimediffSum = 0;
-                    curLength = 0;
-                    curTimeDiff = 0;
-                }
+                // BPMBuff
+                BPMBuff = 2 * Math.Pow(1.02, SharedMethods.MSToBPM(CurMSSpeed));
+
+                // Final Value (Returns the most difficult stream)
+                CurWorth = Math.Max(CurWorth,BPMBuff * LenMult);
+
+                // Miss penalty and combo scaling
+                CurTotalPP = (
+                    CurWorth *
+                    SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo) *
+                    SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo)
+                );
+                Console.WriteLine(SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo) + "/" + SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo));
             }
         }
 

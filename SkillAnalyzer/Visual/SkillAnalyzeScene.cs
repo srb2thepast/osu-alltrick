@@ -71,7 +71,7 @@ namespace SkillAnalyzer.Visual
     {
         protected string OsuPath = @"C:\Users\alexh\AppData\Local\osu!";
         protected override Ruleset CreateEditorRuleset() => new OsuRuleset();
-        protected virtual string MapLocation => @"Songs\975881 ShinRa-Bansho - Mugen Shitto Gekijou 666 [no video]\ShinRa-Bansho - Mugen Shitto Gekijou 666 (Hey lululu) [Jealous Theater 666th Act].osu";
+        protected virtual string MapLocation => @"Songs\90385 Igorrr - Unpleasant Sonata\Igorrr - Unpleasant Sonata (Sieg) [Insane].osu";
         protected virtual List<ModInfo> AppliedMods => new List<ModInfo> { ModStore.Doubletime };
 
         public static List<ISkill> CurSkillList = new List<ISkill>();
@@ -175,7 +175,7 @@ namespace SkillAnalyzer.Visual
                     freqAdjust.Value *= RateMult;
                     Console.WriteLine(RateMult + "| " + freqAdjust.Value);
                     track?.AddAdjustment(AdjustableProperty.Frequency, freqAdjust);
-                    editorClock.Seek(editorClock.Clock.CurrentTime);
+                    editorClock.Seek(10);
                 }
 
                 [BackgroundDependencyLoader]

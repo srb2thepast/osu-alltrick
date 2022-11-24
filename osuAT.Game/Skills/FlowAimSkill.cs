@@ -20,7 +20,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "flowaim";
 
-        public string Version => "0.003";
+        public string Version => "0.004";
 
         public string Summary => "The ability to move your cursor \n in a fluid motion.";
 
@@ -102,15 +102,17 @@ namespace osuAT.Game.Skills
                 var diffHit = (OsuDifficultyHitObject)diffHitObj;
                 var hitObj = (OsuHitObject)diffHit.BaseObject;
                 var lastHitObj = (OsuHitObject)diffHit.LastObject;
-                lastObjectTimeDiff = diffHit.StartTime - diffHit.LastObject.StartTime;
+                var lastDiffHit = diffHit.Previous(0);
+                if (lastDiffHit == null) return;
+                lastObjectTimeDiff = diffHit.StartTime - lastDiffHit.StartTime;
 
                 // if this circle appears within 150ms of the last one, it (might be) a circle in a stream!
                 // So it only runs if it's a circle and it appears within 100ms of the previous circle in the loop.
                 // And also if it's not the first circle of the map (because there would be no previous circle).
-                if (diffHit.Index < FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count-1 && hitObj is HitCircle && (diffHit.StartTime - diffHit.LastObject.StartTime) < 100)
+                if (diffHit.Index < FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count-1 && hitObj is HitCircle && (diffHit.StartTime - lastDiffHit.StartTime) < 100)
                 {
                     curLength++;
-                    curTimediffSum += diffHit.StartTime - diffHit.LastObject.StartTime;
+                    curTimediffSum += diffHit.StartTime - lastDiffHit.StartTime;
                     curSpacingSum += Math.Abs((hitObj.Position - lastHitObj.Position).Length);
                     curAvgSpacing = curSpacingSum / curLength;
                     curTimeDiff = curTimediffSum / curLength;
@@ -128,12 +130,12 @@ namespace osuAT.Game.Skills
                     // Preferably (and by standard), the total pp should be calculated outside the loop.
                     double curHighestPP =
                         Math.Pow(
-                        (Math.Pow((curAvgSpacing / 1.3 * Math.Log(curLength) / 3), 2.2) * csMult * // spacing and circle size (exponentional + shorter streams decrease this mult)
-                        Math.Log((curLength) + 1, 10)) / 40 * // length of stream (logarithmic)
-                    ((double)FocusedScore.Combo / FocusedScore.BeatmapInfo.MaxCombo * // Combo Multiplier (linear)
-                    SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo) // Miss Multiplier
-                    ),
+                            (Math.Pow((curAvgSpacing / 1.3 * Math.Log(curLength) / 3), 2.2) * csMult * // spacing and circle size (exponentional + shorter streams decrease this mult)
+                            Math.Log((curLength) + 1, 10)) / 40, // length of stream (logarithmic)
                         (84 / curAvgTimediff)); // BPM buff math.pow
+
+                    curHighestPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
+                    curHighestPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
 
                     if (curHighestPP >= CurTotalPP)
                     {
