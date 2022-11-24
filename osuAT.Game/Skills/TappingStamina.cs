@@ -21,7 +21,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "tapstamina";
 
-        public string Version => "0.002";
+        public string Version => "0.003";
 
         public string Summary => "The ability of your tapping to \n endure continuous strain";
 
@@ -72,45 +72,42 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-            private double CurStreamLength = 0;
-            private double CurMSSpeed = 0;
-            private double BPMBuff = 0;
-            private double LenMult = 0;
-            private double CurWorth = 0;
+            private double curStreamLength = 0;
+            private double curMSSpeed = 0;
+            private double bPMBuff = 0;
+            private double lenMult = 0;
+            private double curWorth = 0;
             public override void Setup()
             {
-                CurStreamLength = 0;
+                curStreamLength = 0;
             }
 
             public override void CalcNext(OsuDifficultyHitObject diffHitObj)
             {
                 var diffHit = (OsuDifficultyHitObject)diffHitObj;
-                var hitObj = (OsuHitObject)diffHit.BaseObject;
                 var lastHitObj = (OsuHitObject)diffHit.LastObject;
                 var lastDiffHit = diffHit.Previous(0);
                 if (lastDiffHit == null) return;
 
                 // Strain-based Stream Length
-                CurStreamLength += Math.Clamp(SharedMethods.BPMToMS(180, 4) / (hitObj.StartTime - lastHitObj.StartTime), 0, 1);
-                CurStreamLength -= CurStreamLength * (1-Math.Clamp(SharedMethods.BPMToMS(100) / (hitObj.StartTime - lastHitObj.StartTime), 0,1));
-                CurMSSpeed = diffHit.StartTime - lastDiffHit.StartTime;
+                curStreamLength += Math.Clamp(SharedMethods.BPMToMS(180, 4) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1);
+                curStreamLength -= curStreamLength * 0.5 * (1-Math.Clamp(SharedMethods.BPMToMS(140) / (diffHit.StartTime - lastDiffHit.StartTime), 0,1));
+                curMSSpeed = diffHit.StartTime - lastDiffHit.StartTime;
 
                 // Length multiplier
-                LenMult = 2 * Math.Log((CurStreamLength* 1 / 40) + 1);
+                lenMult = 2 * Math.Log((curStreamLength* 1 / 40) + 1);
 
                 // BPMBuff
-                BPMBuff = 2 * Math.Pow(1.02, SharedMethods.MSToBPM(CurMSSpeed));
+                bPMBuff = 2 * Math.Pow(1.02, SharedMethods.MSToBPM(curMSSpeed));
 
                 // Final Value (Returns the most difficult stream)
-                CurWorth = Math.Max(CurWorth,BPMBuff * LenMult);
+                curWorth = Math.Max(curWorth,bPMBuff * lenMult);
 
-                // Miss penalty and combo scaling
                 CurTotalPP = (
-                    CurWorth *
+                    curWorth *
                     SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo) *
                     SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo)
                 );
-                Console.WriteLine(SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo) + "/" + SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo));
             }
         }
 

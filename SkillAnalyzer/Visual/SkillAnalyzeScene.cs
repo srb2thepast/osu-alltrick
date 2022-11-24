@@ -65,13 +65,12 @@ using osuAT.Game.Skills.Resources;
 namespace SkillAnalyzer.Visual
 {
     // [~] TODO: Get beatmap audio working
-    // [!] Make SkillTestScene more of an abstract class
     // [!] Remove AnalyzerPlaybackControl 
     public abstract class SkillAnalyzeScene : EditorTestScene
     {
         protected string OsuPath = @"C:\Users\alexh\AppData\Local\osu!";
         protected override Ruleset CreateEditorRuleset() => new OsuRuleset();
-        protected virtual string MapLocation => @"Songs\90385 Igorrr - Unpleasant Sonata\Igorrr - Unpleasant Sonata (Sieg) [Insane].osu";
+        protected virtual string MapLocation => @"Songs\807850 THE ORAL CIGARETTES - Mou Ii kai\THE ORAL CIGARETTES - Mou ii Kai (Nevo) [Rain].osu";
         protected virtual List<ModInfo> AppliedMods => new List<ModInfo> { ModStore.Doubletime };
 
         public static List<ISkill> CurSkillList = new List<ISkill>();
@@ -817,7 +816,7 @@ namespace SkillAnalyzer.Visual
 
         protected void EnableSkillStep(ISkill skill)
         {
-            AddUntilStep("Add flowaim", () => {
+            AddUntilStep($"Add {skill.Identifier}", () => {
                 if (!CurSkillList.Contains(skill))
                     CurSkillList.Add(skill);
                 UpdateBars(true);

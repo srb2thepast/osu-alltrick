@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NuGet.Protocol.Core.Types;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
+using osu.Game.Localisation;
 using osu.Game.Rulesets.Osu.Mods;
 using osu.Game.Rulesets.Osu.Scoring;
 using OsuApiHelper;
@@ -127,6 +129,13 @@ namespace osuAT.Game
         }
         public static Score ConvertToScore(OsuPlay osuScore, OsuApiBeatmap osuMap)
         {
+            List<string> modString = osuScore.Mods.ToString().Split(", ").ToList();
+            modString.ForEach(n => Console.WriteLine(n));
+            // Prevent nightcore and doubletime from stacking
+            if (modString.Contains("DoubleTime") && modString.Contains("Nightcore")) {
+                modString.Remove("DoubleTime");
+            }
+
 
             return new Score
             {
@@ -152,7 +161,7 @@ namespace osuAT.Game
                     (int)osuScore.C50,
                     (int)osuScore.CMiss),
                 TotalScore = osuScore.Score,
-                ModsString = osuScore.Mods.ToString().Split(", ").ToList(),
+                ModsString = modString,
                 Grade = osuScore.Rank
             };
         }

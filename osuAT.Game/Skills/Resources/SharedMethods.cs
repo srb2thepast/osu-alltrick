@@ -24,7 +24,7 @@ namespace osuAT.Game.Skills.Resources
         /// <returns></returns>
         public static double MissPenalty(int Misses, int MaxCombo)
         {
-            return .97 * Math.Pow(1 - Math.Pow(Misses / MaxCombo, .775), Misses);
+            return .97 * Math.Pow(1 - Math.Pow(((double)Misses) / MaxCombo, .775), Misses);
         }
 
         public static double StandardDeviation(IEnumerable<double> NumList, double sub, bool Sample = false)

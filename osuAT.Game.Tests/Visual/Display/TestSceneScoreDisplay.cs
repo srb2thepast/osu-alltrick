@@ -3,7 +3,7 @@ using osu.Framework.Graphics;
 using osuAT.Game.Objects.Displays;
 using osuAT.Game.Types;
 using osuAT.Game.Skills;
-
+using System;
 
 namespace osuAT.Game.Tests.Visual.Display
 {
@@ -27,22 +27,22 @@ namespace osuAT.Game.Tests.Visual.Display
                     MapID = 651507,
                     MapsetID = 1380717,
                     SongArtist = "a_hisa",
-                    SongName = "Logical Stimulus",
+                    SongName = "Mou Ii Kai",
                     DifficultyName = "owo",
                     MapsetCreator = "Naidaaka",
                     StarRating = 7.93,
-                    MaxCombo = 2336
+                    MaxCombo = 2336,
+                    FolderLocation = @"Songs\807850 THE ORAL CIGARETTES - Mou Ii kai\THE ORAL CIGARETTES - Mou ii Kai (Nevo) [Rain].osu"
 
                 },
                 Grade = "SH",
-                AccuracyStats = new AccStat(2020, 15, 0, 0),
+                AccuracyStats = new AccStat(2020, 15, 0, 1),
                 Combo = 2333,
                 TotalScore = 116276034,
-                Mods = new List<ModInfo>(),
-                DateCreated = System.DateTime.Today
+                ModsString = new List<string> { "Hidden", "Nightcore" },
+                DateCreated = System.DateTime.Today,
             };
             dummyscore.Register();
-            dummyscore.AlltrickPP = new Dictionary<string, double>() { {"flowaim",727} };
             AddStep("create score display", () => {
                 ScoreDisplay display = new ScoreDisplay
                 {
@@ -50,7 +50,7 @@ namespace osuAT.Game.Tests.Visual.Display
                     Origin = Anchor.Centre,
 
                     Current = dummyscore,
-                    Skill = Skill.Flowaim
+                    Skill = Skill.TappingStamina
                 };
                 Child = display;
                 display.Appear();
