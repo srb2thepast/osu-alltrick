@@ -11,6 +11,11 @@ using osu.Framework.Audio;
 using osuTK;
 using osuTK.Graphics;
 using osuAT.Game.Objects;
+using osu.Framework.Graphics.UserInterface;
+using static osuAT.Game.SettingsButton;
+using osu.Framework;
+using osu.Framework.Graphics.Cursor;
+using osu.Framework.Localisation;
 
 namespace osuAT.Game.Screens
 {
@@ -72,6 +77,12 @@ namespace osuAT.Game.Screens
                     Scale = new Vector2(0.8f,0.8f),
 
                     Children = new Drawable[] {
+                        // Exit Button
+                         new ExitButton {
+                            Anchor = Anchor.CentreRight,
+                            Origin = Anchor.Centre,
+                            X = 60
+                        },
 
                         // Username Section Background
                         new Circle {
@@ -137,7 +148,7 @@ namespace osuAT.Game.Screens
 
                         },
                         new SpriteText {
-                            Text = $"version {Updater.CurrentVersion.Split("v")[1]}",
+                            Text = Updater.DevelopmentBuild? Updater.CurrentVersion.Split("v")[1] : $"version {Updater.CurrentVersion.Split("v")[1]}",
                             Anchor = Anchor.Centre,
                             Origin = Anchor.CentreLeft,
                             Spacing = new Vector2(10),
@@ -193,6 +204,53 @@ namespace osuAT.Game.Screens
             {
                 UsernameText.Text = SaveStorage.SaveData.PlayerUsername;
             };
+        }
+
+        private class ExitButton : CompositeDrawable, IHasTooltip
+        {
+            public LocalisableString TooltipText { get; }
+            public ExitButton()
+            {
+                Anchor = Anchor.Centre;
+                Origin = Anchor.Centre;
+                Size = new Vector2(100);
+                TooltipText = "Exit osu!alltrick";
+            }
+
+            [BackgroundDependencyLoader]
+            private void load(TextureStore textures)
+            {
+                InternalChildren = new Drawable[]
+                {
+                    new ClickableContainer{
+                        AutoSizeAxes = Axes.Both,
+                        Action = () => {
+                            SaveStorage.Save();
+                            Dependencies.Get<osu.Framework.Game>().RequestExit();
+                        },
+                        Children = new Drawable[] {
+                            new Sprite{
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Size = new Vector2(100),
+                                Texture = textures.Get("FigmaVectors/DiamondStar")
+                            },
+                            new SpriteIcon {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Rotation = 45,
+                                Size = new Vector2(45),
+                                Colour = Colour4.FromHex("#FF66AB"),
+                                Shadow = true,
+                                ShadowOffset = new Vector2(2f),
+                                ShadowColour = Colour4.Black.MultiplyAlpha(0.5f),
+                                Icon = FontAwesome.Solid.PlusCircle,
+                            },
+                        },
+                    },
+                };
+                Size = InternalChildren[0].Size;
+            }
         }
 
         private class HomeBackground : Container {

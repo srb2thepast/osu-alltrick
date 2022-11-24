@@ -90,7 +90,7 @@ namespace osuAT.Game.Skills
                 if (lastDiffHit == null) return;
 
                 // Strain-based Stream Length
-                curStreamLength += Math.Clamp(SharedMethods.BPMToMS(180, 4) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1);
+                curStreamLength += Math.Clamp(SharedMethods.BPMToMS(180) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1);
                 curStreamLength -= curStreamLength * 0.5 * (1-Math.Clamp(SharedMethods.BPMToMS(140) / (diffHit.StartTime - lastDiffHit.StartTime), 0,1));
                 curMSSpeed = diffHit.StartTime - lastDiffHit.StartTime;
 
