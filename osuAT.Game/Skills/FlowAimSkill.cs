@@ -21,7 +21,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "flowaim";
 
-        public string Version => "0.004";
+        public string Version => "0.005";
 
         public string Summary => "The ability to move your cursor \n in a fluid motion.";
 
@@ -75,23 +75,16 @@ namespace osuAT.Game.Skills
             private double curStreamLength = 0;
             private double curMSSpeed = 0;
             private double lenMult = 0;
-
-            private double curAimWorth = 0;
-            [HiddenDebugValue]
-            private double aimWorthTotal = 0;
-            private double aimStrainDifficulty = 0;
-
+            private double aimDifficulty = 0;
             private double flowPatternMult = 0;
+            private double curAngStrainWorth = 0;
+            private double curWorth = 0;
+            private double totalAngStrainWorth = 0;
+            private double angDifficulty = 0;
 
-            private double curAngWorth = 0;
-            [HiddenDebugValue]
-            private double angWorthTotal = 0;
-            private double angStrainDifficulty = 0;
 
             private double curAngle = 0;
             private double lastAngle = 0;
-
-            private double curWorth = 0;
 
             public override void Setup()
             {
@@ -110,33 +103,28 @@ namespace osuAT.Game.Skills
 
                 // Strain-based Stream Length
                 curStreamLength += Math.Clamp(SharedMethods.BPMToMS(150) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1);
-                curStreamLength -= curStreamLength * 0.75 * (1 - Math.Clamp(SharedMethods.BPMToMS(180, 2) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1));
+                curStreamLength -= curStreamLength * 0.75 * (1 - Math.Clamp(SharedMethods.BPMToMS(150, 2) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1));
                 curMSSpeed = diffHit.StartTime - lastDiffHit.StartTime;
 
                 // Length multiplier
-                lenMult = 2 * Math.Log((curStreamLength / 40) + 1);
+                lenMult = 2 * Math.Log((curStreamLength * 1 / 40) + 1);
                 lenMult /= 1.5;
 
                 // Aim Difficulty
-                curAimWorth = 40*(diffHit.MinimumJumpDistance / (diffHit.MinimumJumpTime*0.5)) * flowPatternMult;
-                aimWorthTotal += curAimWorth;
-                aimWorthTotal *= 0.9;
-                aimStrainDifficulty = 30 * Math.Log(aimWorthTotal + 1); ;
+                aimDifficulty = 2*(diffHit.TravelDistance + diffHit.MinimumJumpDistance) / diffHit.MinimumJumpTime;
 
                 // Flow Pattern Multiplier
                 flowPatternMult = Math.Clamp(((double)curAngle - 60) / 75, 0, 1)/2 + Math.Clamp(((double)lastAngle - 60) / 75, 0, 1) / 2;
 
                 // Angle Difficulty
-                // [!] Right now, angles that are closer to 135 are buffed, rather than sharp angles being buffed.
-                // It does the same thing as FlowPatternMult, execpt it just adds onto the value.
+                curAngStrainWorth = -Math.Clamp(((double)curAngle) / (135 / 0.9), 0, 1) + 0.9;
+                totalAngStrainWorth += curAngStrainWorth;
+                totalAngStrainWorth = Math.Max(0,totalAngStrainWorth);
 
-                curAngWorth = Math.Clamp(((double)curAngle) / (135 / 0.9), 0, 1);
-                angWorthTotal = Math.Max(0, angWorthTotal + curAngWorth);
-                angWorthTotal *= 0.9;
-                angStrainDifficulty = 0;
+                angDifficulty = 30*Math.Log(totalAngStrainWorth+1);
 
                 // Final value
-                curWorth = 1.1*lenMult * flowPatternMult * (aimStrainDifficulty + angStrainDifficulty);
+                curWorth = 1.25*lenMult * flowPatternMult * (aimDifficulty + angDifficulty);
 
                 CurTotalPP = Math.Max(CurTotalPP,curWorth);
             }
