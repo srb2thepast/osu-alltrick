@@ -9,6 +9,7 @@ using osu.Game.Rulesets.Difficulty.Preprocessing;
 using static osuAT.Game.Skills.AimSkill;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using osuAT.Game.Skills.Resources;
+using osu.Game.Graphics.UserInterfaceV2;
 
 namespace osuAT.Game.Skills
 {
@@ -71,85 +72,73 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-            private double lastObjectTimeDiff = 0;
+            private double curStreamLength = 0;
+            private double curMSSpeed = 0;
+            private double lenMult = 0;
 
-            private float curAvgSpacing = 0;
+            private double curAimWorth = 0;
             [HiddenDebugValue]
-            private float curSpacingSum = 0;
-            private double curTimeDiff = 0;
-            private int curLength = 0;
-            [HiddenDebugValue]
-            private double curTimediffSum = 0;
+            private double aimWorthTotal = 0;
+            private double aimStrainDifficulty = 0;
 
-            private float focusedAvgSpacing = 0; // the most streched out one is calculated
-            private int focusedLength = 0;
-            private double focusedAvgTimediff = 0; // the average difference between the starttime of each object
+            private double flowPatternMult = 0;
+
+            private double curAngWorth = 0;
             [HiddenDebugValue]
-            private float csMult;
+            private double angWorthTotal = 0;
+            private double angStrainDifficulty = 0;
+
+            private double curAngle = 0;
+            private double lastAngle = 0;
+
+            private double curWorth = 0;
 
             public override void Setup()
             {
-                csMult = FocusedScore.BeatmapInfo.Contents.DifficultyInfo.CircleSize / 4;
-                curAvgSpacing = 0;
-                curSpacingSum = 0;
-                curTimeDiff = 0;
-                curLength = 0;
-                curTimediffSum = 0;
+
             }
 
             public override void CalcNext(OsuDifficultyHitObject diffHitObj)
             {
                 var diffHit = (OsuDifficultyHitObject)diffHitObj;
-                var hitObj = (OsuHitObject)diffHit.BaseObject;
-                var lastHitObj = (OsuHitObject)diffHit.LastObject;
-                var lastDiffHit = diffHit.Previous(0);
+                var lastDiffHit = (OsuDifficultyHitObject)diffHit.Previous(0);
                 if (lastDiffHit == null) return;
-                lastObjectTimeDiff = diffHit.StartTime - lastDiffHit.StartTime;
+                if (lastDiffHit.Angle == null) return;
+                if (diffHit.Angle == null) return;
+                curAngle = (double)diffHit.Angle * (180/Math.PI);
+                lastAngle = (double)lastDiffHit.Angle * (180 / Math.PI);
 
-                // if this circle appears within 150ms of the last one, it (might be) a circle in a stream!
-                // So it only runs if it's a circle and it appears within 100ms of the previous circle in the loop.
-                // And also if it's not the first circle of the map (because there would be no previous circle).
-                if (diffHit.Index < FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count-1 && hitObj is HitCircle && (diffHit.StartTime - lastDiffHit.StartTime) < 100)
-                {
-                    curLength++;
-                    curTimediffSum += diffHit.StartTime - lastDiffHit.StartTime;
-                    curSpacingSum += Math.Abs((hitObj.Position - lastHitObj.Position).Length);
-                    curAvgSpacing = curSpacingSum / curLength;
-                    curTimeDiff = curTimediffSum / curLength;
-                }
-                // Otherwise, it's considered the end of a stream.
-                else
-                {
-                    if (curLength == 0) return;
-                    curAvgSpacing = curSpacingSum / curLength;
-                    double curAvgTimediff = curTimediffSum / curLength;
+                // Strain-based Stream Length
+                curStreamLength += Math.Clamp(SharedMethods.BPMToMS(150) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1);
+                curStreamLength -= curStreamLength * 0.75 * (1 - Math.Clamp(SharedMethods.BPMToMS(180, 2) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1));
+                curMSSpeed = diffHit.StartTime - lastDiffHit.StartTime;
 
-                    // THIS LINE is where calculations are done.
-                    // The reason it's in the loop is so that the stream that outputs the most PP is the one
-                    // that's returned.
-                    // Preferably (and by standard), the total pp should be calculated outside the loop.
-                    double curHighestPP =
-                        Math.Pow(
-                            (Math.Pow((curAvgSpacing / 1.3 * Math.Log(curLength) / 3), 2.2) * csMult * // spacing and circle size (exponentional + shorter streams decrease this mult)
-                            Math.Log((curLength) + 1, 10)) / 40, // length of stream (logarithmic)
-                        (84 / curAvgTimediff)); // BPM buff math.pow
+                // Length multiplier
+                lenMult = 2 * Math.Log((curStreamLength / 40) + 1);
+                lenMult /= 1.5;
 
-                    curHighestPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
-                    curHighestPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
+                // Aim Difficulty
+                curAimWorth = 40*(diffHit.MinimumJumpDistance / (diffHit.MinimumJumpTime*0.5)) * flowPatternMult;
+                aimWorthTotal += curAimWorth;
+                aimWorthTotal *= 0.9;
+                aimStrainDifficulty = 30 * Math.Log(aimWorthTotal + 1); ;
 
-                    if (curHighestPP >= CurTotalPP)
-                    {
-                        focusedAvgSpacing = curAvgSpacing;
-                        focusedLength = curLength;
-                        focusedAvgTimediff = curTimediffSum / curLength;
-                        CurTotalPP = curHighestPP;
-                    }
-                    curAvgSpacing = 0;
-                    curSpacingSum = 0;
-                    curTimediffSum = 0;
-                    curLength = 0;
-                    curTimeDiff = 0;
-                }
+                // Flow Pattern Multiplier
+                flowPatternMult = Math.Clamp(((double)curAngle - 60) / 75, 0, 1)/2 + Math.Clamp(((double)lastAngle - 60) / 75, 0, 1) / 2;
+
+                // Angle Difficulty
+                // [!] Right now, angles that are closer to 135 are buffed, rather than sharp angles being buffed.
+                // It does the same thing as FlowPatternMult, execpt it just adds onto the value.
+
+                curAngWorth = Math.Clamp(((double)curAngle) / (135 / 0.9), 0, 1);
+                angWorthTotal = Math.Max(0, angWorthTotal + curAngWorth);
+                angWorthTotal *= 0.9;
+                angStrainDifficulty = 0;
+
+                // Final value
+                curWorth = 1.1*lenMult * flowPatternMult * (aimStrainDifficulty + angStrainDifficulty);
+
+                CurTotalPP = Math.Max(CurTotalPP,curWorth);
             }
         }
 

@@ -3,18 +3,18 @@ using Skill = osuAT.Game.Skills.Skill;
 
 namespace SkillAnalyzer.Visual
 {
-    public class SliderAimAnalyzer : SkillAnalyzeScene
+    public class CursorControlAnalyzer : SkillAnalyzeScene
     {
-        public SliderAimAnalyzer() {
+        public CursorControlAnalyzer() {
             
         }
 
         [Test]
         public void TestCheckCurAvgSpacing()
         {
-            EnableSkillStep(Skill.SliderAim);
+            EnableSkillStep(Skill.CursorControl);
             AddSeekStep("2:21:200");
-            AddDebugValueAssert("curavgspacing > 50", Skill.SliderAim, "curAvgSpacing", (val) => {
+            AddDebugValueAssert("curavgspacing > 50", Skill.CursorControl, "curAvgSpacing", (val) => {
                 return (double)val > 50;
             });
         }

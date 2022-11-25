@@ -839,8 +839,8 @@ namespace SkillAnalyzer.Visual
         {
             AddAssert(description, () => {
                 Dictionary<string, object> directory = skillDebugTextCached[skill.Identifier];
-                var amount = (double)directory[key];
-                return assert(amount);
+                var value = directory[key];
+                return assert(value);
             });
         }
 

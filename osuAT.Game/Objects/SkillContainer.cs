@@ -143,6 +143,8 @@ namespace osuAT.Game
             FocusedBox = null;
         }
 
+
+
         #region Input Handlers
         private Vector2 lastoffpos = Vector2.Zero;
         private Vector2 lastscale = new Vector2(0.2f);
@@ -185,7 +187,6 @@ namespace osuAT.Game
             Child.ScaleTo(lastscale, 300, Easing.OutExpo);
             return true;
         }
-
         protected override bool OnKeyDown(KeyDownEvent e)
         {
             if (MainScreen.CurrentlyFocused == false) return false;

@@ -80,6 +80,10 @@ namespace osuAT.Game.Skills
             public override void Setup()
             {
                 curStreamLength = 0;
+                curMSSpeed = 0;
+                bPMBuff = 0;
+                lenMult = 0;
+                curWorth = 0;
             }
 
             public override void CalcNext(OsuDifficultyHitObject diffHitObj)
