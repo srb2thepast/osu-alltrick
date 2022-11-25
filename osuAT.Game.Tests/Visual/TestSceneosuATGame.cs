@@ -35,7 +35,7 @@ namespace osuAT.Game.Tests.Visual
             Dictionary<ISkill, SkillBox> skilldict = mainscreen?.SkillCont?.SkillDict;
 
             AddToggleStep("Focus on Flowaim", (b) => {
-                if (b == true) { mainscreen?.SkillCont?.FocusOnBox(skilldict[Skill.Flowaim]); } else { mainscreen.SkillCont.Defocus(); }
+                // if (b == true) { mainscreen?.SkillCont?.FocusOnBox(skilldict[Skill.Flowaim]); } else { mainscreen.SkillCont.Defocus(); }
             });
             AddWaitStep("Wait a bit", 5);
         }

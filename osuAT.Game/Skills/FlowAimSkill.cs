@@ -42,7 +42,7 @@ namespace osuAT.Game.Skills
 
         public int BoxNameSize => 83;
 
-        public Vector2 BoxPosition => new Vector2(00, 400);
+        public Vector2 BoxPosition => new Vector2(953, 1300);
 
         public SkillGoals Benchmarks => new SkillGoals(600, 1500,3000, 6000, 9000, 10000);
 

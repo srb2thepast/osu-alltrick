@@ -319,6 +319,13 @@ namespace osuAT.Game.Objects
             return true;
         }
 
+        public void TryTransition() {
+            if (ParentBox.ParentCont.MainScreen.CurrentlyFocused == false) return;
+            if (ParentBox.State == SkillBoxState.FullBox) return;
+            fireTransition();
+            return;
+        }
+
         private void fireTransition() {
             if (ParentBox.ParentCont.FocusedBox == ParentBox && ParentBox.State == SkillBoxState.MiniBox)
             {

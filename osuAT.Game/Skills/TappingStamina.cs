@@ -43,7 +43,7 @@ namespace osuAT.Game.Skills
 
         public int BoxNameSize => 54;
 
-        public Vector2 BoxPosition => new Vector2(-2400, 100);
+        public Vector2 BoxPosition => new Vector2(-1873, 1077.5f);
 
         public SkillGoals Benchmarks => new SkillGoals(600, 1500,3000, 6000, 9000, 10000);
 
@@ -91,7 +91,7 @@ namespace osuAT.Game.Skills
 
                 // Strain-based Stream Length
                 curStreamLength += Math.Clamp(SharedMethods.BPMToMS(180) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1);
-                curStreamLength -= curStreamLength * 0.5 * (1-Math.Clamp(SharedMethods.BPMToMS(140) / (diffHit.StartTime - lastDiffHit.StartTime), 0,1));
+                curStreamLength -= curStreamLength * 0.75 * (1-Math.Clamp(SharedMethods.BPMToMS(180,2) / (diffHit.StartTime - lastDiffHit.StartTime), 0,1));
                 curMSSpeed = diffHit.StartTime - lastDiffHit.StartTime;
 
                 // Length multiplier

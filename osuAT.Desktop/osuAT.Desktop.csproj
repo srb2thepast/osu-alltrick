@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <AssemblyName>osuAT</AssemblyName>
     <ApplicationIcon>game.ico</ApplicationIcon>
-    <ApplicationManifest>app1.manifest</ApplicationManifest>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
     <Version>0.0.0</Version>
     <FileVersion>0.0.0</FileVersion>
     <PackageIcon>Icon.png</PackageIcon>

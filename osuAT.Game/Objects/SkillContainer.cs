@@ -12,6 +12,7 @@ using osuAT.Game.Screens;
 using osuAT.Game.Objects;
 using osuAT.Game.Skills;
 using osuTK;
+using osuTK.Input;
 using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game
@@ -25,7 +26,7 @@ namespace osuAT.Game
         protected Container BoxContainer;
         public SkillContainer(HomeScreen mainscreen)
         {
-            Size = new Vector2(8000,6000);
+            Size = new Vector2(8000, 5000);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             MainScreen = mainscreen;
@@ -45,13 +46,15 @@ namespace osuAT.Game
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
+        private void load(LargeTextureStore textures)
         {
+            lastoffpos = new Vector2(Size.X / 2, 0);
             Child = container = new Container
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
+                Scale = lastscale,
                 Children = new Drawable[]
                 {
                     new Box {
@@ -65,6 +68,7 @@ namespace osuAT.Game
                         Anchor = Anchor.Centre,
                         Origin = Anchor.CentreLeft,
                         RelativeSizeAxes = Axes.Both,
+                        Position = -lastoffpos
                     }
                 }
             };
@@ -73,10 +77,19 @@ namespace osuAT.Game
             {
                 box.ParentCont = this;
                 BoxContainer.Add(box);
-                
+
             }
-            lastoffpos = new Vector2(Size.X / 2,0);
-            FocusOnBox(SkillDict[Skill.Flowaim]);
+            /*
+            BoxContainer.Add(
+            new Sprite
+            {
+
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                RelativeSizeAxes = Axes.Both,
+                Alpha = 0.3f,
+                Texture = textures.Get(@"Contributors/chart")
+            });*/
         }
 
         protected override void LoadComplete()
@@ -86,20 +99,53 @@ namespace osuAT.Game
 
         public void FocusOnBox(SkillBox box) {
             Vector2 BoxScreenPos = new Vector2(
-                (Size.X/2+box.Position.X),
+                (Size.X / 2 + box.Position.X),
                 (box.Position.Y));
-            BoxContainer.MoveTo(-BoxScreenPos, 400,Easing.OutCubic);
+            BoxContainer.MoveTo(-BoxScreenPos, 400, Easing.OutCubic);
 
             FocusedBox = box;
             lastoffpos = BoxScreenPos;
         }
+
+        public void FocusToClosest(Vector2 bias) {
+            FocusedBox ??= SkillDict[Skill.Flowaim];
+            SkillBox closest = FocusedBox;
+            float closestDist = 100000;
+            float curBoxDist = 100000;
+            foreach (SkillBox box in SkillDict.Values) {
+                if (box == FocusedBox) continue;
+                curBoxDist = (bias * (box.Position - FocusedBox.Position)).Length;
+                if (closest == null || curBoxDist < closestDist) {
+                    if (Math.Abs(bias.Y) > Math.Abs(bias.X))
+                    {
+                        if (Math.Sign((box.Position - FocusedBox.Position).Y) == -Math.Sign(bias.Y)) // up/down
+                        {
+                            closest = box;
+                            closestDist = (bias * (closest.Position - FocusedBox.Position)).Length;
+                        }
+                    }
+                    else {
+                        if (Math.Sign((box.Position - FocusedBox.Position).X) == -Math.Sign(bias.X)) // left/right
+                        {
+                            closest = box;
+                            closestDist = (bias * (closest.Position - FocusedBox.Position)).Length;
+                        }
+                    }
+                }
+                Console.WriteLine(box.Skill.Identifier + ".Y <" + FocusedBox.Skill.Identifier + ".Y");
+                Console.WriteLine(curBoxDist + "<" + closestDist);
+            }
+            FocusOnBox(closest);
+            return;
+        }
+
         public void Defocus() {
             FocusedBox = null;
         }
 
         #region Input Handlers
         private Vector2 lastoffpos = Vector2.Zero;
-        private Vector2 lastscale = Vector2.One;
+        private Vector2 lastscale = new Vector2(0.2f);
         protected override bool OnDragStart(DragStartEvent e)
         {
             if ((!(FocusedBox?.State == SkillBoxState.FullBox) || (FocusedBox == null)) && MainScreen.CurrentlyFocused == true )
@@ -133,20 +179,43 @@ namespace osuAT.Game
 
             lastscale = ((newScale.X < 0.2 && newScale.Y < 0.2) || (newScale.X > 1.5 && newScale.Y > 1.5)) ? lastscale : newScale;
 
-            Vector2 MouseWorldPos = new Vector2(
-                (e.MousePosition.X * Child.Scale.X) + Child.Position.X,
-                (e.MousePosition.Y * Child.Scale.Y) + Child.Position.Y);
-
-
-            Vector2 BoxScreenPos = new Vector2(
-                -(e.MousePosition.X * Child.Scale.X) -MouseWorldPos.X,
-                -(e.MousePosition.Y * Child.Scale.Y) - MouseWorldPos.Y
-                );
 
             //Child.MoveTo(BoxScreenPos, 300, Easing.OutExpo);
             //lastoffpos = BoxScreenPos;
             Child.ScaleTo(lastscale, 300, Easing.OutExpo);
             return true;
+        }
+
+        protected override bool OnKeyDown(KeyDownEvent e)
+        {
+            if (MainScreen.CurrentlyFocused == false) return false;
+            if (FocusedBox?.State == SkillBoxState.FullBox) { return false; }
+            if (e.Key == Key.W || e.Key == Key.Up)
+            {
+                FocusToClosest(new Vector2(0.3f, 1.5f));
+                return true;
+            }
+            if (e.Key == Key.A || e.Key == Key.Left)
+            {
+                FocusToClosest(new Vector2(1.5f,0.3f));
+                return true;
+            }
+            if (e.Key == Key.S || e.Key == Key.Down)
+            {
+                FocusToClosest(new Vector2(0.3f, -1.5f));
+                return true;
+            }
+            if (e.Key == Key.D || e.Key == Key.Right)
+            {
+                FocusToClosest(new Vector2(-1.5f,0.3f));
+                return true;
+            }
+            if (e.Key == Key.Enter) {
+                FocusedBox?.MiniBox.TryTransition();
+                Console.WriteLine(FocusedBox.Skill.Identifier);
+            }
+            return false;
+            
         }
         #endregion
     }

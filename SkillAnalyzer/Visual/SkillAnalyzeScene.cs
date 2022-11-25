@@ -61,6 +61,7 @@ using osu.Framework.Input.Events;
 using osu.Game.Graphics.UserInterface;
 using osuTK.Input;
 using osuAT.Game.Skills.Resources;
+using NuGet.Packaging.Rules;
 
 namespace SkillAnalyzer.Visual
 {
@@ -120,7 +121,7 @@ namespace SkillAnalyzer.Visual
                 private void load(OverlayColourProvider colourProvider) {
                     //Add(new StrainVisualizer {
 
-                //});
+                    //});
                 }
             }
 
@@ -324,7 +325,7 @@ namespace SkillAnalyzer.Visual
                         if (property.Name == "internalChildren")
                         {
                             IReadOnlyList<Drawable> intChildren = (IReadOnlyList<Drawable>)property.GetValue(popoverCont);
-                            
+
                             centerField = (Container)intChildren[0];
                             if (intChildren.Count == 1)
                                 break; // already removed
@@ -396,7 +397,39 @@ namespace SkillAnalyzer.Visual
             {
                 osuModList.Add(ModStore.ConvertToOsuMod(mod));
             }
-            FocusedBeatmap = WorkFocusedMap.GetPlayableBeatmap(ruleset,osuModList);
+            FocusedBeatmap = WorkFocusedMap.GetPlayableBeatmap(ruleset, osuModList);
+            WorkFocusedMap.LoadTrack();
+            WorkFocusedMap.Track.Start();
+            FocusedBeatmap.BeatmapInfo.BeatDivisor = 4;
+            CachedMapDiffHits = new List<DifficultyHitObject>(ATFocusedMap.Contents.DiffHitObjects);
+            Console.WriteLine("Diffhits: " + ATFocusedMap.Contents.DiffHitObjects[0].StartTime + " | playable: " + ATFocusedMap.Contents.HitObjects[1].StartTime);
+            Console.WriteLine("FB Diffhits: " + FocusedBeatmap.HitObjects[1].StartTime);
+            DummyScore = new Score
+            {
+                RulesetName = atRuleset.Name,
+                ScoreRuleset = atRuleset,
+                Combo = 0,
+                BeatmapInfo = ATFocusedMap,
+                Mods = AppliedMods,
+                AccuracyStats = new AccStat(ATFocusedMap.Contents.HitObjects.Count, 0, 0, 0),
+            };
+            return FocusedBeatmap;
+        }
+
+        protected IBeatmap SwitchFocusedMap(string mapLocation, OsuRulesetInfo ruleset, List<ModInfo> mods) {
+            ATFocusedMap = new ATBeatmap()
+            {
+                FolderLocation = MapLocation
+            };
+            var atRuleset = ATRulesetStore.GetByIRulesetInfo(ruleset);
+            ATFocusedMap.LoadMapContents(atRuleset, mods);
+            WorkFocusedMap = ATFocusedMap.Contents.Workmap;
+            List<Mod> osuModList = new List<Mod>();
+            foreach (ModInfo mod in AppliedMods)
+            {
+                osuModList.Add(ModStore.ConvertToOsuMod(mod));
+            }
+            FocusedBeatmap = WorkFocusedMap.GetPlayableBeatmap(ruleset, osuModList);
             WorkFocusedMap.LoadTrack();
             WorkFocusedMap.Track.Start();
             FocusedBeatmap.BeatmapInfo.BeatDivisor = 4;
@@ -483,13 +516,13 @@ namespace SkillAnalyzer.Visual
                 skillGraph
             );
 
-            for (int i = 0; i<Skill.SkillList.Count; i++)
+            for (int i = 0; i < Skill.SkillList.Count; i++)
             {
                 ISkill skill = Skill.SkillList[i];
                 Box bgbox = new Box
                 {
-                    Size = new Vector2(190,0),
-                    Y = (i) * 32+20,
+                    Size = new Vector2(190, 0),
+                    Y = (i) * 32 + 20,
                     Scale = new Vector2(0.9f),
                     Anchor = Anchor.TopLeft,
                     Origin = Anchor.CentreLeft,
@@ -500,7 +533,7 @@ namespace SkillAnalyzer.Visual
                     Y = i * 32 + 20,
                     Scale = new Vector2(0.9f),
                     Origin = Anchor.CentreLeft,
-                };  
+                };
                 newbox.Current.ValueChanged += delegate (ValueChangedEvent<bool> Enabled)
                 {
                     if (Enabled.NewValue && !CurSkillList.Contains(newbox.Skill))
@@ -511,12 +544,12 @@ namespace SkillAnalyzer.Visual
                     {
                         CurSkillList.Remove(newbox.Skill);
                     }
-					UpdateBars(CurSkillList,true);
+                    UpdateBars(CurSkillList, true);
                 };
                 newbox.Current.Value = CurSkillList.Contains(newbox.Skill);
                 buttonSelectScroll.Add(bgbox);
                 buttonSelectScroll.Add(newbox);
-                bgbox.Height = newbox.Height/19 *23;
+                bgbox.Height = newbox.Height / 19 * 23;
             };
             skillGraph.SetValues(
                 new SortedList<string, float> {
@@ -603,7 +636,7 @@ namespace SkillAnalyzer.Visual
                 }
             }
             Editor.Playback.SetRateMult(rate);
-            EditorLoaded.Invoke(this,true);
+            EditorLoaded.Invoke(this, true);
         }
 
         #endregion
@@ -626,15 +659,15 @@ namespace SkillAnalyzer.Visual
             }
         }
 
-        protected void UpdateBars(bool skipCurhitCheck) => UpdateBars(CurSkillList,true);
+        protected void UpdateBars(bool skipCurhitCheck) => UpdateBars(CurSkillList, true);
         protected void UpdateBars() => UpdateBars(CurSkillList);
 
-        protected void UpdateBars(List<ISkill> skillList,bool skipCurhitCheck = false) {
+        protected void UpdateBars(List<ISkill> skillList, bool skipCurhitCheck = false) {
 
             if (!canUseEditor) return;
             if (CurSkillList == default | editorLoader == null) return;
             if (debugContainer.Parent == null) return;
-            
+
 
             // update the score
             updateClosestHitObjectIndex(EditorClock.CurrentTime);
@@ -643,7 +676,7 @@ namespace SkillAnalyzer.Visual
                 return;
 
             DummyScore.Combo = DummyScore.BeatmapInfo.GetMaxCombo(); // calculated combo with current amount of hit objects
-            
+
             if (scaleByCombo)
             {
                 DummyScore.BeatmapInfo.MaxCombo = CachedMapDiffHits.GetMaxCombo();
@@ -695,7 +728,7 @@ namespace SkillAnalyzer.Visual
                             t.Colour = skill.PrimaryColor;
                             t.Shadow = true;
                         });
-                    }   
+                    }
                     foreach (FieldInfo property in props)
                     {
                         if (property.GetCustomAttribute(typeof(HiddenDebugValueAttribute)) != default)
@@ -725,7 +758,7 @@ namespace SkillAnalyzer.Visual
             });
 
             skillGraph.SBarGraph.MaxValue = (largestPP < 500) ? 500 : largestPP;
-            skillGraph  .SetValues(skillNameList, skillColors);
+            skillGraph.SetValues(skillNameList, skillColors);
             // Console.WriteLine("------------------");
         }
 
@@ -740,11 +773,22 @@ namespace SkillAnalyzer.Visual
         private int updateClosestHitObjectIndex(double currentTime) {
             var hitList = CachedMapDiffHits;
             previoushitindex = curhitindex;
-            if (cachedCurTime > currentTime) { // person seeked backwards, so just reset
+            if (cachedCurTime > currentTime)
+            { // person seeked backwards, so go backwards from the last curhitindex
+                cachedCurTime = currentTime;
+                for (int i = curhitindex-1; i > 0; i--)
+                {
+                    var time = hitList[i].StartTime;
+                    if (time * EditorClock.Track.Value.Rate < currentTime)
+                    {
+                        curhitindex = i;
+                        return i;
+                    }
+                }
                 curhitindex = 0;
+                return 0;
             }
             cachedCurTime = currentTime;
-            
             // [~] this could be made a bit better
             // starts at curhitindex to avoid constantly looping through the whole map
             for (int i = curhitindex; i < hitList.Count; i++) {
@@ -791,7 +835,7 @@ namespace SkillAnalyzer.Visual
         #region Step Methods
 
         protected delegate bool DebugValAssert(object obj);
-        protected void AddDebugValueAssert(string description,ISkill skill,string key, DebugValAssert assert)
+        protected void AddDebugValueAssert(string description, ISkill skill, string key, DebugValAssert assert)
         {
             AddAssert(description, () => {
                 Dictionary<string, object> directory = skillDebugTextCached[skill.Identifier];
@@ -799,10 +843,10 @@ namespace SkillAnalyzer.Visual
                 return assert(amount);
             });
         }
-        
+
         protected void AddSeekStep(string time, bool stopclock = true)
         {
-            AddSeekStep(convertTimeToMs(time),stopclock);
+            AddSeekStep(convertTimeToMs(time), stopclock);
         }
         protected void AddSeekStep(double miliseconds, bool stopclock = true)
         {
@@ -821,6 +865,15 @@ namespace SkillAnalyzer.Visual
                     CurSkillList.Add(skill);
                 UpdateBars(true);
                 return CurSkillList.Contains(skill);
+            });
+        }
+
+        [Obsolete("WIP")] // [!]
+        protected void AddSwitchFocusedMapStep(string mapName, string mapLocation, OsuRulesetInfo ruleset, List<ModInfo> mods) {
+            AddStep($"Switch to beatmap {mapName}", () =>
+            {
+                SwitchFocusedMap(mapLocation, ruleset, mods);
+                Editor.SwitchToDifficulty(FocusedBeatmap.BeatmapInfo);
             });
         }
 

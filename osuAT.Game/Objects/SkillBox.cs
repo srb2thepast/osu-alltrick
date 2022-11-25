@@ -13,6 +13,7 @@ using osu.Framework.Localisation;
 using osuAT.Game.Types;
 using osuTK;
 using osuAT.Game.Skills.Resources;
+using System.Threading.Tasks;
 
 namespace osuAT.Game.Objects
 {
@@ -74,6 +75,7 @@ namespace osuAT.Game.Objects
         {
             ParentCont.MainScreen.AllowButtons = false;
             State = SkillBoxState.FullBox;
+
             FullBox.InnerBox.Height = 217;
             FullBox.InnerBox.Width = 320;
 
@@ -86,20 +88,23 @@ namespace osuAT.Game.Objects
 
             // Boxes
             MiniBox.Slideout();
-            FullBox.Appear(200);    
+            FullBox.Appear(200);
+
         }
 
-        public void TransitionToMini()
+        public async void TransitionToMini()
         {
-            ParentCont.MainScreen.AllowButtons = true;
-            State = SkillBoxState.MiniBox;
             ParentCont.MainScreen.TopBar.ScaleTo(0.8f, 400, Easing.InOutCubic);
             ParentCont.MainScreen.TopBar.MoveToY(60, 400, Easing.InOutCubic);
             ParentCont.Delay(100).ScaleTo(1f,600,Easing.InOutExpo);
             
             MiniBox.Slidein();
             FullBox.Disappear(800);
-            
+
+            await Task.Delay(450); // wait for the container to almost completely zoom out
+            ParentCont.MainScreen.AllowButtons = true;
+            State = SkillBoxState.MiniBox;
+
         }
 
     }
