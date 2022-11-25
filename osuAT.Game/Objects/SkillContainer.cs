@@ -212,7 +212,6 @@ namespace osuAT.Game
             }
             if (e.Key == Key.Enter) {
                 FocusedBox?.MiniBox.TryTransition();
-                Console.WriteLine(FocusedBox.Skill.Identifier);
             }
             return false;
             
