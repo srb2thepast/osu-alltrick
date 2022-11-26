@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using osuAT.Game.Types;
 using Skill = osuAT.Game.Skills.Skill;
 
 namespace SkillAnalyzer.Visual

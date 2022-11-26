@@ -21,7 +21,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "flowaim";
 
-        public string Version => "0.005";
+        public string Version => "0.006";
 
         public string Summary => "The ability to move your cursor \n in a fluid motion.";
 
@@ -75,7 +75,11 @@ namespace osuAT.Game.Skills
             private double curStreamLength = 0;
             private double curMSSpeed = 0;
             private double lenMult = 0;
+            private double aimCurDiff = 0;
+            private double aimTotal = 0;
             private double aimDifficulty = 0;
+
+
             private double flowPatternMult = 0;
             private double curAngStrainWorth = 0;
             private double curWorth = 0;
@@ -111,7 +115,10 @@ namespace osuAT.Game.Skills
                 lenMult /= 1.5;
 
                 // Aim Difficulty
-                aimDifficulty = 2*(diffHit.TravelDistance + diffHit.MinimumJumpDistance) / diffHit.MinimumJumpTime;
+                aimCurDiff = 2*(diffHit.MinimumJumpDistance / diffHit.DeltaTime);
+                aimTotal += aimCurDiff * flowPatternMult;
+                aimTotal *= 0.9;
+                aimDifficulty = aimTotal;
 
                 // Flow Pattern Multiplier
                 flowPatternMult = Math.Clamp(((double)curAngle - 60) / 75, 0, 1)/2 + Math.Clamp(((double)lastAngle - 60) / 75, 0, 1) / 2;
