@@ -20,7 +20,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "cursorcontrol";
 
-        public string Version => "0.003";
+        public string Version => "0.004";
 
         public string Summary => "Ability to control the movement \n of your aim.";
 
@@ -70,6 +70,11 @@ namespace osuAT.Game.Skills
             private double angTotal;
             private int angCount;
 
+            private double curAngStrainWorth = 0;
+            private double curWorth = 0;
+            private double totalAngStrainWorth = 0;
+            private double angDifficulty = 0;
+
             public override void Setup()
             {
                 hitAngleDiffs = new List<double>() {};
@@ -84,24 +89,19 @@ namespace osuAT.Game.Skills
             }
 
             public override void CalcNext(OsuDifficultyHitObject diffHit) { 
-                var hitObj = (OsuHitObject)diffHit.BaseObject;
-                var lastHitObj = (OsuHitObject)diffHit.LastObject;
+                var lastDiffHit = (OsuDifficultyHitObject)diffHit.Previous(0);
+                if (lastDiffHit == null) return;
+                if (lastDiffHit.Angle == null) return;
+                if (diffHit.Angle == null) return;
+                curAngle = (double)diffHit.Angle * (180 / Math.PI);
 
-                var angle = (diffHit.Angle);
-
-                if (angle != default) {
-                    hitAngleDiffs.Add((double)angle);
-                    curAngle = (180 / Math.PI) * (double)angle;
-                    angTotal += (double)angle;
-                    angCount++;
-                    avgAng = angTotal / angCount;
-                }
-                curBPM = 120 / (timeDiffSum / (CurrentIndex + 1));
-                timeDiffSum += hitObj.StartTime - lastHitObj.StartTime;
-                distTotal += (hitObj.Position - lastHitObj.Position).Length; 
-                CurTotalPP = Math.Pow(SharedMethods.StandardDeviation(hitAngleDiffs, avgAng)
-                        * (avgDist/2),curBPM
-                );
+                // Angle Difficulty
+                curAngStrainWorth = -Math.Clamp(((double)curAngle) / (135 / 0.9), 0, 1) + 0.9;
+                totalAngStrainWorth += curAngStrainWorth;
+                totalAngStrainWorth = Math.Max(0, totalAngStrainWorth);
+                angDifficulty = 30 * Math.Log(totalAngStrainWorth + 1);
+                curWorth = Math.Max(curWorth, angDifficulty * diffHit.MinimumJumpDistance / diffHit.DeltaTime);
+                CurTotalPP = curWorth;
 
                 // Miss and combo scaling
                 CurTotalPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);

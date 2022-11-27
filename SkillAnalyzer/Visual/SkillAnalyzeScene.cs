@@ -72,7 +72,7 @@ namespace SkillAnalyzer.Visual
         protected string OsuPath = @"C:\Users\alexh\AppData\Local\osu!";
         protected override Ruleset CreateEditorRuleset() => new OsuRuleset();
         protected virtual string MapLocation => @"Songs\807850 THE ORAL CIGARETTES - Mou Ii kai\THE ORAL CIGARETTES - Mou ii Kai (Nevo) [Rain].osu";
-        protected virtual List<ModInfo> AppliedMods => new List<ModInfo> { ModStore.Doubletime , ModStore.Nightcore};
+        protected virtual List<ModInfo> AppliedMods => new List<ModInfo> { ModStore.Doubletime };
 
         public static List<ISkill> CurSkillList = new List<ISkill>();
         protected IBeatmap FocusedBeatmap;

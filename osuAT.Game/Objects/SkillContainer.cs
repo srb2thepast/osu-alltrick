@@ -14,6 +14,13 @@ using osuAT.Game.Skills;
 using osuTK;
 using osuTK.Input;
 using osuAT.Game.Skills.Resources;
+using osuAT.Game.UserInterface;
+using osu.Game.Rulesets.Taiko.Edit.Blueprints;
+using osu.Game.Rulesets.Catch.UI;
+using NuGet.Protocol.Plugins;
+using osuTK.Graphics.ES11;
+using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.Colour;
 
 namespace osuAT.Game
 {
@@ -77,9 +84,75 @@ namespace osuAT.Game
             {
                 box.ParentCont = this;
                 BoxContainer.Add(box);
-
             }
-            /*
+            // add arrows
+            // main, target, rotation, offset, Segments
+            List<ArrowInfo> connectionList = new List<ArrowInfo> {
+                // Aim -> Cursor Control
+                new ArrowInfo {
+                    MainSkill = Skill.Aim,
+                    TargetSkill = Skill.CursorControl,
+                    Rotation = Direction.Left,
+                    Offset = Vector2.Zero,
+                    Colour = Skill.Aim.PrimaryColor,
+                },
+                // Cursor Control -> Flow Aim
+                new ArrowInfo {
+                    MainSkill = Skill.CursorControl,
+                    TargetSkill = Skill.Flowaim,
+                    Rotation = 0,
+                    Offset = new Vector2(0,90),
+                    Colour = Skill.CursorControl.PrimaryColor,
+                    Segments = new List<Segment> {
+                        new Segment{
+                            Start = 50,
+                            Length = 455,
+                            Rotation = Direction.Left
+                        },
+                        new Segment{
+                            Start = 50,
+                            Length = 1721,
+                            Rotation = Direction.Down
+                        },
+                        new Segment{
+                            Start = 100,
+                            Length = 140,
+                            Rotation = Direction.Left
+                        }
+                    }   
+                },
+                // Cursor Control -> Slider Aim
+                new ArrowInfo
+                {
+                    MainSkill = Skill.CursorControl,
+                    TargetSkill = Skill.SliderAim,
+                    Rotation = 0,
+                    Offset = new Vector2(0, -110),
+                    Colour = Skill.CursorControl.PrimaryColor,
+                    Segments = new List<Segment> {
+                        new Segment{
+                            Start = 50,
+                            Length = 737,
+                            Rotation = Direction.Left
+                        },
+                        new Segment{
+                            Start = 50,
+                            Length = 111,
+                            Rotation = Direction.Up
+                        },
+                    }
+                }
+            };
+            foreach (ArrowInfo connect in connectionList)
+            {
+                SkillBox mainBox = SkillDict[connect.MainSkill];
+                SkillBox targetBox = SkillDict[connect.TargetSkill];
+                Arrow ar = AddArrow(mainBox, targetBox, (float)connect.Rotation, connect.Colour,connect.Segments);
+                ar.Position += connect.Offset;
+            }
+
+            
+
             BoxContainer.Add(
             new Sprite
             {
@@ -88,8 +161,48 @@ namespace osuAT.Game
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0.3f,
-                Texture = textures.Get(@"Contributors/chart")
-            });*/
+                //Texture = textures.Get(@"Contributors/chart")
+            });
+        }
+        protected enum Direction
+        {
+            Up = 180,
+            Down = 0,
+            Left = 90
+        }
+
+        protected struct ArrowInfo {
+            public ISkill MainSkill;
+            public ISkill TargetSkill;
+            public Direction Rotation;
+            public Vector2 Offset;
+            public List<Segment> Segments;
+            public Colour4 Colour;
+        }
+
+        protected struct Segment
+        {
+            /// <summary>
+            /// % start compared to the previous Segment.
+            /// </summary>
+            public float Start;
+            public float Length;
+            public Direction Rotation;
+        }
+
+        protected Arrow AddArrow(SkillBox mainBox, SkillBox targetBox,float rotation,Colour4 color, List<Segment> Segments = null) {
+            Arrow newArrow = new Arrow
+            {
+                Length = (mainBox.X - targetBox.X) - mainBox.MiniBox.Width * 2,
+                Anchor = Anchor.Centre,
+                Rotation = rotation,
+                Segments = Segments,
+                Colour = color,
+                Position = new Vector2(mainBox.X - 8, mainBox.Y - 14)
+            };
+            newArrow.Depth = 100;
+            BoxContainer.Add(newArrow);
+            return newArrow;
         }
 
         protected override void LoadComplete()
@@ -111,10 +224,9 @@ namespace osuAT.Game
             FocusedBox ??= SkillDict[Skill.Flowaim];
             SkillBox closest = FocusedBox;
             float closestDist = 100000;
-            float curBoxDist = 100000;
             foreach (SkillBox box in SkillDict.Values) {
                 if (box == FocusedBox) continue;
-                curBoxDist = (bias * (box.Position - FocusedBox.Position)).Length;
+                float curBoxDist = (bias * (box.Position - FocusedBox.Position)).Length;
                 if (closest == null || curBoxDist < closestDist) {
                     if (Math.Abs(bias.Y) > Math.Abs(bias.X))
                     {
@@ -143,7 +255,130 @@ namespace osuAT.Game
             FocusedBox = null;
         }
 
+        protected class Arrow : CompositeDrawable {
 
+            public float Length = 0;
+
+            // <Segment Start (% of Segment length), Segment length, Segment Rotation>
+            public List<Segment> Segments;
+
+            public Arrow()
+            {
+                Origin = Anchor.TopCentre;
+            }
+
+            [BackgroundDependencyLoader]
+            private void load(TextureStore textures)
+            {
+                Length += 20;
+                RelativeSizeAxes = Axes.Both;
+                // straight ahead (no Segments)
+                if (Segments == null)// arrowhead
+                {
+                    InternalChildren = new Drawable[] {
+                        new Container {
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.TopCentre,
+                            Size = new Vector2(16, Length),
+                            Colour = Colour,
+                            Children = new Drawable[] {
+                                new Box {
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                    Size = new Vector2(16, Length),
+                                    Colour = Colour,
+                                }.WithEffect(new GlowEffect { BlurSigma = new Vector2(2f), Strength = 2, PadExtent = true, Colour = Colour }),
+                                new Sprite
+                                {
+                                    Anchor = Anchor.BottomCentre,
+                                    Origin = Anchor.Centre,
+                                    Y = 15,
+                                    Scale = new Vector2(1.2f),
+                                    Rotation = 180,
+                                    Colour = Colour,
+                                    Texture = textures.Get("FigmaVectors/ArrowHead.png")
+                                }.WithEffect(new GlowEffect { BlurSigma = new Vector2(2f), Strength = 2, PadExtent = true, Colour = Colour }),
+                            }
+                        },
+                    };
+                }
+                else {
+                    Circle lastSegmentBox = new Circle()
+                    {
+
+                    };
+                    // Vector2 lastrotdir = new Vector2(1);
+                    Vector2 lastEndPosition = Vector2.Zero;
+                    int i = 0;
+                    foreach (Segment Segment in Segments) {
+                        Circle curSegmentBox = new Circle
+                        {
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.TopCentre,
+                            Height = Segment.Length,
+                            Rotation = (float)Segment.Rotation,
+                            Width = 16,
+                            Position = lastEndPosition,
+                            Colour = Colour
+                        };
+                        lastSegmentBox = curSegmentBox;
+                        Vector2 curEndPosition = curSegmentBox.Position +
+                            (new Vector2(
+                                (float)Math.Sin((-(double)Segment.Rotation) * Math.PI / 180),
+                                (float)Math.Cos((-(double)Segment.Rotation) * Math.PI / 180)) * (Segment.Length -4f)
+                             );
+                        AddInternal(curSegmentBox.WithEffect(new GlowEffect { BlurSigma = new Vector2(2f), Strength = 10, PadExtent = true, Colour = Colour }));
+                        if (i < Segments.Count - 1)
+                        {
+                            /*AddInternal(new Circle
+                            {
+                                Colour = Colour,
+                                Anchor = Anchor.TopCentre,
+                                Origin = Anchor.Centre,
+                                Size = new Vector2(18),
+                                Position = curEndPosition,
+                            }.WithEffect(new GlowEffect { Strength = 2, PadExtent = true, Colour = Colour }));*/
+                        }
+                        else
+                        {
+                            AddInternal(new Container
+                            {
+                                Anchor = Anchor.TopCentre,
+                                Origin = Anchor.TopCentre,
+                                Size = new Vector2(16, Length),
+                                Height = Segment.Length,
+                                Rotation = (float)Segment.Rotation,
+                                Position = lastEndPosition,
+                                Children = new Drawable[] {
+                                    new Box
+                                    {
+                                        Anchor = Anchor.TopCentre,
+                                        Origin = Anchor.TopCentre,
+                                        Height = Segment.Length,
+                                        Width = 16,
+                                        Colour = Colour
+                                    }.WithEffect(new GlowEffect { BlurSigma = new Vector2(2f), Strength = 2, PadExtent = true, Colour = Colour }),
+                                    new Sprite
+                                    {
+                                        Anchor = Anchor.BottomCentre,
+                                        Origin = Anchor.Centre,
+                                        Y = 10,
+                                        Scale = new Vector2(1.2f),
+                                        Rotation = 180,
+                                        Colour = Colour,
+                                        Texture = textures.Get("FigmaVectors/ArrowHead.png")
+                                    }.WithEffect(new GlowEffect { BlurSigma = new Vector2(2f), Strength = 2, PadExtent = true, Colour = Colour })
+                                }
+                            });
+                        }
+                        Console.WriteLine(curEndPosition);
+                        lastEndPosition = curEndPosition;
+                        i++;
+                    }
+                };
+            }
+
+        }
 
         #region Input Handlers
         private Vector2 lastoffpos = Vector2.Zero;
