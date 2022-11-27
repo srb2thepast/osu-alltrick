@@ -12,6 +12,11 @@ using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Skills
 {
+    [Obsolete(
+        "In osu!phd Nerve Control inherits properties from focus, " +
+        "which inherits from pattern processing/reading. " +
+        "It's better to work down to nerve control from reading so that a better understanding" +
+        "of reading difficulty in maps can be achieved, rather than jumping straight ahead to Nerve Control.")]
     public class NerveControlSkill : ISkill
     {
 
