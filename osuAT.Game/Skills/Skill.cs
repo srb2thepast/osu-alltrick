@@ -16,7 +16,6 @@ namespace osuAT.Game.Skills
         public static FlowAimSkill Flowaim = new FlowAimSkill();
         public static CursorControlSkill CursorControl= new CursorControlSkill();
         public static AimSkill Aim = new AimSkill();
-        public static NerveControlSkill NerveControl = new NerveControlSkill();
         public static SliderAimSkill SliderAim = new SliderAimSkill();
         public static TappingStaminaSkill TappingStamina = new TappingStaminaSkill();
 
@@ -27,7 +26,6 @@ namespace osuAT.Game.Skills
             Flowaim,
             CursorControl,
             Aim,
-            NerveControl,
             SliderAim,
             TappingStamina
         };

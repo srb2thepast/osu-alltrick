@@ -275,6 +275,17 @@ namespace osuAT.Game
                 // straight ahead (no Segments)
                 if (Segments == null)// arrowhead
                 {
+                    var ar = new Sprite
+                    {
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.Centre,
+                        Y = -2,
+                        Scale = new Vector2(1.2f),
+                        Rotation = 180,
+                        Colour = Colour,
+                        Texture = textures.Get("FigmaVectors/ArrowHead.png")
+                    }.WithEffect(new GlowEffect { BlurSigma = new Vector2(2f), Strength = 2, PadExtent = true, Colour = Colour });
+                    ar.Padding = new MarginPadding { Bottom = 40};
                     InternalChildren = new Drawable[] {
                         new Container {
                             Anchor = Anchor.TopCentre,
@@ -288,16 +299,7 @@ namespace osuAT.Game
                                     Size = new Vector2(16, Length),
                                     Colour = Colour,
                                 }.WithEffect(new GlowEffect { BlurSigma = new Vector2(2f), Strength = 2, PadExtent = true, Colour = Colour }),
-                                new Sprite
-                                {
-                                    Anchor = Anchor.BottomCentre,
-                                    Origin = Anchor.Centre,
-                                    Y = 15,
-                                    Scale = new Vector2(1.2f),
-                                    Rotation = 180,
-                                    Colour = Colour,
-                                    Texture = textures.Get("FigmaVectors/ArrowHead.png")
-                                }.WithEffect(new GlowEffect { BlurSigma = new Vector2(2f), Strength = 2, PadExtent = true, Colour = Colour }),
+                                ar
                             }
                         },
                     };
@@ -341,6 +343,17 @@ namespace osuAT.Game
                         }
                         else
                         {
+                            var ar = new Sprite
+                            {
+                                Anchor = Anchor.BottomCentre,
+                                Origin = Anchor.Centre,
+                                Y = -2,
+                                Scale = new Vector2(1.2f),
+                                Rotation = 180,
+                                Colour = Colour,
+                                Texture = textures.Get("FigmaVectors/ArrowHead.png")
+                            }.WithEffect(new GlowEffect { BlurSigma = new Vector2(2f), Strength = 2, PadExtent = true, Colour = Colour });
+                            ar.Padding = new MarginPadding { Bottom = 40 };
                             AddInternal(new Container
                             {
                                 Anchor = Anchor.TopCentre,
@@ -358,16 +371,7 @@ namespace osuAT.Game
                                         Width = 16,
                                         Colour = Colour
                                     }.WithEffect(new GlowEffect { BlurSigma = new Vector2(2f), Strength = 2, PadExtent = true, Colour = Colour }),
-                                    new Sprite
-                                    {
-                                        Anchor = Anchor.BottomCentre,
-                                        Origin = Anchor.Centre,
-                                        Y = 10,
-                                        Scale = new Vector2(1.2f),
-                                        Rotation = 180,
-                                        Colour = Colour,
-                                        Texture = textures.Get("FigmaVectors/ArrowHead.png")
-                                    }.WithEffect(new GlowEffect { BlurSigma = new Vector2(2f), Strength = 2, PadExtent = true, Colour = Colour })
+                                    ar
                                 }
                             });
                         }
