@@ -18,7 +18,7 @@ namespace SkillAnalyzer
     /// </summary>
     /// <remarks>This class is not intended for other works (it was designed very quickly)</remarks>
     /// <param name="barGraph"></param>        
-    public class LabelledBarGraph : Container
+    public partial class LabelledBarGraph : Container
     {
         public SpacedBarGraph SBarGraph { get; private set; }
 
@@ -74,7 +74,7 @@ namespace SkillAnalyzer
 
             SBarGraph.NameValues = values;
             int i = 0;
-            int amount = SBarGraph.Children.Count;
+            int amount = SBarGraph.Count;
             List<Bar> barsToAdd = new List<Bar>();
 
             foreach (Bar child in SBarGraph.Children)

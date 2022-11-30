@@ -21,6 +21,7 @@ using NuGet.Protocol.Plugins;
 using osuTK.Graphics.ES11;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Colour;
+using System.Threading.Tasks;
 
 namespace osuAT.Game
 {
@@ -215,7 +216,11 @@ namespace osuAT.Game
                 (Size.X / 2 + box.Position.X),
                 (box.Position.Y));
             BoxContainer.MoveTo(-BoxScreenPos, 400, Easing.OutCubic);
-
+            FocusedBox?.MiniBox.OnDefocus();
+            Task.Run(async () => {
+                await Task.Delay(200);
+                Schedule(() => box.MiniBox.OnFocus());
+            });
             FocusedBox = box;
             lastoffpos = BoxScreenPos;
         }
@@ -399,7 +404,8 @@ namespace osuAT.Game
         protected override void OnDrag(DragEvent e)
         {
             Vector2 newPos = ((-e.MousePosition + e.MouseDownPosition)*(1/Child.Scale.X) + lastoffpos);
-            BoxContainer.MoveTo(-newPos );
+            newPos = new Vector2(Math.Clamp(newPos.X,0,8000),Math.Clamp(newPos.Y, -2500, 2500));
+            BoxContainer.MoveTo(-newPos);
 
         }
         protected override void OnDragEnd(DragEndEvent e)

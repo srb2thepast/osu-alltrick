@@ -212,32 +212,47 @@ namespace osuAT.Game.Objects
                                 Y = 70,
                                 Alpha = (Skill.Level == SkillLevel.Chosen )? 1:0,
                                 Children = new Drawable[] {
-                                    new Sprite {
-                                        Position = new Vector2(-200, -145),
-                                        Size = new Vector2(70, 70),
-                                        Texture = textures.Get("FigmaVectors/DiamondStar"),
-                                        Colour = Skill.PrimaryColor
-                                    }.WithEffect(new GlowEffect
-                                    {
-                                        BlurSigma = new Vector2(1f),
-                                        Strength = 0.3f,
-                                        Colour = Skill.PrimaryColor,
-                                        PadExtent = true,
-                                    }),
-                                    new Sprite {
-                                        Position = new Vector2(126, 58),
-                                        Size = new Vector2(70, 70),
-                                        Texture = textures.Get("FigmaVectors/DiamondStar"),
-                                        Colour = Skill.SecondaryColor
-                                    }.WithEffect(new GlowEffect
-                                    {
-                                        BlurSigma = new Vector2(1f),
-                                        Strength = 0.3f,
-                                        Colour = Skill.SecondaryColor.Darken(0.2f),
-                                        PadExtent = true,
+                                    new Container {
+                                        AutoSizeAxes = Axes.Both,
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
+                                        Position = new Vector2(-200, -145) - new Vector2(52,23*Skill.MiniHeight/200),
+                                        Children = new Drawable[] {
+                                            new Sprite {
+                                                Size = new Vector2(70, 70),
+                                                Texture = textures.Get("FigmaVectors/DiamondStar"),
+                                                Colour = Skill.PrimaryColor
+                                            }.WithEffect(new GlowEffect
+                                            {
+                                                BlurSigma = new Vector2(1f),
+                                                Strength = 0.3f,
+                                                Colour = Skill.PrimaryColor,
+                                                PadExtent = true,
+                                            })
+                                        },
+                                    },
+                                    new Container {
+                                        AutoSizeAxes = Axes.Both,
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
+                                        Position = new Vector2(126, 58)- new Vector2(62,50-20*Skill.MiniHeight/200),
+                                        Children = new Drawable[] {
+                                            new Sprite {
+                                                Anchor = Anchor.Centre,
+                                                Origin = Anchor.Centre,
+                                                Size = new Vector2(70, 70),
+                                                Texture = textures.Get("FigmaVectors/DiamondStar"),
+                                                Colour = Skill.SecondaryColor
+                                            }.WithEffect(new GlowEffect
+                                            {
+                                                BlurSigma = new Vector2(1f),
+                                                Strength = 0.3f,
+                                                Colour = Skill.SecondaryColor.Darken(0.2f),
+                                                PadExtent = true,
 
-                                    }),
-
+                                            }),
+                                        }
+                                    }
                                 }
                             },
                         }
@@ -297,17 +312,32 @@ namespace osuAT.Game.Objects
         protected override bool OnHover(HoverEvent e)
         {
             if (ParentBox.State == SkillBoxState.FullBox) return false;
-            miniBox.Child.ScaleTo(1.07f, 100, Easing.Out);
-            Console.WriteLine(miniBox.Child.Scale);
+            if (ParentBox.ParentCont.MainScreen.SkillCont.FocusedBox == ParentBox) return false;
+            OnFocus();
             return base.OnHover(e);
 
         }
-        protected override void OnHoverLost(HoverLostEvent e)
+
+        public void OnFocus()
+        {
+            if (ParentBox.State == SkillBoxState.FullBox) return;
+            miniBox.Child.ScaleTo(1.07f, 100, Easing.Out);
+            Console.WriteLine(miniBox.Child.Scale);
+        }
+
+        public void OnDefocus()
         {
             if (ParentBox.ParentCont.MainScreen.CurrentlyFocused == false) return;
             if (ParentBox.State == SkillBoxState.FullBox) { miniBox.Child.Scale = new Vector2(1.1f); return; }
             miniBox.Child.ScaleTo(1f, 100, Easing.Out);
-            base.OnHoverLost(e);
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            if (ParentBox.ParentCont.MainScreen.CurrentlyFocused == false) return;
+            if (ParentBox.ParentCont.MainScreen.SkillCont.FocusedBox == ParentBox) return;
+            if (ParentBox.State == SkillBoxState.FullBox) { miniBox.Child.Scale = new Vector2(1.1f); return; }
+            OnDefocus();
             Console.WriteLine(miniBox.Child.Scale);
         }
 
@@ -339,12 +369,12 @@ namespace osuAT.Game.Objects
 
         public void Slideout()
         {
-
+            
             mainbox.Delay(300).MoveToX(358, 600, Easing.InOutCubic);
-            outerstars[0].Delay(500).MoveTo(new Vector2(0, 0), 600, Easing.InOutCubic);
-            outerstars[1].Delay(500).MoveTo(new Vector2(0, 0), 600, Easing.InOutCubic);
-            outerstars.Delay(500).MoveTo(new Vector2(148, -100), 600, Easing.InOutCubic);
-            outerstars.Delay(500).ScaleTo(0.5f, 600, Easing.InOutCubic);
+            outerstars[0].Delay(400).MoveTo(new Vector2(0, 0), 600, Easing.InOutCubic);
+            outerstars[1].Delay(400).MoveTo(new Vector2(0, 0), 600, Easing.InOutCubic);
+            outerstars.Delay(400).MoveTo(new Vector2(148, -100), 600, Easing.InOutCubic);
+            outerstars.Delay(400).ScaleTo(0.5f, 600, Easing.InOutCubic);
             //mainbox.Delay(700).FadeOut();
         }
 
@@ -352,8 +382,8 @@ namespace osuAT.Game.Objects
         {
             mainbox.Delay(0).FadeIn();
             mainbox.Delay(300).MoveToX(0, 600, Easing.InOutCubic);
-            outerstars[0].Delay(500).MoveTo(new Vector2(-200, -145), 600, Easing.InOutCubic);
-            outerstars[1].Delay(500).MoveTo(new Vector2(126, 58), 600, Easing.InOutCubic);
+            outerstars[0].Delay(500).MoveTo(new Vector2(-200, -145) - new Vector2(52, 23 * Skill.MiniHeight / 200), 600, Easing.InOutCubic);
+            outerstars[1].Delay(500).MoveTo(new Vector2(126, 58) - new Vector2(62, 30 * Skill.MiniHeight / 200), 600, Easing.InOutCubic);
             outerstars.Delay(500).MoveTo(new Vector2(96, 70), 600, Easing.InOutCubic);
             outerstars.Delay(500).ScaleTo(1, 600, Easing.InOutCubic);
         }

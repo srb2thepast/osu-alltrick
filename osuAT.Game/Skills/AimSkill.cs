@@ -21,7 +21,7 @@ namespace osuAT.Game.Skills
 
         public string Version => "0.001";
 
-        public string Summary => "The ability to move your cursor \n to any circle\n.";
+        public string Summary => "Absolutely Broken"; // "The ability to move your cursor \n to any circle\n.";
 
         public int SummarySize => 9;
 

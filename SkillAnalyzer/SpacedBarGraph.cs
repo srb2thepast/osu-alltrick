@@ -11,7 +11,7 @@ namespace SkillAnalyzer
     /// <summary>w
     /// A spaced out bar graph.
     /// </summary>
-    public class SpacedBarGraph : BarGraph
+    public class SpacedBarGraph : BarGraphFlow
     {
         private SortedList<string, float> nameValues;
 

@@ -10,7 +10,7 @@ namespace SkillAnalyzer.Visual
 {
     public class FlowAimAnalyzer : SkillAnalyzeScene
     {
-        protected override string MapLocation => @"Songs\859515 K A Z M A S A - Bon Appetit S (Oldskool HappyHardcore Remix) (Short Ver)\K A Z M A S A - Bon Appetit S (Oldskool HappyHardcore Remix) (Short Ver.) (BarkingMadDog) [blend s (250 bpm)].osu";
+        protected override string MapLocation => @"Songs\1392153 Release Hallucination - Chronostasis (1)\Release Hallucination - Chronostasis (Seni) [A Brilliant Petal Frozen In an Everlasting Moment].osu";
         protected override List<ModInfo> AppliedMods => new List<ModInfo> { };
         public FlowAimAnalyzer() {
             

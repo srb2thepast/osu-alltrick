@@ -21,7 +21,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "flowaim";
 
-        public string Version => "0.007";
+        public string Version => "0.008";
 
         public string Summary => "The ability to move your cursor \n in a fluid motion.";
 
@@ -72,18 +72,17 @@ namespace osuAT.Game.Skills
             private double aimTotal = 0;
 
 
-            private double flowPatternMult = 0;
-            private double curAngStrainWorth = 0;
             [HiddenDebugValue]
             private double totalAngStrainWorth = 0;
+
+            private double flowPatternMult = 0;
+            private double angCurDiff = 0;
             private double aimCurDiff = 0;
+
             private double lenMult = 0;
             private double aimDifficulty = 0;
             private double angDifficulty = 0;
             private double curWorth = 0;
-
-            private double curAngle = 0;
-            private double lastAngle = 0;
 
 
             public override void Setup()
@@ -98,8 +97,8 @@ namespace osuAT.Game.Skills
                 if (lastDiffHit == null) return;
                 if (lastDiffHit.Angle == null) return;
                 if (diffHit.Angle == null) return;
-                curAngle = (double)diffHit.Angle * (180/Math.PI);
-                lastAngle = (double)lastDiffHit.Angle * (180 / Math.PI);
+                double curAngle = (double)diffHit.Angle * (180/Math.PI);
+                double lastAngle = (double)lastDiffHit.Angle * (180 / Math.PI);
 
                 // Strain-based Stream Length
                 curStreamLength += Math.Clamp(SharedMethods.BPMToMS(180) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1);
@@ -107,28 +106,27 @@ namespace osuAT.Game.Skills
                 curMSSpeed = diffHit.StartTime - lastDiffHit.StartTime;
 
                 // Length multiplier
-                lenMult = 2 * Math.Log((curStreamLength * 1 / 40) + 1);
-                lenMult /= 1.5;
+                lenMult = 1.3 * Math.Log((curStreamLength / 60) + 1);
 
                 // Aim Difficulty
                 aimCurDiff = 2*(diffHit.LazyJumpDistance / diffHit.DeltaTime);
                 aimTotal += aimCurDiff * flowPatternMult;
-                aimTotal *= 0.9 - (0.5 *(1 - flowPatternMult));
-                aimDifficulty = 1.5*aimTotal;
+                aimTotal *= 0.9;
+                aimDifficulty = aimTotal;
 
                 // Flow Pattern Multiplier
                 flowPatternMult = Math.Clamp(((double)curAngle - 60) / 75, 0, 1)/2 + Math.Clamp(((double)lastAngle - 60) / 75, 0, 1) / 2;
 
                 // Angle Difficulty 
-                curAngStrainWorth = -Math.Clamp(((double)curAngle) / (135 / 0.9), 0, 1) + 0.9;
-                totalAngStrainWorth += curAngStrainWorth;
-                totalAngStrainWorth *= 0.995;
+                angCurDiff = 20*(-Math.Clamp(1.5 * ((double)curAngle-60) / 180, -1, 1) + 1);
+                totalAngStrainWorth += angCurDiff * flowPatternMult;
+                totalAngStrainWorth *= 0.9;
                 totalAngStrainWorth = Math.Max(0,totalAngStrainWorth);
 
-                angDifficulty = aimDifficulty * 1.5 *Math.Log(totalAngStrainWorth+1);
+                angDifficulty = 1.5 *Math.Log(totalAngStrainWorth+1);
 
                 // Final value
-                curWorth = 1.25*lenMult * flowPatternMult * (aimDifficulty*2 + angDifficulty);
+                curWorth = 1.25*lenMult * flowPatternMult * (10*aimDifficulty + (aimDifficulty * angDifficulty));
 
                 CurTotalPP = Math.Max(CurTotalPP,curWorth);
             }

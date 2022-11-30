@@ -292,7 +292,7 @@ namespace osuAT.Game
                                 Origin = Anchor.CentreLeft,
                                 Position = new Vector2(60,115),
                                 Font = new FontUsage("VarelaRound", size: 50),
-                                Colour = ApiScoreProcessor.ApiKeyValid? Colour4.White : Colour4.Gray,
+                                Colour = Colour4.Gray,
                                 Shadow = true,
                                 ShadowOffset = new Vector2(0,0.1f),
                                 Text = "Username:"
@@ -303,7 +303,7 @@ namespace osuAT.Game
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.CentreLeft,
                                 Position = new Vector2(256,110),
-                                Colour = ApiScoreProcessor.ApiKeyValid? Colour4.White : Colour4.Gray,
+                                Colour = Colour4.Gray,
                                 Masking =true,
                                 CornerRadius = 5,
                                 Size = new Vector2(500,50),
@@ -488,7 +488,9 @@ namespace osuAT.Game
                 fileSelectContainer.Hide();
                 apikeyText.Text = SaveStorage.SaveData.APIKey;
                 Console.WriteLine(SaveStorage.SaveData.PlayerUsername);
-                usernameText.Text = (SaveStorage.SaveData.PlayerUsername == "")? SaveStorage.SaveData.PlayerUsername : "Please set your api key first.";
+                usernameText.Text = ApiScoreProcessor.ApiKeyValid? SaveStorage.SaveData.PlayerUsername : "Please set your api key first.";
+                usernameText.Colour = ApiScoreProcessor.ApiKeyValid ? Colour4.White : Colour4.Gray;
+                usernameDisplayText.Colour = ApiScoreProcessor.ApiKeyValid ? Colour4.White : Colour4.Gray;
                 apikeyText.OnCommit += new TextBox.OnCommitHandler((TextBox box, bool target) => {
 
                     // check if it's a valid api key. if it is, display a checkmark
@@ -504,7 +506,7 @@ namespace osuAT.Game
                         apikeyText.FlashColour(Color4.Green, 3000, Easing.InOutCubic);
                         usernameText.ReadOnly = false;
                         usernameText.Colour = Colour4.White;
-                        usernameText.Text = (usernameText.Text == "Please set your api key first.") ? "" : usernameText.Text;
+                        usernameText.Text = SaveStorage.SaveData.PlayerUsername;
                         usernameDisplayText.Colour = Colour4.White;
                         return;
                     }
