@@ -6,7 +6,7 @@ using osuTK;
 
 namespace osuAT.Game.Objects
 {
-    public class Book : Container {
+    public partial class Book : Container {
         public Page[] Pages = new Page[] { };
         public Bindable<int> CurrentPage = new Bindable<int>(defaultValue: 0);
 

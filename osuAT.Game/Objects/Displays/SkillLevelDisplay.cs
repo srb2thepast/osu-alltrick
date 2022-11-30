@@ -12,7 +12,7 @@ using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Objects.Displays
 {
-    public class SkillLevelDisplay : CompositeDrawable
+    public partial class SkillLevelDisplay : CompositeDrawable
     {
         private CircularContainer maincont;
         private CircularContainer levelContainer;

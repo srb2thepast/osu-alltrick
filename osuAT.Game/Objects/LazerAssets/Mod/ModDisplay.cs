@@ -37,10 +37,10 @@ namespace osuAT.Game.Objects.LazerAssets.Mod
     /// <summary>
     /// Displays a single-line horizontal auto-sized flow of mods. For cases where wrapping is required, use <see cref="ModFlowDisplay"/> instead.
     /// </summary>
-    public class ModDisplay : CompositeDrawable, IHasCurrentValue<IReadOnlyList<ModInfo>>
+    public partial class ModDisplay : CompositeDrawable, IHasCurrentValue<IReadOnlyList<ModInfo>>
     {
 
-        public class ReverseChildIDFillFlowContainer<T> : FillFlowContainer<T> where T : Drawable
+        public partial class ReverseChildIDFillFlowContainer<T> : FillFlowContainer<T> where T : Drawable
         {
             protected override int Compare(Drawable x, Drawable y) => CompareReverseChildID(x, y);
         }

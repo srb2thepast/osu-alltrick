@@ -19,7 +19,7 @@ using osuAT.Game.Skills.Resources;
 namespace osuAT.Game.Objects
 {
 
-    public class MiniSkillBox : CompositeDrawable
+    public partial class MiniSkillBox : CompositeDrawable
     {
 
         public ISkill Skill;

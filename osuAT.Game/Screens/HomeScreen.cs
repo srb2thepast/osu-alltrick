@@ -19,7 +19,7 @@ using osu.Framework.Localisation;
 
 namespace osuAT.Game.Screens
 {
-    public class HomeScreen : Screen
+    public partial class HomeScreen : Screen
     {
         private Drawable background;
         public SpriteText UsernameText;
@@ -206,7 +206,7 @@ namespace osuAT.Game.Screens
             };
         }
 
-        private class ExitButton : CompositeDrawable, IHasTooltip
+        private partial class ExitButton : CompositeDrawable, IHasTooltip
         {
             public LocalisableString TooltipText { get; }
             public ExitButton()
@@ -253,7 +253,7 @@ namespace osuAT.Game.Screens
             }
         }
 
-        private class HomeBackground : Container {
+        private partial class HomeBackground : Container {
             private Container box;
 
             public HomeBackground()

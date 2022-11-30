@@ -17,7 +17,7 @@ using osuTK;
 namespace osuAT.Game.Objects.Displays
 {
 
-    public class ScoreList : CompositeDrawable
+    public partial class ScoreList : CompositeDrawable
     {
 
         public ScoreList()

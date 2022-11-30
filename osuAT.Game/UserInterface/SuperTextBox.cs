@@ -8,7 +8,7 @@ using osuTK;
 namespace osuAT.Game.UserInterface
 {
     
-    public class SuperTextBox : BasicTextBox
+    public partial class SuperTextBox : BasicTextBox
     {
         public FontUsage TextFont;
 

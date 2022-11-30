@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 
 namespace osuAT.Game
 {
-    public class SkillContainer : Container
+    public partial class SkillContainer : Container
     {
         private Container container;
         public Dictionary<ISkill, SkillBox> SkillDict = new Dictionary<ISkill, SkillBox>();

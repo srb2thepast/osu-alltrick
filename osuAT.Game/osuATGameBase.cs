@@ -22,7 +22,7 @@ using System.ComponentModel.Design;
 
 namespace osuAT.Game
 {
-    public class osuATGameBase : osu.Framework.Game
+    public partial class osuATGameBase : osu.Framework.Game
     {
         // Anything in this class is shared between the test browser and the game implementation.
         // It allows for caching global dependencies that should be accessible to tests, or changing

@@ -20,7 +20,7 @@ using osuAT.Game.Skills.Resources;
 namespace osuAT.Game.Objects
 {
 
-    public class FullSkillBox : CompositeDrawable
+    public partial class FullSkillBox : CompositeDrawable
     {
 
         public ISkill CurSkill;
@@ -32,7 +32,7 @@ namespace osuAT.Game.Objects
         private ScoreContainer scoreContainer;
 
 
-        public class SkillInfo : CompositeDrawable
+        public partial class SkillInfo : CompositeDrawable
         {
             public ISkill CurSkill;
             public int TextSize; // Text Size 
@@ -67,7 +67,7 @@ namespace osuAT.Game.Objects
             private Container bubbleContainer;
             #endregion
 
-            private class ppBar : Container
+            private partial class ppBar : Container
             {
                 public ISkill CurSkill;
                 private readonly BindableWithCurrent<int> performance = new BindableWithCurrent<int>();

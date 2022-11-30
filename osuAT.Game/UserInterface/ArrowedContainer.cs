@@ -19,7 +19,7 @@ using osuTK;
 
 namespace osuAT.Game.UserInterface
 {
-    public class ArrowedContainer : FillFlowContainer
+    public partial class ArrowedContainer : FillFlowContainer
     {
         public Drawable[] Objects = { Drawable.Empty() };
         public int StartingIndex;

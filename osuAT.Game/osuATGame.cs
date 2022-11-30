@@ -10,7 +10,7 @@ using Realms;
 
 namespace osuAT.Game
 {
-    public class osuATGame : osuATGameBase
+    public partial class osuATGame : osuATGameBase
     {
         
         public ScreenStack ScreenStack;

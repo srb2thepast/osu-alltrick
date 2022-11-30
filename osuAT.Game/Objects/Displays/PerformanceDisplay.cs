@@ -39,7 +39,7 @@ namespace osuAT.Game.Objects.Displays
     /// <summary>
     /// A pill that displays the star rating of a beatmap.
     /// </summary>
-    public class PerformanceDisplay : CompositeDrawable
+    public partial class PerformanceDisplay : CompositeDrawable
     {
         public static Color4 SampleFromLinearGradient((float position, Color4 colour)[] gradient, float point)
         {

@@ -29,7 +29,7 @@ namespace osuAT.Game
 {
 
 
-    public class ImportButton : CompositeDrawable
+    public partial class ImportButton : CompositeDrawable
     {
         private MapIDBox beatmapBox;
         private HomeScreen mainScreen;
@@ -87,7 +87,7 @@ namespace osuAT.Game
             Size = InternalChildren[0].Size;
         }
 
-        public class MapIDBox : CompositeDrawable
+        public partial class MapIDBox : CompositeDrawable
         {
             private bool force = false;
             private Container background;

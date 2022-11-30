@@ -17,7 +17,7 @@ using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Objects.Displays
 {
-    public class ScoreDisplay : CompositeDrawable
+    public partial class ScoreDisplay : CompositeDrawable
     {
 
         public Score Current { get; set; }

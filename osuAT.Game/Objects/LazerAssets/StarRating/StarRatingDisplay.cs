@@ -39,7 +39,7 @@ namespace osuAT.Game.Objects.LazerAssets.StarRating
     /// <summary>
     /// A pill that displays the star rating of a beatmap.
     /// </summary>
-    public class StarRatingDisplay : CompositeDrawable
+    public partial class StarRatingDisplay : CompositeDrawable
     {
         public static Color4 SampleFromLinearGradient((float position, Color4 colour)[] gradient, float point)
         {

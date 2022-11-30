@@ -26,7 +26,7 @@ using osu.Framework.Extensions.ObjectExtensions;
 namespace osuAT.Game
 {
 
-    public class SettingsButton : CompositeDrawable
+    public partial class SettingsButton : CompositeDrawable
     {
         private SettingsBox settingsBox;
         private HomeScreen mainScreen;
@@ -97,7 +97,7 @@ namespace osuAT.Game
             Size = InternalChildren[0].Size;
         }
 
-        public class SettingsBox : CompositeDrawable
+        public partial class SettingsBox : CompositeDrawable
         {
             private bool force = false;
             private Container background;

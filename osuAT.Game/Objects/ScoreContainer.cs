@@ -13,7 +13,7 @@ using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game
 {
-    public class ScoreContainer : CompositeDrawable
+    public partial class ScoreContainer : CompositeDrawable
     {
         protected List<Score> ScoreList = new List<Score>();
         public ISkill Skill { get; set; }
@@ -25,9 +25,9 @@ namespace osuAT.Game
         }
         private ScoreScrollContainer<Drawable> scrollbox;
 
-        public class ScoreScrollContainer<T> : ScrollContainer<T> where T : Drawable
+        public partial class ScoreScrollContainer<T> : ScrollContainer<T> where T : Drawable
         {
-            protected class ScoreScrollBar : ScrollbarContainer
+            protected partial class ScoreScrollBar : ScrollbarContainer
             {
                 public ScoreScrollBar(Direction direction) : base(direction)
                 {

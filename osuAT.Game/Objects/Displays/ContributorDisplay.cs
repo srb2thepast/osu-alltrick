@@ -17,7 +17,7 @@ using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Objects.Displays
 {
-    public class ContributorDisplay : CompositeDrawable
+    public partial class ContributorDisplay : CompositeDrawable
     {
 
         public ISkill Skill;

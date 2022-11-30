@@ -10,7 +10,7 @@ using osuAT.Game.Types;
 using osuTK;
 namespace osuAT.Game.Objects.Displays
 {
-    public class RulesetDisplay : CompositeDrawable
+    public partial class RulesetDisplay : CompositeDrawable
     {
 
 

@@ -7,7 +7,7 @@ using osuTK;
 
 namespace osuAT.Game.UserInterface
 {
-    public class SuperPasswordTextBox : BasicPasswordTextBox
+    public partial class SuperPasswordTextBox : BasicPasswordTextBox
     {
         public FontUsage TextFont;
 

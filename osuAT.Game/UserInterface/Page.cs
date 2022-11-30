@@ -3,7 +3,7 @@ using osu.Framework.Graphics.Containers;
 
 namespace osuAT.Game.Objects
 {
-    public class Page : Container
+    public partial class Page : Container
     {
         // public Action UpdateContent;
         public int Index;

@@ -13,7 +13,7 @@ using osuTK.Graphics;
 
 namespace osuAT.Game.Objects.LazerAssets
 {
-    public class DrawableRank : CompositeDrawable
+    public partial class DrawableRank : CompositeDrawable
     {
         private readonly string rank;
 

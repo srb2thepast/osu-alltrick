@@ -24,7 +24,7 @@ namespace osuAT.Game.Objects
         FullBox = 2
     }
 
-    public class SkillBox : Container
+    public partial class SkillBox : Container
     {
 
         public ISkill Skill;
