@@ -776,11 +776,17 @@ namespace SkillAnalyzer.Visual
             if (cachedCurTime > currentTime)
             { // person seeked backwards, so go backwards from the last curhitindex
                 cachedCurTime = currentTime;
-                for (int i = curhitindex-1; i > 0; i--)
+                for (int i = curhitindex; i >= 0; i--)
                 {
-                    var time = hitList[i].StartTime;
-                    if (time * EditorClock.Track.Value.Rate < currentTime)
+                    var time = hitList[i].StartTime * EditorClock.Track.Value.Rate;
+                    Console.Write(time);
+                    Console.Write(" < ");
+                    Console.WriteLine(currentTime);
+                    Console.WriteLine(time * EditorClock.Track.Value.Rate < currentTime);
+                    
+                    if (time < currentTime)
                     {
+                        Console.WriteLine(curhitindex);
                         curhitindex = i;
                         return i;
                     }
@@ -788,18 +794,21 @@ namespace SkillAnalyzer.Visual
                 curhitindex = 0;
                 return 0;
             }
+
             cachedCurTime = currentTime;
             // [~] this could be made a bit better
             // starts at curhitindex to avoid constantly looping through the whole map
             for (int i = curhitindex; i < hitList.Count; i++) {
                 var time = hitList[i].StartTime;
-                if (time * EditorClock.Track.Value.Rate > currentTime) {
+                if (time * EditorClock.Track.Value.Rate > currentTime)
+                {
+                    Console.WriteLine(curhitindex);
                     curhitindex = i;
                     return i;
                 }
             }
-            curhitindex = hitList.Count;
-            return hitList.Count;
+            curhitindex = hitList.Count-1;
+            return hitList.Count-1;
         }
 
         protected override void LoadEditor()

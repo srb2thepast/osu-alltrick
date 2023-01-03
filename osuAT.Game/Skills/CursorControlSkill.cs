@@ -57,35 +57,21 @@ namespace osuAT.Game.Skills
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
 
-            [HiddenDebugValue]
-            private List<double> hitAngleDiffs;
-            [HiddenDebugValue]
-            private double distTotal;
-            private double avgDist;
+            private double angDifficulty = 0;
+            private double aimDifficulty = 0;
             private double curAngle;
-            private double timeDiffSum;
-            private double curBPM;
-            private double avgAng;
-            [HiddenDebugValue]
-            private double angTotal;
-            private int angCount;
 
             private double curAngStrainWorth = 0;
             private double curWorth = 0;
+            [HiddenDebugValue]
+            private double highestWorth = 0;
+
             private double totalAngStrainWorth = 0;
-            private double angDifficulty = 0;
 
             public override void Setup()
             {
-                hitAngleDiffs = new List<double>() {};
-                avgDist = 0;
-                distTotal = 0;
-                avgAng = 0;
-                angTotal = 0;
-                angCount = 0;
                 curAngle = 0;
-                timeDiffSum = 0;
-                curBPM = 0;
+                aimDifficulty = 0;
             }
 
             public override void CalcNext(OsuDifficultyHitObject diffHit) { 
@@ -100,14 +86,17 @@ namespace osuAT.Game.Skills
                 totalAngStrainWorth += curAngStrainWorth;
                 totalAngStrainWorth = Math.Max(0, totalAngStrainWorth);
                 angDifficulty = 30 * Math.Log(totalAngStrainWorth + 1);
-                curWorth = Math.Max(curWorth, angDifficulty * diffHit.MinimumJumpDistance / diffHit.DeltaTime);
-                CurTotalPP = curWorth;
+                aimDifficulty = (diffHit.MinimumJumpDistance / diffHit.DeltaTime) / 5;
+
+                curWorth = angDifficulty * aimDifficulty;
+                highestWorth = Math.Max(highestWorth, curWorth);
 
                 // Miss and combo scaling
+                CurTotalPP = highestWorth;
                 CurTotalPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
                 CurTotalPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
 
-                avgDist = distTotal / (CurrentIndex+1);
+
             }
         }
 

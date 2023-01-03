@@ -83,6 +83,8 @@ namespace osuAT.Game.Skills
             private double aimDifficulty = 0;
             private double angDifficulty = 0;
             private double curWorth = 0;
+            [HiddenDebugValue]
+            private double highestWorth = 0;
 
 
             public override void Setup()
@@ -109,13 +111,13 @@ namespace osuAT.Game.Skills
                 lenMult = 1.3 * Math.Log((curStreamLength / 60) + 1);
 
                 // Aim Difficulty
-                aimCurDiff = 2*(diffHit.LazyJumpDistance / diffHit.DeltaTime);
+                aimCurDiff = 10 * (diffHit.LazyJumpDistance / diffHit.DeltaTime);
                 aimTotal += aimCurDiff * flowPatternMult;
-                aimTotal *= 0.9;
+                aimTotal *= 0.5; // - 1 * (1-flowPatternMult);
                 aimDifficulty = aimTotal;
 
                 // Flow Pattern Multiplier
-                flowPatternMult = Math.Clamp(((double)curAngle - 60) / 75, 0, 1)/2 + Math.Clamp(((double)lastAngle - 60) / 75, 0, 1) / 2;
+                flowPatternMult = Math.Clamp(((double)curAngle - 60) / 60, 0, 1)/2 + Math.Clamp(((double)lastAngle - 60) / 60, 0, 1) / 2;
 
                 // Angle Difficulty 
                 angCurDiff = 20*(-Math.Clamp(1.5 * ((double)curAngle-60) / 180, -1, 1) + 1);
@@ -127,8 +129,11 @@ namespace osuAT.Game.Skills
 
                 // Final value
                 curWorth = 1.25*lenMult * flowPatternMult * (10*aimDifficulty + (aimDifficulty * angDifficulty));
+                highestWorth = Math.Max(highestWorth, curWorth);
 
-                CurTotalPP = Math.Max(CurTotalPP,curWorth);
+                CurTotalPP = highestWorth;
+                CurTotalPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
+                CurTotalPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
             }
         }
 
