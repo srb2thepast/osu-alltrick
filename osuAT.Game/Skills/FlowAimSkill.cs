@@ -102,7 +102,7 @@ namespace osuAT.Game.Skills
                 double curAngle = (double)diffHit.Angle * (180/Math.PI);
                 double lastAngle = (double)lastDiffHit.Angle * (180 / Math.PI);
 
-                // Strain-based Stream Length
+                // Strain-based Stream Length  
                 curStreamLength += Math.Clamp(SharedMethods.BPMToMS(180) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1);
                 curStreamLength -= curStreamLength * 0.75 * (1 - Math.Clamp(SharedMethods.BPMToMS(180, 2) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1));
                 curMSSpeed = diffHit.StartTime - lastDiffHit.StartTime;

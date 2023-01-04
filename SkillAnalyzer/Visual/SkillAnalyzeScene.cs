@@ -62,14 +62,15 @@ using osu.Game.Graphics.UserInterface;
 using osuTK.Input;
 using osuAT.Game.Skills.Resources;
 using NuGet.Packaging.Rules;
+using System.IO;
 
 namespace SkillAnalyzer.Visual
 {
     // [~] TODO: Get beatmap audio working
     // [!] Remove AnalyzerPlaybackControl 
-    public abstract class SkillAnalyzeScene : EditorTestScene
+    public abstract partial class SkillAnalyzeScene : EditorTestScene
     {
-        protected string OsuPath = @"C:\Users\alexh\AppData\Local\osu!";
+        protected virtual string OsuPath => @"C:\Users\alexh\AppData\Local\osu!";
         protected override Ruleset CreateEditorRuleset() => new OsuRuleset();
         protected virtual string MapLocation => @"Songs\807850 THE ORAL CIGARETTES - Mou Ii kai\THE ORAL CIGARETTES - Mou ii Kai (Nevo) [Rain].osu";
         protected virtual List<ModInfo> AppliedMods => new List<ModInfo> { ModStore.Doubletime };
@@ -94,6 +95,7 @@ namespace SkillAnalyzer.Visual
         public SkillAnalyzeScene()
         {
             SaveStorage.SaveData.OsuPath = OsuPath;
+
             foreach (ISkill skill in Skill.SkillList)
             {
                 skillDebugTextCached.Add(skill.Identifier, new Dictionary<string, object>());
@@ -107,7 +109,7 @@ namespace SkillAnalyzer.Visual
         // Editor
         [Cached(typeof(IBeatSnapProvider), null)]
         [Cached(typeof(Editor))]
-        protected class AnalyzerEditor : TestEditor
+        protected partial class AnalyzerEditor : TestEditor
         {
             public AnalyzerPlaybackControl Playback;
 
@@ -115,7 +117,7 @@ namespace SkillAnalyzer.Visual
 
             }
 
-            protected class AnalyzerSummaryTimeline : SummaryTimeline
+            protected partial class AnalyzerSummaryTimeline : SummaryTimeline
             {
                 [BackgroundDependencyLoader]
                 private void load(OverlayColourProvider colourProvider) {
@@ -125,7 +127,7 @@ namespace SkillAnalyzer.Visual
                 }
             }
 
-            protected class AnalyzerTimeInfoContainer : TimeInfoContainer
+            protected partial class AnalyzerTimeInfoContainer : TimeInfoContainer
             {
 
                 [Resolved]
@@ -156,7 +158,7 @@ namespace SkillAnalyzer.Visual
                     msTime.Text = $"| {Math.Truncate(editorClock.CurrentTime)}ms";
                 }
             }
-            public class AnalyzerPlaybackControl : PlaybackControl
+            public partial class AnalyzerPlaybackControl : PlaybackControl
             {
                 [Resolved]
                 private EditorClock editorClock { get; set; }
@@ -188,7 +190,7 @@ namespace SkillAnalyzer.Visual
                 }
             }
 
-            protected class AnalyzerBottomBar : CompositeDrawable
+            protected partial class AnalyzerBottomBar : CompositeDrawable
             {
 
 
@@ -363,7 +365,7 @@ namespace SkillAnalyzer.Visual
         }
 
         // Editor Loader
-        protected class AnalyzerEditorLoader : TestEditorLoader
+        protected partial class AnalyzerEditorLoader : TestEditorLoader
         {
             public new AnalyzerEditor Editor;
             protected override TestEditor CreateTestEditor(EditorLoader loader)
@@ -670,8 +672,11 @@ namespace SkillAnalyzer.Visual
 
 
             // update the score
+            var p = curhitindex;
             updateClosestHitObjectIndex(EditorClock.CurrentTime);
-
+            if (p != curhitindex) { 
+                Console.WriteLine($"Current Index: {curhitindex}");
+            }
             if (curhitindex == previoushitindex && !skipCurhitCheck)
                 return;
 
@@ -779,14 +784,9 @@ namespace SkillAnalyzer.Visual
                 for (int i = curhitindex; i >= 0; i--)
                 {
                     var time = hitList[i].StartTime * EditorClock.Track.Value.Rate;
-                    Console.Write(time);
-                    Console.Write(" < ");
-                    Console.WriteLine(currentTime);
-                    Console.WriteLine(time * EditorClock.Track.Value.Rate < currentTime);
                     
                     if (time < currentTime)
                     {
-                        Console.WriteLine(curhitindex);
                         curhitindex = i;
                         return i;
                     }
@@ -798,13 +798,12 @@ namespace SkillAnalyzer.Visual
             cachedCurTime = currentTime;
             // [~] this could be made a bit better
             // starts at curhitindex to avoid constantly looping through the whole map
-            for (int i = curhitindex; i < hitList.Count; i++) {
-                var time = hitList[i].StartTime;
-                if (time * EditorClock.Track.Value.Rate > currentTime)
+            for (int i = Math.Max(0,curhitindex-1); i < hitList.Count; i++) {
+                var time = hitList[i].StartTime * EditorClock.Track.Value.Rate;
+                if (time >= currentTime)
                 {
-                    Console.WriteLine(curhitindex);
-                    curhitindex = i;
-                    return i;
+                    curhitindex = Math.Max(0, i-1);
+                    return Math.Max(0, i - 1);
                 }
             }
             curhitindex = hitList.Count-1;

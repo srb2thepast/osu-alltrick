@@ -32,7 +32,7 @@ namespace osuAT.Game.Tests
             Window.Title = "osu!alltrick";
         }
 
-        public new Storage GetStorage() => Host.GetStorage("osu!AT-Tests");
+        public Storage GetStorage() => Host.GetStorage("osu!AT-Tests");
         public override void SetHost(GameHost host)
         {
             base.SetHost(host);

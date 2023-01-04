@@ -37,7 +37,7 @@ namespace osuAT.Game.Skills.Resources
         public SkillCalcuator(Score score)
         {
             FocusedScore = score;
-            EndIndex = EndIndex == default ? FocusedScore.BeatmapInfo != null ? FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count : 0 : EndIndex;
+            EndIndex = EndIndex == default ? (FocusedScore.BeatmapInfo != null ? FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count -1 : 0) : EndIndex;
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace osuAT.Game.Skills.Resources
             if (FocusedScore.BeatmapInfo.FolderLocation == default) return -2;
             if (FocusedScore.BeatmapInfo.Contents.HitObjects == default) return -3;
             Setup();
-            for (var i = StartIndex; i < EndIndex; i++)
+            for (var i = StartIndex; i <= EndIndex; i++)
             {
                 var diffHitObj = FocusedScore.BeatmapInfo.Contents.DiffHitObjects[i];
                 CurrentIndex = i;

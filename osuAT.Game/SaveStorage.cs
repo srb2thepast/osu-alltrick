@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Linq;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
-using System.IO;
 using osu.Framework.Platform; // Reminder: consider using osu.Framework.Platform.Storage for safe file writing.
 using OsuApiHelper;
-using osuAT.Game.Types;
-using osu.Game.Rulesets.Difficulty.Skills;
-using Skill = osuAT.Game.Skills.Skill;
-using osu.Framework.Allocation;
 using osuAT.Game.Skills.Resources;
+using osuAT.Game.Types;
+using Skill = osuAT.Game.Skills.Skill;
 
 namespace osuAT.Game
 {
@@ -124,9 +121,9 @@ namespace osuAT.Game
             return SaveData.OsuPath + @"\" + str;
         }
 
-        public static bool ExistsInOsuDirectory(string path, bool checkisbeatmap = false)
+        public static bool ExistsInOsuDirectory(string path, bool checkisbeatmap = false,bool checkpath = true)
         {
-            return OsuPathIsValid() && !(path == default) && File.Exists(ConcateOsuPath(path))
+            return (checkpath? OsuPathIsValid() : true) && !(path == default) && File.Exists(ConcateOsuPath(path))
                 && (checkisbeatmap? path.EndsWith(".osu") : true)
                 ;
         }
