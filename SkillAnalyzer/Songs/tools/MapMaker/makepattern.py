@@ -1,5 +1,11 @@
-# py makepattern.py -a angle -b bpm -c circles -s spacing -x xpositiont -y yposition
-# ex: py makepattern.py -a 90 -b 250 -s 50 -x 200-y 10
+# py makepattern.py 
+# -x: x position
+# -y: y position
+# -c: circle count
+# -b: bpm
+# -s: spacing
+# -a: angle 
+# ex: py makepattern.py -x 200 -y 10 -b 250 -c 30 -s 50 -a 90 
 import sys
 import math
 
@@ -34,6 +40,17 @@ try:
             curpos[0] = int(val)
         elif arg in ("-y"):
             curpos[1] = int(val)
+        elif arg in ("-s"):
+            if val.lower() == "jump":
+                rate = 2
+            elif val.lower() == "stream":
+                rate = 4
+            elif val.lower() == "thirds" or val.lower() == "3rds":
+                rate = 3
+            elif val.lower() == "beat":
+                rate = 1
+            else:
+                rate = int(val)
      
 except getopt.error as err:
     # output error, and return with an error code
@@ -105,7 +122,6 @@ SliderTickRate: 1
 
 
 for num in range(circles):
-    print(num)
     x = str(math.sin(num*angle) * spacing + curpos[0]) 
     y = str(math.cos(num*angle) * spacing + curpos[1]) 
     t = str(1000+num*ms)
@@ -114,3 +130,5 @@ for num in range(circles):
 f = open("output.osu", "w")
 f.write(result)
 f.close()
+
+print("Map Generation Complete")

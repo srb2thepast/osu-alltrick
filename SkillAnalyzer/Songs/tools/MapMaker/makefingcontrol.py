@@ -1,27 +1,48 @@
-# ex:  py makefingcontrol.py 180 "xxxx" 5 jump
+
+# -s: rate (jump, stream)
+# -b: bpm
+# -p: repeats
+# -r: rhythm
+# default: py makefingcontrol.py -s jump -b 180 -p 1 -r "xxxx"
+
 import sys
 import math
-bpm = int(sys.argv[1])
 
-rate = 4
-rhythm = sys.argv[2]
+import getopt, sys
+ 
+argList = sys.argv[1:]
+options = "s:r:b:p:"
+
+bpm = 180
+rhythm = "x xxx"
+rate = 2
 repeats = 1
 
-
-if len(sys.argv)-1 >= 3:
-    repeats = int(sys.argv[3])
-    if repeats == 0: 
-        repeats = 1 
-
-if len(sys.argv)-1 >= 4:
-    if sys.argv[4].lower() == "jump":
-        rate = 2
-    if sys.argv[4].lower() == "stream":
-        rate = 4
-    if sys.argv[4].lower() == "thirds" or sys.argv[2].lower() == "3rds":
-        rate = 3 
-    if sys.argv[4].lower() == "beat":
-        rate = 1
+try:
+    arguments, values = getopt.getopt(argList, options)
+     
+    for arg, val in arguments:
+        if arg in ("-s"):
+            if val.lower() == "jump":
+                rate = 2
+            elif val.lower() == "stream":
+                rate = 4
+            elif val.lower() == "thirds" or val.lower() == "3rds":
+                rate = 3
+            elif val.lower() == "beat":
+                rate = 1
+            else:
+                rate = int(val)
+        elif arg in ("-b"):
+            bpm = int(val)
+        elif arg in ("-r"):
+            rhythm = val
+        elif arg in ("-p"):
+            repeats = int(val)
+     
+except getopt.error as err:
+    # output error, and return with an error code
+    print(str(err))
 
 ms = math.trunc(60000/bpm / rate)
 # def clamp(n, smallest, largest): return max(smallest, min(n, largest))
@@ -82,14 +103,10 @@ SliderTickRate: 1
 """
 
 
-rhythm = rhythm.replace("[","")
-rhythm = rhythm.replace("]","")
 
 num = 0
 xnum = 0
 y = 130
-
-
 for i in range(repeats):
     for char in rhythm:
         x = str(100+xnum*20)
@@ -125,3 +142,5 @@ for i in range(repeats):
 f = open("output.osu", "w")
 f.write(result)
 f.close()
+
+print("Map Generation Complete")

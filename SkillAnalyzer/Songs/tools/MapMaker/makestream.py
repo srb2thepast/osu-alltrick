@@ -1,19 +1,44 @@
 # ex:  py makestream.py 180 jump
+
+# -s: rate (jump, stream)
+# -b: bpm
+# default: py makestream.py -s stream -b 180
+
+
 import sys
 import math
-bpm = int(sys.argv[1])
+
+import getopt, sys
+ 
+argList = sys.argv[1:]
+options = "b:s:"
 
 rate = 4
+bpm = 180
 
-if len(sys.argv)-1 >= 2:
-    if sys.argv[2].lower() == "jump":
-        rate = 2
-    if sys.argv[2].lower() == "stream":
-        rate = 4
-    if sys.argv[2].lower() == "thirds" or sys.argv[2].lower() == "3rds":
-        rate = 3 
-    if sys.argv[2].lower() == "beat":
-        rate = 1
+try:
+    arguments, values = getopt.getopt(argList, options)
+     
+    for arg, val in arguments:
+        if arg in ("-s"):
+            if val.lower() == "jump":
+                rate = 2
+            elif val.lower() == "stream":
+                rate = 4
+            elif val.lower() == "thirds" or val.lower() == "3rds":
+                rate = 3
+            elif val.lower() == "beat":
+                rate = 1
+            else:
+                rate = int(val)
+        elif arg in ("-b"):
+            bpm = int(val)
+     
+except getopt.error as err:
+    # output error, and return with an error code
+    print(str(err))
+
+
 
 result = """osu file format v14
 
@@ -78,3 +103,5 @@ for num in range(30):
 f = open("output.osu", "w")
 f.write(result)
 f.close()
+
+print("Map Generation Complete")
