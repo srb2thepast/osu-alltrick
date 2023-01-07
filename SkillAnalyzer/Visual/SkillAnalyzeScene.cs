@@ -63,6 +63,7 @@ using osuTK.Input;
 using osuAT.Game.Skills.Resources;
 using NuGet.Packaging.Rules;
 using System.IO;
+using osuAT.Game.Screens;
 
 namespace SkillAnalyzer.Visual
 {
@@ -70,9 +71,9 @@ namespace SkillAnalyzer.Visual
     // [!] Remove AnalyzerPlaybackControl 
     public abstract partial class SkillAnalyzeScene : EditorTestScene
     {
-        protected virtual string OsuPath => @"C:\Users\alexh\AppData\Local\osu!";
+        protected virtual string OsuPath => @"C:\Users\alexh\Documents\osu!alltrick\osuAT\SkillAnalyzer\Songs";
         protected override Ruleset CreateEditorRuleset() => new OsuRuleset();
-        protected virtual string MapLocation => @"Songs\807850 THE ORAL CIGARETTES - Mou Ii kai\THE ORAL CIGARETTES - Mou ii Kai (Nevo) [Rain].osu";
+        protected virtual string MapLocation => @"THE ORAL CIGARETTES - Mou ii Kai (Nevo) [Rain].osu";
         protected virtual List<ModInfo> AppliedMods => new List<ModInfo> { ModStore.Doubletime };
 
         public static List<ISkill> CurSkillList = new List<ISkill>();
@@ -675,7 +676,7 @@ namespace SkillAnalyzer.Visual
             var p = curhitindex;
             updateClosestHitObjectIndex(EditorClock.CurrentTime);
             if (p != curhitindex) { 
-                Console.WriteLine($"Current Index: {curhitindex}");
+                Console.WriteLine($"Current Index:  {curhitindex}");
             }
             if (curhitindex == previoushitindex && !skipCurhitCheck)
                 return;
@@ -816,6 +817,7 @@ namespace SkillAnalyzer.Visual
 
 
             LoadScreen(editorLoader = new AnalyzerEditorLoader());
+
         }
 
         protected void LoadDefaultSteps()
@@ -874,6 +876,7 @@ namespace SkillAnalyzer.Visual
                 UpdateBars(true);
                 return CurSkillList.Contains(skill);
             });
+            
         }
 
         [Obsolete("WIP")] // [!]

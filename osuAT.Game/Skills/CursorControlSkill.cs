@@ -65,6 +65,7 @@ namespace osuAT.Game.Skills
             private double curWorth = 0;
             [HiddenDebugValue]
             private double highestWorth = 0;
+            private double flowPatternMult = 0;
 
             private double totalAngStrainWorth = 0;
 
@@ -80,13 +81,17 @@ namespace osuAT.Game.Skills
                 if (lastDiffHit.Angle == null) return;
                 if (diffHit.Angle == null) return;
                 curAngle = (double)diffHit.Angle * (180 / Math.PI);
+                double lastAngle = (double)lastDiffHit.Angle * (180 / Math.PI);
+
+                // Flow Angle Difficulty
+                flowPatternMult = Math.Clamp(((double)curAngle - 60) / 60, 0, 1) / 2 + Math.Clamp(((double)lastAngle - 60) / 60, 0, 1) / 2;
 
                 // Angle Difficulty
                 curAngStrainWorth = -Math.Clamp(((double)curAngle) / (135 / 0.9), 0, 1) + 0.9;
                 totalAngStrainWorth += curAngStrainWorth;
                 totalAngStrainWorth = Math.Max(0, totalAngStrainWorth);
                 angDifficulty = 30 * Math.Log(totalAngStrainWorth + 1);
-                aimDifficulty = (diffHit.MinimumJumpDistance / diffHit.DeltaTime) / 5;
+                aimDifficulty = (diffHit.MinimumJumpDistance / diffHit.DeltaTime) / 2;
 
                 curWorth = angDifficulty * aimDifficulty;
                 highestWorth = Math.Max(highestWorth, curWorth);

@@ -1,10 +1,17 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using NUnit.Framework;
+using osuAT.Game.Types;
 using Skill = osuAT.Game.Skills.Skill;
+using osu.Game.Rulesets.Osu;
 
 namespace SkillAnalyzer.Visual
 {
-    public class CursorControlAnalyzer : SkillAnalyzeScene
+    public partial class CursorControlAnalyzer : SkillAnalyzeScene
     {
+        protected override string MapLocation => @"lapix - Nexta (DTM9 Nowa) [ending].osu";
+        //protected override List<ModInfo> AppliedMods => new List<ModInfo> { };
         public CursorControlAnalyzer() {
             
         }

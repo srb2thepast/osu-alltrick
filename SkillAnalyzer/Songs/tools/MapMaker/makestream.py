@@ -23,7 +23,7 @@ AudioLeadIn: 0
 PreviewTime: 60000
 Countdown: 0
 SampleSet: Soft
-StackLeniency: 0.7
+StackLeniency: 0
 Mode: 0
 LetterboxInBreaks: 0
 WidescreenStoryboard: 0

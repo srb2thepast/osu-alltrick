@@ -10,7 +10,7 @@ namespace SkillAnalyzer.Visual
 {
     public class TappingStaminaAnalyzer : SkillAnalyzeScene
     {
-        protected override string MapLocation => @"Songs\859515 K A Z M A S A - Bon Appetit S (Oldskool HappyHardcore Remix) (Short Ver)\K A Z M A S A - Bon Appetit S (Oldskool HappyHardcore Remix) (Short Ver.) (BarkingMadDog) [blend s (220 bpm)].osu";
+        protected override string MapLocation => @"Blend S\K A Z M A S A - Bon Appetit S (Oldskool HappyHardcore Remix) (Short Ver.) (BarkingMadDog) [blend s (220 bpm)].osu";
         protected override List<ModInfo> AppliedMods => new List<ModInfo> { };
         public TappingStaminaAnalyzer() {
             
