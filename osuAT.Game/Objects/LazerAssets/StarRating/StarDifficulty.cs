@@ -56,7 +56,7 @@ namespace osuAT.Game.Objects.LazerAssets.StarRating
 
             if (Precision.AlmostBigger(starRating, 4.0, 0.005))
                 return DifficultyRating.Insane;
-                
+
             if (Precision.AlmostBigger(starRating, 2.7, 0.005))
                 return DifficultyRating.Hard;
 

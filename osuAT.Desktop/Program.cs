@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Reflection;
 using System.IO;
-using osu.Framework.Platform;
-using osu.Framework;
-using osuAT.Game;
-using Squirrel;
-using osu.Framework.Logging;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using osu.Framework;
+using osu.Framework.Logging;
+using osu.Framework.Platform;
+using osuAT.Game;
+using Squirrel;
 
 namespace osuAT.Desktop
 {
@@ -16,30 +16,31 @@ namespace osuAT.Desktop
     {
         public static void Main()
         {
-            
+
             try
             {
                 Updater.CheckForUpdates();
             }
-            catch {
+            catch
+            {
                 Logger.Log("Failed to update.");
             }
 
             using (GameHost host = Host.GetSuitableDesktopHost(@"osuAT", new HostOptions { BindIPC = true }))
             using (osu.Framework.Game game = new osuATGame())
-            try
-            {
-                if (!host.IsPrimaryInstance)
+                try
                 {
-                    return;
+                    if (!host.IsPrimaryInstance)
+                    {
+                        return;
+                    }
+                    host.Run(game);
                 }
-                host.Run(game);
-            }
-            catch (Exception err)
-            {
-                File.WriteAllText("errlog.txt", err.StackTrace + "\n ----------- ERROR MESSAGE: \n ----------- " + err.Message);
-                Console.WriteLine("Logged");
-            }
+                catch (Exception err)
+                {
+                    File.WriteAllText("errlog.txt", err.StackTrace + "\n ----------- ERROR MESSAGE: \n ----------- " + err.Message);
+                    Console.WriteLine("Logged");
+                }
         }
     }
 }

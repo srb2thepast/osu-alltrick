@@ -1,27 +1,27 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using Markdig.Extensions.SelfPipeline;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
+using osu.Framework.Extensions.ObjectExtensions;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Textures;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Effects;
-using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
-using osuAT.Game.UserInterface;
-using osuAT.Game.Screens;
+using osu.Game.Overlays.BeatmapListing;
 using OsuApiHelper;
+using osuAT.Game.Objects;
+using osuAT.Game.Screens;
+using osuAT.Game.UserInterface;
 using osuTK;
 using osuTK.Graphics;
-using osuAT.Game.Objects;
-using System;
-using System.Runtime.CompilerServices;
-using Markdig.Extensions.SelfPipeline;
-using System.IO;
-using osu.Framework.Bindables;
-using osu.Game.Overlays.BeatmapListing;
-using System.Linq;
-using osu.Framework.Extensions.ObjectExtensions;
 
 namespace osuAT.Game
 {
@@ -76,13 +76,13 @@ namespace osuAT.Game
                         }
                         if (mainScreen != null) { mainScreen.CurrentlyFocused = true; }
                         HideBox();
-                    }, 
+                    },
                     Children = new Drawable[] {
                          new SpriteIcon {
 
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            
+
                             Size = new Vector2(38,38),
                             Colour = Colour4.LightSlateGray,
                             Shadow = true,
@@ -112,7 +112,7 @@ namespace osuAT.Game
             private Container fileSelectContainer;
             private SpriteText locationText;
 
-            public class OsuATButton : BasicButton
+            public partial class OsuATButton : BasicButton
             {
 
                 [BackgroundDependencyLoader]
@@ -133,8 +133,10 @@ namespace osuAT.Game
             }
 
             // [!] add exit button
-            private class osuATFileSelector : BasicFileSelector {
-                public osuATFileSelector() {
+            private partial class osuATFileSelector : BasicFileSelector
+            {
+                public osuATFileSelector()
+                {
                     ShowHiddenItems.Value = true;
                     CurrentPath.ValueChanged += (ValueChangedEvent<DirectoryInfo> pathinfo) =>
                     {
@@ -149,7 +151,8 @@ namespace osuAT.Game
                 }
 
                 [BackgroundDependencyLoader]
-                private void load() {
+                private void load()
+                {
                     AddInternal(new OsuATButton()
                     {
                         Masking = true,
@@ -173,7 +176,8 @@ namespace osuAT.Game
 
                 protected override DirectorySelectorDirectory CreateDirectoryItem(DirectoryInfo directory, string displayName = null)
                 {
-                    if (directory.Name == "Songs") {
+                    if (directory.Name == "Songs")
+                    {
                         foundsongsfolder = true;
                         Console.WriteLine("songs found");
                     }
@@ -181,7 +185,8 @@ namespace osuAT.Game
                     return new BasicDirectorySelectorDirectory(directory, displayName);
                 }
 
-                protected override DirectoryListingFile CreateFileItem(FileInfo file) {
+                protected override DirectoryListingFile CreateFileItem(FileInfo file)
+                {
                     var fileitem = base.CreateFileItem(file);
                     if (file.Name == "osu!.exe")
                     {
@@ -192,7 +197,8 @@ namespace osuAT.Game
                     return fileitem;
                 }
 
-                protected void CheckButtonFound() {
+                protected void CheckButtonFound()
+                {
                     if (foundexe && foundsongsfolder && selectButton == default)
                     {
                         AddInternal(selectButton = new OsuATButton
@@ -488,10 +494,11 @@ namespace osuAT.Game
                 fileSelectContainer.Hide();
                 apikeyText.Text = SaveStorage.SaveData.APIKey;
                 Console.WriteLine(SaveStorage.SaveData.PlayerUsername);
-                usernameText.Text = ApiScoreProcessor.ApiKeyValid? SaveStorage.SaveData.PlayerUsername : "Please set your api key first.";
+                usernameText.Text = ApiScoreProcessor.ApiKeyValid ? SaveStorage.SaveData.PlayerUsername : "Please set your api key first.";
                 usernameText.Colour = ApiScoreProcessor.ApiKeyValid ? Colour4.White : Colour4.Gray;
                 usernameDisplayText.Colour = ApiScoreProcessor.ApiKeyValid ? Colour4.White : Colour4.Gray;
-                apikeyText.OnCommit += new TextBox.OnCommitHandler((TextBox box, bool target) => {
+                apikeyText.OnCommit += new TextBox.OnCommitHandler((TextBox box, bool target) =>
+                {
 
                     // check if it's a valid api key. if it is, display a checkmark
                     // then, save it to savestorage.
@@ -538,9 +545,9 @@ namespace osuAT.Game
                         SaveStorage.SaveData.PlayerUsername = usernameText.Text;
                         UsernameChanged.Invoke();
                     }
-                    usernameText.FlashColour(Color4.Green, 3000, Easing.InOutCubic);    
+                    usernameText.FlashColour(Color4.Green, 3000, Easing.InOutCubic);
                 });
-                
+
             }
 
             protected override bool OnClick(ClickEvent e)

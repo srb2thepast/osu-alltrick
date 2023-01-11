@@ -22,7 +22,7 @@ using osuTK;
 
 namespace SkillAnalyzer
 {
-    public class StrainBar : Bar, IHasTooltip
+    public partial class StrainBar : Bar, IHasTooltip
     {
         public StrainBar(string tooltip)
         {
@@ -32,7 +32,7 @@ namespace SkillAnalyzer
         public LocalisableString TooltipText { get; }
     }
 
-    public class StrainBarGraph : FillFlowContainer<StrainBar>
+    public partial class StrainBarGraph : FillFlowContainer<StrainBar>
     {
         /// <summary>
         /// Manually sets the max value, if null <see cref="Enumerable.Max(IEnumerable{float})"/> is instead used
@@ -70,7 +70,7 @@ namespace SkillAnalyzer
         }
     }
 
-    internal class StrainVisualizer : Container
+    internal partial class StrainVisualizer : Container
     {
         public readonly Bindable<Skill[]> Skills = new();
 

@@ -3,32 +3,32 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
+using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
-using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Audio;
+using osu.Framework.Graphics.Textures;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.Formats;
+using osu.Game.Database;
 using osu.Game.IO;
-using osu.Game.Rulesets.Objects.Types;
-using osu.Game.Skinning;
-using osuAT.Game.Types;
+using osu.Game.Resources.Localisation.Web;
 using osu.Game.Rulesets;
-using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.UI;
 using osu.Game.Rulesets.Mods;
-using osu.Framework.Allocation;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.UI;
+using osu.Game.Skinning;
 using osu.Game.Storyboards;
+using osuAT.Game.Types;
 using Beatmap = osu.Game.Beatmaps.Beatmap;
+using FileInfo = System.IO.FileInfo;
 using FileWebRequest = osu.Framework.IO.Network.FileWebRequest;
 using RulesetStore = osuAT.Game.Types.RulesetStore;
-using FileInfo = System.IO.FileInfo;
-using osu.Game.Resources.Localisation.Web;
-using osu.Game.Database;
 
 namespace osuAT.Game
 {
@@ -80,14 +80,14 @@ namespace osuAT.Game
         }
 
 
-        public static ProcessorWorkingBeatmap FromFileOrId(string  fileOrId, AudioManager audioManager = null, string cachePath = "cache")
+        public static ProcessorWorkingBeatmap FromFileOrId(string fileOrId, AudioManager audioManager = null, string cachePath = "cache")
         {
             if (fileOrId.EndsWith(".osu"))
             {
                 if (!File.Exists(fileOrId))
                     throw new ArgumentException($"Beatmap file {fileOrId} does not exist.");
 
-                return new ProcessorWorkingBeatmap(fileOrId, null, audioManager?? audio);
+                return new ProcessorWorkingBeatmap(fileOrId, null, audioManager ?? audio);
             }
             throw new NotImplementedException("file did not end in .osu, if this was intended, osu!apiv2 is not currently supported. Getting by ID requires osu!apiv2.");
             /*

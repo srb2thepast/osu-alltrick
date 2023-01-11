@@ -1,21 +1,21 @@
+using osu.Framework;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Textures;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.Textures;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osu.Framework.Screens;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Audio;
+using osuAT.Game.Objects;
 using osuTK;
 using osuTK.Graphics;
-using osuAT.Game.Objects;
-using osu.Framework.Graphics.UserInterface;
 using static osuAT.Game.SettingsButton;
-using osu.Framework;
-using osu.Framework.Graphics.Cursor;
-using osu.Framework.Localisation;
 
 namespace osuAT.Game.Screens
 {
@@ -31,7 +31,8 @@ namespace osuAT.Game.Screens
         public bool AllowButtons
         {
             get => allowbuttons;
-            set {
+            set
+            {
                 SetButton.CanOpen = value;
                 ImpButton.CanOpen = value;
                 if (!value)
@@ -51,7 +52,7 @@ namespace osuAT.Game.Screens
 
 
         [BackgroundDependencyLoader]
-        private void load(LargeTextureStore textures,Texture defaultPFP)
+        private void load(LargeTextureStore textures, Texture defaultPFP)
         {
             System.Console.WriteLine(audio);
             InternalChildren = new Drawable[]
@@ -200,10 +201,10 @@ namespace osuAT.Game.Screens
                 },
             };
 
-           SettingsButton.UsernameChanged += () =>
-            {
-                UsernameText.Text = SaveStorage.SaveData.PlayerUsername;
-            };
+            SettingsButton.UsernameChanged += () =>
+             {
+                 UsernameText.Text = SaveStorage.SaveData.PlayerUsername;
+             };
         }
 
         private partial class ExitButton : CompositeDrawable, IHasTooltip
@@ -253,7 +254,8 @@ namespace osuAT.Game.Screens
             }
         }
 
-        private partial class HomeBackground : Container {
+        private partial class HomeBackground : Container
+        {
             private Container box;
 
             public HomeBackground()
@@ -286,7 +288,7 @@ namespace osuAT.Game.Screens
                         },
                     }
                 };
-            }   
+            }
 
             protected override void LoadComplete()
             {
@@ -295,7 +297,7 @@ namespace osuAT.Game.Screens
             }
         }
 
-        
-        
+
+
     }
 }

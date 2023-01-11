@@ -23,25 +23,25 @@ THE SOFTWARE.
 */
 
 using System;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
+using osu.Game.Rulesets.Mods;
+using osuAT.Game.Types;
 using osuTK;
 using osuTK.Graphics;
-using osu.Framework.Bindables;
-using osu.Framework.Localisation;
-using osuAT.Game.Types;
-using osu.Game.Rulesets.Mods;
 
 namespace osuAT.Game.Objects.LazerAssets.Mod
 {
     /// <summary>
     /// Display the specified mod at a fixed size.
     /// </summary>
-    public class ModIcon : Container, IHasTooltip
+    public partial class ModIcon : Container, IHasTooltip
     {
         public readonly BindableBool Selected = new BindableBool();
 

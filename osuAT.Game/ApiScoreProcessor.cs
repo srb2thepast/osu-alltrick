@@ -132,7 +132,8 @@ namespace osuAT.Game
             List<string> modString = osuScore.Mods.ToString().Split(", ").ToList();
             modString.ForEach(n => Console.WriteLine(n));
             // Prevent nightcore and doubletime from stacking
-            if (modString.Contains("DoubleTime") && modString.Contains("Nightcore")) {
+            if (modString.Contains("DoubleTime") && modString.Contains("Nightcore"))
+            {
                 modString.Remove("DoubleTime");
             }
 
@@ -270,7 +271,8 @@ namespace osuAT.Game
 
         public static bool ApiKeyValid = false;
 
-        public static bool UpdateKeyValid() {
+        public static bool UpdateKeyValid()
+        {
             ApiKeyValid = OsuApi.IsKeyValid();
             return ApiKeyValid;
         }

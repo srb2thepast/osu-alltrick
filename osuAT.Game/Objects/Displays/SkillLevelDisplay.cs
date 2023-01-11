@@ -2,13 +2,13 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Graphics.Effects;
+using osuAT.Game.Skills.Resources;
 using osuAT.Game.Types;
 using osuTK;
-using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Objects.Displays
 {
@@ -19,7 +19,10 @@ namespace osuAT.Game.Objects.Displays
         private CircularContainer container;
         private LargeTextureStore texturecache;
 
-        private string levelText { get {
+        private string levelText
+        {
+            get
+            {
                 if ((int)Skill.Level == 1) return "Learner";
                 if ((int)Skill.Level == 2) return "Experienced";
                 if ((int)Skill.Level == 3) return "Confident";
@@ -47,11 +50,11 @@ namespace osuAT.Game.Objects.Displays
 
         }
 
-        private class CircleShad : Container
+        private partial class CircleShad : Container
         {
             public ColourInfo MainColour = Colour4.White;
             public ColourInfo ShadowColour = Colour4.Gray;
-            public Vector2 Spacing = new Vector2(0,4);
+            public Vector2 Spacing = new Vector2(0, 4);
             public new Vector2 Size;
             public CircleShad()
             {
@@ -61,7 +64,8 @@ namespace osuAT.Game.Objects.Displays
             }
 
             [BackgroundDependencyLoader]
-            private void load() {
+            private void load()
+            {
                 Child = new Container
                 {
                     AutoSizeAxes = Axes.Both,
@@ -200,7 +204,8 @@ namespace osuAT.Game.Objects.Displays
             };
             float xdif = 0;
 
-            switch (level) {
+            switch (level)
+            {
                 case SkillLevel.Learner:
                     xdif = 120;
                     break;
@@ -223,7 +228,7 @@ namespace osuAT.Game.Objects.Displays
                     circlecont.Size = new Vector2(438, 93);
                     circlecont.Add(new CircleShad
                     {
-                        X = -xdif-30,
+                        X = -xdif - 30,
                         Spacing = new Vector2(0, 2.5f),
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
@@ -233,20 +238,20 @@ namespace osuAT.Game.Objects.Displays
                     });
                     circlecont.Add(new CircleShad
                     {
-                        X = xdif+30,
+                        X = xdif + 30,
                         Spacing = new Vector2(0, 2.5f),
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         MainColour = Skill.SecondaryColor,
                         ShadowColour = Skill.SecondaryColor + Colour4.Gray,
-                        Size = new Vector2(15,15)
+                        Size = new Vector2(15, 15)
                     });
                     break;
                 case SkillLevel.Chosen:
                     xdif = 115;
                     container.Size = new Vector2(438, 93);
                     circlecont.Size = new Vector2(438, 93);
-                    
+
                     for (int i = 1; i < 7; i++)
                     {
                         circlecont.Add(new CircleShad
@@ -273,7 +278,8 @@ namespace osuAT.Game.Objects.Displays
             Vector2 circlesize = Skill.Level == SkillLevel.Chosen ? new Vector2(35, 35) : new Vector2(25, 25);
 
 
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 2; i++)
+            {
                 circlecont.Add(new CircleShad
                 {
                     X = ((i % 2 == 0) ? -1 : 1) * xdif,
@@ -281,7 +287,7 @@ namespace osuAT.Game.Objects.Displays
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     MainColour = (i % 2 == 0) ? Skill.PrimaryColor : Skill.SecondaryColor,
-                    ShadowColour  = Skill.SecondaryColor + Colour4.Gray,
+                    ShadowColour = Skill.SecondaryColor + Colour4.Gray,
                     Size = circlesize
                 });
                 if (Skill.Level == SkillLevel.Chosen)

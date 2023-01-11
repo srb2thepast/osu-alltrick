@@ -60,21 +60,21 @@ namespace osuAT.Game.Objects.Displays
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                     }
-                    
+
                 }
             };
             outerCircle.FadeIn(200, Easing.InOutCubic);
             innerCircle.FadeIn(200, Easing.InOutCubic);
 
             outerCircle.Delay(50).ResizeTo(new Vector2(78 + RulesetList.Length * 60, 67), 500, Easing.InOutCubic);
-            innerCircle.Delay(50).ResizeTo(new Vector2(69 + RulesetList.Length * 60, 58),500,Easing.InOutCubic);
+            innerCircle.Delay(50).ResizeTo(new Vector2(69 + RulesetList.Length * 60, 58), 500, Easing.InOutCubic);
 
             for (var i = 0; i < RulesetList.Length; i++)
             {
                 RulesetInfo ruleset = RulesetList[i];
                 SpriteIcon newIcon = new SpriteIcon
                 {
-                    X = (RulesetList.Length % 2 == 1)? i * 60 + (-30 * (RulesetList.Length - 1)) : i * 60 + (-60 * (RulesetList.Length - 2) / 2 - 30),
+                    X = (RulesetList.Length % 2 == 1) ? i * 60 + (-30 * (RulesetList.Length - 1)) : i * 60 + (-60 * (RulesetList.Length - 2) / 2 - 30),
                     Y = 25, // starts at 25, moves to 0 in the animation
                     Icon = ruleset.Icon,
 
@@ -91,7 +91,7 @@ namespace osuAT.Game.Objects.Displays
 
                 using (newIcon.BeginDelayedSequence(450))
                     newIcon.FadeIn(250, Easing.InOutSine);
-                    newIcon.MoveToY(0, 1000,Easing.Out);
+                newIcon.MoveToY(0, 1000, Easing.Out);
             };
 
 

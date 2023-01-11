@@ -3,13 +3,13 @@
 
 #nullable disable
 
-using osuTK;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Extensions.EnumExtensions;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Game.Graphics.UserInterface;
+using osuTK;
 
 namespace SkillAnalyzer
 {

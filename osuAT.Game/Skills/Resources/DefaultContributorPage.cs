@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Textures;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Sprites;
-using osuAT.Game.Types;
+using osu.Framework.Graphics.Textures;
 using osuAT.Game.Objects;
 using osuAT.Game.Objects.Displays;
+using osuAT.Game.Types;
 using osuTK;
 
 namespace osuAT.Game.Skills.Resources
 {
     // When a skill is ready to be used, dont forget to add it to Skill.cs   
-    internal class DefaultContributorPage : Page
+    internal partial class DefaultContributorPage : Page
     {
         public ISkill Skill;
         public Contributor[] Contribs;

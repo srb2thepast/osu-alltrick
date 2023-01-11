@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Graphics;
-using osuAT.Game.Types;
-using osu.Game.Rulesets.Osu.Objects;
-using osuTK;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
-using static osuAT.Game.Skills.AimSkill;
-using osu.Framework.Utils;
+using osu.Game.Rulesets.Osu.Objects;
 using osuAT.Game.Skills.Resources;
+using osuAT.Game.Types;
+using osuTK;
+using static osuAT.Game.Skills.AimSkill;
 
 namespace osuAT.Game.Skills
 {
@@ -44,7 +44,7 @@ namespace osuAT.Game.Skills
 
         public Vector2 BoxPosition => new Vector2(1875, -500);
 
-        public SkillGoals Benchmarks => new SkillGoals(600, 1500,3000, 6000, 9000, 10000);
+        public SkillGoals Benchmarks => new SkillGoals(600, 1500, 3000, 6000, 9000, 10000);
         #endregion
 
 
@@ -75,7 +75,8 @@ namespace osuAT.Game.Skills
                 aimDifficulty = 0;
             }
 
-            public override void CalcNext(OsuDifficultyHitObject diffHit) { 
+            public override void CalcNext(OsuDifficultyHitObject diffHit)
+            {
                 var lastDiffHit = (OsuDifficultyHitObject)diffHit.Previous(0);
                 if (lastDiffHit == null) return;
                 if (lastDiffHit.Angle == null) return;

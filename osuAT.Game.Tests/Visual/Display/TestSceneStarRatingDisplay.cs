@@ -26,15 +26,15 @@ using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Utils;
 using osu.Framework.Testing;
-using osuTK;
+using osu.Framework.Utils;
 using osuAT.Game.Objects.LazerAssets.StarRating;
+using osuTK;
 
 namespace osuAT.Game.Tests.Visual.Display
 {
-    public class TestSceneStarRatingDisplay : TestScene
-    {   
+    public partial class TestSceneStarRatingDisplay : TestScene
+    {
         [TestCase(StarRatingDisplaySize.Regular)]
         [TestCase(StarRatingDisplaySize.Small)]
         public void TestDisplay(StarRatingDisplaySize size)

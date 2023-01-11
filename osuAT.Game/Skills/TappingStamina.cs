@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Graphics;
-using osuAT.Game.Types;
-using osu.Game.Rulesets.Osu.Objects;
-using osuTK;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
-using static osuAT.Game.Skills.AimSkill;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
+using osu.Game.Rulesets.Osu.Objects;
 using osuAT.Game.Skills.Resources;
+using osuAT.Game.Types;
+using osuTK;
 using Sentry.Infrastructure;
+using static osuAT.Game.Skills.AimSkill;
 
 namespace osuAT.Game.Skills
 {
@@ -45,7 +45,7 @@ namespace osuAT.Game.Skills
 
         public Vector2 BoxPosition => new Vector2(-1873, 1077.5f);
 
-        public SkillGoals Benchmarks => new SkillGoals(600, 1500,3000, 6000, 9000, 10000);
+        public SkillGoals Benchmarks => new SkillGoals(600, 1500, 3000, 6000, 9000, 10000);
 
         #endregion
 
@@ -89,23 +89,23 @@ namespace osuAT.Game.Skills
             public override void CalcNext(OsuDifficultyHitObject diffHitObj)
             {
                 var diffHit = (OsuDifficultyHitObject)diffHitObj;
-                var lastHitObj = (OsuHitObject)diffHit.LastObject;
+                _ = (OsuHitObject)diffHit.LastObject;
                 var lastDiffHit = diffHit.Previous(0);
                 if (lastDiffHit == null) return;
 
                 // Strain-based Stream Length
                 curStreamLength += Math.Clamp(SharedMethods.BPMToMS(180) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1);
-                curStreamLength -= curStreamLength * 0.75 * (1-Math.Clamp(SharedMethods.BPMToMS(180,2) / (diffHit.StartTime - lastDiffHit.StartTime), 0,1));
+                curStreamLength -= curStreamLength * 0.75 * (1 - Math.Clamp(SharedMethods.BPMToMS(180, 2) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1));
                 curMSSpeed = diffHit.StartTime - lastDiffHit.StartTime;
 
                 // Length multiplier
-                lenMult = 2 * Math.Log((curStreamLength* 1 / 40) + 1);
+                lenMult = 2 * Math.Log((curStreamLength * 1 / 40) + 1);
 
                 // BPMBuff
                 bPMBuff = 2 * Math.Pow(1.02, SharedMethods.MSToBPM(curMSSpeed));
 
                 // Final Value (Returns the most difficult stream)
-                curWorth = Math.Max(curWorth,bPMBuff * lenMult);
+                curWorth = Math.Max(curWorth, bPMBuff * lenMult);
 
                 CurTotalPP = (
                     curWorth *

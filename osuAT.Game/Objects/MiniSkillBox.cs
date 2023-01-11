@@ -1,20 +1,20 @@
 using System;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Graphics.Effects;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Input.Events;
-using osu.Framework.Extensions.IEnumerableExtensions;
-using osu.Framework.Graphics.Cursor;
 using osu.Framework.Localisation;
 using osuAT.Game.Objects;
+using osuAT.Game.Skills.Resources;
 using osuAT.Game.Types;
 using osuTK;
-using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Objects
 {
@@ -26,14 +26,14 @@ namespace osuAT.Game.Objects
         public SkillBox ParentBox;
 
         // private SkillContainer OverallContainer;
-        
+
         private BufferedContainer miniBG;
         private Container miniBox;
         private Container mainbox;
         private Container stars;
         private Container outerstars;
-        public MiniSkillBox(ISkill skill,SkillBox parentbox)
-        {   
+        public MiniSkillBox(ISkill skill, SkillBox parentbox)
+        {
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Size = new Vector2(175, 100);
@@ -261,10 +261,11 @@ namespace osuAT.Game.Objects
             };
             miniBox.ScaleTo(0.5f);
 
-            int lv = Math.Clamp((int)Skill.Level,0,5);
+            int lv = Math.Clamp((int)Skill.Level, 0, 5);
             Console.WriteLine(lv);
 
-            for (int i = 0; i < lv; i++) {
+            for (int i = 0; i < lv; i++)
+            {
                 stars.Add(new StarShad(textures, Skill.PrimaryColor, Skill.SecondaryColor,
                     new Vector2(
                         lv % 2 == 1 ? i * 45 + (-22.5f * (lv - 1)) : i * 45 + (-45 * (lv - 2) / 2 - 22.5f),
@@ -276,10 +277,10 @@ namespace osuAT.Game.Objects
         }
 
 
-        private class StarShad : Container
+        private partial class StarShad : Container
         {
             public Container StarShading;
-            public StarShad(TextureStore textures,Colour4 MainColor, Colour4 ShadowColor, Vector2 Pos)
+            public StarShad(TextureStore textures, Colour4 MainColor, Colour4 ShadowColor, Vector2 Pos)
             {
 
                 Child = StarShading = new Container
@@ -349,14 +350,16 @@ namespace osuAT.Game.Objects
             return true;
         }
 
-        public void TryTransition() {
+        public void TryTransition()
+        {
             if (ParentBox.ParentCont.MainScreen.CurrentlyFocused == false) return;
             if (ParentBox.State == SkillBoxState.FullBox) return;
             fireTransition();
             return;
         }
 
-        private void fireTransition() {
+        private void fireTransition()
+        {
             if (ParentBox.ParentCont.FocusedBox == ParentBox && ParentBox.State == SkillBoxState.MiniBox)
             {
                 ParentBox.TransitionToFull();
@@ -369,7 +372,7 @@ namespace osuAT.Game.Objects
 
         public void Slideout()
         {
-            
+
             mainbox.Delay(300).MoveToX(358, 600, Easing.InOutCubic);
             outerstars[0].Delay(400).MoveTo(new Vector2(0, 0), 600, Easing.InOutCubic);
             outerstars[1].Delay(400).MoveTo(new Vector2(0, 0), 600, Easing.InOutCubic);

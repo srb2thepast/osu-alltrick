@@ -1,56 +1,58 @@
-using NUnit.Framework;
-using osuAT.Game;
-using osuAT.Game.Types;
-using osu.Framework.Allocation;
-using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.UserInterface;
+using System;
+using System.Collections.Generic;
 using System.IO;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Textures;
-using osu.Framework.Graphics.Effects;
-using osu.Framework.Graphics.Colour;
-using osu.Framework.Input.Events;
+using NuGet.Packaging.Core;
+using NUnit.Framework;
+using NUnit.Framework.Interfaces;
+using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
+using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
+using osu.Framework.Platform;
+using osu.Game.Overlays.BeatmapSet;
+using osuAT.Game;
 using osuAT.Game.Objects;
 using osuAT.Game.Skills;
-using osuTK;
-using System.Collections.Generic;
-using NUnit.Framework.Interfaces;
-using System;
-using NuGet.Packaging.Core;
-using osu.Game.Overlays.BeatmapSet;
-using static osuAT.Game.Skills.AimSkill;
-using osu.Framework.Platform;
 using osuAT.Game.Skills.Resources;
+using osuAT.Game.Types;
+using osuTK;
+using static osuAT.Game.Skills.AimSkill;
 
 namespace osuAT.Game.Tests.Visual
 {
     // i got lazy making this so execpt some bad code 
-    public class TestSceneSaveStorage : osuATTestScene
+    public partial class TestSceneSaveStorage : osuATTestScene
     {
 
         private Score dummyscore;
         private BasicTextBox savelocation;
         private TextFlowContainer savecontents;
 
-        private void saveDummy() {
+        private void saveDummy()
+        {
             SaveStorage.AddScore(dummyscore);
         }
         private void saveSStorage()
         {
             FileInfo info = SaveStorage.Save();
             string content = SaveStorage.Read();
-            string contentstring =  content.Replace(",", "\n").Replace("{", "\n {").Replace("}", "}\n");
+            string contentstring = content.Replace(",", "\n").Replace("{", "\n {").Replace("}", "}\n");
             savelocation.Text = info.FullName;
             savecontents.Text = contentstring;
             System.Console.WriteLine(contentstring);
         }
 
-        private void ReloadText(string savepath = null) {
+        private void ReloadText(string savepath = null)
+        {
             savepath ??= Path.GetFullPath(SaveStorage.SaveFileFullPath);
             string content = SaveStorage.Read();
             string contentstring = content.Replace(",", "\n").Replace("{", "\n {").Replace("}", "}\n");
@@ -123,7 +125,8 @@ namespace osuAT.Game.Tests.Visual
         {
             AddStep("create dummy score", makeNomodDummy);
             addThenSave();
-            AddStep("remove dummy score from storage", () => {
+            AddStep("remove dummy score from storage", () =>
+            {
                 SaveStorage.RemoveScore(dummyscore.ID);
             });
             AddAssert("removed from main branch", () => { return !(SaveStorage.SaveData.Scores.ContainsKey(dummyscore.ID)); });
@@ -173,10 +176,12 @@ namespace osuAT.Game.Tests.Visual
         {
             AddStep("create dummy score", makeNomodDummy);
             addThenSave();
-            AddStep("add testSkill to SkillList", () => {
+            AddStep("add testSkill to SkillList", () =>
+            {
                 Skill.SkillList.Add(skillInstance);
             });
-            AddStep("re-initalize savestorage", () => {
+            AddStep("re-initalize savestorage", () =>
+            {
                 SaveStorage.Init(new NativeStorage("testing"));
                 ReloadText();
             });
@@ -189,18 +194,21 @@ namespace osuAT.Game.Tests.Visual
             });
             AddAssert("skill removed", () => { return !SaveStorage.SaveData.TotalSkillPP.ContainsKey(skillInstance.Identifier); });
             AddStep("save the storage", saveSStorage);
-            
+
 
         }
 
         [Test]
-        public void TestDeleteSaveFile() {
-            AddStep("delete test save file", () => {
+        public void TestDeleteSaveFile()
+        {
+            AddStep("delete test save file", () =>
+            {
                 File.Delete(SaveStorage.SaveFileFullPath);
             });
         }
 
-        private bool checkScoreRemovedFromTop() {
+        private bool checkScoreRemovedFromTop()
+        {
             Console.WriteLine(SaveStorage.SaveData.Scores.ContainsKey(dummyscore.ID));
             var modeList = new List<string> { "overall", dummyscore.ScoreRuleset.Name };
             foreach (KeyValuePair<string, double> scoreSkillPP in dummyscore.AlltrickPP)
@@ -227,7 +235,8 @@ namespace osuAT.Game.Tests.Visual
         {
             AddStep("add dummy score to storage", saveDummy);
             AddStep("save the storage", saveSStorage);
-            AddAssert("score exists", () => {
+            AddAssert("score exists", () =>
+            {
                 return SaveStorage.SaveData.Scores.ContainsKey(dummyscore.ID);
             });
 
@@ -235,7 +244,7 @@ namespace osuAT.Game.Tests.Visual
 
         private void makeNomodDummy()
         {
-            List<ModInfo> ModList = new List<ModInfo>
+            _ = new List<ModInfo>
                 {
                     ModStore.Hidden,
                     ModStore.Doubletime,
@@ -303,7 +312,7 @@ namespace osuAT.Game.Tests.Visual
             dummyscore.Register();
         }
 
-        
+
     }
 }
 

@@ -1,20 +1,20 @@
 ﻿using System;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Textures;
+using osu.Framework.Graphics.Colour;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Colour;
-using osuTK.Graphics;
 using osuAT.Game.Objects;
-using osuAT.Game.Types;
-using osuAT.Game.Skills;
 using osuAT.Game.Objects.Displays;
+using osuAT.Game.Skills;
+using osuAT.Game.Types;
 using osuTK;
+using osuTK.Graphics;
 
 
 namespace osuAT.Game.UserInterface
@@ -28,13 +28,14 @@ namespace osuAT.Game.UserInterface
 
         public bool Shadow = false;
         public Vector2 ShadowOffset = new Vector2(0, 0.05f);
-        public ObjectSwitched OnObjectSwitched = delegate(Drawable focusedObject) { };
+        public ObjectSwitched OnObjectSwitched = delegate (Drawable focusedObject) { };
         public delegate void ObjectSwitched(Drawable focusedObject);
         public new int Spacing = 3;
 
         private Container objcontainer;
 
-        public class ArrowButton : SpriteText {
+        public partial class ArrowButton : SpriteText
+        {
             public Action ClickAction = new Action(() => { });
             protected override bool OnClick(ClickEvent e)
             {
@@ -61,7 +62,7 @@ namespace osuAT.Game.UserInterface
 
         protected void RightArrowClick()
         {
-            if (focusIndex == Objects.Length-1) return;
+            if (focusIndex == Objects.Length - 1) return;
             objcontainer[focusIndex].Hide();
             focusIndex++;
             FocusedObject = Objects[focusIndex];

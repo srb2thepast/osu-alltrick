@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Graphics;
-using osuAT.Game.Types;
-using osu.Game.Rulesets.Osu.Objects;
-using osuTK;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
-using static osuAT.Game.Skills.AimSkill;
+using osu.Game.Rulesets.Osu.Objects;
 using osuAT.Game.Skills.Resources;
+using osuAT.Game.Types;
+using osuTK;
+using static osuAT.Game.Skills.AimSkill;
 
 namespace osuAT.Game.Skills
 {
@@ -49,7 +49,7 @@ namespace osuAT.Game.Skills
 
         public Vector2 BoxPosition => new Vector2(953, 855);
 
-        public SkillGoals Benchmarks => new SkillGoals(600, 1500,3000, 6000, 9000, 10000);
+        public SkillGoals Benchmarks => new SkillGoals(600, 1500, 3000, 6000, 9000, 10000);
         #endregion
 
         public class NerveControlCalculator : SkillCalcuator

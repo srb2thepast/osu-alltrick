@@ -1,24 +1,24 @@
 using System;
+using System.ComponentModel.Design;
+using System.Linq;
 using System.Threading.Tasks;
-using osu.Game.Online;
+using NuGet.Protocol.Core.Types;
+using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Screens;
-using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.IO.Stores;
-using osuTK;
-using osuAT.Resources;
-using osuTK.Graphics.ES30;
-using osu.Framework;
-using osu.Framework.Platform;
-using osu.Framework.Utils;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.Input;
 using osu.Framework.Input.Handlers.Mouse;
 using osu.Framework.Input.Handlers.Tablet;
-using System.Linq;
-using NuGet.Protocol.Core.Types;
-using System.ComponentModel.Design;
+using osu.Framework.IO.Stores;
+using osu.Framework.Platform;
+using osu.Framework.Screens;
+using osu.Framework.Utils;
+using osu.Game.Online;
+using osuAT.Resources;
+using osuTK;
+using osuTK.Graphics.ES30;
 
 namespace osuAT.Game
 {
@@ -72,7 +72,7 @@ namespace osuAT.Game
             largeStore.AddTextureSource(Host.CreateTextureLoaderStore(new OnlineStore()));
 
             Dependencies.Cache(largeStore);
-            Storage storage = (Updater.DevelopmentBuild)? new NativeStorage("dev_savedata") : Host.Storage;
+            Storage storage = (Updater.DevelopmentBuild) ? new NativeStorage("dev_savedata") : Host.Storage;
             Dependencies.CacheAs(storage);
             Window.Title = "osu!alltrick";
             Dependencies.CacheAs<osuATGameBase>(this);
@@ -91,7 +91,8 @@ namespace osuAT.Game
                 Console.WriteLine(handler);
                 if (handler is ITabletHandler tabhandler)
                 {
-                    Schedule(() => {
+                    Schedule(() =>
+                    {
                         tabhandler.Enabled.Value = false;
                     });
                 }

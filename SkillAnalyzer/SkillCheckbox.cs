@@ -23,7 +23,7 @@ using osuTK.Graphics;
 
 namespace SkillAnalyzer
 {
-    public class SkillCheckbox : OsuCheckbox
+    public partial class SkillCheckbox : OsuCheckbox
     {
 
         public ISkill Skill;

@@ -41,7 +41,8 @@ namespace osuAT.Game
             Console.WriteLine($"Latest version : {latest.ReleaseTag}");
             Console.WriteLine($"Current version : {CurrentVersion}");
 
-            if (latest.ReleaseTag != CurrentVersion) {
+            if (latest.ReleaseTag != CurrentVersion)
+            {
                 Process.Start(new ProcessStartInfo(@"https://github.com/srb2thepast/osu-alltrick/releases") { UseShellExecute = true });
             }
         }

@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Textures;
-using osu.Framework.Graphics.Sprites;
-using osuAT.Game.Types;
-using osuAT.Game.Objects;
-using osuTK;
-using osu.Framework.Allocation;
-using osu.Framework.Graphics.Effects;
-using osu.Framework.Graphics.Colour;
-using osu.Game.Rulesets.Difficulty.Preprocessing;
 using AutoMapper.Internal;
+using osu.Framework.Allocation;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
+using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
+using osu.Game.Rulesets.Difficulty.Preprocessing;
+using osuAT.Game.Objects;
+using osuAT.Game.Types;
+using osuTK;
 
 namespace osuAT.Game.Skills.Resources
 {

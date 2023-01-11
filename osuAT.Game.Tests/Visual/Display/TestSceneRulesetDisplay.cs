@@ -7,7 +7,7 @@ using osuAT.Game.Types;
 
 namespace osuAT.Game.Tests.Visual.Display
 {
-    public class TestSceneRulesetDisplay : osuATTestScene
+    public partial class TestSceneRulesetDisplay : osuATTestScene
     {
         [Test]
         public void TestRuleset()

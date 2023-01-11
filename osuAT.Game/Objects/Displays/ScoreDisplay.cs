@@ -8,12 +8,12 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Events;
-using osuAT.Game.Objects.LazerAssets.StarRating;
-using osuAT.Game.Objects.LazerAssets.Mod;
 using osuAT.Game.Objects.LazerAssets;
+using osuAT.Game.Objects.LazerAssets.Mod;
+using osuAT.Game.Objects.LazerAssets.StarRating;
+using osuAT.Game.Skills.Resources;
 using osuAT.Game.Types;
 using osuTK;
-using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Objects.Displays
 {
@@ -92,7 +92,7 @@ namespace osuAT.Game.Objects.Displays
                                         Shadow = true,
                                         ShadowOffset = new Vector2(0,0.1f),
                                         Truncate = true,
-                                        
+
                                         Colour = Colour4.FromHex("#DDFFF4"),
                                         Font = new FontUsage("ChivoBold",size: 11),
                                         Anchor = Anchor.CentreLeft,
@@ -158,7 +158,7 @@ namespace osuAT.Game.Objects.Displays
                             // Ruleset Icon
                             new Container{
                                 AutoSizeAxes = Axes.Both,
-                                Anchor = Anchor.Centre, 
+                                Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
                                 Children = new Drawable[] {
                                     // Background
@@ -202,7 +202,7 @@ namespace osuAT.Game.Objects.Displays
                                     // Icon
                                     new Container {
                                         AutoSizeAxes = Axes.Both,
-                                        Anchor = Anchor.Centre, 
+                                        Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         Child = new SpriteIcon {
 
@@ -366,7 +366,7 @@ namespace osuAT.Game.Objects.Displays
                                             new StarRatingDisplay(new StarDifficulty(Current.BeatmapInfo.StarRating), StarRatingDisplaySize.Regular) {
                                                 Scale = new Vector2(0.75f),
                                             },
-                                            
+
                                         }
                                     },
 
@@ -489,14 +489,15 @@ namespace osuAT.Game.Objects.Displays
         protected override void LoadComplete()
         {
             base.LoadComplete();
-            
+
 
         }
         protected override bool OnHover(HoverEvent e)
         {
             return base.OnHover(e);
         }
-        public void Appear(float delay = 0) {
+        public void Appear(float delay = 0)
+        {
             scoreInfo.Alpha = 0;
             diffInfo.Alpha = 0;
             display.Y = 13;
@@ -507,7 +508,8 @@ namespace osuAT.Game.Objects.Displays
             comboBar.Delay(delay).ResizeTo(new Vector2(((float)Current.Combo / Current.BeatmapInfo.MaxCombo) * 175, comboBar.Height), 500, Easing.InOutQuad);
         }
 
-        public void Disappear(float delay) {
+        public void Disappear(float delay)
+        {
             scoreInfo.Delay(delay).FadeOut();
             diffInfo.Delay(delay).FadeOut();
             display.Delay(delay).MoveToY(13);

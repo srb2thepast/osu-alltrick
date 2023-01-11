@@ -25,8 +25,9 @@ namespace osuAT.Game.Types
             Count50 = count50;
             CountMiss = countMiss;
         }
-        public double CalcAcc() {
-            return ((300 * Count300) + (100 * Count300) + (50 * Count50))/(300* (Count300+Count100+Count50+CountMiss));
+        public double CalcAcc()
+        {
+            return ((300 * Count300) + (100 * Count300) + (50 * Count50)) / (300 * (Count300 + Count100 + Count50 + CountMiss));
         }
     }
 

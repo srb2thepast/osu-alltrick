@@ -2,17 +2,17 @@
 using System.IO;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Screens;
 using osu.Framework.Platform;
-using osuAT.Game.Screens;
+using osu.Framework.Screens;
 using osu.Game.Database;
+using osuAT.Game.Screens;
 using Realms;
 
 namespace osuAT.Game
 {
     public partial class osuATGame : osuATGameBase
     {
-        
+
         public ScreenStack ScreenStack;
         public HomeScreen MainScreen = new HomeScreen();
         private Storage storage { get; set; }
@@ -30,6 +30,6 @@ namespace osuAT.Game
             base.LoadComplete();
 
         }
-        
+
     }
 }

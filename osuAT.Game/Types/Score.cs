@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 using Newtonsoft.Json;
 using osuAT.Game;
 using osuAT.Game.Skills;
@@ -125,31 +125,36 @@ namespace osuAT.Game.Types
             RulesetName = ScoreRuleset.Name;
             Mods = Mods;
             IndexPosition = index;
-            if (ModsString is null) {
+            if (ModsString is null)
+            {
                 ModsString = new List<string>();
                 foreach (ModInfo mod in Mods)
                 {
                     ModsString.Add(mod.Name);
                 }
             }
-            if (Mods is null) {
+            if (Mods is null)
+            {
                 Mods = new List<ModInfo>();
-                foreach (string mod in ModsString) {
+                foreach (string mod in ModsString)
+                {
                     if (mod == "None") continue;
                     Mods.Add(ModStore.GetByName(mod));
                 }
             }
 
-            if ((calcPP || loadBeatmapContents) && !BeatmapInfo.FolderLocationIsValid(true)) {
+            if ((calcPP || loadBeatmapContents) && !BeatmapInfo.FolderLocationIsValid(true))
+            {
                 Console.WriteLine($"Deleted or unset folder detected for map {OsuID}, {BeatmapInfo.FolderLocation}. Skipping beatmapinfo contents.");
                 if (calcPP) { AlltrickPP = Skill.CalcAll(this); }
                 return;
             }
-            if (loadBeatmapContents || calcPP) { BeatmapInfo.LoadMapContents(ScoreRuleset,Mods); }
-            if (calcPP) {AlltrickPP = Skill.CalcAll(this); }
+            if (loadBeatmapContents || calcPP) { BeatmapInfo.LoadMapContents(ScoreRuleset, Mods); }
+            if (calcPP) { AlltrickPP = Skill.CalcAll(this); }
         }
 
-        public Score Clone() {
+        public Score Clone()
+        {
             Score newscore = new Score
             {
                 ID = ID,

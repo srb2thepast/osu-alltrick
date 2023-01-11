@@ -28,11 +28,13 @@ namespace osuAT.Game.Tests.Types
             */
         }
 
-        private void createMap() {
-            map = new Beatmap() {
+        private void createMap()
+        {
+            map = new Beatmap()
+            {
                 FolderLocation = "Hi"
             };
-            
+
         }
     }
 }

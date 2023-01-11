@@ -1,22 +1,22 @@
 ﻿using System;
-using System.Linq;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Extensions;
-using osu.Framework.Allocation;
+using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Textures;
-using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Difficulty.Preprocessing;
-using osuAT.Game.Types;
 using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Mods;
-using OsuBeatmap = osu.Game.Beatmaps.Beatmap;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Osu.Difficulty;
 using OsuApiHelper;
-using osu.Framework.Graphics.Primitives;
+using osuAT.Game.Types;
+using OsuBeatmap = osu.Game.Beatmaps.Beatmap;
 
 namespace osuAT.Game.Types
 {
@@ -65,10 +65,7 @@ namespace osuAT.Game.Types
         [JsonIgnore]
         public BeatmapContents Contents
         {
-            get
-            {
-                return contents;
-            }
+            get => contents;
             set => contents = value;
         }
 
@@ -92,11 +89,11 @@ namespace osuAT.Game.Types
 
         }
 
-       
+
 
         public string GetLocalBackgroundFile(LargeTextureStore textures)
         {
-            if (FolderLocation == default || FolderLocation == "deleted"|| !SaveStorage.OsuPathIsValid())
+            if (FolderLocation == default || FolderLocation == "deleted" || !SaveStorage.OsuPathIsValid())
             {
                 Console.WriteLine("No folder/invalid folder provided.");
                 return null;
@@ -115,8 +112,8 @@ namespace osuAT.Game.Types
                         {
                             line = reader.ReadLine();
                             List<string> FolderSplit = FolderLocation.Split(@"\").ToList();
-                            FolderSplit.RemoveAt(FolderSplit.Count-1);
-                            return string.Join(@"\",FolderSplit) + @"\" + line.Split(",")[2].Trim('"').ToStandardisedPath();
+                            FolderSplit.RemoveAt(FolderSplit.Count - 1);
+                            return string.Join(@"\", FolderSplit) + @"\" + line.Split(",")[2].Trim('"').ToStandardisedPath();
                         }
                         Console.WriteLine("Background section not found.");
                         return null;
@@ -132,6 +129,6 @@ namespace osuAT.Game.Types
             return textures.Get("TestBG");
             // return textures.Get(SaveStorage.ConcateOsuPath(GetLocalBackgroundFile(textures)));
         }
-        
+
     }
 }

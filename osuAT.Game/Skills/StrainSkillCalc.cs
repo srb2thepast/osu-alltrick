@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Textures;
-using osu.Framework.Graphics.Sprites;
-using osuAT.Game.Types;
-using osu.Game.Rulesets.Difficulty.Preprocessing;
-using osuTK;
 using osu.Framework.Allocation;
-using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
+using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
+using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using osuAT.Game.Skills.Resources;
+using osuAT.Game.Types;
+using osuTK;
 
 namespace osuAT.Game.Skills
 {
@@ -46,15 +46,15 @@ namespace osuAT.Game.Skills
         protected double GetTimeAppliedStrain(double value, DifficultyHitObject obj)
         {
 
-            return value * Math.Pow(1-DecayFactor, obj.StartTime/1000);
+            return value * Math.Pow(1 - DecayFactor, obj.StartTime / 1000);
         }
 
-        protected double GetPositionAppliedStrain(double value,bool capAtMin = true)
+        protected double GetPositionAppliedStrain(double value, bool capAtMin = true)
         {
             var newval = value * Math.Pow(1 - DecayFactor, StrainPosition);
             UncappedVal = newval;
             if (newval > Peak) Peak = newval;
-            return capAtMin? Math.Max(Peak,newval): newval;
+            return capAtMin ? Math.Max(Peak, newval) : newval;
         }
 
 

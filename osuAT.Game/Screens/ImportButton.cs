@@ -1,29 +1,29 @@
-using osu.Framework.Allocation;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Textures;
-using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Effects;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.UserInterface;
-using osu.Framework.Input.Events;
-using osu.Framework.Screens;
-using osuAT.Game.UserInterface;
-using osuAT.Game.Screens;
-using OsuApiHelper;
-using osuTK;
-using osuTK.Graphics;
-using osuAT.Game.Objects;
-using osu.Game.Overlays.BeatmapSet;
-using osu.Framework.Graphics.Animations;
-using osu.Framework.IO.Network;
-using OsuMemoryDataProvider;
 using System;
-using osu.Framework.Extensions.IEnumerableExtensions;
-using osu.Game.Overlays.Changelog;
 using System.IO;
 using System.Linq;
+using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Animations;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
+using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Input.Events;
+using osu.Framework.IO.Network;
+using osu.Framework.Screens;
+using osu.Game.Overlays.BeatmapSet;
+using osu.Game.Overlays.Changelog;
+using OsuApiHelper;
 using osuAT.Game.API;
+using osuAT.Game.Objects;
+using osuAT.Game.Screens;
+using osuAT.Game.UserInterface;
+using OsuMemoryDataProvider;
+using osuTK;
+using osuTK.Graphics;
 
 namespace osuAT.Game
 {
@@ -45,7 +45,7 @@ namespace osuAT.Game
 
         public void HideBox()
         {
-            beatmapBox.FadeOut(200,Easing.OutCubic);
+            beatmapBox.FadeOut(200, Easing.OutCubic);
         }
 
         public void ShowBox()
@@ -53,7 +53,7 @@ namespace osuAT.Game
             beatmapBox.Show();
         }
 
-        [BackgroundDependencyLoader ]
+        [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
             InternalChildren = new Drawable[]
@@ -178,7 +178,7 @@ namespace osuAT.Game
                                 ShadowOffset = new Vector2(0,0.1f),
                                 Text = "Beatmap ID: "
                             },
-                            beatmapidText = new SuperTextBox 
+                            beatmapidText = new SuperTextBox
                             {
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.CentreLeft,
@@ -186,7 +186,7 @@ namespace osuAT.Game
                                 Colour = Colour4.White,
                                 Masking =true,
                                 CornerRadius = 20,
-                                Size = new Vector2(250,50), 
+                                Size = new Vector2(250,50),
                                 Text = "",
                                 TextFont = new FontUsage("VarelaRound", size: 50),
                                 Shadow = true,
@@ -215,7 +215,8 @@ namespace osuAT.Game
                     },
                 };
 
-                if (ApiScoreProcessor.ApiReqs > 30) {
+                if (ApiScoreProcessor.ApiReqs > 30)
+                {
                     // Please wait text
                 }
                 beatmapidText.OnCommit += new TextBox.OnCommitHandler((TextBox box, bool target) =>
@@ -261,7 +262,8 @@ namespace osuAT.Game
                     return;
                 }
                 bool invalidID = false;
-                beatmapidText.Text.ForEach(ch => {
+                beatmapidText.Text.ForEach(ch =>
+                {
                     if (!"1234567890".Contains(ch))
                     {
                         infoText.Text = "Invalid map ID!";
@@ -289,7 +291,8 @@ namespace osuAT.Game
                 ProcessResult result = ApiScoreProcessor.SaveToStorageIfValid(osuScore, mapRet);
                 if ((int)result < 1)
                 {
-                    switch (result) {
+                    switch (result)
+                    {
                         case ProcessResult.AlreadySaved:
                             infoText.Text = "This score has already been saved!";
                             break;
@@ -297,10 +300,10 @@ namespace osuAT.Game
                             infoText.Text = "A better score has already been saved!";
                             break;
                         case ProcessResult.FailedScore:
-                        infoText.Text = "This is a failed score!";
+                            infoText.Text = "This is a failed score!";
                             break;
                         case ProcessResult.UnrankedMap:
-                        infoText.Text = "This map is unranked!";
+                            infoText.Text = "This map is unranked!";
                             break;
                     }
                     beatmapidText.FlashColour(Color4.Red, 3000, Easing.InOutCubic);

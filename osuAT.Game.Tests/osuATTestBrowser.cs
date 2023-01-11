@@ -1,19 +1,19 @@
+using System;
+using System.Diagnostics;
+using System.Reflection;
+using NUnit.Framework;
+using NUnit.Framework.Internal;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Platform;
 using osu.Framework.Testing;
-using osu.Framework.Allocation;
-using NUnit.Framework.Internal;
-using NUnit.Framework;
 using osu.Framework.Testing.Drawables.Steps;
 using osuTK.Graphics;
-using System.Diagnostics;
-using System.Reflection;
-using System;
 
 namespace osuAT.Game.Tests
 {
-    public class osuATTestBrowser : osuATGameBase
+    public partial class osuATTestBrowser : osuATGameBase
     {
         protected override void LoadComplete()
         {

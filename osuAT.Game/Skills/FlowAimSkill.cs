@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Graphics;
-using osuAT.Game.Types;
-using osu.Game.Rulesets.Osu.Objects;
-using osuTK;
-using osu.Game.Rulesets.Difficulty.Preprocessing;
-using static osuAT.Game.Skills.AimSkill;
-using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
-using osuAT.Game.Skills.Resources;
 using osu.Game.Graphics.UserInterfaceV2;
+using osu.Game.Rulesets.Difficulty.Preprocessing;
+using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
+using osu.Game.Rulesets.Osu.Objects;
+using osuAT.Game.Skills.Resources;
+using osuAT.Game.Types;
+using osuTK;
+using static osuAT.Game.Skills.AimSkill;
 
 namespace osuAT.Game.Skills
 {
@@ -45,7 +45,7 @@ namespace osuAT.Game.Skills
 
         public Vector2 BoxPosition => new Vector2(953, 1300);
 
-        public SkillGoals Benchmarks => new SkillGoals(600, 1500,3000, 6000, 9000, 10000);
+        public SkillGoals Benchmarks => new SkillGoals(600, 1500, 3000, 6000, 9000, 10000);
 
         #endregion
 
@@ -99,7 +99,7 @@ namespace osuAT.Game.Skills
                 if (lastDiffHit == null) return;
                 if (lastDiffHit.Angle == null) return;
                 if (diffHit.Angle == null) return;
-                double curAngle = (double)diffHit.Angle * (180/Math.PI);
+                double curAngle = (double)diffHit.Angle * (180 / Math.PI);
                 double lastAngle = (double)lastDiffHit.Angle * (180 / Math.PI);
 
                 // Strain-based Stream Length  
@@ -117,18 +117,18 @@ namespace osuAT.Game.Skills
                 aimDifficulty = aimTotal;
 
                 // Flow Pattern Multiplier
-                flowPatternMult = Math.Clamp(((double)curAngle - 60) / 60, 0, 1)/2 + Math.Clamp(((double)lastAngle - 60) / 60, 0, 1) / 2;
+                flowPatternMult = Math.Clamp(((double)curAngle - 60) / 60, 0, 1) / 2 + Math.Clamp(((double)lastAngle - 60) / 60, 0, 1) / 2;
 
                 // Angle Difficulty 
-                angCurDiff = 20*(-Math.Clamp(1.5 * ((double)curAngle-60) / 180, -1, 1) + 1);
+                angCurDiff = 20 * (-Math.Clamp(1.5 * ((double)curAngle - 60) / 180, -1, 1) + 1);
                 totalAngStrainWorth += angCurDiff * flowPatternMult;
                 totalAngStrainWorth *= 0.9;
-                totalAngStrainWorth = Math.Max(0,totalAngStrainWorth);
+                totalAngStrainWorth = Math.Max(0, totalAngStrainWorth);
 
-                angDifficulty = 1.5 *Math.Log(totalAngStrainWorth+1);
+                angDifficulty = 1.5 * Math.Log(totalAngStrainWorth + 1);
 
                 // Final value
-                curWorth = 1.25*lenMult * flowPatternMult * (10*aimDifficulty + (aimDifficulty * angDifficulty));
+                curWorth = 1.25 * lenMult * flowPatternMult * (10 * aimDifficulty + (aimDifficulty * angDifficulty));
                 highestWorth = Math.Max(highestWorth, curWorth);
 
                 CurTotalPP = highestWorth;

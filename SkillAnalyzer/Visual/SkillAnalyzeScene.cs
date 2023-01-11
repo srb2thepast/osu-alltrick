@@ -4,66 +4,66 @@
 #nullable disable
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using MongoDB.Bson.Serialization.Serializers;
+using NuGet.Configuration;
+using NuGet.Packaging.Rules;
 using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
+using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Textures;
-using osu.Game;
-using osu.Game.Screens;
-using osu.Game.Screens.Play;
-using osu.Game.Screens.Edit;
-using osu.Game.Beatmaps;
-using osu.Game.Tests.Beatmaps;
-using osu.Game.Beatmaps.ControlPoints;
-using osu.Game.Rulesets;
-using osu.Game.Rulesets.Edit;
-using osu.Game.Rulesets.Osu;
-using osu.Game.Overlays;
-using osu.Game.Tests.Visual;
-using osu.Framework.Testing;
-using osu.Game.Screens.Edit.Components.Timelines.Summary;
-using osu.Framework.Extensions.IEnumerableExtensions;
-using osu.Framework.Extensions.Color4Extensions;
-using osu.Game.Graphics.Cursor;
-using osu.Game.Screens.Edit.Components;
-using osuTK;
-using osuTK.Graphics;
-using osuAT.Game;
-using osuAT.Game.Types;
-using osu.Framework.Bindables;
-using osu.Game.Rulesets.Difficulty.Preprocessing;
-using osu.Game.Screens.Edit.Compose;
 using osu.Framework.Graphics.Sprites;
-using System.Reflection;
-using osu.Game.Graphics;
-using osuAT.Game.Tests.Visual;
-using Skill = osuAT.Game.Skills.Skill;
-using OsuRulesetInfo = osu.Game.Rulesets.RulesetInfo;
-using OsuBeatmap = osu.Game.Beatmaps.Beatmap;
-using ATBeatmap = osuAT.Game.Types.Beatmap;
-using ATRulesetStore = osuAT.Game.Types.RulesetStore;
-using osu.Game.Graphics.Sprites;
-using osu.Game.Extensions;
-using osu.Game.Rulesets.Mods;
-using OsuMemoryDataProvider.OsuMemoryModels.Abstract;
-using MongoDB.Bson.Serialization.Serializers;
-using NuGet.Configuration;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osu.Framework.Testing;
+using osu.Game;
+using osu.Game.Beatmaps;
+using osu.Game.Beatmaps.ControlPoints;
+using osu.Game.Extensions;
+using osu.Game.Graphics;
+using osu.Game.Graphics.Cursor;
+using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
-using osuTK.Input;
-using osuAT.Game.Skills.Resources;
-using NuGet.Packaging.Rules;
-using System.IO;
+using osu.Game.Overlays;
+using osu.Game.Rulesets;
+using osu.Game.Rulesets.Difficulty.Preprocessing;
+using osu.Game.Rulesets.Edit;
+using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Osu;
+using osu.Game.Screens;
+using osu.Game.Screens.Edit;
+using osu.Game.Screens.Edit.Components;
+using osu.Game.Screens.Edit.Components.Timelines.Summary;
+using osu.Game.Screens.Edit.Compose;
+using osu.Game.Screens.Play;
+using osu.Game.Tests.Beatmaps;
+using osu.Game.Tests.Visual;
+using osuAT.Game;
 using osuAT.Game.Screens;
+using osuAT.Game.Skills.Resources;
+using osuAT.Game.Tests.Visual;
+using osuAT.Game.Types;
+using OsuMemoryDataProvider.OsuMemoryModels.Abstract;
+using osuTK;
+using osuTK.Graphics;
+using osuTK.Input;
+using ATBeatmap = osuAT.Game.Types.Beatmap;
+using ATRulesetStore = osuAT.Game.Types.RulesetStore;
+using OsuBeatmap = osu.Game.Beatmaps.Beatmap;
+using OsuRulesetInfo = osu.Game.Rulesets.RulesetInfo;
+using Skill = osuAT.Game.Skills.Skill;
 
 namespace SkillAnalyzer.Visual
 {
@@ -114,14 +114,16 @@ namespace SkillAnalyzer.Visual
         {
             public AnalyzerPlaybackControl Playback;
 
-            public AnalyzerEditor(EditorLoader loader) : base(loader) {
+            public AnalyzerEditor(EditorLoader loader) : base(loader)
+            {
 
             }
 
             protected partial class AnalyzerSummaryTimeline : SummaryTimeline
             {
                 [BackgroundDependencyLoader]
-                private void load(OverlayColourProvider colourProvider) {
+                private void load(OverlayColourProvider colourProvider)
+                {
                     //Add(new StrainVisualizer {
 
                     //});
@@ -184,7 +186,8 @@ namespace SkillAnalyzer.Visual
                 [BackgroundDependencyLoader]
                 private void load()
                 {
-                    Track.BindValueChanged(tr => {
+                    Track.BindValueChanged(tr =>
+                    {
                         track = tr.NewValue;
                         SetRateMult(RateMult);
                     }, true);
@@ -264,7 +267,8 @@ namespace SkillAnalyzer.Visual
             private AnalyzerBottomBar bottomBar;
 
             [BackgroundDependencyLoader]
-            private void load() {
+            private void load()
+            {
 
             }
 
@@ -309,7 +313,8 @@ namespace SkillAnalyzer.Visual
 
                     // Lol
                     HitObjectComposer popoverCont = null;
-                    foreach (FieldInfo property in props) {
+                    foreach (FieldInfo property in props)
+                    {
                         Console.WriteLine(property.Name + "=" + property.GetValue(composeScreen));
                         if (property.Name == "composer")
                         {
@@ -419,7 +424,8 @@ namespace SkillAnalyzer.Visual
             return FocusedBeatmap;
         }
 
-        protected IBeatmap SwitchFocusedMap(string mapLocation, OsuRulesetInfo ruleset, List<ModInfo> mods) {
+        protected IBeatmap SwitchFocusedMap(string mapLocation, OsuRulesetInfo ruleset, List<ModInfo> mods)
+        {
             ATFocusedMap = new ATBeatmap()
             {
                 FolderLocation = MapLocation
@@ -665,7 +671,8 @@ namespace SkillAnalyzer.Visual
         protected void UpdateBars(bool skipCurhitCheck) => UpdateBars(CurSkillList, true);
         protected void UpdateBars() => UpdateBars(CurSkillList);
 
-        protected void UpdateBars(List<ISkill> skillList, bool skipCurhitCheck = false) {
+        protected void UpdateBars(List<ISkill> skillList, bool skipCurhitCheck = false)
+        {
 
             if (!canUseEditor) return;
             if (CurSkillList == default | editorLoader == null) return;
@@ -675,7 +682,8 @@ namespace SkillAnalyzer.Visual
             // update the score
             var p = curhitindex;
             updateClosestHitObjectIndex(EditorClock.CurrentTime);
-            if (p != curhitindex) { 
+            if (p != curhitindex)
+            {
                 Console.WriteLine($"Current Index:  {curhitindex}");
             }
             if (curhitindex == previoushitindex && !skipCurhitCheck)
@@ -729,7 +737,8 @@ namespace SkillAnalyzer.Visual
 
                     if (props.Count() > 0)
                     {
-                        debugContainer.AddText($"{skill.Identifier}", t => {
+                        debugContainer.AddText($"{skill.Identifier}", t =>
+                        {
                             t.Font = new FontUsage("VarelaRound", size: 23);
                             t.Colour = skill.PrimaryColor;
                             t.Shadow = true;
@@ -748,7 +757,8 @@ namespace SkillAnalyzer.Visual
                         {
                             propval = Math.Truncate(dubval * 100) / 100;
                         }
-                        debugContainer.AddText($"{property.Name}:\n   -> {propval}\n", t => {
+                        debugContainer.AddText($"{property.Name}:\n   -> {propval}\n", t =>
+                        {
                             t.Font = new FontUsage("VarelaRound", size: 17);
                             t.Colour = Colour4.White;
                             t.Shadow = true;
@@ -759,7 +769,8 @@ namespace SkillAnalyzer.Visual
             );
 
 
-            skillNameList.ForEach(skillName => {
+            skillNameList.ForEach(skillName =>
+            {
                 skillColors.Add(ColourInfo.GradientVertical(Skill.GetSkillByID(skillName.Key).PrimaryColor, Skill.GetSkillByID(skillName.Key).SecondaryColor));
             });
 
@@ -776,7 +787,8 @@ namespace SkillAnalyzer.Visual
         /// </summary>
         /// <remarks>It's possible for  could be heavily improved.</remarks>
         /// <returns></returns>
-        private int updateClosestHitObjectIndex(double currentTime) {
+        private int updateClosestHitObjectIndex(double currentTime)
+        {
             var hitList = CachedMapDiffHits;
             previoushitindex = curhitindex;
             if (cachedCurTime > currentTime)
@@ -785,7 +797,7 @@ namespace SkillAnalyzer.Visual
                 for (int i = curhitindex; i >= 0; i--)
                 {
                     var time = hitList[i].StartTime * EditorClock.Track.Value.Rate;
-                    
+
                     if (time < currentTime)
                     {
                         curhitindex = i;
@@ -799,16 +811,17 @@ namespace SkillAnalyzer.Visual
             cachedCurTime = currentTime;
             // [~] this could be made a bit better
             // starts at curhitindex to avoid constantly looping through the whole map
-            for (int i = Math.Max(0,curhitindex-1); i < hitList.Count; i++) {
+            for (int i = Math.Max(0, curhitindex - 1); i < hitList.Count; i++)
+            {
                 var time = hitList[i].StartTime * EditorClock.Track.Value.Rate;
                 if (time >= currentTime)
                 {
-                    curhitindex = Math.Max(0, i-1);
+                    curhitindex = Math.Max(0, i - 1);
                     return Math.Max(0, i - 1);
                 }
             }
-            curhitindex = hitList.Count-1;
-            return hitList.Count-1;
+            curhitindex = hitList.Count - 1;
+            return hitList.Count - 1;
         }
 
         protected override void LoadEditor()
@@ -847,7 +860,8 @@ namespace SkillAnalyzer.Visual
         protected delegate bool DebugValAssert(object obj);
         protected void AddDebugValueAssert(string description, ISkill skill, string key, DebugValAssert assert)
         {
-            AddAssert(description, () => {
+            AddAssert(description, () =>
+            {
                 Dictionary<string, object> directory = skillDebugTextCached[skill.Identifier];
                 var value = directory[key];
                 return assert(value);
@@ -860,7 +874,8 @@ namespace SkillAnalyzer.Visual
         }
         protected void AddSeekStep(double miliseconds, bool stopclock = true)
         {
-            AddStep("Seek to " + miliseconds.ToEditorFormattedString(), () => {
+            AddStep("Seek to " + miliseconds.ToEditorFormattedString(), () =>
+            {
                 EditorClock.Seek(miliseconds);
                 if (stopclock)
                     EditorClock.Stop();
@@ -870,17 +885,19 @@ namespace SkillAnalyzer.Visual
 
         protected void EnableSkillStep(ISkill skill)
         {
-            AddUntilStep($"Add {skill.Identifier}", () => {
+            AddUntilStep($"Add {skill.Identifier}", () =>
+            {
                 if (!CurSkillList.Contains(skill))
                     CurSkillList.Add(skill);
                 UpdateBars(true);
                 return CurSkillList.Contains(skill);
             });
-            
+
         }
 
         [Obsolete("WIP")] // [!]
-        protected void AddSwitchFocusedMapStep(string mapName, string mapLocation, OsuRulesetInfo ruleset, List<ModInfo> mods) {
+        protected void AddSwitchFocusedMapStep(string mapName, string mapLocation, OsuRulesetInfo ruleset, List<ModInfo> mods)
+        {
             AddStep($"Switch to beatmap {mapName}", () =>
             {
                 SwitchFocusedMap(mapLocation, ruleset, mods);
@@ -899,6 +916,6 @@ namespace SkillAnalyzer.Visual
         #endregion
 
 
-        public override void SetUpSteps() {}
+        public override void SetUpSteps() { }
     }
 }

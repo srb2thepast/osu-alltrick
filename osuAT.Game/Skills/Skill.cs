@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Textures;
-using osuAT.Game.Types;
 using osuAT.Game.Objects;
-using osuTK;
-using System.IO;
 using osuAT.Game.Skills.Resources;
+using osuAT.Game.Types;
+using osuTK;
 
 namespace osuAT.Game.Skills
 {
     public static class Skill
     {
         public static FlowAimSkill Flowaim = new FlowAimSkill();
-        public static CursorControlSkill CursorControl= new CursorControlSkill();
+        public static CursorControlSkill CursorControl = new CursorControlSkill();
         public static AimSkill Aim = new AimSkill();
         public static SliderAimSkill SliderAim = new SliderAimSkill();
         public static TappingStaminaSkill TappingStamina = new TappingStaminaSkill();
@@ -30,9 +30,12 @@ namespace osuAT.Game.Skills
             TappingStamina
         };
 
-        public static ISkill GetSkillByID(string skillid) {
-            foreach (ISkill skill in SkillList) {
-                if (skill.Identifier == skillid) {
+        public static ISkill GetSkillByID(string skillid)
+        {
+            foreach (ISkill skill in SkillList)
+            {
+                if (skill.Identifier == skillid)
+                {
                     return skill;
                 }
             }
@@ -53,7 +56,7 @@ namespace osuAT.Game.Skills
             foreach (ISkill skill in SkillList)
             {
                 SkillCalcuator calculator = skill.GetSkillCalc(score);
-                dict.Add(skill.Identifier,  calculator.SkillCalc());
+                dict.Add(skill.Identifier, calculator.SkillCalc());
             }
             return dict;
         }
@@ -78,7 +81,7 @@ namespace osuAT.Game.Skills
             int n = 0;
             foreach (var score in scoreList)
             {
-                total += score.Item2*Math.Pow(0.95, n);
+                total += score.Item2 * Math.Pow(0.95, n);
                 n += 1;
             }
             return Math.Truncate(total * 100) / 100;

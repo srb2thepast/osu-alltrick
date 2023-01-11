@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Textures;
-using osuAT.Game.Types;
 using osuAT.Game.Objects;
+using osuAT.Game.Types;
 using osuTK;
 
 namespace osuAT.Game.Skills.Resources

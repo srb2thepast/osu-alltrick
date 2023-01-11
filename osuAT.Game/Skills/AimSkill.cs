@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Graphics;
-using osuAT.Game.Types;
-using osu.Game.Rulesets.Osu.Objects;
-using osuTK;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
+using osu.Game.Rulesets.Osu.Objects;
 using osuAT.Game.Skills.Resources;
+using osuAT.Game.Types;
+using osuTK;
 
 namespace osuAT.Game.Skills
 {

@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
+using osu.Game.Rulesets.Osu;
 using osuAT.Game.Types;
 using Skill = osuAT.Game.Skills.Skill;
-using osu.Game.Rulesets.Osu;
 
 namespace SkillAnalyzer.Visual
 {
@@ -12,8 +12,9 @@ namespace SkillAnalyzer.Visual
     {
         protected override string MapLocation => @"lapix - Nexta (DTM9 Nowa) [ending].osu";
         //protected override List<ModInfo> AppliedMods => new List<ModInfo> { };
-        public CursorControlAnalyzer() {
-            
+        public CursorControlAnalyzer()
+        {
+
         }
 
         [Test]
@@ -21,7 +22,8 @@ namespace SkillAnalyzer.Visual
         {
             EnableSkillStep(Skill.CursorControl);
             AddSeekStep("2:21:200");
-            AddDebugValueAssert("curavgspacing > 50", Skill.CursorControl, "curAvgSpacing", (val) => {
+            AddDebugValueAssert("curavgspacing > 50", Skill.CursorControl, "curAvgSpacing", (val) =>
+            {
                 return (double)val > 50;
             });
         }

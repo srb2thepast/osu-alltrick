@@ -44,7 +44,7 @@ namespace osuAT.Game.Types
         }
 
         [Obsolete]
-        public static ATBeatmap ConvertToATMap(this WorkingBeatmap map,string folderlocation = "",List<ModInfo> mods = null)
+        public static ATBeatmap ConvertToATMap(this WorkingBeatmap map, string folderlocation = "", List<ModInfo> mods = null)
         {
             ATBeatmap newmap = new ATBeatmap()
             {
@@ -57,7 +57,7 @@ namespace osuAT.Game.Types
                 StarRating = 1,
                 FolderLocation = folderlocation,
             };
-            newmap.LoadMapContents(RulesetStore.Osu,mods);
+            newmap.LoadMapContents(RulesetStore.Osu, mods);
             newmap.MaxCombo = newmap.GetMaxCombo();
 
             return newmap;

@@ -1,27 +1,27 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using NuGet.Protocol.Plugins;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Events;
-using osuAT.Game.Screens;
+using osu.Game.Rulesets.Catch.UI;
+using osu.Game.Rulesets.Taiko.Edit.Blueprints;
 using osuAT.Game.Objects;
+using osuAT.Game.Screens;
 using osuAT.Game.Skills;
-using osuTK;
-using osuTK.Input;
 using osuAT.Game.Skills.Resources;
 using osuAT.Game.UserInterface;
-using osu.Game.Rulesets.Taiko.Edit.Blueprints;
-using osu.Game.Rulesets.Catch.UI;
-using NuGet.Protocol.Plugins;
+using osuTK;
 using osuTK.Graphics.ES11;
-using osu.Framework.Graphics.Effects;
-using osu.Framework.Graphics.Colour;
-using System.Threading.Tasks;
+using osuTK.Input;
 
 namespace osuAT.Game
 {
@@ -120,7 +120,7 @@ namespace osuAT.Game
                             Length = 140,
                             Rotation = Direction.Left
                         }
-                    }   
+                    }
                 },
                 // Cursor Control -> Slider Aim
                 new ArrowInfo
@@ -148,11 +148,11 @@ namespace osuAT.Game
             {
                 SkillBox mainBox = SkillDict[connect.MainSkill];
                 SkillBox targetBox = SkillDict[connect.TargetSkill];
-                Arrow ar = AddArrow(mainBox, targetBox, (float)connect.Rotation, connect.Colour,connect.Segments);
+                Arrow ar = AddArrow(mainBox, targetBox, (float)connect.Rotation, connect.Colour, connect.Segments);
                 ar.Position += connect.Offset;
             }
 
-            
+
 
             BoxContainer.Add(
             new Sprite
@@ -172,7 +172,8 @@ namespace osuAT.Game
             Left = 90
         }
 
-        protected struct ArrowInfo {
+        protected struct ArrowInfo
+        {
             public ISkill MainSkill;
             public ISkill TargetSkill;
             public Direction Rotation;
@@ -191,7 +192,8 @@ namespace osuAT.Game
             public Direction Rotation;
         }
 
-        protected Arrow AddArrow(SkillBox mainBox, SkillBox targetBox,float rotation,Colour4 color, List<Segment> Segments = null) {
+        protected Arrow AddArrow(SkillBox mainBox, SkillBox targetBox, float rotation, Colour4 color, List<Segment> Segments = null)
+        {
             Arrow newArrow = new Arrow
             {
                 Length = (mainBox.X - targetBox.X) - mainBox.MiniBox.Width * 2,
@@ -199,9 +201,9 @@ namespace osuAT.Game
                 Rotation = rotation,
                 Segments = Segments,
                 Colour = color,
-                Position = new Vector2(mainBox.X - 8, mainBox.Y - 14)
+                Position = new Vector2(mainBox.X - 8, mainBox.Y - 14),
+                Depth = 100
             };
-            newArrow.Depth = 100;
             BoxContainer.Add(newArrow);
             return newArrow;
         }
@@ -211,13 +213,15 @@ namespace osuAT.Game
             base.LoadComplete();
         }
 
-        public void FocusOnBox(SkillBox box) {
+        public void FocusOnBox(SkillBox box)
+        {
             Vector2 BoxScreenPos = new Vector2(
                 (Size.X / 2 + box.Position.X),
                 (box.Position.Y));
             BoxContainer.MoveTo(-BoxScreenPos, 400, Easing.OutCubic);
             FocusedBox?.MiniBox.OnDefocus();
-            Task.Run(async () => {
+            Task.Run(async () =>
+            {
                 await Task.Delay(200);
                 Schedule(() => box.MiniBox.OnFocus());
             });
@@ -225,14 +229,17 @@ namespace osuAT.Game
             lastoffpos = BoxScreenPos;
         }
 
-        public void FocusToClosest(Vector2 bias) {
+        public void FocusToClosest(Vector2 bias)
+        {
             FocusedBox ??= SkillDict[Skill.Flowaim];
             SkillBox closest = FocusedBox;
             float closestDist = 100000;
-            foreach (SkillBox box in SkillDict.Values) {
+            foreach (SkillBox box in SkillDict.Values)
+            {
                 if (box == FocusedBox) continue;
                 float curBoxDist = (bias * (box.Position - FocusedBox.Position)).Length;
-                if (closest == null || curBoxDist < closestDist) {
+                if (closest == null || curBoxDist < closestDist)
+                {
                     if (Math.Abs(bias.Y) > Math.Abs(bias.X))
                     {
                         if (Math.Sign((box.Position - FocusedBox.Position).Y) == -Math.Sign(bias.Y)) // up/down
@@ -241,7 +248,8 @@ namespace osuAT.Game
                             closestDist = (bias * (closest.Position - FocusedBox.Position)).Length;
                         }
                     }
-                    else {
+                    else
+                    {
                         if (Math.Sign((box.Position - FocusedBox.Position).X) == -Math.Sign(bias.X)) // left/right
                         {
                             closest = box;
@@ -256,11 +264,13 @@ namespace osuAT.Game
             return;
         }
 
-        public void Defocus() {
+        public void Defocus()
+        {
             FocusedBox = null;
         }
 
-        protected class Arrow : CompositeDrawable {
+        protected partial class Arrow : CompositeDrawable
+        {
 
             public float Length = 0;
 
@@ -290,7 +300,7 @@ namespace osuAT.Game
                         Colour = Colour,
                         Texture = textures.Get("FigmaVectors/ArrowHead.png")
                     }.WithEffect(new GlowEffect { BlurSigma = new Vector2(2f), Strength = 2, PadExtent = true, Colour = Colour });
-                    ar.Padding = new MarginPadding { Bottom = 40};
+                    ar.Padding = new MarginPadding { Bottom = 40 };
                     InternalChildren = new Drawable[] {
                         new Container {
                             Anchor = Anchor.TopCentre,
@@ -309,15 +319,17 @@ namespace osuAT.Game
                         },
                     };
                 }
-                else {
-                    Circle lastSegmentBox = new Circle()
+                else
+                {
+                    _ = new Circle()
                     {
 
                     };
                     // Vector2 lastrotdir = new Vector2(1);
                     Vector2 lastEndPosition = Vector2.Zero;
                     int i = 0;
-                    foreach (Segment Segment in Segments) {
+                    foreach (Segment Segment in Segments)
+                    {
                         Circle curSegmentBox = new Circle
                         {
                             Anchor = Anchor.TopCentre,
@@ -328,11 +340,11 @@ namespace osuAT.Game
                             Position = lastEndPosition,
                             Colour = Colour
                         };
-                        lastSegmentBox = curSegmentBox;
+                        var lastSegmentBox = curSegmentBox;
                         Vector2 curEndPosition = curSegmentBox.Position +
                             (new Vector2(
                                 (float)Math.Sin((-(double)Segment.Rotation) * Math.PI / 180),
-                                (float)Math.Cos((-(double)Segment.Rotation) * Math.PI / 180)) * (Segment.Length -4f)
+                                (float)Math.Cos((-(double)Segment.Rotation) * Math.PI / 180)) * (Segment.Length - 4f)
                              );
                         AddInternal(curSegmentBox.WithEffect(new GlowEffect { BlurSigma = new Vector2(2f), Strength = 10, PadExtent = true, Colour = Colour }));
                         if (i < Segments.Count - 1)
@@ -394,7 +406,7 @@ namespace osuAT.Game
         private Vector2 lastscale = new Vector2(0.2f);
         protected override bool OnDragStart(DragStartEvent e)
         {
-            if ((!(FocusedBox?.State == SkillBoxState.FullBox) || (FocusedBox == null)) && MainScreen.CurrentlyFocused == true )
+            if ((!(FocusedBox?.State == SkillBoxState.FullBox) || (FocusedBox == null)) && MainScreen.CurrentlyFocused == true)
             {
                 FocusedBox = null; // if you start dragging, the box will defocus.
                 return true;
@@ -403,8 +415,8 @@ namespace osuAT.Game
         }
         protected override void OnDrag(DragEvent e)
         {
-            Vector2 newPos = ((-e.MousePosition + e.MouseDownPosition)*(1/Child.Scale.X) + lastoffpos);
-            newPos = new Vector2(Math.Clamp(newPos.X,0,8000),Math.Clamp(newPos.Y, -2500, 2500));
+            Vector2 newPos = ((-e.MousePosition + e.MouseDownPosition) * (1 / Child.Scale.X) + lastoffpos);
+            newPos = new Vector2(Math.Clamp(newPos.X, 0, 8000), Math.Clamp(newPos.Y, -2500, 2500));
             BoxContainer.MoveTo(-newPos);
 
         }
@@ -421,8 +433,8 @@ namespace osuAT.Game
             // is finally...
             // GOOD!!!!!!!!!!!!!!!!!!!!!!!!!
             if (MainScreen.CurrentlyFocused == false) return false;
-                if (FocusedBox?.State == SkillBoxState.FullBox) { return false; }
-                Vector2 newScale = lastscale + new Vector2(e.ScrollDelta.Y / 10, e.ScrollDelta.Y / 10);
+            if (FocusedBox?.State == SkillBoxState.FullBox) { return false; }
+            Vector2 newScale = lastscale + new Vector2(e.ScrollDelta.Y / 10, e.ScrollDelta.Y / 10);
 
             lastscale = ((newScale.X < 0.2 && newScale.Y < 0.2) || (newScale.X > 1.5 && newScale.Y > 1.5)) ? lastscale : newScale;
 
@@ -443,7 +455,7 @@ namespace osuAT.Game
             }
             if (e.Key == Key.A || e.Key == Key.Left)
             {
-                FocusToClosest(new Vector2(1.5f,0.3f));
+                FocusToClosest(new Vector2(1.5f, 0.3f));
                 return true;
             }
             if (e.Key == Key.S || e.Key == Key.Down)
@@ -453,14 +465,15 @@ namespace osuAT.Game
             }
             if (e.Key == Key.D || e.Key == Key.Right)
             {
-                FocusToClosest(new Vector2(-1.5f,0.3f));
+                FocusToClosest(new Vector2(-1.5f, 0.3f));
                 return true;
             }
-            if (e.Key == Key.Enter) {
+            if (e.Key == Key.Enter)
+            {
                 FocusedBox?.MiniBox.TryTransition();
             }
             return false;
-            
+
         }
         #endregion
     }

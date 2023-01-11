@@ -1,20 +1,20 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Timers;
-using System.ComponentModel;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Timers;
 using osu.Framework;
-using osuAT.Game.Objects.LazerAssets;
+using osu.Framework.Allocation;
+using osu.Framework.Platform;
 using OsuApiHelper;
+using osuAT.Game.API;
+using osuAT.Game.Objects.LazerAssets;
 using OsuMemoryDataProvider;
 using OsuMemoryDataProvider.OsuMemoryModels.Abstract;
 using OsuMemoryDataProvider.OsuMemoryModels.Direct;
-using osuAT.Game.API;
-using osu.Framework.Allocation;
-using osu.Framework.Platform;
 
 namespace osuAT.Game
 {
@@ -34,14 +34,15 @@ namespace osuAT.Game
         public static async void Init()
         {
             var gamestore = osuATGameBase.Dependencies.Get<osuATGameBase>();
-            
+
             Console.WriteLine("initalised scoreimpoter");
             instances += 1;
             Console.WriteLine($"{instances} Instances.");
             if (instances > 1)
                 return;
             osuReader = StructuredOsuMemoryReader.Instance.GetInstanceForWindowTitleHint("");
-            while (true) {
+            while (true)
+            {
                 await Task.Delay(TickDelay);
                 if (Enabled && !gamestore.Window.Focused)
                 {
@@ -53,7 +54,8 @@ namespace osuAT.Game
         private static async void scoreSetTimer_Elapsed()
         {
             if (!SaveStorage.OsuPathIsValid() || OsuApiKey.Key == default || !(ApiScoreProcessor.ApiKeyValid)) return;
-            if (ApiScoreProcessor.ApiReqs >= 30) {
+            if (ApiScoreProcessor.ApiReqs >= 30)
+            {
                 Console.WriteLine($"Automatic Rate limiting begun ({ApiScoreProcessor.ApiReqs} API Requests were sent!!!!)");
                 return;
             }
@@ -85,8 +87,10 @@ namespace osuAT.Game
                 var osuScore = OsuApi.GetUserRecent(SaveStorage.SaveData.PlayerID.ToString())[0];
                 OsuApiBeatmap mapRet() => ApiScoreProcessor.OsuApiGetBeatmapWithMD5(osuScore.MapID, osuScore.Mods, osuScore.Mode);
 
-                ApiScoreProcessor.SaveToStorageIfValid(osuScore,mapRet);
-            } catch {
+                ApiScoreProcessor.SaveToStorageIfValid(osuScore, mapRet);
+            }
+            catch
+            {
                 lastScreen = OsuMemoryStatus.Unknown;
             }
             finally { }
@@ -95,7 +99,8 @@ namespace osuAT.Game
 
 
 
-        public void ImportScore() {
+        public void ImportScore()
+        {
         }
     }
 }

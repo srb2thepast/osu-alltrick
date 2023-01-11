@@ -1,21 +1,21 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using osu.Framework.Testing;
 using osu.Framework.Development;
+using osu.Framework.Extensions.TypeExtensions;
+using osu.Framework.Testing;
 using osu.Game.Tests;
 using osu.Game.Tests.Visual;
 using osuTK;
-using osu.Framework.Extensions.TypeExtensions;
 
 namespace osuAT.Game.Tests.Visual
 {
-    public class osuATTestScene : TestScene
+    public partial class osuATTestScene : TestScene
     {
 
         protected override ITestSceneTestRunner CreateRunner() => new osuATTestSceneTestRunner();
 
-        private class osuATTestSceneTestRunner : osuATGameBase, ITestSceneTestRunner
+        private partial class osuATTestSceneTestRunner : osuATGameBase, ITestSceneTestRunner
         {
 
             private TestSceneTestRunner.TestRunner runner;

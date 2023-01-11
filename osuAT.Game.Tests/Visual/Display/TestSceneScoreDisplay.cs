@@ -1,13 +1,13 @@
+using System;
 using System.Collections.Generic;
 using osu.Framework.Graphics;
 using osuAT.Game.Objects.Displays;
-using osuAT.Game.Types;
 using osuAT.Game.Skills;
-using System;
+using osuAT.Game.Types;
 
 namespace osuAT.Game.Tests.Visual.Display
 {
-    public class TestSceneScoreDisplay : osuATTestScene
+    public partial class TestSceneScoreDisplay : osuATTestScene
     {
         public TestSceneScoreDisplay()
         {
@@ -43,7 +43,8 @@ namespace osuAT.Game.Tests.Visual.Display
                 DateCreated = System.DateTime.Today,
             };
             dummyscore.Register();
-            AddStep("create score display", () => {
+            AddStep("create score display", () =>
+            {
                 ScoreDisplay display = new ScoreDisplay
                 {
                     Anchor = Anchor.Centre,

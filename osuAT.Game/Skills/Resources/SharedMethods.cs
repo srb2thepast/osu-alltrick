@@ -44,8 +44,9 @@ namespace osuAT.Game.Skills.Resources
         /// <param name="bpm">The BPM to convert</param>
         /// <param name="divisor"></param>
         /// <returns></returns>
-        public static double BPMToMS(double bpm,int divisor=4) {
-            return (60000/bpm)/divisor;
+        public static double BPMToMS(double bpm, int divisor = 4)
+        {
+            return (60000 / bpm) / divisor;
         }
 
         /// <summary>
@@ -56,7 +57,7 @@ namespace osuAT.Game.Skills.Resources
         /// <returns></returns>
         public static double MSToBPM(double ms, int divisor = 4)
         {
-            return  (60000/ms)/divisor;
+            return (60000 / ms) / divisor;
         }
 
         /// <summary>

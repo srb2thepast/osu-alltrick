@@ -1,4 +1,3 @@
-using osu.Framework.Testing;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -10,15 +9,16 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
+using osu.Framework.Testing;
 using osuTK;
 using osuTK.Graphics;
 
 namespace osuAT.Game.Tests.Visual
 {
     [TestFixture]
-    public class TestSceneSpriteIcon : TestScene
+    public partial class TestSceneSpriteIcon : TestScene
     {
-        
+
         public TestSceneSpriteIcon()
         {
             Box background;
@@ -83,7 +83,7 @@ namespace osuAT.Game.Tests.Visual
                 }));
         }
 
-        private class Icon : Container, IHasTooltip
+        private partial class Icon : Container, IHasTooltip
         {
             public LocalisableString TooltipText { get; }
 

@@ -1,13 +1,13 @@
 ﻿using System;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
 
 namespace osuAT.Game.UserInterface
 {
-    
+
     public partial class SuperTextBox : BasicTextBox
     {
         public FontUsage TextFont;
@@ -23,7 +23,7 @@ namespace osuAT.Game.UserInterface
 
         public SuperTextBox()
         {
-            
+
             BackgroundFocused = BGFocusedColor;
             BackgroundUnfocused = BGUnfocusedColor;
             BackgroundCommit = BGCommitColor;

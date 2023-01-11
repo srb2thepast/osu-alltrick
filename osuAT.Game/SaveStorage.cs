@@ -69,7 +69,7 @@ namespace osuAT.Game
         /// list of each score set in that mode.
         /// </remarks>
         [JsonProperty("alltrickTop")]
-        public Dictionary<string, Dictionary<string,List<Tuple<Guid, double>>>> AlltrickTop { get; set; }
+        public Dictionary<string, Dictionary<string, List<Tuple<Guid, double>>>> AlltrickTop { get; set; }
 
         /// <summary>
         /// A list of every score that osu!alltrick was able to process.
@@ -91,7 +91,8 @@ namespace osuAT.Game
         private static Dictionary<string, double> getDefaultTotal()
         {
             Dictionary<string, double> dict = new Dictionary<string, double>();
-            foreach (ISkill skill in Skill.SkillList) {
+            foreach (ISkill skill in Skill.SkillList)
+            {
                 dict.Add(skill.Identifier, 0);
             }
             return dict;
@@ -115,31 +116,37 @@ namespace osuAT.Game
             return dict;
         }
 
-        public static string ConcateOsuPath(string str) {
+        public static string ConcateOsuPath(string str)
+        {
             if (!OsuPathIsValid())
                 return "";
             return SaveData.OsuPath + @"\" + str;
         }
 
-        public static bool ExistsInOsuDirectory(string path, bool checkisbeatmap = false,bool checkpath = true)
+        public static bool ExistsInOsuDirectory(string path, bool checkisbeatmap = false, bool checkpath = true)
         {
-            return (checkpath? OsuPathIsValid() : true) && !(path == default) && File.Exists(ConcateOsuPath(path))
-                && (checkisbeatmap? path.EndsWith(".osu") : true)
+            return (checkpath ? OsuPathIsValid() : true) && !(path == default) && File.Exists(ConcateOsuPath(path))
+                && (checkisbeatmap ? path.EndsWith(".osu") : true)
                 ;
         }
 
-        private static Dictionary<string, string> getDefaultSkillVer() {
+        private static Dictionary<string, string> getDefaultSkillVer()
+        {
             Dictionary<string, string> dict = new Dictionary<string, string>();
-            foreach (ISkill skill in Skill.SkillList) {
+            foreach (ISkill skill in Skill.SkillList)
+            {
                 dict.Add(skill.Identifier, skill.Version);
             }
             return dict;
         }
 
-        public static void Init(Storage storage) {
+        public static void Init(Storage storage)
+        {
             InternalStorage = storage;
-            if (!(CheckSaveExists())) {
-                SaveData = new CSaveData {
+            if (!(CheckSaveExists()))
+            {
+                SaveData = new CSaveData
+                {
                     PlayerID = default,
                     PlayerUsername = default,
                     APIKey = default,
@@ -156,13 +163,15 @@ namespace osuAT.Game
             OsuApiKey.Key = SaveData.APIKey;
             ApiScoreProcessor.UpdateKeyValid();
             int i = 0;
-            foreach (Score score in SaveData.Scores.Values) {
-                score.Register(index: i, setGUID: false, calcPP: false,loadBeatmapContents: false);
+            foreach (Score score in SaveData.Scores.Values)
+            {
+                score.Register(index: i, setGUID: false, calcPP: false, loadBeatmapContents: false);
                 i += 1;
             }
             /// Check the skill verions in the SaveFile for:
             ///     1. If it doesnt exist in the savefile
-            foreach (ISkill skill in Skill.SkillList) {
+            foreach (ISkill skill in Skill.SkillList)
+            {
 
                 /// if the skill from SkillList is not found in SaveData.SkillVersions, the
                 /// skill was added as of the newest update.
@@ -176,7 +185,8 @@ namespace osuAT.Game
             /// Check the skill verions in the SaveFile for:
             ///     1. If it's different than the code (recalcs scores)
             ///     2. If it doesnt exist in the code (does nothing)
-            foreach (KeyValuePair<string, string> skillVer in SaveData.SkillVersions) {
+            foreach (KeyValuePair<string, string> skillVer in SaveData.SkillVersions)
+            {
 
                 /// check if the skill exists in <see cref="Skill.SkillList"/>, if it doesn't
                 /// then that means it was a deleted/removed skill.
@@ -249,7 +259,8 @@ namespace osuAT.Game
         }
 
 
-        public static void AddNewSkill(ISkill skill) {
+        public static void AddNewSkill(ISkill skill)
+        {
             IsSaving = true;
 
             Console.WriteLine("---------------New Skill Addition Begun----------------");
@@ -317,8 +328,10 @@ namespace osuAT.Game
             Console.WriteLine("---------------New Skill Addition Complete----------------");
         }
 
-        public static void RemoveSkillFromSave(ISkill skill) {
-            if (!SaveData.TotalSkillPP.ContainsKey(skill.Identifier)) {
+        public static void RemoveSkillFromSave(ISkill skill)
+        {
+            if (!SaveData.TotalSkillPP.ContainsKey(skill.Identifier))
+            {
                 Console.WriteLine("This skill does not exist in the save storage!");
                 return;
             }
@@ -346,7 +359,7 @@ namespace osuAT.Game
             Console.WriteLine("removing from top (0/2)");
 
             // Loop through every score in SaveData.Scores
-            SkillCalcuator calculator = skill.GetSkillCalc(new Score() {});
+            SkillCalcuator calculator = skill.GetSkillCalc(new Score() { });
             foreach (Score score in SaveData.Scores.Values)
             {
                 // Remove the AlltrickPP section of this skill
@@ -381,7 +394,7 @@ namespace osuAT.Game
         public static string Read()
         {
             if (!CheckSaveExists()) return null;
-            
+
             string decodedtext = "";
             foreach (char chara in File.ReadAllText(SaveFileFullPath))
             {
@@ -409,9 +422,11 @@ namespace osuAT.Game
         /// Sets the data of a score to "deleted"
         /// </summary>
         /// <param name="scoreID"></param>
-        [Obsolete("Please use SaveStorage.RemoveScore(scoreID).",true)]
-        public static void DeleteScore(Guid scoreID) {
-            if (!(SaveData.Scores[scoreID] == null)) {
+        [Obsolete("Please use SaveStorage.RemoveScore(scoreID).", true)]
+        public static void DeleteScore(Guid scoreID)
+        {
+            if (!(SaveData.Scores[scoreID] == null))
+            {
                 Console.WriteLine(
                     "The score with the Guid " + scoreID.ToString() +
                     " could not be found in the SaveData. Maybe you already deleted it?");
@@ -463,7 +478,7 @@ namespace osuAT.Game
             Score score = SaveData.Scores[scoreID];
             var modeList = new List<string> { "overall", score.ScoreRuleset.Name };
             foreach (KeyValuePair<string, double> scoreSkillPP in score.AlltrickPP)
-            {   
+            {
                 foreach (var mode in modeList)
                 {
                     var SkillList = SaveData.AlltrickTop[scoreSkillPP.Key][mode];
@@ -477,7 +492,8 @@ namespace osuAT.Game
                         Console.WriteLine(score.ID);
                         Console.WriteLine(skillListScore.Item1);
                         */
-                        if (skillListScore.Item1 == score.ID) {
+                        if (skillListScore.Item1 == score.ID)
+                        {
                             SkillList.Remove(skillListScore);
                             SkillList.Sort((x, y) => y.Item2.CompareTo(x.Item2));
                         }
@@ -486,7 +502,8 @@ namespace osuAT.Game
             }
             SaveData.Scores.Remove(scoreID);
         }
-        public static void AddScore(Score score) {
+        public static void AddScore(Score score)
+        {
             CheckSaveExists();
 
             // So that there arent duplicate references of the same score in the savedata.
@@ -513,7 +530,7 @@ namespace osuAT.Game
 
         private static void addToSkillTops(Score score)
         {
-            var modeList = new List<string> { "overall", score.ScoreRuleset.Name }; 
+            var modeList = new List<string> { "overall", score.ScoreRuleset.Name };
             foreach (KeyValuePair<string, double> scoreSkillPP in score.AlltrickPP)
             {
                 foreach (var mode in modeList)
@@ -535,16 +552,17 @@ namespace osuAT.Game
                     SkillList.Sort((x, y) => y.Item2.CompareTo(x.Item2));
                 }
             }
-            
+
         }
 
         /// <summary>
         /// Returns a list of scores based on a SkillTop list contained in a <see cref="CSaveData.AlltrickTop"/>.
         /// </summary>
         /// <returns>A list of each <see cref="Score"/> in order.</returns>
-        public static List<Score> GetTrickTopScoreList(ISkill skill, string ruleset = "overall") {
+        public static List<Score> GetTrickTopScoreList(ISkill skill, string ruleset = "overall")
+        {
             List<Tuple<Guid, double>> list = SaveData.AlltrickTop[skill.Identifier][ruleset];
-            List<Score> scorelist = new List<Score>();  
+            List<Score> scorelist = new List<Score>();
             foreach (Tuple<Guid, double> pair in list)
             {
 
@@ -568,21 +586,24 @@ namespace osuAT.Game
             }
             return scorelist;
         }
-            
+
         public static bool CheckSaveExists()
         {
-            if (!Directory.Exists(Path.GetFullPath(Path.Combine(SaveFileFullPath, @"..\")))) {
+            if (!Directory.Exists(Path.GetFullPath(Path.Combine(SaveFileFullPath, @"..\"))))
+            {
                 Directory.CreateDirectory(Path.GetFullPath(Path.Combine(SaveFileFullPath, @"..\")));
                 return false;
             }
-            if (!File.Exists(SaveFileFullPath)) {
+            if (!File.Exists(SaveFileFullPath))
+            {
                 return false;
             }
 
             return true;
         }
 
-        public static bool OsuPathIsValid() {
+        public static bool OsuPathIsValid()
+        {
             return File.Exists(SaveData.OsuPath + @"\osu!.exe");
         }
     }

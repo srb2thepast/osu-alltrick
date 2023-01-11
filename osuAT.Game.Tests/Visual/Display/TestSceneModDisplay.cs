@@ -25,12 +25,12 @@ THE SOFTWARE.
 using NUnit.Framework;
 using osu.Framework.Graphics;
 using osu.Framework.Testing;
-using osuAT.Game.Types;
 using osuAT.Game.Objects.LazerAssets.Mod;
+using osuAT.Game.Types;
 
 namespace osuAT.Game.Tests.Visual.Display
 {
-    public class TestSceneModDisplay : TestScene
+    public partial class TestSceneModDisplay : TestScene
     {
         [Test]
         public void TestMode([Values] ExpansionMode mode)

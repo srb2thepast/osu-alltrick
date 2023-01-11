@@ -3,32 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osuAT.Game.Objects;
-using osuAT.Game.Objects.LazerAssets;
-using osuAT.Game.Objects.LazerAssets.Mod;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets;
-using osu.Game.Rulesets.Osu;
-using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Difficulty.Skills;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Legacy.Osu;
+using osu.Game.Rulesets.Osu;
 using osu.Game.Rulesets.Osu.Difficulty;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
-using osu.Game.Rulesets.Objects.Legacy.Osu;
+using osuAT.Game.Objects;
+using osuAT.Game.Objects.LazerAssets;
+using osuAT.Game.Objects.LazerAssets.Mod;
 using osuTK;
 namespace osuAT.Game.Types
 {
 
-    public class RulesetInfo {
+    public class RulesetInfo
+    {
 
         public int OnlineID { get; }
         public string Name { get; }
         public IconUsage Icon { get; }
-            
+
         public RulesetInfo(string name, IconUsage icon, int onlineID)
         {
             Name = name;
@@ -48,23 +49,24 @@ namespace osuAT.Game.Types
             {
             }
 
-            protected IEnumerable<DifficultyHitObject> CreateDifficultyHitObjectsOld(IBeatmap beatmap, double clockRate) {
+            protected IEnumerable<DifficultyHitObject> CreateDifficultyHitObjectsOld(IBeatmap beatmap, double clockRate)
+            {
                 List<DifficultyHitObject> objects = new List<DifficultyHitObject>();
 
                 // The first jump is formed by the first two hitobjects of the map.
                 // If the map has less than two OsuHitObjects, the enumerator will not return anything.
-                for (int i = 1; i< beatmap.HitObjects.Count; i++)
+                for (int i = 1; i < beatmap.HitObjects.Count; i++)
                 {
                     var lastLast = i > 1 ? beatmap.HitObjects[i - 2] : null;
                     var last = beatmap.HitObjects[i - 1];
                     var cur = beatmap.HitObjects[i];
 
                     if (cur is HitObject)
-                    objects.Add(new OsuDifficultyHitObject(cur, last, lastLast, clockRate, objects, objects.Count));
+                        objects.Add(new OsuDifficultyHitObject(cur, last, lastLast, clockRate, objects, objects.Count));
                 }
 
                 return objects;
-             }
+            }
 
             public IEnumerable<DifficultyHitObject> GetDifficultyHitObjects(IBeatmap beatmap, double clockRate)
             {
@@ -78,10 +80,10 @@ namespace osuAT.Game.Types
         }
         #endregion
 
-        public static RulesetInfo Osu = new RulesetInfo("osu", OsuIcon.RulesetOsu,0); 
-        public static RulesetInfo Mania = new RulesetInfo("mania", OsuIcon.RulesetMania,1);
-        public static RulesetInfo Catch = new RulesetInfo("catch", OsuIcon.RulesetCatch,2);
-        public static RulesetInfo Taiko = new RulesetInfo("taiko", OsuIcon.RulesetTaiko,3);
+        public static RulesetInfo Osu = new RulesetInfo("osu", OsuIcon.RulesetOsu, 0);
+        public static RulesetInfo Mania = new RulesetInfo("mania", OsuIcon.RulesetMania, 1);
+        public static RulesetInfo Catch = new RulesetInfo("catch", OsuIcon.RulesetCatch, 2);
+        public static RulesetInfo Taiko = new RulesetInfo("taiko", OsuIcon.RulesetTaiko, 3);
 
         public static RulesetInfo GetByName(string name)
         {
@@ -111,7 +113,8 @@ namespace osuAT.Game.Types
 
         public static Ruleset ConvertToOsuRuleset(RulesetInfo ruleset)
         {
-            if (ruleset == Osu) {
+            if (ruleset == Osu)
+            {
                 return new OsuRuleset();
             }
             return null;

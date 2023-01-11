@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
+using osu.Game.Rulesets.Osu;
 using osuAT.Game.Types;
 using Skill = osuAT.Game.Skills.Skill;
-using osu.Game.Rulesets.Osu;
 
 namespace SkillAnalyzer.Visual
 {
@@ -12,8 +12,9 @@ namespace SkillAnalyzer.Visual
     {
         protected override string MapLocation => @"AimPatterns\Hexagon.osu";
         protected override List<ModInfo> AppliedMods => new List<ModInfo> { ModStore.Nightcore };
-        public FlowAimAnalyzer() { 
-            
+        public FlowAimAnalyzer()
+        {
+
         }
 
         [Test]

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Graphics;
 using osu.Game.Graphics.UserInterface;
 using osuTK;
@@ -11,7 +11,7 @@ namespace SkillAnalyzer
     /// <summary>w
     /// A spaced out bar graph.
     /// </summary>
-    public class SpacedBarGraph : BarGraphFlow
+    public partial class SpacedBarGraph : BarGraphFlow
     {
         private SortedList<string, float> nameValues;
 
@@ -36,7 +36,7 @@ namespace SkillAnalyzer
         {
             set
             {
-                RemoveAll(d => { return true; },true) ;
+                RemoveAll(d => { return true; }, true);
                 List<Bar> bars = Children.ToList();
                 var selectedItems = value.Select((float length, int index) => new
                 {
@@ -44,7 +44,8 @@ namespace SkillAnalyzer
                     Bar = ((bars.Count > index) ? bars[index] : null)
                 });
 
-                foreach (var item in selectedItems) {
+                foreach (var item in selectedItems)
+                {
                     float num = MaxValue ?? value.Max();
                     if (num != 0f)
                     {
@@ -76,7 +77,7 @@ namespace SkillAnalyzer
                     Add(new Bar
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Size = new Vector2(num2* BarSpacing, 1f),
+                        Size = new Vector2(num2 * BarSpacing, 1f),
                         Length = num,
                         Direction = Direction,
                         Colour = Colour4.Red.MultiplyAlpha(0)
@@ -84,7 +85,7 @@ namespace SkillAnalyzer
 
                 }
                 Size = new Vector2(2, 3);
-                RemoveRange(base.Children.Where((Bar _, int index) => index >= value.Count()*2).ToList(), disposeImmediately: true);
+                RemoveRange(base.Children.Where((Bar _, int index) => index >= value.Count() * 2).ToList(), disposeImmediately: true);
             }
         }
 

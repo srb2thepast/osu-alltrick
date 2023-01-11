@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
-using osu.Game.Graphics.UserInterface;
-using osuTK;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
-using SixLabors.ImageSharp.Processing.Processors.Transforms;
+using osu.Game.Graphics.UserInterface;
 using osuAT.Game.Skills;
-using osu.Framework.Extensions.IEnumerableExtensions;
+using osuTK;
+using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using static System.Net.Mime.MediaTypeNames;
-using osu.Framework.Graphics.Colour;
 
 namespace SkillAnalyzer
 {   /// <summary>
@@ -30,10 +30,12 @@ namespace SkillAnalyzer
 
         protected DrawSizePreservingFillContainer BackerPresContainer;
 
-        public LabelledBarGraph(SpacedBarGraph barGraph = null) {
+        public LabelledBarGraph(SpacedBarGraph barGraph = null)
+        {
             SBarGraph = barGraph ?? new SpacedBarGraph();
             SBarGraph.Anchor = Anchor.TopCentre;
-            Add(BackgroundContainer = new Container {
+            Add(BackgroundContainer = new Container
+            {
 
             });
             Add(GraphContainer = new Container
@@ -59,7 +61,7 @@ namespace SkillAnalyzer
 
         }
 
-        public void SetValues(SortedList<string,float> values, List<ColourInfo> colors = null, List<float> Backers = null)
+        public void SetValues(SortedList<string, float> values, List<ColourInfo> colors = null, List<float> Backers = null)
         {
             colors ??= new List<ColourInfo> { Colour4.White };
             // colors.Count should be equal to values.Count
@@ -100,9 +102,9 @@ namespace SkillAnalyzer
                     {
                         RelativeSizeAxes = Axes.Both,
                         Size = new Vector2(child.Size.X, 1f),
-                        Length = child.Length/1.65f,
+                        Length = child.Length / 1.65f,
                         Direction = SBarGraph.Direction,
-                        Position = new Vector2(((index) / amount * 410 * 2 * scale) * (SBarGraph.BarSpacing * 1 / 2f + 0.5f) + 412  , 342),
+                        Position = new Vector2(((index) / amount * 410 * 2 * scale) * (SBarGraph.BarSpacing * 1 / 2f + 0.5f) + 412, 342),
                     };
                     newBar.X += 100;
                     newBar.X += 200;

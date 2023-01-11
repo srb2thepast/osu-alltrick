@@ -2,14 +2,14 @@ using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Graphics.Effects;
 using osuAT.Game.Objects.Displays;
+using osuAT.Game.Skills.Resources;
 using osuAT.Game.Types;
 using osuTK;
-using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game
 {
@@ -45,7 +45,7 @@ namespace osuAT.Game
             };
             protected override ScrollbarContainer CreateScrollbar(Direction direction) => new ScoreScrollBar(direction);
         }
-            
+
 
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
@@ -71,19 +71,20 @@ namespace osuAT.Game
                 Colour = Colour4.FromHex("465550")
             });
 
-            AddInternal(scrollbox = new ScoreScrollContainer<Drawable> {
+            AddInternal(scrollbox = new ScoreScrollContainer<Drawable>
+            {
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
                 Y = -40,
                 X = 10,
-                Size = new Vector2(150,180),
+                Size = new Vector2(150, 180),
                 ScrollContent =
                 {
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
                     Children = new ScoreDisplay[] { }
                 },
-                
+
                 ScrollbarAnchor = Anchor.TopLeft
             });
 
@@ -109,7 +110,7 @@ namespace osuAT.Game
         public void ReloadScores()
         {
             ScoreList = SaveStorage.GetTrickTopScoreList(Skill);
-            
+
             scrollbox.Clear();
             int index = 0;
             foreach (Score score in ScoreList)
@@ -129,9 +130,9 @@ namespace osuAT.Game
                 index += 1;
             }
 
-        }   
+        }
 
-        public void Appear(float delay=0,float offset = 30)
+        public void Appear(float delay = 0, float offset = 30)
         {
             ReloadScores();
             int index = 0;
@@ -146,7 +147,7 @@ namespace osuAT.Game
         {
             foreach (ScoreDisplay display in scrollbox.ScrollContent.Children)
             {
-                display.Disappear(delay) ;
+                display.Disappear(delay);
             }
         }
 

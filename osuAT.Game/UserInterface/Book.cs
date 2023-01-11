@@ -6,7 +6,8 @@ using osuTK;
 
 namespace osuAT.Game.Objects
 {
-    public partial class Book : Container {
+    public partial class Book : Container
+    {
         public Page[] Pages = new Page[] { };
         public Bindable<int> CurrentPage = new Bindable<int>(defaultValue: 0);
 
@@ -25,8 +26,10 @@ namespace osuAT.Game.Objects
         }
 
         [BackgroundDependencyLoader]
-        private void load() {
-            PageContainer = new BufferedContainer {
+        private void load()
+        {
+            PageContainer = new BufferedContainer
+            {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 AutoSizeAxes = Axes.Both
@@ -45,10 +48,11 @@ namespace osuAT.Game.Objects
         /// <summary>
         /// Slides to the chosen page.
         /// </summary
-        public void SlideToPage(ValueChangedEvent<int> curindex) {
+        public void SlideToPage(ValueChangedEvent<int> curindex)
+        {
             Page curpage = Pages[curindex.NewValue];
-            PageContainer.MoveToX(-curpage.X,SlideSpeed, SlideEasing);
+            PageContainer.MoveToX(-curpage.X, SlideSpeed, SlideEasing);
         }
-           
+
     }
 }

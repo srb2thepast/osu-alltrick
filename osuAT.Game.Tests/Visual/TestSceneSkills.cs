@@ -1,4 +1,4 @@
-using osu.Framework.Testing;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -10,21 +10,21 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
-using osuTK.Graphics;
+using osu.Framework.Testing;
 using osuAT.Game.Objects;
 using osuAT.Game.Objects.Displays;
-using osuAT.Game.Types;
 using osuAT.Game.Skills;
-using osuTK;
-using System;
 using osuAT.Game.Skills.Resources;
+using osuAT.Game.Types;
+using osuTK;
+using osuTK.Graphics;
 
 namespace osuAT.Game.Tests.Visual
 {
     [TestFixture]
-    public class TestSceneSkills : TestScene
+    public partial class TestSceneSkills : TestScene
     {
-        
+
         public TestSceneSkills()
         {
             Box background;
@@ -64,7 +64,8 @@ namespace osuAT.Game.Tests.Visual
             AddStep("go to page 2", () => flow.Children.OfType<FullSkillBox>().ForEach(b => b.InfoBox.InfoBook.CurrentPage.Value = 2));
         }
 
-        private void loadBoxes(FillFlowContainer flow) {
+        private void loadBoxes(FillFlowContainer flow)
+        {
             flow.RemoveAll(d => { return true; }, true);
             foreach (ISkill skill in Skill.SkillList)
             {
@@ -81,7 +82,7 @@ namespace osuAT.Game.Tests.Visual
             Schedule(() => flow.Children.OfType<FullSkillBox>().ForEach(b => b.Appear()));
         }
 
-        private class Icon : Container, IHasTooltip
+        private partial class Icon : Container, IHasTooltip
         {
             public LocalisableString TooltipText { get; }
 

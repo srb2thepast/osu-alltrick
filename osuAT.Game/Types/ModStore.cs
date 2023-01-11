@@ -2,38 +2,40 @@
 using System.Reflection;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Textures;
-using osuAT.Game.Objects;
 using osu.Framework.Graphics.Sprites;
-using osuAT.Game.Objects.LazerAssets;
-using osuAT.Game.Objects.LazerAssets.Mod;
+using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Osu.Mods;
+using osuAT.Game.Objects;
+using osuAT.Game.Objects.LazerAssets;
+using osuAT.Game.Objects.LazerAssets.Mod;
 
 
 namespace osuAT.Game.Types
 {
 
-    public class ModInfo {
+    public class ModInfo
+    {
         public string Name { get; }
         public string Acronym { get; }
         public byte Order { get; } // for score syntaxs like HDDTHR rather than DTHRHD
         public ModType Type { get; }
         public IconUsage? Icon { get; }
         public string Description { get; }
-        public ModInfo(string name, string acronym, byte order, ModType type, IconUsage? icon = null) {
+        public ModInfo(string name, string acronym, byte order, ModType type, IconUsage? icon = null)
+        {
             Name = name;
             Acronym = acronym;
             Order = order;
             Icon = icon;
             Type = type;
         }
-        
+
     }
     public class ModStore
     {
         #region osu!standard mods
-        public static ModInfo Auto => new ModInfo("Auto", "AT", 1, ModType.Automation, OsuIcon.ModAuto); 
+        public static ModInfo Auto => new ModInfo("Auto", "AT", 1, ModType.Automation, OsuIcon.ModAuto);
         public static ModInfo Relax => new ModInfo("Relax", "RX", 1, ModType.Automation, OsuIcon.ModRelax);
         public static ModInfo Autopilot => new ModInfo("Autopilot", "AP", 1, ModType.Automation, OsuIcon.ModAutopilot);
         public static ModInfo Spunout => new ModInfo("Spunout", "SO", 3, ModType.DifficultyReduction, OsuIcon.ModSpunOut);
@@ -50,7 +52,8 @@ namespace osuAT.Game.Types
         public static ModInfo Nomod => new ModInfo("Nomod", "NM", 0, ModType.System, OsuIcon.ModBg);
         #endregion
 
-        public static Mod ConvertToOsuMod(ModInfo mod) {
+        public static Mod ConvertToOsuMod(ModInfo mod)
+        {
             string name = mod.Name;
             switch (name.ToUpper()[0] + name.ToLower()[1..])
             {
@@ -95,9 +98,11 @@ namespace osuAT.Game.Types
             }
         }
 
-        public ModInfo GetByAcronym(string acronym) {
-            switch (acronym) {
-                case "AT": return Auto; 
+        public ModInfo GetByAcronym(string acronym)
+        {
+            switch (acronym)
+            {
+                case "AT": return Auto;
                 case "RX": return Relax;
                 case "AP": return Autopilot;
                 case "SO": return Spunout;

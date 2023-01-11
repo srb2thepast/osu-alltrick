@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Graphics;
-using osuAT.Game.Types;
-using osu.Game.Rulesets.Osu.Objects;
-using osuTK;
-using osu.Game.Rulesets.Difficulty.Preprocessing;
-using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using osu.Framework.Utils;
+using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
+using osu.Game.Rulesets.Osu.Objects;
 using osuAT.Game.Skills.Resources;
+using osuAT.Game.Types;
+using osuTK;
 
 namespace osuAT.Game.Skills
 {
@@ -44,7 +44,7 @@ namespace osuAT.Game.Skills
 
         public Vector2 BoxPosition => new Vector2(953, -950);
 
-        public SkillGoals Benchmarks => new SkillGoals(600, 1500,3000, 6000, 9000, 10000);
+        public SkillGoals Benchmarks => new SkillGoals(600, 1500, 3000, 6000, 9000, 10000);
         #endregion
 
 
@@ -56,7 +56,8 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-            public override void Setup() {
+            public override void Setup()
+            {
 
             }
 
@@ -66,26 +67,28 @@ namespace osuAT.Game.Skills
             [HiddenDebugValue]
             private double lastSliderApperance = 0;
 
-            public override void CalcNext(OsuDifficultyHitObject osuHit) {
+            public override void CalcNext(OsuDifficultyHitObject osuHit)
+            {
 
                 // Slider velocity buff:
                 // https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Osu/Difficulty/Evaluators/AimEvaluator.cs
                 if (osuHit.BaseObject is Slider slideHit && osuHit.TravelTime > 0)
                 {
                     lastSliderApperance = CurrentIndex;
-                    double sliderWorth = (osuHit.TravelDistance/2) / (osuHit.TravelTime) * 80;
+                    double sliderWorth = (osuHit.TravelDistance / 2) / (osuHit.TravelTime) * 80;
                     curWorth = sliderWorth;
-                    TotalStrainWorth += sliderWorth/3;
+                    TotalStrainWorth += sliderWorth / 3;
                     // If sliderWorth is more than 100, you get an overall strain buff!
-                    StrainPosition += 0.8 - sliderWorth/100;
-                    CurTotalPP = GetPositionAppliedStrain(TotalStrainWorth)*4;
-                    if (CurrentIndex == EndIndex-1) {
+                    StrainPosition += 0.8 - sliderWorth / 100;
+                    CurTotalPP = GetPositionAppliedStrain(TotalStrainWorth) * 4;
+                    if (CurrentIndex == EndIndex - 1)
+                    {
                         Console.WriteLine($"{osuHit.TravelDistance}/{osuHit.TravelTime} | " + sliderWorth + " pos:" + (StrainPosition) + $" reps: {slideHit.SpanCount()}");
                     }
 
                     // Miss and combo scaling
                     CurTotalPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
-                    CurTotalPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo,FocusedScore.BeatmapInfo.MaxCombo);
+                    CurTotalPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
                     return;
                 }
             }

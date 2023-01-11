@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using osuAT.Game.Types;
-using osuAT.Game.Objects;
 using osu.Framework.Allocation;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
+using osuAT.Game.Objects;
+using osuAT.Game.Types;
 using osuTK;
 
 namespace osuAT.Game.Skills.Resources
@@ -37,7 +37,7 @@ namespace osuAT.Game.Skills.Resources
         public SkillCalcuator(Score score)
         {
             FocusedScore = score;
-            EndIndex = EndIndex == default ? (FocusedScore.BeatmapInfo != null ? FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count -1 : 0) : EndIndex;
+            EndIndex = EndIndex == default ? (FocusedScore.BeatmapInfo != null ? FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count - 1 : 0) : EndIndex;
         }
 
         /// <summary>

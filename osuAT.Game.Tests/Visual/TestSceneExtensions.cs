@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
-using osu.Framework.Testing;
-using osu.Framework.Extensions.IEnumerableExtensions;
-using NUnit.Framework.Internal;
+using System.Runtime.CompilerServices;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
+using osu.Framework.Extensions.IEnumerableExtensions;
+using osu.Framework.Testing;
 using osu.Framework.Testing.Drawables.Steps;
 using osuTK.Graphics;
-using System.Runtime.CompilerServices;
 
 namespace osuAT.Game.Tests.Visual
 {
@@ -32,7 +32,7 @@ namespace osuAT.Game.Tests.Visual
                     continue;
 
                 if (name.StartsWith("Test", StringComparison.Ordinal))
-                    name = name.Substring(4);
+                    name = name[4..];
 
                 int runCount = 1;
 

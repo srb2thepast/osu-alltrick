@@ -1,19 +1,19 @@
+using System.Threading.Tasks;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Graphics.Effects;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Input.Events;
-using osu.Framework.Extensions.IEnumerableExtensions;
-using osu.Framework.Graphics.Cursor;
 using osu.Framework.Localisation;
+using osuAT.Game.Skills.Resources;
 using osuAT.Game.Types;
 using osuTK;
-using osuAT.Game.Skills.Resources;
-using System.Threading.Tasks;
 
 namespace osuAT.Game.Objects
 {
@@ -46,14 +46,14 @@ namespace osuAT.Game.Objects
         private void load(TextureStore textures)
         {
             Position = Skill.BoxPosition;
-            MiniBox = new MiniSkillBox(Skill,this);
-            FullBox = new FullSkillBox(Skill,this);
+            MiniBox = new MiniSkillBox(Skill, this);
+            FullBox = new FullSkillBox(Skill, this);
 
             InternalChild = new Container
             {
                 FullBox,
                 MiniBox
-            };  
+            };
             MiniBox.ScaleTo(3.3f);
             FullBox.ScaleTo(1.7f);
             FullBox.InnerBox.Width = 1;
@@ -84,7 +84,7 @@ namespace osuAT.Game.Objects
             ParentCont.MainScreen.TopBar.MoveToY(50, 500, Easing.InOutCubic);
             // Refocus and zoom in
             ParentCont.FocusOnBox(this);
-            ParentCont.ScaleTo(1.9f/ParentCont.Child.Scale.Y, 400, Easing.InOutExpo);
+            ParentCont.ScaleTo(1.9f / ParentCont.Child.Scale.Y, 400, Easing.InOutExpo);
 
             // Boxes
             MiniBox.Slideout();
@@ -96,8 +96,8 @@ namespace osuAT.Game.Objects
         {
             ParentCont.MainScreen.TopBar.ScaleTo(0.8f, 400, Easing.InOutCubic);
             ParentCont.MainScreen.TopBar.MoveToY(60, 400, Easing.InOutCubic);
-            ParentCont.Delay(100).ScaleTo(1f,600,Easing.InOutExpo);
-            
+            ParentCont.Delay(100).ScaleTo(1f, 600, Easing.InOutExpo);
+
             MiniBox.Slidein();
             FullBox.Disappear(800);
 

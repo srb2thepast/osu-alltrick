@@ -2,20 +2,20 @@ using System;
 using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.LocalisationExtensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.UserInterface;
-using osu.Framework.Graphics.Colour;
-using osu.Framework.Extensions.LocalisationExtensions;
-using osuAT.Game.Types;
-using osuAT.Game.Objects.Displays;
 using osu.Framework.Input.Events;
-using osuTK;
+using osuAT.Game.Objects.Displays;
 using osuAT.Game.Skills.Resources;
+using osuAT.Game.Types;
+using osuTK;
 
 namespace osuAT.Game.Objects
 {
@@ -27,7 +27,7 @@ namespace osuAT.Game.Objects
         public SkillBox ParentBox;
         public SkillInfo InfoBox;
 
-        public Container InnerBox; 
+        public Container InnerBox;
         private ClickableContainer backBut;
         private ScoreContainer scoreContainer;
 
@@ -57,7 +57,7 @@ namespace osuAT.Game.Objects
             public Page Page1 { get; private set; }
             public Page Page2 { get; private set; }
 
-            
+
             #endregion
 
             #region Clickable Bubbles
@@ -80,7 +80,8 @@ namespace osuAT.Game.Objects
                 private Bindable<int> performPoints = new BindableInt();
                 private BufferedContainer ppText;
 
-                public ppBar() {
+                public ppBar()
+                {
                     AutoSizeAxes = Axes.Both;
                 }
 
@@ -176,7 +177,7 @@ namespace osuAT.Game.Objects
                     };
                     Performance.BindValueChanged(c =>
                     {
-                       this.TransformBindableTo(performPoints, c.NewValue, 1000, Easing.InOutQuint);
+                        this.TransformBindableTo(performPoints, c.NewValue, 1000, Easing.InOutQuint);
                     });
                     performPoints.Value = Performance.Value;
                     performPoints.BindValueChanged(pp =>
@@ -212,7 +213,7 @@ namespace osuAT.Game.Objects
                             Colour = Colour4.White,
                             PadExtent = true,
                         });
-                            Clear();
+                        Clear();
                         Add(
                             new Circle
                             {
@@ -234,14 +235,14 @@ namespace osuAT.Game.Objects
                                 Colour = CurSkill.PrimaryColor,
                             });
                         Add(ppText);
-                        
+
                     }, true);
                 }
 
                 public void Appear()
                 {
                     reloadPPText((int)CurSkill.SkillPP);
-                    
+
 
                 }
                 private void reloadPPText(int pp)
@@ -253,7 +254,7 @@ namespace osuAT.Game.Objects
                         TopRight = CurSkill.SecondaryColor,
                         BottomRight = CurSkill.SecondaryColor,
                     };
-                    Remove(ppText,true);
+                    Remove(ppText, true);
                     ppText = new SpriteText
                     {
                         Text = pp.ToLocalisableString("0") + "pp/" + ((CurSkill.Level < SkillLevel.Chosen) ? CurSkill.Benchmarks.Mastery.ToString() : CurSkill.Benchmarks.Chosen.ToString()) + "pp",
@@ -674,7 +675,7 @@ namespace osuAT.Game.Objects
                                                     Text = "Work In Progress",
                                                     ShadowColour = Colour4.Orange,
                                                     Shadow = true
-                                                        
+
                                                 }
                                                 /* Play Button new Sprite{
                                                     X = 2,
@@ -866,8 +867,8 @@ namespace osuAT.Game.Objects
 
                     if (value.NewValue == 0)
                     {
-                        Bubble1.MoveTo(new Vector2(-7,-18),500,Easing.InOutCubic);
-                        Bubble2.MoveTo(new Vector2(0,0), 500, Easing.InOutCubic);
+                        Bubble1.MoveTo(new Vector2(-7, -18), 500, Easing.InOutCubic);
+                        Bubble2.MoveTo(new Vector2(0, 0), 500, Easing.InOutCubic);
                         Bubble3.MoveTo(new Vector2(-7, 18), 500, Easing.InOutCubic);
                     }
                     // page1
@@ -888,7 +889,7 @@ namespace osuAT.Game.Objects
                     }
                 };
 
-                
+
 
                 PageBubbleDict = new Dictionary<Page, ClickableContainer>
                 {
@@ -944,13 +945,13 @@ namespace osuAT.Game.Objects
                     );
                     i++;
                 }
-                
+
             }
             public void Appear(float delay = 0)
             {
                 levelDisplay.Appear();
                 levelDisplay.SwitchLevel(CurSkill.Level);
-                ColourInfo HorizontalGrad = new ColourInfo
+                _ = new ColourInfo
                 {
                     TopLeft = CurSkill.PrimaryColor,
                     BottomLeft = CurSkill.PrimaryColor,
@@ -958,13 +959,13 @@ namespace osuAT.Game.Objects
                     BottomRight = CurSkill.SecondaryColor,
                 };
                 skillprogress.Delay(300 + delay).FillTo((CurSkill.Level < SkillLevel.Mastery) ? (float)CurSkill.SkillPP / CurSkill.Benchmarks.Mastery : 1, 1000, Easing.InOutCubic);
-                chosenprogress.Delay(1000 + delay).FillTo((CurSkill.Level >= SkillLevel.Mastery) ? Math.Clamp((float)CurSkill.SkillPP / CurSkill.Benchmarks.Chosen, 0,1) : 0, 1000, Easing.InOutCubic);
+                chosenprogress.Delay(1000 + delay).FillTo((CurSkill.Level >= SkillLevel.Mastery) ? Math.Clamp((float)CurSkill.SkillPP / CurSkill.Benchmarks.Chosen, 0, 1) : 0, 1000, Easing.InOutCubic);
                 ppBox.Performance.Value = (int)CurSkill.SkillPP;
 
                 if (CurSkill.Level >= SkillLevel.Mastery)
                 {
                     pfpBorder1.FadeIn(600, Easing.InOutSine);
-                    pfpBorder2.FadeOut(600,Easing.InOutSine);
+                    pfpBorder2.FadeOut(600, Easing.InOutSine);
                 }
             }
 
@@ -973,10 +974,10 @@ namespace osuAT.Game.Objects
                 skillprogress.Delay(delay).FillTo(0, 0, Easing.InOutCubic);
                 chosenprogress.Delay(delay).FillTo(0, 0, Easing.InOutCubic);
             }
-            
+
         }
 
-        
+
         public FullSkillBox(ISkill skill, SkillBox parentbox)
         {
             AutoSizeAxes = Axes.Both;
@@ -997,7 +998,7 @@ namespace osuAT.Game.Objects
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            
+
             InternalChild = InnerBox = new Container
             {
                 Size = new Vector2(350, 220),
@@ -1129,17 +1130,19 @@ namespace osuAT.Game.Objects
                 }
             };
             backBut.Action = () => { ParentBox.TransitionToMini(); };
-            
+
         }
 
-        public void Appear(float delay = 0) {
+        public void Appear(float delay = 0)
+        {
 
 
             InfoBox.Appear(delay);
             scoreContainer.Appear(delay);
         }
 
-        public void Disappear(float delay) {
+        public void Disappear(float delay)
+        {
             scoreContainer.HideScores(delay);
             InfoBox.Disappear(delay);
         }
@@ -1152,13 +1155,14 @@ namespace osuAT.Game.Objects
 
         protected override bool OnKeyDown(KeyDownEvent e)
         {
-            if (e.IsPressed(osuTK.Input.Key.Escape) && ParentBox.State == SkillBoxState.FullBox) {
+            if (e.IsPressed(osuTK.Input.Key.Escape) && ParentBox.State == SkillBoxState.FullBox)
+            {
                 ParentBox.TransitionToMini();
                 return true;
             }
             return false;
         }
-        
+
 
 
 

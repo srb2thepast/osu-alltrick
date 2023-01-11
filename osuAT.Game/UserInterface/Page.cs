@@ -22,5 +22,5 @@ namespace osuAT.Game.Objects
         /// </summary>
         public new Action Hide = new Action(() => { });
     }
-            
+
 }

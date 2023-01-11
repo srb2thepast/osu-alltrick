@@ -1,18 +1,18 @@
 using System.Collections.Generic;
-using osu.Framework.Input.Events;
+using Newtonsoft.Json;
+using NUnit.Framework;
 using osu.Framework.Allocation;
+using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuAT.Game.Objects;
-using osuAT.Game.Skills;
 using osuAT.Game.Screens;
-using NUnit.Framework;
-using Newtonsoft.Json;
+using osuAT.Game.Skills;
 using osuAT.Game.Skills.Resources;
 
 namespace osuAT.Game.Tests.Visual
 {
-    public class TestSceneosuATGame : osuATTestScene
+    public partial class TestSceneosuATGame : osuATTestScene
     {
         // Add visual tests to ensure correct behaviour of your game: https://github.com/ppy/osu-framework/wiki/Development-and-Testing
         // You can make changes to classes associated with the tests and they will recompile and update immediately.
@@ -34,7 +34,8 @@ namespace osuAT.Game.Tests.Visual
             HomeScreen mainscreen = game.MainScreen;
             Dictionary<ISkill, SkillBox> skilldict = mainscreen?.SkillCont?.SkillDict;
 
-            AddToggleStep("Focus on Flowaim", (b) => {
+            AddToggleStep("Focus on Flowaim", (b) =>
+            {
                 // if (b == true) { mainscreen?.SkillCont?.FocusOnBox(skilldict[Skill.Flowaim]); } else { mainscreen.SkillCont.Defocus(); }
             });
             AddWaitStep("Wait a bit", 5);
