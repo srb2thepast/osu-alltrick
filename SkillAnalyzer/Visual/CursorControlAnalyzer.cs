@@ -11,7 +11,7 @@ namespace SkillAnalyzer.Visual
     public partial class CursorControlAnalyzer : SkillAnalyzeScene
     {
         protected override string MapLocation => @"lapix - Nexta (DTM9 Nowa) [ending].osu";
-        //protected override List<ModInfo> AppliedMods => new List<ModInfo> { };
+        protected override List<ModInfo> AppliedMods => new List<ModInfo> { };
         public CursorControlAnalyzer()
         {
 
