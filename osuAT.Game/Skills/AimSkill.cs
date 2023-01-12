@@ -54,9 +54,41 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-            public override void CalcNext(OsuDifficultyHitObject diffHitObj)
+
+            private double angDifficulty = 0;
+            private double aimDifficulty = 0;
+            private double curAngle;
+
+            private double curAngStrainWorth = 0;
+            private double curWorth = 0;
+            [HiddenDebugValue]
+            private double highestWorth = 0;
+
+            private double totalAngStrainWorth = 0;
+
+
+            public override void CalcNext(OsuDifficultyHitObject diffHit)
             {
-                CurTotalPP = new Random().Next(120000);
+                if (diffHit.Angle == null) return;
+                curAngle = (double)diffHit.Angle * (180 / Math.PI);
+
+                // Aim Difficulty
+                aimDifficulty = (diffHit.MinimumJumpDistance / diffHit.DeltaTime) / 2;
+
+                // Angle Difficulty
+                curAngStrainWorth = Math.Clamp(aimDifficulty/4,0,1) * Math.Clamp(-5*(curAngle)/90 +5,-10,1);
+                totalAngStrainWorth += curAngStrainWorth;
+                totalAngStrainWorth = Math.Max(0, totalAngStrainWorth);
+                angDifficulty = 30 * Math.Log(totalAngStrainWorth + 1);
+
+
+                curWorth = aimDifficulty * 5 + (aimDifficulty * angDifficulty) * 5;
+                highestWorth = Math.Max(highestWorth, curWorth);
+
+                // Miss and combo scaling
+                CurTotalPP = highestWorth;
+                CurTotalPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
+                CurTotalPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
             }
         }
 
