@@ -11,17 +11,17 @@ using osuTK;
 
 namespace osuAT.Game.Skills
 {
-    public class AimSkill : ISkill
+    public class AimStaminaSkill : ISkill
     {
 
         #region
-        public string Name => "Aim";
+        public string Name => "Aim Stamina";
 
-        public string Identifier => "overallaim";
+        public string Identifier => "aimstamina";
 
         public string Version => "0.001";
 
-        public string Summary => "The ability to move your cursor \n to any circle\n.";
+        public string Summary => "The ability for your aim to endure \n continous strain.";
 
         public int SummarySize => 9;
 
@@ -37,11 +37,11 @@ namespace osuAT.Game.Skills
 
         public (Vector2, Vector2) BadgePosSize { get; }
 
-        public float MiniHeight => 264;
+        public float MiniHeight => 224;
+        
+        public int BoxNameSize => 63;
 
-        public int BoxNameSize => 150;
-
-        public Vector2 BoxPosition => new Vector2(2690, -500);
+        public Vector2 BoxPosition => new Vector2(1875, 1080);
 
         public SkillGoals Benchmarks => new SkillGoals(600, 1500, 3000, 6000, 9000, 10000);
         #endregion
@@ -55,16 +55,16 @@ namespace osuAT.Game.Skills
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
 
-            private double angDifficulty = 0;
+            private double jerkDifficulty = 0;
             private double aimDifficulty = 0;
             private double curAngle;
 
-            private double curAngStrainWorth = 0;
             private double curWorth = 0;
             [HiddenDebugValue]
             private double highestWorth = 0;
 
-            private double totalAngStrainWorth = 0;
+            private double jerkAngWorth = 0;
+            private double totalJerkStrainWorth = 0;
 
 
             public override void CalcNext(OsuDifficultyHitObject diffHit)
@@ -73,16 +73,16 @@ namespace osuAT.Game.Skills
                 curAngle = (double)diffHit.Angle * (180 / Math.PI);
 
                 // Aim Difficulty
-                aimDifficulty = (diffHit.MinimumJumpDistance / diffHit.DeltaTime) / 2;
+                aimDifficulty = (diffHit.MinimumJumpDistance / diffHit.DeltaTime) / 4;
 
-                // Angle Difficulty
-                curAngStrainWorth = Math.Clamp(aimDifficulty/4,0,1) * Math.Clamp(-5*(curAngle)/90 +5,-10,1);
-                totalAngStrainWorth += curAngStrainWorth;
-                totalAngStrainWorth = Math.Max(0, totalAngStrainWorth);
-                angDifficulty = 30 * Math.Log(totalAngStrainWorth + 1);
+                // Jerk Angle Difficulty
+                jerkAngWorth = Math.Clamp(-1.5*(curAngle-60)/180 + 0.5, 0,1);
+                totalJerkStrainWorth += jerkAngWorth;
+                totalJerkStrainWorth = Math.Max(0, jerkAngWorth) * 0.995;
+                jerkDifficulty = 30 * Math.Log(totalJerkStrainWorth + 1);
 
 
-                curWorth = aimDifficulty * 5 + (aimDifficulty * angDifficulty) * 5;
+                curWorth = aimDifficulty * jerkDifficulty*15;
                 highestWorth = Math.Max(highestWorth, curWorth);
 
                 // Miss and combo scaling

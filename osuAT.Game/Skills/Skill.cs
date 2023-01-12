@@ -18,6 +18,7 @@ namespace osuAT.Game.Skills
         public static AimSkill Aim = new AimSkill();
         public static SliderAimSkill SliderAim = new SliderAimSkill();
         public static TappingStaminaSkill TappingStamina = new TappingStaminaSkill();
+        public static AimStaminaSkill AimStamina = new AimStaminaSkill();
 
         /// <summary>
         /// A list of every skill currently supported.
@@ -27,7 +28,8 @@ namespace osuAT.Game.Skills
             CursorControl,
             Aim,
             SliderAim,
-            TappingStamina
+            TappingStamina,
+            AimStamina
         };
 
         public static ISkill GetSkillByID(string skillid)

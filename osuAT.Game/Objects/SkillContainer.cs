@@ -142,7 +142,33 @@ namespace osuAT.Game
                             Rotation = Direction.Up
                         },
                     }
-                }
+                },
+
+                // Aim -> Aim Stamina
+                new ArrowInfo {
+                    MainSkill = Skill.Aim,
+                    TargetSkill = Skill.AimStamina,
+                    Rotation = 0,
+                    Offset = new Vector2(-100,90),
+                    Colour = Skill.Aim.PrimaryColor,
+                    Segments = new List<Segment> {
+                        new Segment{
+                            Start = 50,
+                            Length = 455,
+                            Rotation = Direction.Down
+                        },
+                        new Segment{
+                            Start = 50,
+                            Length = 1050,
+                            Rotation = Direction.Down
+                        },
+                        new Segment{
+                            Start = 100,
+                            Length = 385,
+                            Rotation = Direction.Left
+                        }
+                    }
+                },
             };
             foreach (ArrowInfo connect in connectionList)
             {
