@@ -20,7 +20,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "slideraim";
 
-        public string Version => "0.003";
+        public string Version => "0.004";
 
         public string Summary => "Ability to follow slider bodies \n accurately.";
 
@@ -89,6 +89,7 @@ namespace osuAT.Game.Skills
                     // Miss and combo scaling
                     CurTotalPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
                     CurTotalPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
+                    CurTotalPP *= SharedMethods.SimpleAccNerf(FocusedScore.Accuracy);
                     return;
                 }
             }

@@ -21,7 +21,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "flowaim";
 
-        public string Version => "0.008";
+        public string Version => "0.009";
 
         public string Summary => "The ability to move your cursor \n in a fluid motion.";
 
@@ -134,6 +134,7 @@ namespace osuAT.Game.Skills
                 CurTotalPP = highestWorth;
                 CurTotalPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
                 CurTotalPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
+                CurTotalPP *= SharedMethods.SimpleAccNerf(FocusedScore.Accuracy);
             }
         }
 

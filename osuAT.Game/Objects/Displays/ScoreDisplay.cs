@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using HtmlAgilityPack;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -38,6 +39,9 @@ namespace osuAT.Game.Objects.Displays
         private Container diffInfo;
         private Container display;
         private Circle comboBar;
+        private Circle accBar;
+        private Container comboCont;
+        private Container accCont;
 
         [BackgroundDependencyLoader]
         private void load(LargeTextureStore textures)
@@ -389,7 +393,7 @@ namespace osuAT.Game.Objects.Displays
                                 ShadowOffset = new Vector2(0,0.1f),
                             },
 
-                            // Combo Bar
+                            // Combo & Acc Bar 
                             new Container{
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
@@ -408,7 +412,7 @@ namespace osuAT.Game.Objects.Displays
                                     },
 
                                     // Combo Bar
-                                    new Container{
+                                    comboCont = new Container{
                                         AutoSizeAxes = Axes.X,
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft,
@@ -475,6 +479,76 @@ namespace osuAT.Game.Objects.Displays
                                                 }
                                             }
                                         }
+                                    },
+
+
+                                    accCont = new Container{
+                                        AutoSizeAxes = Axes.X,
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft,
+                                        Height = 8,
+                                        Alpha = 1,
+                                        Children = new Drawable[] {
+
+                                            // Bar
+                                            accBar = new Circle {
+                                                RelativeSizeAxes = Axes.Y,
+                                                Width = 0,
+                                                Colour = Skill.PrimaryColor +  new Colour4(0,0,20,0)
+                                            },
+
+                                            // Combo Number
+                                            new CircularContainer
+                                            {
+                                                Masking = true,
+                                                AutoSizeAxes = Axes.Both,
+                                                Anchor = Anchor.CentreRight,
+                                                Origin = Anchor.CentreRight,
+                                                Children = new Drawable[]
+                                                {
+                                                    new Box
+                                                    {
+                                                        RelativeSizeAxes = Axes.Both,
+                                                        Colour = Skill.PrimaryColor + new Colour4(0,0,40,0)
+                                                    },
+                                                    new FillFlowContainer
+                                                    {
+                                                        AutoSizeAxes = Axes.Both,
+                                                        Anchor = Anchor.CentreRight,
+                                                        Origin = Anchor.CentreRight,
+                                                        Direction = FillDirection.Horizontal,
+                                                        Spacing = new Vector2(0.5f, 0),
+                                                        Margin = new MarginPadding { Horizontal = 4f, Vertical = 0.1f },
+                                                        Children = new Drawable[]
+                                                        {
+
+                                                            new SpriteText
+                                                            {
+                                                                Anchor = Anchor.CentreRight,
+                                                                Origin = Anchor.CentreRight,
+                                                                Spacing = new Vector2(-0.3f,0),
+                                                                Text = "%",
+                                                                Font = new FontUsage("ChivoBold",size: 10),
+                                                                Colour = (Current.Combo == Current.BeatmapInfo.MaxCombo)? Colour4.FromHex("#FFD966") : Colour4.Violet - new Colour4(40,40,40,0),
+                                                                Shadow = true,
+                                                                ShadowOffset = new Vector2(0,0.1f),
+                                                            },
+                                                            new SpriteText
+                                                            {
+                                                                Anchor = Anchor.CentreRight,
+                                                                Origin = Anchor.CentreRight,
+                                                                Spacing = new Vector2(-0.3f,0),
+                                                                Text = (Math.Truncate(Current.Accuracy*10000)/100).ToString(),
+                                                                Font = new FontUsage("ChivoBold",size: 10),
+                                                                Colour = (Current.Combo == Current.BeatmapInfo.MaxCombo)? Colour4.FromHex("#FFD966") : Colour4.Violet - new Colour4(40,40,40,0),
+                                                                Shadow = true,
+                                                                ShadowOffset = new Vector2(0,0.1f),
+                                                            },
+                                                        }
+                                                    },
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -494,12 +568,22 @@ namespace osuAT.Game.Objects.Displays
         }
         protected override bool OnHover(HoverEvent e)
         {
+            InternalChild.ScaleTo(3.1f, 100, Easing.Out);
             return base.OnHover(e);
         }
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            InternalChild.ScaleTo(3, 100, Easing.OutCirc);
+        }
+
         public void Appear(float delay = 0)
         {
             scoreInfo.Alpha = 0;
             diffInfo.Alpha = 0;
+
+            comboCont.Alpha = 1;
+            accCont.Alpha = 0;
+
             display.Y = 13;
 
             scoreInfo.Delay(delay).FadeIn(450, Easing.InOutSine);
@@ -508,13 +592,36 @@ namespace osuAT.Game.Objects.Displays
             comboBar.Delay(delay).ResizeTo(new Vector2(((float)Current.Combo / Current.BeatmapInfo.MaxCombo) * 175, comboBar.Height), 500, Easing.InOutQuad);
         }
 
+        public void SwitchBar() {
+            bool comboEnabled = comboCont.Alpha == 1;
+            if (comboEnabled)
+            {
+                comboCont.Alpha = 0;
+                accCont.Alpha = 1;
+                comboBar.ResizeTo(new Vector2(0, comboBar.Height));
+                accBar.ResizeTo(new Vector2(((float)Current.Accuracy) * 175, accBar.Height), 400, Easing.Out);
+                return;
+            }
+            comboCont.Alpha = 1;
+            accCont.Alpha = 0;
+            comboBar.ResizeTo(new Vector2(((float)Current.Combo / Current.BeatmapInfo.MaxCombo) * 175, comboBar.Height), 400, Easing.Out);
+            accBar.ResizeTo(new Vector2(0, accBar.Height));
+
+        }
+
         public void Disappear(float delay)
         {
             scoreInfo.Delay(delay).FadeOut();
             diffInfo.Delay(delay).FadeOut();
             display.Delay(delay).MoveToY(13);
             comboBar.Delay(delay).ResizeTo(new Vector2(0, comboBar.Height));
+            accBar.Delay(delay).ResizeTo(new Vector2(0, accBar.Height));
         }
 
+        protected override bool OnClick(ClickEvent e)
+        {
+            SwitchBar();
+            return base.OnClick(e);
+        }
     }
 }

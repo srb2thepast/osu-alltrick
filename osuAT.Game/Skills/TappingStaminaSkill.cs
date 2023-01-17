@@ -21,7 +21,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "tapstamina";
 
-        public string Version => "0.003";
+        public string Version => "0.004";
 
         public string Summary => "The ability of your tapping to \n endure continuous strain";
 
@@ -49,24 +49,9 @@ namespace osuAT.Game.Skills
 
         #endregion
 
-        /// <summary>
-        /// Returns a pp value based off of the most spaced out stream of a map.
-        /// </summary>
-        /// <remarks> Current faults:
-        /// - Hard-capping what is considered a stream based off of ms
-        /// - Strain is not considered
-        /// - Angle is not considered
-        /// - Only considers one stream rather than the map as a whole
-        /// ~ Difficulty Spike of Spacing is considered as a simple parabola.
-        /// - Difficulty Spike of CS is considered as a linear curve
-        /// - Difficulty Spike of BPM is a un-tuned parabola
-        /// - Difficulty of Stream Count is considered as a linear curve
-        /// - No combo diff-spike
-        /// - Jumps can be considered streams if they're fast enough
-        /// </remarks>
-        public class FlowAimCalculator : SkillCalcuator
+        public class TappingStaminaCalculator : SkillCalcuator
         {
-            public FlowAimCalculator(Score score) : base(score)
+            public TappingStaminaCalculator(Score score) : base(score)
             {
             }
 
@@ -110,11 +95,12 @@ namespace osuAT.Game.Skills
                 CurTotalPP = (
                     curWorth *
                     SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo) *
-                    SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo)
+                    SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo) *
+                    SharedMethods.SimpleAccNerf(FocusedScore.Accuracy)
                 );
             }
         }
 
-        public SkillCalcuator GetSkillCalc(Score score) => new FlowAimCalculator(score);
+        public SkillCalcuator GetSkillCalc(Score score) => new TappingStaminaCalculator(score);
     }
 }

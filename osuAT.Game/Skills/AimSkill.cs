@@ -19,9 +19,9 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "overallaim";
 
-        public string Version => "0.001";
+        public string Version => "0.003";
 
-        public string Summary => "The ability to move your cursor \n to any circle\n.";
+        public string Summary => "The ability to move your cursor \n to any circle.";
 
         public int SummarySize => 9;
 
@@ -79,16 +79,17 @@ namespace osuAT.Game.Skills
                 curAngStrainWorth = Math.Clamp(aimDifficulty/4,0,1) * Math.Clamp(-5*(curAngle)/90 +5,-10,1);
                 totalAngStrainWorth += curAngStrainWorth;
                 totalAngStrainWorth = Math.Max(0, totalAngStrainWorth);
-                angDifficulty = 30 * Math.Log(totalAngStrainWorth + 1);
+                angDifficulty = 15 * Math.Log(totalAngStrainWorth + 1);
 
 
-                curWorth = aimDifficulty * 5 + (aimDifficulty * angDifficulty) * 5;
+                curWorth = aimDifficulty * 4 + (aimDifficulty * angDifficulty) * 4;
                 highestWorth = Math.Max(highestWorth, curWorth);
 
                 // Miss and combo scaling
                 CurTotalPP = highestWorth;
                 CurTotalPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
                 CurTotalPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
+                CurTotalPP *= SharedMethods.SimpleAccNerf(FocusedScore.Accuracy);
             }
         }
 

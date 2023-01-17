@@ -232,12 +232,13 @@ namespace osuAT.Game
                         SkillCalcuator calculator = skillInstance.GetSkillCalc(score);
                         if (calculator.SupportedRulesets.Contains(score.ScoreRuleset))
                         {
+                            double oldPP = score.AlltrickPP[skillID];
                             score.AlltrickPP[skillID] = calculator.SkillCalc();
                             Tuple<Guid, double> newTuple = new Tuple<Guid, double>(score.ID, score.AlltrickPP[skillID]);
 
                             tuplList["overall"].Add(newTuple);
                             tuplList[score.ScoreRuleset.Name].Add(newTuple);
-                            Console.WriteLine(score.ID.ToString() + " | NewPP: " + score.AlltrickPP[skillID].ToString());
+                            Console.WriteLine(score.ID + " |OldPP: " +  oldPP + "| NewPP: " + score.AlltrickPP[skillID]);
                         }
                     }
                     // sort and set each ruleset tuple

@@ -20,7 +20,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "cursorcontrol";
 
-        public string Version => "0.004";
+        public string Version => "0.005";
 
         public string Summary => "Ability to control the movement \n of your aim.";
 
@@ -115,6 +115,7 @@ namespace osuAT.Game.Skills
                 CurTotalPP = highestWorth;
                 CurTotalPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
                 CurTotalPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
+                CurTotalPP *= SharedMethods.SimpleAccNerf(FocusedScore.Accuracy);
 
 
             }

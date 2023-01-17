@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
 // [~] Maybe in the future we could finally have the location of misses in a beatmap avaliable based off of a replay! (https://discord.com/channels/546120878908506119/757615676310552598/1033540314914373642) <- PP Discord
 
@@ -27,7 +28,7 @@ namespace osuAT.Game.Types
         }
         public double CalcAcc()
         {
-            return ((300 * Count300) + (100 * Count300) + (50 * Count50)) / (300 * (Count300 + Count100 + Count50 + CountMiss));
+            return (double)((300 * Count300) + (100 * Count100) + (50 * Count50)) / (300 * (Count300 + Count100 + Count50 + CountMiss));
         }
     }
 

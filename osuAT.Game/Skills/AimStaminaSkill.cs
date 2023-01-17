@@ -19,7 +19,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "aimstamina";
 
-        public string Version => "0.001";
+        public string Version => "0.002";
 
         public string Summary => "The ability for your aim to endure \n continous strain.";
 
@@ -89,6 +89,7 @@ namespace osuAT.Game.Skills
                 CurTotalPP = highestWorth;
                 CurTotalPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
                 CurTotalPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
+                CurTotalPP *= SharedMethods.SimpleAccNerf(FocusedScore.Accuracy);
             }
         }
 
