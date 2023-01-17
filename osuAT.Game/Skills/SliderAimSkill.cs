@@ -22,7 +22,7 @@ namespace osuAT.Game.Skills
 
         public string Version => "0.004";
 
-        public string Summary => "Ability to follow slider bodies \n accurately.";
+        public string Summary => "The ability to follow slider bodies \n accurately.";
 
         public int SummarySize => 9;
 
