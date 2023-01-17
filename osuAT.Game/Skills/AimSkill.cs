@@ -66,6 +66,18 @@ namespace osuAT.Game.Skills
 
             private double totalAngStrainWorth = 0;
 
+            public override void Setup()
+            {
+                angDifficulty = 0;
+                aimDifficulty = 0;
+                curAngle = 0;
+
+                curAngStrainWorth = 0;
+                curWorth = 0;
+
+                highestWorth = 0;
+                totalAngStrainWorth = 0;
+            }
 
             public override void CalcNext(OsuDifficultyHitObject diffHit)
             {
