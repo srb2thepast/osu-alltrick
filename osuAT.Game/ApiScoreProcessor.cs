@@ -32,6 +32,7 @@ namespace osuAT.Game
         Okay = 1
     }
 
+    // [!] add difficulty recalculation based on mods (ex. DT 6* -. 8*)
     public static class ApiScoreProcessor
     {
 
