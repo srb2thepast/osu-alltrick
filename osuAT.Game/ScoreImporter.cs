@@ -18,12 +18,11 @@ using OsuMemoryDataProvider.OsuMemoryModels.Direct;
 
 namespace osuAT.Game
 {
-
-
     public class ScoreImporter
     {
         // looks like timers dont go to well with hot reload in o!f. alternative is needed
         public static int TickDelay = 1500;
+
         private static Timer scoreSetTimer = new Timer(TickDelay);
         private static StructuredOsuMemoryReader osuReader;
         private static OsuMemoryStatus lastScreen = OsuMemoryStatus.Playing;
@@ -79,12 +78,13 @@ namespace osuAT.Game
                 lastScreen = gameData.OsuStatus;
                 Console.WriteLine("Importation begun.");
                 await Task.Delay(2000); // wait a bit incase osu!servers are behind
+
                 ApiScoreProcessor.ApiReqs += 1;
                 var recent = OsuApi.GetUserRecent(SaveStorage.SaveData.PlayerID.ToString());
                 if (recent == null)
                     return;
 
-                var osuScore = OsuApi.GetUserRecent(SaveStorage.SaveData.PlayerID.ToString())[0];
+                var osuScore = recent[0];
                 OsuApiBeatmap mapRet() => ApiScoreProcessor.OsuApiGetBeatmapWithMD5(osuScore.MapID, osuScore.Mods, osuScore.Mode);
 
                 ApiScoreProcessor.SaveToStorageIfValid(osuScore, mapRet);
@@ -94,10 +94,7 @@ namespace osuAT.Game
                 lastScreen = OsuMemoryStatus.Unknown;
             }
             finally { }
-
         }
-
-
 
         public void ImportScore()
         {

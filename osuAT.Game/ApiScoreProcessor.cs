@@ -29,6 +29,7 @@ namespace osuAT.Game
         WorseScoreSaved = -3,
         UnrankedMap = -4,
         MapNotDownloaded = -5,
+        RateLimited = -6,
         Okay = 1
     }
 
@@ -43,7 +44,6 @@ namespace osuAT.Game
         /// <param name="deleteIfBetter">If a worse score than the score given is set on the same map and
         /// this parameter is true, the worse score will be deleted from the SaveStorage to create an opening for
         /// the better score.</param>
-        /// <returns></returns>
         public static ProcessResult CheckScoreValidity(OsuPlay osuScore, bool deleteIfBetter = false)
         {
             if (osuScore.ScoreID == null)
@@ -95,6 +95,10 @@ namespace osuAT.Game
         /// </summary>
         public static ProcessResult CheckMapValidity(OsuBeatmap osuMap)
         {
+            if (ApiReqs > 30)
+            {
+                return ProcessResult.RateLimited;
+            }
             // return if the map is not ranked/approved
             if (!(osuMap.Status == BeatmapStatus.Ranked || osuMap.Status == BeatmapStatus.Approved))
                 return ProcessResult.UnrankedMap;
@@ -105,6 +109,8 @@ namespace osuAT.Game
 
         public static string GetMapFolder(OsuBeatmap osuMap)
         {
+            Console.WriteLine(osuMap.BeatmapSetID + " | " + osuMap.BeatmapID);
+
             if (!SaveStorage.OsuPathIsValid())
                 return default;
 
@@ -112,6 +118,7 @@ namespace osuAT.Game
             {
                 return folder.StartsWith(SaveStorage.ConcateOsuPath(@"Songs\" + osuMap.BeatmapSetID + ' '));
             });
+
             if (mapList.Count() == 0) return default;
 
             var mapFolder = mapList.ElementAt(0);
@@ -121,14 +128,27 @@ namespace osuAT.Game
                 Console.WriteLine(file);
                 var text = File.ReadAllLines(file);
                 string filemapid = default;
+                int format = int.Parse(text[0].Split("osu file format v")[1]);
+                if (format > 9)
+                {
+                    // Directly compare BeatmapID
+                    foreach (var line in text)
+                    {
+                        if (line.StartsWith("BeatmapID:")) filemapid = line.Split("BeatmapID:")[1];
+                        if (line == "[Difficulty]") break;
+                    }
+                    Console.WriteLine(filemapid + "|" + osuMap.BeatmapID);
+                    return filemapid == osuMap.BeatmapID;
+                }
 
+                // Instead compare difficulty name for versions at and below 9 (HACK)
+                int matches = 0;
                 foreach (var line in text)
                 {
-                    if (line.StartsWith("BeatmapID:")) filemapid = line.Split("BeatmapID:")[1];
+                    if (line.StartsWith("Version:") && line.Split("Version:")[1] == osuMap.DifficultyName) matches += 1;
                     if (line == "[Difficulty]") break;
                 }
-                Console.WriteLine(filemapid + "|" + osuMap.BeatmapID);
-                return filemapid == osuMap.BeatmapID;
+                return matches == 1;
             }).ElementAt(0);
 
             return osuFile;
@@ -177,8 +197,7 @@ namespace osuAT.Game
         /// Saves the given play to SaveStorage by using data from osuScore and mapRet() to create a <see cref="Score"/>.
         /// </summary>
         /// <param name="osuScore">A score of type<see cref="OsuPlay"/>.</param>
-        /// <param name="mapRet">A delegate that returns a <see cref="OsuBeatmap"/>. It's structured this way to make sure
-        /// the least API requests are made as possible.</param>
+        /// <param name="mapRet">A delegate that returns a <see cref="OsuBeatmap"/> incase the score is already invalid. </param>
         public static ProcessResult SaveToStorageIfValid(OsuPlay osuScore, BeatmapReturner mapRet)
         {
             Console.WriteLine($"{ApiReqs} osu!api v1 requests have been sent.");
@@ -187,7 +206,6 @@ namespace osuAT.Game
             Console.WriteLine(scoreResult);
             if (scoreResult < ProcessResult.Okay) return scoreResult;
 
-            ApiReqs += 1;
             var osuMap = mapRet();
             var mapResult = CheckMapValidity(osuMap);
             Console.WriteLine(mapResult);
@@ -206,6 +224,7 @@ namespace osuAT.Game
         public static List<OsuPlay> OsuApiGetScores(string beatmapid, string username, OsuMode mode = OsuMode.Standard, int limit = 1, bool generateBeatmaps = false)
 
         {
+            ApiReqs++;
             string[] obj = new string[11]
             {
                 "https://osu.ppy.sh/api/",
@@ -228,7 +247,7 @@ namespace osuAT.Game
                     play.Mode = mode;
                     if (generateBeatmaps)
                     {
-                        play.Beatmap = OsuApi.GetBeatmap(play.MapID, play.Mods, mode);
+                        play.Beatmap = OsuApiGetBeatmapWithMD5(play.MapID, play.Mods, mode);
                     }
                 });
             }
@@ -243,6 +262,7 @@ namespace osuAT.Game
 
         public static OsuApiBeatmap OsuApiGetBeatmapWithMD5(string id, OsuMods mods = OsuMods.None, OsuMode mode = OsuMode.Standard)
         {
+            ApiReqs++;
             string[] obj = new string[9]
             {
                 "https://osu.ppy.sh/api/",
