@@ -27,8 +27,6 @@ using osuTK.Graphics;
 
 namespace osuAT.Game
 {
-
-
     public partial class ImportButton : CompositeDrawable
     {
         private MapIDBox beatmapBox;
@@ -69,7 +67,6 @@ namespace osuAT.Game
                     },
                     Children = new Drawable[] {
                          new SpriteIcon {
-
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
 
@@ -93,7 +90,6 @@ namespace osuAT.Game
             private Container background;
             private SuperTextBox beatmapidText;
             private SpriteText infoText;
-
 
             public MapIDBox(bool forcecompletion = false)
             {
@@ -147,7 +143,6 @@ namespace osuAT.Game
                                 Shadow = true,
                                 ShadowOffset = new Vector2(0,0.1f),
                             },
-
                         }
                     },
 
@@ -204,7 +199,6 @@ namespace osuAT.Game
                                 ShadowOffset = new Vector2(0,0.1f),
                             }
                         }
-
                     },
                     new Sprite {
                         Anchor = Anchor.Centre,
@@ -226,7 +220,6 @@ namespace osuAT.Game
                     ApiScoreProcessor.ApiReqs += 1;
                     if (ApiScoreProcessor.ApiKeyValid)
                     {
-
                         ApiScoreProcessor.ApiReqs += 1;
                         beatmapidText.Text.ToCharArray().ForEach(ch =>
                         {
@@ -296,14 +289,21 @@ namespace osuAT.Game
                         case ProcessResult.AlreadySaved:
                             infoText.Text = "This score has already been saved!";
                             break;
+
                         case ProcessResult.BetterScoreSaved:
                             infoText.Text = "A better score has already been saved!";
                             break;
+
                         case ProcessResult.FailedScore:
                             infoText.Text = "This is a failed score!";
                             break;
+
                         case ProcessResult.UnrankedMap:
                             infoText.Text = "This map is unranked!";
+                            break;
+
+                        case ProcessResult.MapNotDownloaded:
+                            infoText.Text = "This map isn't downloaded!";
                             break;
                     }
                     beatmapidText.FlashColour(Color4.Red, 3000, Easing.InOutCubic);
@@ -313,7 +313,6 @@ namespace osuAT.Game
                 infoText.Text = $"{osuMap.Title} imported sucessfully!";
                 beatmapidText.FlashColour(Color4.Green, 3000, Easing.InOutCubic);
             }
-
 
             public override void Show()
             {
@@ -330,6 +329,5 @@ namespace osuAT.Game
                 return true;
             }
         }
-
     }
 }

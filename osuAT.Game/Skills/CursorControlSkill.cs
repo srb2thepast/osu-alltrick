@@ -101,14 +101,14 @@ namespace osuAT.Game.Skills
 
                 // // Uneven Flow
                 soloFlowPatternMult = Math.Clamp(((double)curAngle - 60) / 60, 0, 1) / 2 + Math.Clamp(((double)lastAngle - 60) / 60, 0, 1) / 2;
-                flowPatternCount = Math.Max(0, flowPatternCount + (soloFlowPatternMult* 10-9) * 3);
+                flowPatternCount = Math.Max(0, flowPatternCount + (soloFlowPatternMult * 10 - 9) * 3);
 
                 if (flowPatternCount >= 1)
-                    aubruptionWorth = Math.Pow(Math.E, -(Math.Pow(flowPatternCount- 3, 2) / (4 * flowPatternCount)));
+                    aubruptionWorth = Math.Pow(Math.E, -(Math.Pow(flowPatternCount - 3, 2) / (4 * flowPatternCount)));
                 else
                     aubruptionWorth = 0;
 
-                curWorth = angDifficulty * aimDifficulty + (angDifficulty * aimDifficulty * (aubruptionWorth +1));
+                curWorth = angDifficulty * aimDifficulty + (angDifficulty * aimDifficulty * (aubruptionWorth + 1));
                 highestWorth = Math.Max(highestWorth, curWorth);
 
                 // Miss and combo scaling

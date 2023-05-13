@@ -88,7 +88,7 @@ namespace osuAT.Game.Skills
                 aimDifficulty = (diffHit.MinimumJumpDistance / diffHit.DeltaTime) / 2;
 
                 // Angle Difficulty
-                curAngStrainWorth = Math.Clamp(aimDifficulty/4,0,1) * Math.Clamp(-5*(curAngle)/90 +5,-10,1);
+                curAngStrainWorth = Math.Clamp(aimDifficulty / 4, 0, 1) * Math.Clamp(-5 * (curAngle) / 90 + 5, -10, 1);
                 totalAngStrainWorth += curAngStrainWorth;
                 totalAngStrainWorth = Math.Max(0, totalAngStrainWorth);
                 angDifficulty = 15 * Math.Log(totalAngStrainWorth + 1);

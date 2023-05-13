@@ -38,7 +38,7 @@ namespace osuAT.Game.Skills
         public (Vector2, Vector2) BadgePosSize { get; }
 
         public float MiniHeight => 224;
-        
+
         public int BoxNameSize => 63;
 
         public Vector2 BoxPosition => new Vector2(1875, 1080);
@@ -76,13 +76,13 @@ namespace osuAT.Game.Skills
                 aimDifficulty = (diffHit.MinimumJumpDistance / diffHit.DeltaTime) / 4;
 
                 // Jerk Angle Difficulty
-                jerkAngWorth = Math.Clamp(-1.5*(curAngle-60)/180 + 0.5, 0,1);
+                jerkAngWorth = Math.Clamp(-1.5 * (curAngle - 60) / 180 + 0.5, 0, 1);
                 totalJerkStrainWorth += jerkAngWorth;
                 totalJerkStrainWorth = Math.Max(0, jerkAngWorth) * 0.995;
                 jerkDifficulty = 30 * Math.Log(totalJerkStrainWorth + 1);
 
 
-                curWorth = aimDifficulty * jerkDifficulty*15;
+                curWorth = aimDifficulty * jerkDifficulty * 15;
                 highestWorth = Math.Max(highestWorth, curWorth);
 
                 // Miss and combo scaling

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using FFmpeg.AutoGen;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -9,11 +10,10 @@ using osu.Game.Rulesets.Osu.Mods;
 using osuAT.Game.Objects;
 using osuAT.Game.Objects.LazerAssets;
 using osuAT.Game.Objects.LazerAssets.Mod;
-
+using Sentry.Infrastructure;
 
 namespace osuAT.Game.Types
 {
-
     public class ModInfo
     {
         public string Name { get; }
@@ -22,6 +22,7 @@ namespace osuAT.Game.Types
         public ModType Type { get; }
         public IconUsage? Icon { get; }
         public string Description { get; }
+
         public ModInfo(string name, string acronym, byte order, ModType type, IconUsage? icon = null)
         {
             Name = name;
@@ -30,11 +31,12 @@ namespace osuAT.Game.Types
             Icon = icon;
             Type = type;
         }
-
     }
+
     public class ModStore
     {
         #region osu!standard mods
+
         public static ModInfo Auto => new ModInfo("Auto", "AT", 1, ModType.Automation, OsuIcon.ModAuto);
         public static ModInfo Relax => new ModInfo("Relax", "RX", 1, ModType.Automation, OsuIcon.ModRelax);
         public static ModInfo Autopilot => new ModInfo("Autopilot", "AP", 1, ModType.Automation, OsuIcon.ModAutopilot);
@@ -50,10 +52,12 @@ namespace osuAT.Game.Types
         public static ModInfo Perfect => new ModInfo("Perfect", "PF", 10, ModType.DifficultyIncrease, OsuIcon.ModPerfect);
         public static ModInfo Flashlight => new ModInfo("Flashlight", "FL", 11, ModType.DifficultyIncrease, OsuIcon.ModFlashlight);
         public static ModInfo Nomod => new ModInfo("Nomod", "NM", 0, ModType.System, OsuIcon.ModBg);
-        #endregion
+
+        #endregion osu!standard mods
 
         public static Mod ConvertToOsuMod(ModInfo mod)
         {
+            Console.WriteLine(mod.Name, mod.Acronym, mod.Description);
             string name = mod.Name;
             switch (name.ToUpper()[0] + name.ToLower()[1..])
             {
@@ -71,12 +75,13 @@ namespace osuAT.Game.Types
                 case "Suddendeath": return new OsuModSuddenDeath();
                 case "Perfect": return new OsuModPerfect();
                 case "Flashlight": return new OsuModFlashlight();
-                default: throw new NullReferenceException("Could not find a lazer-mod equivalent.");
+                case "Nomod": return new OsuModTouchDevice();
+                case "Touchdevice": return new OsuModTouchDevice();
+                default: throw new NullReferenceException("Could not find a lazer-mod equivalent for  mod " + name);
             }
-
         }
 
-        public static ModInfo GetByName(string name)
+        public static ModInfo GetModInfoByName(string name)
         {
             switch (name.ToUpper()[0] + name.ToLower()[1..])
             {
@@ -138,7 +143,7 @@ namespace osuAT.Game.Types
         Autoplay = 2048,
         SpunOut = 4096,
         Relax2 = 8192,    // Autopilot
-        Perfect = 16384, // Only set along with SuddenDeath. i.e: PF only gives 16416  
+        Perfect = 16384, // Only set along with SuddenDeath. i.e: PF only gives 16416
         Key4 = 32768,
         Key5 = 65536,
         Key6 = 131072,

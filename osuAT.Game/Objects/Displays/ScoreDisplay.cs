@@ -592,7 +592,8 @@ namespace osuAT.Game.Objects.Displays
             comboBar.Delay(delay).ResizeTo(new Vector2(((float)Current.Combo / Current.BeatmapInfo.MaxCombo) * 175, comboBar.Height), 500, Easing.InOutQuad);
         }
 
-        public void SwitchBar() {
+        public void SwitchBar()
+        {
             bool comboEnabled = comboCont.Alpha == 1;
             if (comboEnabled)
             {

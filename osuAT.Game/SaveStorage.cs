@@ -46,7 +46,6 @@ namespace osuAT.Game
         [JsonProperty("playerid")]
         public int PlayerID { get; set; }
 
-
         /// <summary>
         /// The player's APIKey.
         /// </summary>
@@ -172,7 +171,6 @@ namespace osuAT.Game
             ///     1. If it doesnt exist in the savefile
             foreach (ISkill skill in Skill.SkillList)
             {
-
                 /// if the skill from SkillList is not found in SaveData.SkillVersions, the
                 /// skill was added as of the newest update.
 
@@ -187,7 +185,6 @@ namespace osuAT.Game
             ///     2. If it doesnt exist in the code (does nothing)
             foreach (KeyValuePair<string, string> skillVer in SaveData.SkillVersions)
             {
-
                 /// check if the skill exists in <see cref="Skill.SkillList"/>, if it doesn't
                 /// then that means it was a deleted/removed skill.
                 ISkill skillInstance = Skill.GetSkillByID(skillVer.Key);
@@ -238,7 +235,7 @@ namespace osuAT.Game
 
                             tuplList["overall"].Add(newTuple);
                             tuplList[score.ScoreRuleset.Name].Add(newTuple);
-                            Console.WriteLine(score.ID + " |OldPP: " +  oldPP + "| NewPP: " + score.AlltrickPP[skillID]);
+                            Console.WriteLine(score.ID + " |OldPP: " + oldPP + "| NewPP: " + score.AlltrickPP[skillID]);
                         }
                     }
                     // sort and set each ruleset tuple
@@ -251,14 +248,11 @@ namespace osuAT.Game
                     SaveData.TotalSkillPP[skillID] = (Skill.CalcWeighted(SaveData.AlltrickTop[skillID]["overall"]));
                     SaveData.SkillVersions[skillID] = skillInstance.Version;
                     Console.WriteLine("---------------Score Recalc Complete----------------");
-
                 }
-
             }
             Save();
             Console.WriteLine("SaveStorage Initalized Sucessfully!");
         }
-
 
         public static void AddNewSkill(ISkill skill)
         {
@@ -346,7 +340,6 @@ namespace osuAT.Game
 
             Console.WriteLine("They may all be regained via recalculation if this skill is added back.");
 
-
             SaveData.TotalSkillPP.Remove(skill.Identifier);
             Console.WriteLine("removed from total");
 
@@ -380,6 +373,7 @@ namespace osuAT.Game
 
             Console.WriteLine("---------------Skill Removal Complete----------------");
         }
+
         public static string Base64Encode(string plainText)
         {
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
@@ -461,7 +455,6 @@ namespace osuAT.Game
             Save();
         }
 
-
         /// <summary>
         /// Removes all references to the score from all lists (including AlltrickTop)
         /// </summary>
@@ -503,6 +496,7 @@ namespace osuAT.Game
             }
             SaveData.Scores.Remove(scoreID);
         }
+
         public static void AddScore(Score score)
         {
             CheckSaveExists();
@@ -518,10 +512,10 @@ namespace osuAT.Game
             SaveData.Scores = tempdict;
             addToSkillTops(score);
             OnScoreAdded?.Invoke(score);
-
         }
 
         public delegate void ScoreAddedHandler(Score score);
+
         public static event ScoreAddedHandler OnScoreAdded;
 
         /// <summary>
@@ -553,7 +547,6 @@ namespace osuAT.Game
                     SkillList.Sort((x, y) => y.Item2.CompareTo(x.Item2));
                 }
             }
-
         }
 
         /// <summary>
@@ -566,7 +559,6 @@ namespace osuAT.Game
             List<Score> scorelist = new List<Score>();
             foreach (Tuple<Guid, double> pair in list)
             {
-
                 Score score = SaveData.Scores[pair.Item1];
                 scorelist.Add(score);
 
@@ -579,11 +571,6 @@ namespace osuAT.Game
                 Console.WriteLine(scorelist[0].AlltrickPP[skill.Identifier]);
                 if (score == null) { for (int i = 1; i < 3; i++) { Console.Write(" [NOT FOUND]"); } }
                 */
-
-
-
-
-
             }
             return scorelist;
         }

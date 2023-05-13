@@ -88,7 +88,7 @@ namespace osuAT.Game.Skills
 
 
             public override void Setup()
-            {   
+            {
 
             }
 

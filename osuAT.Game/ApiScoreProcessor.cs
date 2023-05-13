@@ -20,7 +20,6 @@ using osuTK.Graphics;
 
 namespace osuAT.Game
 {
-
     public enum ProcessResult
     {
         IDInvalid = 0,
@@ -29,13 +28,13 @@ namespace osuAT.Game
         BetterScoreSaved = 2,
         WorseScoreSaved = -3,
         UnrankedMap = -4,
+        MapNotDownloaded = -5,
         Okay = 1
     }
 
     // [!] add difficulty recalculation based on mods (ex. DT 6* -. 8*)
     public static class ApiScoreProcessor
     {
-
         public static double ApiReqs = 0;
 
         /// <summary>
@@ -56,6 +55,7 @@ namespace osuAT.Game
                 Console.WriteLine("Score is F ranked.");
                 return ProcessResult.FailedScore;
             }
+
             foreach (var savedscore in SaveStorage.SaveData.Scores.Values)
             {
                 // check if the score has already been saved.
@@ -65,10 +65,10 @@ namespace osuAT.Game
                     return ProcessResult.AlreadySaved;
                 }
 
-                // check if a score on that diff has already been set, 
+                // check if a score on that diff has already been set,
                 if (savedscore.BeatmapInfo.MapID.ToString() == osuScore.MapID)
                 {
-                    // check if the just score set is higher than the one currently savd. 
+                    // check if the just score set is higher than the one currently savd.
                     if (savedscore.TotalScore < osuScore.Score)
                     {
                         Console.Write("New top score detected!");
@@ -98,18 +98,23 @@ namespace osuAT.Game
             // return if the map is not ranked/approved
             if (!(osuMap.Status == BeatmapStatus.Ranked || osuMap.Status == BeatmapStatus.Approved))
                 return ProcessResult.UnrankedMap;
-
+            if (GetMapFolder(osuMap) == default)
+                return ProcessResult.MapNotDownloaded;
             return ProcessResult.Okay;
         }
+
         public static string GetMapFolder(OsuBeatmap osuMap)
         {
             if (!SaveStorage.OsuPathIsValid())
                 return default;
 
-            var mapFolder = Directory.GetDirectories(SaveStorage.ConcateOsuPath(@"Songs\")).Where((folder) =>
+            var mapList = Directory.GetDirectories(SaveStorage.ConcateOsuPath(@"Songs\")).Where((folder) =>
             {
                 return folder.StartsWith(SaveStorage.ConcateOsuPath(@"Songs\" + osuMap.BeatmapSetID + ' '));
-            }).ElementAt(0);
+            });
+            if (mapList.Count() == 0) return default;
+
+            var mapFolder = mapList.ElementAt(0);
 
             var osuFile = Directory.GetFiles(mapFolder, "*.osu").Where((file) =>
             {
@@ -128,6 +133,7 @@ namespace osuAT.Game
 
             return osuFile;
         }
+
         public static Score ConvertToScore(OsuPlay osuScore, OsuApiBeatmap osuMap)
         {
             List<string> modString = osuScore.Mods.ToString().Split(", ").ToList();
@@ -137,7 +143,6 @@ namespace osuAT.Game
             {
                 modString.Remove("DoubleTime");
             }
-
 
             return new Score
             {

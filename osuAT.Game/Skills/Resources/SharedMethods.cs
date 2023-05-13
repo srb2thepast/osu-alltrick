@@ -78,7 +78,8 @@ namespace osuAT.Game.Skills.Resources
         /// Returns a number to penalize or buff score worth depending on acc. Named "Simple" as it doesn't really consider beatmap length or anything besides the accuracy.
         /// </summary>
         /// <returns></returns>
-        public static double SimpleAccNerf(double accuracy) {
+        public static double SimpleAccNerf(double accuracy)
+        {
             return (Math.Pow(7, accuracy) - 1) / 6;
         }
 

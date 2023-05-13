@@ -38,7 +38,6 @@ namespace osuAT.Game.Types
         [JsonProperty("osu_scoreid")]
         public long? OsuID { get; set; }
 
-
         /// <summary>
         /// All of the information about the beatmap this score was set on.
         /// </summary>
@@ -117,7 +116,6 @@ namespace osuAT.Game.Types
         /// </summary>
         public void Register(bool calcPP = true, bool setDate = true, int index = -1, bool setGUID = true, bool loadBeatmapContents = true)
         {
-
             if (setGUID) { ID = Guid.NewGuid(); }
             if (setDate) { DateCreated = DateTime.Today; }
             PerfectCombo = BeatmapInfo.MaxCombo == Combo;
@@ -139,7 +137,7 @@ namespace osuAT.Game.Types
                 foreach (string mod in ModsString)
                 {
                     if (mod == "None") continue;
-                    Mods.Add(ModStore.GetByName(mod));
+                    Mods.Add(ModStore.GetModInfoByName(mod));
                 }
             }
 
@@ -176,5 +174,4 @@ namespace osuAT.Game.Types
             return newscore;
         }
     }
-
 }
