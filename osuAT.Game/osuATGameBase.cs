@@ -28,6 +28,7 @@ namespace osuAT.Game
         // It allows for caching global dependencies that should be accessible to tests, or changing
         // the screen scaling for all components including the test browser and framework overlays.
         protected override Container<Drawable> Content { get; }
+
         public new static DependencyContainer Dependencies;
         public static readonly EndpointConfiguration ENDPOINT_CONFIGURATION = new ProductionEndpointConfiguration();
 
@@ -61,14 +62,14 @@ namespace osuAT.Game
             Console.WriteLine(Host.AvailableInputHandlers);
             Window.WindowMode.Value = osu.Framework.Configuration.WindowMode.Windowed;
             Resources.AddStore(new DllResourceStore(typeof(osuATResources).Assembly));
-            AddFont(Resources, @"Fonts/osuFont");
-            AddFont(Resources, @"Fonts/VarelaRound");
-            AddFont(Resources, @"Fonts/ChivoBold");
-            AddFont(Resources, @"Fonts/Venera");
-            AddFont(Resources, @"Fonts/AveriaSansLibre");
+            AddFont(Resources, "Fonts/osuFont");
+            AddFont(Resources, "Fonts/VarelaRound");
+            AddFont(Resources, "Fonts/ChivoBold");
+            AddFont(Resources, "Fonts/Venera");
+            AddFont(Resources, "Fonts/AveriaSansLibre");
 
             // [!] how to use turn local images outside game directory to texture help plz
-            var largeStore = new LargeTextureStore(Host.Renderer, Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"Textures")));
+            var largeStore = new LargeTextureStore(Host.Renderer, Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, "Textures")));
             largeStore.AddTextureSource(Host.CreateTextureLoaderStore(new OnlineStore()));
 
             Dependencies.Cache(largeStore);
@@ -91,10 +92,7 @@ namespace osuAT.Game
                 Console.WriteLine(handler);
                 if (handler is ITabletHandler tabhandler)
                 {
-                    Schedule(() =>
-                    {
-                        tabhandler.Enabled.Value = false;
-                    });
+                    Schedule(() => tabhandler.Enabled.Value = false);
                 }
                 if (handler is MouseHandler mousehandle)
                 {
@@ -103,7 +101,6 @@ namespace osuAT.Game
                 }
             }
         }
-
 
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) =>
             Dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

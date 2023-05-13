@@ -23,6 +23,14 @@ namespace osuAT.Game.Types
         public IconUsage? Icon { get; }
         public string Description { get; }
 
+        /// <summary>
+        /// Creates a new ModInfo class.
+        /// </summary>
+        /// <param name="name">The mod's name</param>
+        /// <param name="acronym">The mod's acronym</param>
+        /// <param name="order">The order for the mod to be displayed in when placed with others</param>
+        /// <param name="type">The osu!lazer type of the mod</param>
+        /// <param name="icon">The osu! Icon for the mod</param>
         public ModInfo(string name, string acronym, byte order, ModType type, IconUsage? icon = null)
         {
             Name = name;
@@ -37,21 +45,22 @@ namespace osuAT.Game.Types
     {
         #region osu!standard mods
 
-        public static ModInfo Auto => new ModInfo("Auto", "AT", 1, ModType.Automation, OsuIcon.ModAuto);
-        public static ModInfo Relax => new ModInfo("Relax", "RX", 1, ModType.Automation, OsuIcon.ModRelax);
-        public static ModInfo Autopilot => new ModInfo("Autopilot", "AP", 1, ModType.Automation, OsuIcon.ModAutopilot);
-        public static ModInfo Spunout => new ModInfo("Spunout", "SO", 3, ModType.DifficultyReduction, OsuIcon.ModSpunOut);
-        public static ModInfo Easy => new ModInfo("Easy", "EZ", 4, ModType.DifficultyReduction, OsuIcon.ModEasy);
-        public static ModInfo Nofail => new ModInfo("Nofail", "NF", 5, ModType.DifficultyReduction, OsuIcon.ModNoFail);
-        public static ModInfo Hidden => new ModInfo("Hidden", "HD", 6, ModType.DifficultyIncrease, OsuIcon.ModHidden);
-        public static ModInfo Halftime => new ModInfo("Halftime", "HT", 7, ModType.DifficultyReduction, OsuIcon.ModHalftime);
-        public static ModInfo Nightcore => new ModInfo("Nightcore", "NC", 7, ModType.DifficultyIncrease, OsuIcon.ModNightcore);
-        public static ModInfo Doubletime => new ModInfo("Doubletime", "DT", 8, ModType.DifficultyIncrease, OsuIcon.ModDoubleTime);
-        public static ModInfo Hardrock => new ModInfo("Hardrock", "HR", 9, ModType.DifficultyIncrease, OsuIcon.ModHardRock);
-        public static ModInfo Suddendeath => new ModInfo("Suddendeath", "SD", 10, ModType.DifficultyIncrease, OsuIcon.ModSuddenDeath);
-        public static ModInfo Perfect => new ModInfo("Perfect", "PF", 10, ModType.DifficultyIncrease, OsuIcon.ModPerfect);
-        public static ModInfo Flashlight => new ModInfo("Flashlight", "FL", 11, ModType.DifficultyIncrease, OsuIcon.ModFlashlight);
-        public static ModInfo Nomod => new ModInfo("Nomod", "NM", 0, ModType.System, OsuIcon.ModBg);
+        public static ModInfo Auto => new("Auto", "AT", 1, ModType.Automation, OsuIcon.ModAuto);
+        public static ModInfo Relax => new("Relax", "RX", 1, ModType.Automation, OsuIcon.ModRelax);
+        public static ModInfo Autopilot => new("Autopilot", "AP", 1, ModType.Automation, OsuIcon.ModAutopilot);
+        public static ModInfo Spunout => new("Spunout", "SO", 2, ModType.DifficultyReduction, OsuIcon.ModSpunOut);
+        public static ModInfo Touchdevice => new("Touchdevice", "TD", 3, ModType.System, null);
+        public static ModInfo Easy => new("Easy", "EZ", 4, ModType.DifficultyReduction, OsuIcon.ModEasy);
+        public static ModInfo Nofail => new("Nofail", "NF", 5, ModType.DifficultyReduction, OsuIcon.ModNoFail);
+        public static ModInfo Hidden => new("Hidden", "HD", 6, ModType.DifficultyIncrease, OsuIcon.ModHidden);
+        public static ModInfo Halftime => new("Halftime", "HT", 7, ModType.DifficultyReduction, OsuIcon.ModHalftime);
+        public static ModInfo Nightcore => new("Nightcore", "NC", 7, ModType.DifficultyIncrease, OsuIcon.ModNightcore);
+        public static ModInfo Doubletime => new("Doubletime", "DT", 8, ModType.DifficultyIncrease, OsuIcon.ModDoubleTime);
+        public static ModInfo Hardrock => new("Hardrock", "HR", 9, ModType.DifficultyIncrease, OsuIcon.ModHardRock);
+        public static ModInfo Suddendeath => new("Suddendeath", "SD", 10, ModType.DifficultyIncrease, OsuIcon.ModSuddenDeath);
+        public static ModInfo Perfect => new("Perfect", "PF", 10, ModType.DifficultyIncrease, OsuIcon.ModPerfect);
+        public static ModInfo Flashlight => new("Flashlight", "FL", 11, ModType.DifficultyIncrease, OsuIcon.ModFlashlight);
+        public static ModInfo Nomod => new("Nomod", "NM", 0, ModType.System, OsuIcon.ModBg);
 
         #endregion osu!standard mods
 
@@ -75,7 +84,6 @@ namespace osuAT.Game.Types
                 case "Suddendeath": return new OsuModSuddenDeath();
                 case "Perfect": return new OsuModPerfect();
                 case "Flashlight": return new OsuModFlashlight();
-                case "Nomod": return new OsuModTouchDevice();
                 case "Touchdevice": return new OsuModTouchDevice();
                 default: throw new NullReferenceException("Could not find a lazer-mod equivalent for  mod " + name);
             }
@@ -99,7 +107,8 @@ namespace osuAT.Game.Types
                 case "Suddendeath": return Suddendeath;
                 case "Perfect": return Perfect;
                 case "Flashlight": return Flashlight;
-                default: return Nomod;
+                case "Touchdevice": return Touchdevice;
+                default: throw new NullReferenceException("Could not find any ModInfo for mod " + name);
             }
         }
 
@@ -121,11 +130,13 @@ namespace osuAT.Game.Types
                 case "SD": return Suddendeath;
                 case "PF": return Perfect;
                 case "FL": return Flashlight;
-                default: return Nomod;
+                case "TD": return Touchdevice;
+                default: throw new NullReferenceException("Could not find any ModInfo for mod acronym" + acronym);
             }
         }
     }
 
+    [Flags]
     public enum OsuMod
     {
         None = 0,

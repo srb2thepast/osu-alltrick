@@ -99,9 +99,9 @@ namespace osuAT.Game.Objects.LazerAssets.Mod
                     Anchor = Anchor.Centre,
                     Colour = new Color4(84, 84, 84, 1f),
                     Alpha = 0,
-                    Font = new FontUsage("VarelaRound", size: 22f,weight: "Bold"), // Font Should be Venera
+                    Font =new FontUsage("Venera", size: 29), // Should be Venera Bold
                     UseFullGlyphHeight = false,
-                    Text = mod.Acronym
+                    Text = mod.Acronym,
                 },
                 modIcon = new SpriteIcon
                 {

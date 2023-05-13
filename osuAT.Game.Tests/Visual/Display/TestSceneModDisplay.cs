@@ -50,7 +50,8 @@ namespace osuAT.Game.Tests.Visual.Display
                             ModStore.Doubletime,
                             ModStore.Auto,
                             ModStore.Easy,
-                            ModStore.Nomod
+                            ModStore.Nomod,
+                            ModStore.Touchdevice,
                         }
                     }
                 };

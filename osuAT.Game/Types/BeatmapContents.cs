@@ -20,7 +20,7 @@ namespace osuAT.Game.Types
 {
     public class BeatmapContents
     {
-        public string FolderLocation { get; private set; }
+        public string FolderLocation { get; }
 
         public BeatmapDifficulty DifficultyInfo { get; set; }
 
@@ -30,20 +30,17 @@ namespace osuAT.Game.Types
 
         public List<HitObject> HitObjects { get; set; }
 
-
         public List<DifficultyHitObject> DiffHitObjects { get; set; }
 
         public RulesetInfo ContentRuleset { get; set; }
 
-        private IExtendedDifficultyCalculator diffcalc;
+        private readonly IExtendedDifficultyCalculator diffcalc;
 
         /// <summary>
         /// Creates a an empty BeatmapContents. Should only be used for testing.
         /// </summary>
         public BeatmapContents()
-        {
-
-        }
+        { }
 
         /// <summary>
         /// Creates a new BeatmapContents based off of a .osu file.
@@ -81,7 +78,6 @@ namespace osuAT.Game.Types
             ContentRuleset = ruleset;
             DiffHitObjects = diffcalc.GetDifficultyHitObjects(PlayableMap, rate).ToList();
             HitObjects = PlayableMap.HitObjects.ToList();
-
         }
     }
 }

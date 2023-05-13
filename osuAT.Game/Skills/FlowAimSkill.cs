@@ -13,10 +13,10 @@ using static osuAT.Game.Skills.AimSkill;
 
 namespace osuAT.Game.Skills
 {
-
     public class FlowAimSkill : ISkill
     {
         #region Info
+
         public string Name => "Flow Aim";
 
         public string Identifier => "flowaim";
@@ -47,7 +47,7 @@ namespace osuAT.Game.Skills
 
         public SkillGoals Benchmarks => new SkillGoals(600, 1500, 3000, 6000, 9000, 10000);
 
-        #endregion
+        #endregion Info
 
         /// <summary>
         /// Returns a pp value based off of the most spaced out stream of a map.
@@ -65,12 +65,11 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-
             private double curStreamLength = 0;
             private double curMSSpeed = 0;
+
             [HiddenDebugValue]
             private double aimTotal = 0;
-
 
             [HiddenDebugValue]
             private double totalAngStrainWorth = 0;
@@ -83,14 +82,12 @@ namespace osuAT.Game.Skills
             private double aimDifficulty = 0;
             private double angDifficulty = 0;
             private double curWorth = 0;
+
             [HiddenDebugValue]
             private double highestWorth = 0;
 
-
             public override void Setup()
-            {
-
-            }
+            { }
 
             public override void CalcNext(OsuDifficultyHitObject diffHitObj)
             {
@@ -102,7 +99,7 @@ namespace osuAT.Game.Skills
                 double curAngle = (double)diffHit.Angle * (180 / Math.PI);
                 double lastAngle = (double)lastDiffHit.Angle * (180 / Math.PI);
 
-                // Strain-based Stream Length  
+                // Strain-based Stream Length
                 curStreamLength += Math.Clamp(SharedMethods.BPMToMS(180) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1);
                 curStreamLength -= curStreamLength * 0.75 * (1 - Math.Clamp(SharedMethods.BPMToMS(180, 2) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1));
                 curMSSpeed = diffHit.StartTime - lastDiffHit.StartTime;
@@ -119,7 +116,7 @@ namespace osuAT.Game.Skills
                 // Flow Pattern Multiplier
                 flowPatternMult = Math.Clamp(((double)curAngle - 60) / 60, 0, 1) / 2 + Math.Clamp(((double)lastAngle - 60) / 60, 0, 1) / 2;
 
-                // Angle Difficulty 
+                // Angle Difficulty
                 angCurDiff = 20 * (-Math.Clamp(1.5 * ((double)curAngle - 60) / 180, -1, 1) + 1);
                 totalAngStrainWorth += angCurDiff * flowPatternMult;
                 totalAngStrainWorth *= 0.9;
