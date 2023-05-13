@@ -28,6 +28,9 @@ namespace osuAT.Game.Objects.Displays
         public int TextSize; // Text Size
 
         public Texture Background; // Background
+
+        public event Action BoxClicked;
+
         public ScoreDisplay()
         {
             AutoSizeAxes = Axes.Both;
@@ -621,7 +624,7 @@ namespace osuAT.Game.Objects.Displays
 
         protected override bool OnClick(ClickEvent e)
         {
-            SwitchBar();
+            BoxClicked.Invoke();
             return base.OnClick(e);
         }
     }

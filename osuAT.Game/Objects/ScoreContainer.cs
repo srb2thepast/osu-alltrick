@@ -17,12 +17,14 @@ namespace osuAT.Game
     {
         protected List<Score> ScoreList = new List<Score>();
         public ISkill Skill { get; set; }
+
         public ScoreContainer()
         {
             Size = new osuTK.Vector2(100, 100);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
         }
+
         private ScoreScrollContainer<Drawable> scrollbox;
 
         public partial class ScoreScrollContainer<T> : ScrollContainer<T> where T : Drawable
@@ -43,9 +45,9 @@ namespace osuAT.Game
                     this.ResizeTo(size, duration, easing);
                 }
             };
+
             protected override ScrollbarContainer CreateScrollbar(Direction direction) => new ScoreScrollBar(direction);
         }
-
 
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
@@ -126,10 +128,18 @@ namespace osuAT.Game
                     IndexPos = index,
                     Scale = new Vector2(0.17f),
                 };
+                display.BoxClicked += SwapBarTypes;
                 scrollbox.Add(display);
                 index += 1;
             }
+        }
 
+        public void SwapBarTypes()
+        {
+            foreach (ScoreDisplay box in scrollbox.Children)
+            {
+                box.SwitchBar();
+            }
         }
 
         public void Appear(float delay = 0, float offset = 30)
