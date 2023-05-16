@@ -85,9 +85,9 @@ namespace osuAT.Game
                     return;
 
                 var osuScore = recent[0];
-                OsuApiBeatmap mapRet() => ApiScoreProcessor.OsuApiGetBeatmapWithMD5(osuScore.MapID, osuScore.Mods, osuScore.Mode);
+                async Task<OsuApiBeatmap> mapRet() => await ApiScoreProcessor.OsuGetBeatmap(osuScore.MapID, osuScore.Mods, osuScore.Mode);
 
-                ApiScoreProcessor.SaveToStorageIfValid(osuScore, mapRet);
+                await ApiScoreProcessor.SaveToStorageIfValid(osuScore, mapRet);
             }
             catch
             {

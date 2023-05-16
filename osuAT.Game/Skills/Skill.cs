@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Textures;
 using osuAT.Game.Objects;
@@ -47,7 +48,7 @@ namespace osuAT.Game.Skills
         /// <summary>
         /// Calculates the PP of every Skill for one score.
         /// </summary>
-        public static Dictionary<string, double> CalcAll(Score score)
+        public static async Task<Dictionary<string, double>> CalcAll(Score score, bool async = false)
         {
             if (!File.Exists(SaveStorage.ConcateOsuPath(score.BeatmapInfo.FolderLocation)))
             {
@@ -58,7 +59,8 @@ namespace osuAT.Game.Skills
             foreach (ISkill skill in SkillList)
             {
                 SkillCalcuator calculator = skill.GetSkillCalc(score);
-                dict.Add(skill.Identifier, calculator.SkillCalc());
+                double skillPP = async ? await calculator.SkillCalcAsync() : calculator.SkillCalc();
+                dict.Add(skill.Identifier, skillPP);
             }
             return dict;
         }
@@ -72,7 +74,6 @@ namespace osuAT.Game.Skills
             }
             return dict;
         }
-
 
         /// <summary>
         /// Calculates the Weghted PP of a list of Scores based on a list of Tuple<Score.ID, double pp>.
@@ -88,6 +89,7 @@ namespace osuAT.Game.Skills
             }
             return Math.Truncate(total * 100) / 100;
         }
+
         /// <summary>
         /// Calculates the Weghted PP of a list of Scores.
         /// </summary>
@@ -103,6 +105,7 @@ namespace osuAT.Game.Skills
 
             return Math.Truncate(total * 100) / 100;
         }
+
         /// <summary>
         /// Calculates the Weghted PP of a list of pp values.
         /// </summary>

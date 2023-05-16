@@ -89,7 +89,7 @@ namespace osuAT.Game.Screens
                         new Circle {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Size = new Vector2(601,63),
+                            Size = new Vector2(601,70),
                             Y = 60
                         },
                         

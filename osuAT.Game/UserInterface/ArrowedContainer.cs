@@ -16,7 +16,6 @@ using osuAT.Game.Types;
 using osuTK;
 using osuTK.Graphics;
 
-
 namespace osuAT.Game.UserInterface
 {
     public partial class ArrowedContainer : FillFlowContainer
@@ -29,7 +28,9 @@ namespace osuAT.Game.UserInterface
         public bool Shadow = false;
         public Vector2 ShadowOffset = new Vector2(0, 0.05f);
         public ObjectSwitched OnObjectSwitched = delegate (Drawable focusedObject) { };
+
         public delegate void ObjectSwitched(Drawable focusedObject);
+
         public new int Spacing = 3;
 
         private Container objcontainer;
@@ -37,12 +38,25 @@ namespace osuAT.Game.UserInterface
         public partial class ArrowButton : SpriteText
         {
             public Action ClickAction = new Action(() => { });
+
             protected override bool OnClick(ClickEvent e)
             {
                 ClickAction();
                 return true;
             }
+
+            protected override bool OnHover(HoverEvent e)
+            {
+                this.ScaleTo(1.07f, 100, Easing.Out);
+                return true;
+            }
+
+            protected override void OnHoverLost(HoverLostEvent e)
+            {
+                this.ScaleTo(1f, 100, Easing.Out);
+            }
         }
+
         public ArrowedContainer()
         {
             Direction = FillDirection.Horizontal; // only horizontal is supported as that's the only one needed
@@ -68,7 +82,6 @@ namespace osuAT.Game.UserInterface
             FocusedObject = Objects[focusIndex];
             objcontainer[focusIndex].Show();
             OnObjectSwitched(FocusedObject);
-
         }
 
         [BackgroundDependencyLoader]

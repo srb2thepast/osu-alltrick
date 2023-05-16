@@ -11,10 +11,9 @@ using osuTK;
 
 namespace osuAT.Game.Skills.Resources
 {
-    // When a skill is ready to be used, dont forget to add it to Skill.cs   
+    // When a skill is ready to be used, dont forget to add it to Skill.cs
     public abstract class SkillCalcuator
     {
-
         /// <summary>
         /// The rulesets this skill can support.
         /// </summary>
@@ -49,7 +48,8 @@ namespace osuAT.Game.Skills.Resources
         /// Completes any necessary setup to calculate the skill (ex. variables that depend on info from the score or
         /// initalizing any non-static variables).
         /// </summary>
-        public virtual void Setup() { }
+        public virtual void Setup()
+        { }
 
         /// <summary>
         /// Calculates the pp worth of the FocusedScore.
@@ -69,11 +69,10 @@ namespace osuAT.Game.Skills.Resources
             return CurTotalPP;
         }
 
-
         /// <summary>
         /// Asynchronously calculates the pp worth of the FocusedScore.
         /// </summary>
-        public virtual async Task<double> SkillCalcAsync()
+        public async Task<double> SkillCalcAsync()
         {
             await Task.Run(SkillCalc);
             return CurTotalPP;
@@ -84,7 +83,6 @@ namespace osuAT.Game.Skills.Resources
         /// Sets <see cref="CurTotalPP"/> to how much pp the hit object given is worth with respect to all objects coming before it.
         /// </summary>
         /// <remarks>The code that goes here runs in the for-loop block in <see cref="SkillCalc()"/>.</remarks>
-        /// <param name="difficultyHitObject"></param>
 
         public virtual void CalcNext(OsuDifficultyHitObject diffHitObj) => throw new NotImplementedException($"Calculations for ruleset {FocusedScore.RulesetName} is not supported.");
 
@@ -104,7 +102,5 @@ namespace osuAT.Game.Skills.Resources
 
             throw new NotSupportedException("Attempted to calculate for ruleset that is not implemented by default.");
         }
-
-
     }
 }

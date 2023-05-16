@@ -25,12 +25,22 @@ using osuTK.Graphics;
 
 namespace osuAT.Game
 {
-
-    public partial class SettingsButton : CompositeDrawable
+    public partial class SettingsButton : ButtonScreen
     {
-        private SettingsBox settingsBox;
+        protected override IconUsage ButtonIcon => FontAwesome.Solid.Cog;
+
         private HomeScreen mainScreen;
-        public bool CanOpen = true;
+
+        private SettingsBox settingsBox = new()
+        {
+            Anchor = Anchor.Centre,
+            X = -250,
+            Y = 400,
+            Alpha = 0,
+            BypassAutoSizeAxes = Axes.Both
+        };
+
+        protected override Drawable DisplayBox => settingsBox;
         public bool SettingsOpen => settingsBox.Alpha > 0;
 
         public SettingsButton(HomeScreen mainScreen)
@@ -46,62 +56,15 @@ namespace osuAT.Game
             Origin = Anchor.Centre;
             UsernameChanged += () =>
             {
-
             };
         }
 
         public static event Action UsernameChanged;
-        public void HideBox()
-        {
-            settingsBox.Hide();
-        }
-
-        public void ShowBox()
-        {
-            settingsBox.Show();
-        }
-
-        [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
-        {
-            InternalChildren = new Drawable[]
-            {
-                new ClickableContainer{
-                    AutoSizeAxes = Axes.Both,
-                    Action = () => {
-                        if (!(CanOpen)) return;
-                        if (settingsBox.Alpha==0) {
-                            if (mainScreen != null) { mainScreen.CurrentlyFocused = false; }
-                            ShowBox(); return;
-                        }
-                        if (mainScreen != null) { mainScreen.CurrentlyFocused = true; }
-                        HideBox();
-                    },
-                    Children = new Drawable[] {
-                         new SpriteIcon {
-
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-
-                            Size = new Vector2(38,38),
-                            Colour = Colour4.LightSlateGray,
-                            Shadow = true,
-                            ShadowOffset = new Vector2(0,4f),
-                            ShadowColour = Colour4.Black,
-                            Icon = FontAwesome.Solid.Cog,
-                        },
-                    },
-                },
-                settingsBox = new SettingsBox{ Anchor = Anchor.Centre,X = -250,Y = 400, Alpha = 0, BypassAutoSizeAxes = Axes.Both}
-            };
-            Size = InternalChildren[0].Size;
-        }
 
         public partial class SettingsBox : CompositeDrawable
         {
             private bool force = false;
             private Container background;
-
 
             private SuperPasswordTextBox apikeyText;
             private SpriteText usernameDisplayText;
@@ -114,12 +77,14 @@ namespace osuAT.Game
 
             public partial class OsuATButton : BasicButton
             {
-
                 [BackgroundDependencyLoader]
                 private void load()
                 {
-
                 }
+
+                public Action OnHoverAction = () => { };
+                public Action OnHoverLostAction = () => { };
+
                 protected override SpriteText CreateText() => new SpriteText
                 {
                     Depth = -1,
@@ -130,6 +95,17 @@ namespace osuAT.Game
                     Shadow = true,
                     ShadowOffset = new Vector2(0, 0.1f),
                 };
+
+                protected override bool OnHover(HoverEvent e)
+                {
+                    OnHoverAction.Invoke();
+                    return base.OnHover(e);
+                }
+
+                protected override void OnHoverLost(HoverLostEvent e)
+                {
+                    OnHoverLostAction.Invoke();
+                }
             }
 
             // [!] add exit button
@@ -235,7 +211,6 @@ namespace osuAT.Game
             [BackgroundDependencyLoader]
             private void load(TextureStore textures)
             {
-
                 InternalChildren = new Drawable[]
                 {
                     background = new Container
@@ -368,12 +343,12 @@ namespace osuAT.Game
                                 Colour = Colour4.White,
                                 Shadow = true,
                                 ShadowOffset = new Vector2(0,0.1f),
-                                Text = "Auto Score Importing: "
+                                Text = "Automatically Import Scores: "
                             },
                             asiOption = new ArrowedContainer{
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.CentreLeft,
-                                Position = new Vector2(470,230),
+                                Position = new Vector2(590,230),
                                 Objects = new Drawable[] {
                                     new SpriteText {
                                         Anchor = Anchor.TopLeft,
@@ -449,9 +424,7 @@ namespace osuAT.Game
                                 Text = "inspired by digitalhypno's osu!phd"
                             }
                         }
-
                     },
-
 
                     new Sprite {
                         Anchor = Anchor.Centre,
@@ -499,7 +472,6 @@ namespace osuAT.Game
                 usernameDisplayText.Colour = ApiScoreProcessor.ApiKeyValid ? Colour4.White : Colour4.Gray;
                 apikeyText.OnCommit += new TextBox.OnCommitHandler((TextBox box, bool target) =>
                 {
-
                     // check if it's a valid api key. if it is, display a checkmark
                     // then, save it to savestorage.
                     // otherwise, display a red X
@@ -547,7 +519,6 @@ namespace osuAT.Game
                     }
                     usernameText.FlashColour(Color4.Green, 3000, Easing.InOutCubic);
                 });
-
             }
 
             protected override bool OnClick(ClickEvent e)
@@ -560,6 +531,5 @@ namespace osuAT.Game
                 return true;
             }
         }
-
     }
 }

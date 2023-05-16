@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using osuAT.Game;
 using osuAT.Game.Skills;
@@ -114,7 +115,7 @@ namespace osuAT.Game.Types
         /// <summary>
         /// Fills in all the missing properties that are not supposed to be set while constructing.
         /// </summary>
-        public void Register(bool calcPP = true, bool setDate = true, int index = -1, bool setGUID = true, bool loadBeatmapContents = true)
+        public async Task Register(bool calcPP = true, bool setDate = true, int index = -1, bool setGUID = true, bool loadBeatmapContents = true, bool async = false)
         {
             if (setGUID) { ID = Guid.NewGuid(); }
             if (setDate) { DateCreated = DateTime.Today; }
@@ -144,11 +145,18 @@ namespace osuAT.Game.Types
             if ((calcPP || loadBeatmapContents) && !BeatmapInfo.FolderLocationIsValid(true))
             {
                 Console.WriteLine($"Deleted or unset folder detected for map {OsuID}, {BeatmapInfo.FolderLocation}. Skipping beatmapinfo contents.");
-                if (calcPP) { AlltrickPP = Skill.CalcAll(this); }
+                if (calcPP)
+                {
+                    AlltrickPP = await Skill.CalcAll(this, async);
+                }
+                // [!] TODO: Test above. Process:
+                // 1. Delete a map one of the scores saved are connected to.
+                // 2. Update one of the skills, causing every score to recalculate.
+                // 3. See results.
                 return;
             }
             if (loadBeatmapContents || calcPP) { BeatmapInfo.LoadMapContents(ScoreRuleset, Mods); }
-            if (calcPP) { AlltrickPP = Skill.CalcAll(this); }
+            if (calcPP) { AlltrickPP = await Skill.CalcAll(this, async); }
         }
 
         public Score Clone()

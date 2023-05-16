@@ -164,7 +164,7 @@ namespace osuAT.Game
             int i = 0;
             foreach (Score score in SaveData.Scores.Values)
             {
-                score.Register(index: i, setGUID: false, calcPP: false, loadBeatmapContents: false);
+                score.Register(index: i, setGUID: false, calcPP: false, loadBeatmapContents: false, async: false);
                 i += 1;
             }
             /// Check the skill verions in the SaveFile for:
