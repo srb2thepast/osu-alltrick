@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using osu.Framework.Platform; // Reminder: consider using osu.Framework.Platform.Storage for safe file writing.
 using OsuApiHelper;
@@ -139,7 +140,7 @@ namespace osuAT.Game
             return dict;
         }
 
-        public static void Init(Storage storage)
+        public static async Task Init(Storage storage)
         {
             InternalStorage = storage;
             if (!(CheckSaveExists()))
@@ -164,7 +165,7 @@ namespace osuAT.Game
             int i = 0;
             foreach (Score score in SaveData.Scores.Values)
             {
-                score.Register(index: i, setGUID: false, calcPP: false, loadBeatmapContents: false, async: false);
+                await score.Register(index: i, setGUID: false, calcPP: false, loadBeatmapContents: false, async: false);
                 i += 1;
             }
             /// Check the skill verions in the SaveFile for:

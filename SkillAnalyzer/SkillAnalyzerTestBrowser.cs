@@ -33,15 +33,11 @@ using Skill = osuAT.Game.Skills.Skill;
 
 namespace SkillAnalyzer
 {
-
     public partial class SkillAnalyzerTestBrowser : TestBrowser
     {
         public SkillAnalyzerTestBrowser(string assemblyName) : base(assemblyName)
         {
-
         }
-
-
 
         protected override void LoadComplete()
         {
@@ -63,11 +59,11 @@ namespace SkillAnalyzer
         }
 
         [BackgroundDependencyLoader]
-        private void load()
+        private async void load()
         {
             // Logger.Level = LogLevel.Verbose;
             Window.Title = "osu!alltrick's SkillAnalyzer";
-            SaveStorage.Init(new NativeStorage("SkillAnalyzer"));
+            await SaveStorage.Init(new NativeStorage("SkillAnalyzer"));
             foreach (var handler in Host.AvailableInputHandlers)
             {
                 if (handler is ITabletHandler tabhandler)

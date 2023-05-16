@@ -11,6 +11,7 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.IO.Network;
 using osu.Game.Localisation;
+using osu.Game.Overlays.BeatmapListing;
 using osu.Game.Rulesets.Osu.Mods;
 using osu.Game.Rulesets.Osu.Scoring;
 using osu.Game.Screens;
@@ -97,7 +98,7 @@ namespace osuAT.Game
         /// <summary>
         /// Checks if the quality of the map given meets the neccessary requirements for a score set on it to be saved.
         /// </summary>
-        public static ProcessResult CheckMapValidity(OsuBeatmap osuMap)
+        public static async Task<ProcessResult> CheckMapValidity(OsuBeatmap osuMap)
         {
             if (ApiReqs > 30)
             {
@@ -106,7 +107,7 @@ namespace osuAT.Game
             // return if the map is not ranked/approved
             if (!(osuMap.Status == BeatmapStatus.Ranked || osuMap.Status == BeatmapStatus.Approved))
                 return ProcessResult.UnrankedMap;
-            if (GetMapFolder(osuMap) == default)
+            if (await GetMapFolder(osuMap) == default)
                 return ProcessResult.MapNotDownloaded;
             return ProcessResult.Okay;
         }
@@ -134,21 +135,19 @@ namespace osuAT.Game
             return "Imported " + scorestr + "successfully!";
         }
 
-        public static string GetMapFolder(OsuBeatmap osuMap)
+        public static async Task<string> GetMapFolder(OsuBeatmap osuMap)
         {
             Console.WriteLine(osuMap.BeatmapSetID + " | " + osuMap.BeatmapID);
 
             if (!SaveStorage.OsuPathIsValid())
                 return default;
 
-            var mapList = Directory.GetDirectories(SaveStorage.ConcateOsuPath(@"Songs\")).Where((folder) =>
+            var mapFolder = Directory.GetDirectories(SaveStorage.ConcateOsuPath(@"Songs\")).First((folder) =>
             {
                 return folder.StartsWith(SaveStorage.ConcateOsuPath(@"Songs\" + osuMap.BeatmapSetID + ' '));
             });
 
-            if (!mapList.Any()) return default;
-
-            var mapFolder = mapList.ElementAt(0);
+            if (mapFolder == null) return default;
 
             var osuFile = Directory.GetFiles(mapFolder, "*.osu").Where((file) =>
             {
@@ -181,7 +180,7 @@ namespace osuAT.Game
             return osuFile;
         }
 
-        public static Score ConvertToScore(OsuPlay osuScore, OsuApiBeatmap osuMap)
+        public static async Task<Score> ConvertToScore(OsuPlay osuScore, OsuApiBeatmap osuMap)
         {
             List<string> modString = osuScore.Mods.ToString().Split(", ").ToList();
             modString.ForEach(n => Console.WriteLine(n));
@@ -206,7 +205,7 @@ namespace osuAT.Game
                     SongName = osuMap.Title,
                     DifficultyName = osuMap.DifficultyName,
                     MapsetCreator = osuMap.Mapper,
-                    FolderLocation = GetMapFolder(osuMap).Remove(0, SaveStorage.SaveData.OsuPath.Length + 1),
+                    FolderLocation = (await GetMapFolder(osuMap)).Remove(0, SaveStorage.SaveData.OsuPath.Length + 1),
                     MaxCombo = (int)osuMap.MaxCombo,
                     StarRating = (double)osuMap.Starrating,
                     OnlineMD5Hash = osuMap.FileMd5
@@ -232,21 +231,19 @@ namespace osuAT.Game
         {
             Console.WriteLine($"{ApiReqs} osu!api v1 requests have been sent.");
 
-            var scoreResult = CheckScoreValidity(osuScore, true);
+            Console.WriteLine("Checking score");
+            ProcessResult scoreResult = CheckScoreValidity(osuScore, true);
             Console.WriteLine(scoreResult);
             if (scoreResult < ProcessResult.Okay) return scoreResult;
 
             var osuMap = await mapRet();
-            var mapResult = CheckMapValidity(osuMap);
+            ProcessResult mapResult = await CheckMapValidity(osuMap);
             Console.WriteLine(mapResult);
             if (mapResult < ProcessResult.Okay) return mapResult;
 
             // Add to SaveStorage
-            Console.WriteLine("Converting");
-            var score = ConvertToScore(osuScore, osuMap);
-            Console.WriteLine("Registering");
+            var score = await ConvertToScore(osuScore, osuMap);
             await score.Register(async: true);
-            Console.WriteLine("Adding to storage");
             SaveStorage.AddScore(score);
             return scoreResult;
         }

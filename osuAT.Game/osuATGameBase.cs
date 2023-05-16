@@ -57,7 +57,7 @@ namespace osuAT.Game
         */
 
         [BackgroundDependencyLoader]
-        private void load()
+        private async void load()
         {
             Console.WriteLine(Host.AvailableInputHandlers);
             Window.WindowMode.Value = osu.Framework.Configuration.WindowMode.Windowed;
@@ -77,7 +77,7 @@ namespace osuAT.Game
             Dependencies.CacheAs(storage);
             Window.Title = "osu!alltrick";
             Dependencies.CacheAs<osuATGameBase>(this);
-            SaveStorage.Init(storage);
+            await SaveStorage.Init(storage);
             ScoreImporter.Init();
             Texture pfptxt = largeStore.Get($"http://a.ppy.sh/{SaveStorage.SaveData.PlayerID}");
             Console.WriteLine($"https://a.ppy.sh/{SaveStorage.SaveData.PlayerID}");

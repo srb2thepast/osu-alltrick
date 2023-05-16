@@ -29,10 +29,9 @@ using static osuAT.Game.Skills.AimSkill;
 
 namespace osuAT.Game.Tests.Visual
 {
-    // i got lazy making this so execpt some bad code 
+    // i got lazy making this so execpt some bad code
     public partial class TestSceneSaveStorage : osuATTestScene
     {
-
         private Score dummyscore;
         private BasicTextBox savelocation;
         private TextFlowContainer savecontents;
@@ -41,6 +40,7 @@ namespace osuAT.Game.Tests.Visual
         {
             SaveStorage.AddScore(dummyscore);
         }
+
         private void saveSStorage()
         {
             FileInfo info = SaveStorage.Save();
@@ -51,7 +51,7 @@ namespace osuAT.Game.Tests.Visual
             System.Console.WriteLine(contentstring);
         }
 
-        private void ReloadText(string savepath = null)
+        private void reloadText(string savepath = null)
         {
             savepath ??= Path.GetFullPath(SaveStorage.SaveFileFullPath);
             string content = SaveStorage.Read();
@@ -62,9 +62,9 @@ namespace osuAT.Game.Tests.Visual
         }
 
         [SetUp]
-        public void SetUp()
+        public async void SetUp()
         {
-            SaveStorage.Init(new NativeStorage("testing"));
+            await SaveStorage.Init(new NativeStorage("testing"));
             Child = new Container
             {
                 Origin = Anchor.Centre,
@@ -78,7 +78,6 @@ namespace osuAT.Game.Tests.Visual
                         Y = -300,
                         Origin = Anchor.Centre,
                         ReadOnly = true,
-
                     },
 
                     new Container
@@ -180,22 +179,20 @@ namespace osuAT.Game.Tests.Visual
             {
                 Skill.SkillList.Add(skillInstance);
             });
-            AddStep("re-initalize savestorage", () =>
+            AddStep("re-initalize savestorage", async () =>
             {
-                SaveStorage.Init(new NativeStorage("testing"));
-                ReloadText();
+                await SaveStorage.Init(new NativeStorage("testing"));
+                reloadText();
             });
             AddAssert("skill added", () => { return SaveStorage.SaveData.TotalSkillPP.ContainsKey(skillInstance.Identifier); });
             AddStep("remove testSkill from SkillList and SaveStorage", () =>
             {
                 Skill.SkillList.Remove(skillInstance);
                 SaveStorage.RemoveSkillFromSave(skillInstance);
-                ReloadText();
+                reloadText();
             });
             AddAssert("skill removed", () => { return !SaveStorage.SaveData.TotalSkillPP.ContainsKey(skillInstance.Identifier); });
             AddStep("save the storage", saveSStorage);
-
-
         }
 
         [Test]
@@ -227,9 +224,7 @@ namespace osuAT.Game.Tests.Visual
                 }
             }
             return true;
-
         }
-
 
         private void addThenSave()
         {
@@ -239,7 +234,6 @@ namespace osuAT.Game.Tests.Visual
             {
                 return SaveStorage.SaveData.Scores.ContainsKey(dummyscore.ID);
             });
-
         }
 
         private void makeNomodDummy()
@@ -311,8 +305,5 @@ namespace osuAT.Game.Tests.Visual
             };
             dummyscore.Register();
         }
-
-
     }
 }
-
