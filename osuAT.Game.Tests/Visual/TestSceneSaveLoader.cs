@@ -268,7 +268,7 @@ namespace osuAT.Game.Tests.Visual
                 Mods = new List<ModInfo>(),
                 DateCreated = System.DateTime.Today
             };
-            dummyscore.Register();
+            _ = dummyscore.Register();
         }
 
         private void makeFourmodDummy()
@@ -303,7 +303,7 @@ namespace osuAT.Game.Tests.Visual
                 Mods = ModList,
                 DateCreated = System.DateTime.Today
             };
-            dummyscore.Register();
+            _ = dummyscore.Register();
         }
     }
 }

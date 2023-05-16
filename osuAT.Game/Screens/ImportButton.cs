@@ -420,6 +420,10 @@ namespace osuAT.Game
 
             public async void ImportTopPlays()
             {
+                if (importing)
+                {
+                    infoText.AddText("\n Busy importing top plays!");
+                }
                 importing = true;
 
                 ApiScoreProcessor.ApiReqs++;
@@ -431,13 +435,13 @@ namespace osuAT.Game
                 }
 
                 int i = 1;
-                Console.WriteLine(topPlays.Count());
+                Console.WriteLine(topPlays.Count);
                 ProcessResult result = ProcessResult.AlreadySaved;
                 foreach (var osuScore in topPlays)
                 {
                     Console.WriteLine("Restarting");
                     if (result != ProcessResult.AlreadySaved)
-                        await Task.Delay(1000);
+                        await Task.Delay(1200);
                     else
                         await Task.Delay(50);
                     Console.WriteLine("Delay ended");
@@ -448,10 +452,11 @@ namespace osuAT.Game
                     string resultMsg = ApiScoreProcessor.GetResultMessages(result, osuScore);
                     Console.WriteLine(resultMsg);
                     infoText.AddText("\n#[" + i + "] " + resultMsg);
-                    if (result == ProcessResult.RateLimited)
+                    if (i % 60 == 0)
                     {
-                        await Task.Delay(10000);
-                        infoText.AddText("Rate limited. Waiting...");
+                        infoText.AddText("\n Resting. Importing will continue in 30 seconds.");
+                        await Task.Delay(30000); // Wait 30 seconds.
+                        infoText.AddText("\n Resting complete!");
                     }
                     i++;
                 }
@@ -459,6 +464,7 @@ namespace osuAT.Game
                 infoText.AddText("\n [[ Finished importing all top plays! ]]");
                 infoText.AddText("\n [[ Saving... ]]");
                 SaveStorage.Save();
+                infoText.AddText("\n [[ Saved Successfully! ]]");
                 importing = false;
             }
 

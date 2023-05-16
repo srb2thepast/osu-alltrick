@@ -419,7 +419,7 @@ namespace osuAT.Game
         /// </summary>
         /// <param name="scoreID"></param>
         [Obsolete("Please use SaveStorage.RemoveScore(scoreID).", true)]
-        public static void DeleteScore(Guid scoreID)
+        public static async void DeleteScore(Guid scoreID)
         {
             if (!(SaveData.Scores[scoreID] == null))
             {
@@ -452,7 +452,7 @@ namespace osuAT.Game
                 IndexPosition = SaveData.Scores[scoreID].IndexPosition,
                 DateCreated = SaveData.Scores[scoreID].DateCreated
             };
-            SaveData.Scores[scoreID].Register(setGUID: false);
+            await SaveData.Scores[scoreID].Register(setGUID: false);
             Save();
         }
 

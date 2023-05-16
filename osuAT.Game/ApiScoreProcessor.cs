@@ -100,10 +100,6 @@ namespace osuAT.Game
         /// </summary>
         public static async Task<ProcessResult> CheckMapValidity(OsuBeatmap osuMap)
         {
-            if (ApiReqs > 30)
-            {
-                return ProcessResult.RateLimited;
-            }
             // return if the map is not ranked/approved
             if (!(osuMap.Status == BeatmapStatus.Ranked || osuMap.Status == BeatmapStatus.Approved))
                 return ProcessResult.UnrankedMap;

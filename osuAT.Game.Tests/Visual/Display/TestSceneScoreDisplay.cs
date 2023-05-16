@@ -42,7 +42,7 @@ namespace osuAT.Game.Tests.Visual.Display
                 ModsString = new List<string> { "Hidden", "Nightcore" },
                 DateCreated = System.DateTime.Today,
             };
-            dummyscore.Register();
+            _ = dummyscore.Register();
             AddStep("create score display", () =>
             {
                 ScoreDisplay display = new ScoreDisplay
