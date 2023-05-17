@@ -549,7 +549,7 @@ namespace osuAT.Game
                             },
 
                             new BasicScrollContainer() {
-                                Position = new Vector2(20,120),
+                                Position = new Vector2(20,100),
                                 Width = (300*2) - 40,
                                 Height = 130*2,
                                 Masking = true,
