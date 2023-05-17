@@ -452,7 +452,7 @@ namespace osuAT.Game
                     string resultMsg = ApiScoreProcessor.GetResultMessages(result, osuScore);
                     Console.WriteLine(resultMsg);
                     infoText.AddText("\n#[" + i + "] " + resultMsg);
-                    if (i % 60 == 0)
+                    if (i % 60 == 0 && ApiScoreProcessor.ApiReqs > 5)
                     {
                         infoText.AddText("\n Resting. Importing will continue in 30 seconds.");
                         await Task.Delay(30000); // Wait 30 seconds.
