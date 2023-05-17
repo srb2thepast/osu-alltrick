@@ -20,7 +20,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "cursorcontrol";
 
-        public string Version => "0.005";
+        public string Version => "0.006";
 
         public string Summary => "Ability to control the movement \n of your aim.";
 
@@ -96,7 +96,7 @@ namespace osuAT.Game.Skills
                 curAngStrainWorth = -Math.Clamp(((double)curAngle) / (135 / 0.9), 0, 1) + 0.9;
                 totalAngStrainWorth += curAngStrainWorth;
                 totalAngStrainWorth = Math.Max(0, totalAngStrainWorth);
-                angDifficulty = 30 * Math.Log(totalAngStrainWorth + 1);
+                angDifficulty = 10 * Math.Log(totalAngStrainWorth + 1);
                 aimDifficulty = (diffHit.MinimumJumpDistance / diffHit.DeltaTime) / 2;
 
                 // // Uneven Flow

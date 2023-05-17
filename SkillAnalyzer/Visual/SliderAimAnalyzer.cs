@@ -6,9 +6,10 @@ namespace SkillAnalyzer.Visual
 {
     public partial class SliderAimAnalyzer : SkillAnalyzeScene
     {
+        protected override string MapLocation => "ShinRa-Bansho - Mugen Shitto Gekijou 666 (Hey lululu) [Jealous Theater 666th Act].osu";
+
         public SliderAimAnalyzer()
         {
-
         }
 
         [Test]
