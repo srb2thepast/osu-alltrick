@@ -13,7 +13,6 @@ namespace osuAT.Game.Skills
 {
     public class AimStaminaSkill : ISkill
     {
-
         #region
         public string Name => "Aim Stamina";
 
@@ -43,7 +42,6 @@ namespace osuAT.Game.Skills
 
         public Vector2 BoxPosition => new Vector2(1875, 1080);
 
-        public SkillGoals Benchmarks => new SkillGoals(600, 1500, 3000, 6000, 9000, 10000);
         #endregion
 
         public class AimCalculator : SkillCalcuator
@@ -54,18 +52,17 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-
             private double jerkDifficulty = 0;
             private double aimDifficulty = 0;
             private double curAngle;
 
             private double curWorth = 0;
+
             [HiddenDebugValue]
             private double highestWorth = 0;
 
             private double jerkAngWorth = 0;
             private double totalJerkStrainWorth = 0;
-
 
             public override void CalcNext(OsuDifficultyHitObject diffHit)
             {
@@ -73,14 +70,13 @@ namespace osuAT.Game.Skills
                 curAngle = (double)diffHit.Angle * (180 / Math.PI);
 
                 // Aim Difficulty
-                aimDifficulty = (diffHit.MinimumJumpDistance / diffHit.DeltaTime) / 4;
+                aimDifficulty = diffHit.MinimumJumpDistance / diffHit.DeltaTime / 4;
 
                 // Jerk Angle Difficulty
                 jerkAngWorth = Math.Clamp(-1.5 * (curAngle - 60) / 180 + 0.5, 0, 1);
                 totalJerkStrainWorth += jerkAngWorth;
                 totalJerkStrainWorth = Math.Max(0, jerkAngWorth) * 0.995;
                 jerkDifficulty = 30 * Math.Log(totalJerkStrainWorth + 1);
-
 
                 curWorth = aimDifficulty * jerkDifficulty * 15;
                 highestWorth = Math.Max(highestWorth, curWorth);

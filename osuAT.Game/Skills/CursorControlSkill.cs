@@ -42,11 +42,9 @@ namespace osuAT.Game.Skills
 
         public int BoxNameSize => 63;
 
-        public Vector2 BoxPosition => new Vector2(1875, -500);
+        public Vector2 BoxPosition => new(1875, -500);
 
-        public SkillGoals Benchmarks => new SkillGoals(600, 1500, 3000, 6000, 9000, 10000);
         #endregion
-
 
         public class CursorControlCalculator : SkillCalcuator
         {
@@ -56,19 +54,21 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-
             private double angDifficulty = 0;
             private double aimDifficulty = 0;
             private double curAngle;
 
             private double curAngStrainWorth = 0;
             private double curWorth = 0;
+
             [HiddenDebugValue]
             private double highestWorth = 0;
+
             private double flowPatternMult = 0;
 
             // Uneven Flow
             private double soloFlowPatternMult;
+
             private double flowPatternCount;
             private double aubruptionWorth;
 
@@ -116,8 +116,6 @@ namespace osuAT.Game.Skills
                 CurTotalPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
                 CurTotalPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
                 CurTotalPP *= SharedMethods.SimpleAccNerf(FocusedScore.Accuracy);
-
-
             }
         }
 

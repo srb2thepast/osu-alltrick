@@ -19,8 +19,8 @@ namespace osuAT.Game.Skills
         "of reading difficulty in maps can be achieved, rather than jumping straight ahead to Nerve Control.")]
     public class NerveControlSkill : ISkill
     {
-
         #region Info
+
         public string Name => "Nerve Control";
 
         public string Identifier => "nervecontrol";
@@ -49,8 +49,7 @@ namespace osuAT.Game.Skills
 
         public Vector2 BoxPosition => new Vector2(953, 855);
 
-        public SkillGoals Benchmarks => new SkillGoals(600, 1500, 3000, 6000, 9000, 10000);
-        #endregion
+        #endregion Info
 
         public class NerveControlCalculator : SkillCalcuator
         {

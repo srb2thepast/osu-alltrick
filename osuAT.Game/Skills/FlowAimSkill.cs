@@ -9,7 +9,6 @@ using osu.Game.Rulesets.Osu.Objects;
 using osuAT.Game.Skills.Resources;
 using osuAT.Game.Types;
 using osuTK;
-using static osuAT.Game.Skills.AimSkill;
 
 namespace osuAT.Game.Skills
 {
@@ -45,8 +44,6 @@ namespace osuAT.Game.Skills
 
         public Vector2 BoxPosition => new Vector2(953, 1300);
 
-        public SkillGoals Benchmarks => new SkillGoals(600, 1500, 3000, 6000, 9000, 10000);
-
         #endregion Info
 
         /// <summary>
@@ -65,33 +62,33 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-            private double curStreamLength = 0;
-            private double curMSSpeed = 0;
+            private double curStreamLength;
+            private double curMSSpeed;
 
             [HiddenDebugValue]
-            private double aimTotal = 0;
+            private double aimTotal;
 
             [HiddenDebugValue]
-            private double totalAngStrainWorth = 0;
+            private double totalAngStrainWorth;
 
-            private double flowPatternMult = 0;
-            private double angCurDiff = 0;
-            private double aimCurDiff = 0;
+            private double flowPatternMult;
+            private double angCurDiff;
+            private double aimCurDiff;
 
-            private double lenMult = 0;
-            private double aimDifficulty = 0;
-            private double angDifficulty = 0;
-            private double curWorth = 0;
+            private double lenMult;
+            private double aimDifficulty;
+            private double angDifficulty;
+            private double curWorth;
 
             [HiddenDebugValue]
-            private double highestWorth = 0;
+            private double highestWorth;
 
             public override void Setup()
             { }
 
             public override void CalcNext(OsuDifficultyHitObject diffHitObj)
             {
-                var diffHit = (OsuDifficultyHitObject)diffHitObj;
+                var diffHit = diffHitObj;
                 var lastDiffHit = (OsuDifficultyHitObject)diffHit.Previous(0);
                 if (lastDiffHit == null) return;
                 if (lastDiffHit.Angle == null) return;

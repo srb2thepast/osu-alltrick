@@ -45,7 +45,6 @@ namespace osuAT.Game.Skills
 
         public Vector2 BoxPosition => new Vector2(953, -950);
 
-        public SkillGoals Benchmarks => new SkillGoals(600, 1500, 3000, 6000, 9000, 10000);
         #endregion
 
         public class SliderAimSkillCalculator : SkillCalcuator

@@ -39,6 +39,7 @@ namespace osuAT.Game
     public class ProcessorWorkingBeatmap : WorkingBeatmap
     {
         private readonly Beatmap beatmap;
+
         [Resolved]
         private AudioManager audioManager { get; set; }
 
@@ -71,14 +72,12 @@ namespace osuAT.Game
             BeatmapSetInfo = beatmap.BeatmapInfo.BeatmapSet ?? new BeatmapSetInfo();
         }
 
-
         private static Beatmap readFromFile(string filename)
         {
             using (var stream = File.OpenRead(filename))
             using (var reader = new LineBufferedReader(stream))
                 return Decoder.GetDecoder<Beatmap>(reader).Decode(reader);
         }
-
 
         public static ProcessorWorkingBeatmap FromFileOrId(string fileOrId, AudioManager audioManager = null, string cachePath = "cache")
         {
@@ -207,16 +206,17 @@ namespace osuAT.Game
                 item6.ApplyToBeatmap(beatmap);
             }
 
-
-
             return beatmap;
         }
 
-
         public new readonly BeatmapSetInfo BeatmapSetInfo;
+
         protected override IBeatmap GetBeatmap() => beatmap;
-        protected override Texture GetBackground() => null;
+
+        public override Texture GetBackground() => null;
+
         protected override ISkin GetSkin() => null;
+
         public override Stream GetStream(string storagePath) => null;
     }
 }

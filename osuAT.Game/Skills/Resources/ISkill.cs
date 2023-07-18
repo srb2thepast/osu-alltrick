@@ -17,6 +17,7 @@ namespace osuAT.Game.Skills.Resources
     public interface ISkill
     {
         #region Info
+
         /// <summary>
         /// The displayed name of this skill.
         /// </summary>
@@ -109,8 +110,9 @@ namespace osuAT.Game.Skills.Resources
         /// <summary>
         /// This skill's <see cref="SkillLevel"/> Benchmarks.
         /// </summary>
-        public SkillGoals Benchmarks { get; }
-        #endregion
+        public SkillGoals Benchmarks => new(1250, 2500, 5000, 10000, 15000, 20000);
+
+        #endregion Info
 
         #region Skill Calculations
 
@@ -124,7 +126,6 @@ namespace osuAT.Game.Skills.Resources
         /// </summary>
         public SkillCalcuator GetSkillCalc(Beatmap map, RulesetInfo ruleset, List<ModInfo> mods)
         {
-
             mods ??= new List<ModInfo>();
             return GetSkillCalc(new Score
             {
@@ -142,7 +143,6 @@ namespace osuAT.Game.Skills.Resources
         /// </summary>
         public SkillCalcuator GetSkillCalc(List<DifficultyHitObject> hitobjects, RulesetInfo ruleset, List<ModInfo> mods)
         {
-
             mods ??= new List<ModInfo>();
             var fakemap = new Beatmap() { Contents = new BeatmapContents() { } };
             fakemap.Contents.DiffHitObjects = hitobjects;
@@ -181,6 +181,6 @@ namespace osuAT.Game.Skills.Resources
         /// </summary>
         public double SkillPP => SaveStorage.SaveData.TotalSkillPP[Identifier];
 
-        #endregion
+        #endregion Skill Calculations
     }
 }

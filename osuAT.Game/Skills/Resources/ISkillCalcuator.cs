@@ -22,7 +22,7 @@ namespace osuAT.Game.Skills.Resources
         /// <summary>
         /// The score this SkillCalculator is assigned to process.
         /// </summary>
-        public Score FocusedScore { get; private set; }
+        public Score FocusedScore { get; }
 
         public int StartIndex { get; set; }
 
@@ -33,7 +33,7 @@ namespace osuAT.Game.Skills.Resources
         /// <summary>
         /// Creates a new SkillCalculator that will calculate the value of the score given for this skill.
         /// </summary>
-        public SkillCalcuator(Score score)
+        protected SkillCalcuator(Score score)
         {
             FocusedScore = score;
             EndIndex = EndIndex == default ? (FocusedScore.BeatmapInfo != null ? FocusedScore.BeatmapInfo.Contents.DiffHitObjects.Count - 1 : 0) : EndIndex;

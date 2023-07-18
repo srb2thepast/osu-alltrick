@@ -13,7 +13,6 @@ namespace osuAT.Game.Skills
 {
     public class AimSkill : ISkill
     {
-
         #region
         public string Name => "Aim";
 
@@ -42,8 +41,6 @@ namespace osuAT.Game.Skills
         public int BoxNameSize => 150;
 
         public Vector2 BoxPosition => new Vector2(2690, -500);
-
-        public SkillGoals Benchmarks => new SkillGoals(600, 1500, 3000, 6000, 9000, 10000);
         #endregion
 
         public class AimCalculator : SkillCalcuator
@@ -54,17 +51,17 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-
-            private double angDifficulty = 0;
-            private double aimDifficulty = 0;
+            private double angDifficulty;
+            private double aimDifficulty;
             private double curAngle;
 
-            private double curAngStrainWorth = 0;
-            private double curWorth = 0;
-            [HiddenDebugValue]
-            private double highestWorth = 0;
+            private double curAngStrainWorth;
+            private double curWorth;
 
-            private double totalAngStrainWorth = 0;
+            [HiddenDebugValue]
+            private double highestWorth;
+
+            private double totalAngStrainWorth;
 
             public override void Setup()
             {
@@ -92,7 +89,6 @@ namespace osuAT.Game.Skills
                 totalAngStrainWorth += curAngStrainWorth;
                 totalAngStrainWorth = Math.Max(0, totalAngStrainWorth);
                 angDifficulty = 15 * Math.Log(totalAngStrainWorth + 1);
-
 
                 curWorth = aimDifficulty * 4 + (aimDifficulty * angDifficulty) * 4;
                 highestWorth = Math.Max(highestWorth, curWorth);

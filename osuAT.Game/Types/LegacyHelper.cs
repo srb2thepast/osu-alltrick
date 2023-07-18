@@ -110,7 +110,7 @@ namespace osuAT.Game.Types
 
             protected override IBeatmap GetBeatmap() => throw new NotImplementedException();
 
-            protected override Texture GetBackground() => throw new NotImplementedException();
+            public override Texture GetBackground() => throw new NotImplementedException();
 
             protected override Track GetBeatmapTrack() => throw new NotImplementedException();
 

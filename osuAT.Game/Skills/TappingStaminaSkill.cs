@@ -13,10 +13,10 @@ using static osuAT.Game.Skills.AimSkill;
 
 namespace osuAT.Game.Skills
 {
-
     public class TappingStaminaSkill : ISkill
     {
         #region Info
+
         public string Name => "Tapping Stamina";
 
         public string Identifier => "tapstamina";
@@ -45,9 +45,7 @@ namespace osuAT.Game.Skills
 
         public Vector2 BoxPosition => new Vector2(-1873, 1077.5f);
 
-        public SkillGoals Benchmarks => new SkillGoals(600, 1500, 3000, 6000, 9000, 10000);
-
-        #endregion
+        #endregion Info
 
         public class TappingStaminaCalculator : SkillCalcuator
         {
@@ -62,6 +60,7 @@ namespace osuAT.Game.Skills
             private double bPMBuff = 0;
             private double lenMult = 0;
             private double curWorth = 0;
+
             public override void Setup()
             {
                 curStreamLength = 0;
