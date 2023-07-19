@@ -80,13 +80,15 @@ namespace osuAT.Game.Skills
                 if (lastDiffHit == null) return;
                 if (diffHit.BaseObject is Spinner) return;
 
-                // Strain-based Stream Length
-                curStreamLength += Math.Clamp(SharedMethods.BPMToMS(170) / msSpeedStrain, 0, 1);
-                curStreamLength -= curStreamLength * 0.8 * (1 - Math.Clamp(SharedMethods.BPMToMS(170, 2) / (msSpeedStrain), 0, 1));
-
                 // Smoothly scaling MS speed
                 curMSSpeed = diffHit.StartTime - lastDiffHit.StartTime;
-                msSpeedStrain += 0.7 * (curMSSpeed - msSpeedStrain);
+
+                msSpeedStrain += 0.5 * (curMSSpeed - msSpeedStrain);
+
+
+                // Strain-based Stream Length
+                curStreamLength += Math.Clamp(SharedMethods.BPMToMS(180) / curMSSpeed, 0, 1);
+                curStreamLength -= curStreamLength * 0.8 * (1 - Math.Clamp(SharedMethods.BPMToMS(220, 2) / (curMSSpeed), 0, 1));
 
                 // Length multiplier
                 lenMult = 2 * Math.Log((curStreamLength * 1 / 40) + 1);

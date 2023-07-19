@@ -136,7 +136,7 @@ namespace osuAT.Game.Skills
                 angDifficulty = 1.5 * Math.Log(totalAngStrainWorth + 1);
 
                 // Final value
-                curWorth = 2 * lenMult * flowPatternMult * (aimDifficulty + (aimDifficulty * angDifficulty));
+                curWorth = 2.5 * lenMult * flowPatternMult * (aimDifficulty + (aimDifficulty * angDifficulty));
                 highestWorth = Math.Max(highestWorth, curWorth);
 
                 CurTotalPP = highestWorth;
