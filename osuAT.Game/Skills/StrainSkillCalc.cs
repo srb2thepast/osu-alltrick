@@ -17,6 +17,7 @@ namespace osuAT.Game.Skills
     /// <summary>
     /// An abstract class for skills whose calculations revolve around Strain.
     /// </summary>
+    [Obsolete]
     public abstract class StrainSkillCalc : SkillCalcuator
     {
         /// <summary>
@@ -34,7 +35,9 @@ namespace osuAT.Game.Skills
 
         protected double UncappedVal = 0;
 
-        protected StrainSkillCalc(Score score) : base(score) { }
+        protected StrainSkillCalc(Score score) : base(score)
+        {
+        }
 
         // note: currently breaks just plunge the worth of value. there should be a scaling that
         // makes the power (obj.StartTime/1000 in the pow statment) fall back to 0 as the time

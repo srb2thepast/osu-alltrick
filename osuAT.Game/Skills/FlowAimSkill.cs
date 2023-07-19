@@ -102,7 +102,7 @@ namespace osuAT.Game.Skills
                 msSpeedStrain += 0.7 * (curMSSpeed - msSpeedStrain);
 
                 // Flow Pattern Multiplier
-                flowPatternMult = Math.Clamp(((double)curAngle - 60) / 60, 0, 1) / 2 + Math.Clamp(((double)lastAngle - 60) / 60, 0, 1) / 2;
+                flowPatternMult = Math.Clamp((curAngle - (int)Angle.Triangle) / (int)Angle.Triangle, 0, 1) / 2 + Math.Clamp(((double)lastAngle - (int)Angle.Triangle) / (int)Angle.Triangle, 0, 1) / 2;
 
                 // Aim Difficulty
                 const double aim_difficulty_weight = 10;
@@ -128,7 +128,7 @@ namespace osuAT.Game.Skills
                 lenMult = Math.Log((curStreamLength / (double)StreamLengths.Stream) + 1);
 
                 // Angle Difficulty
-                angCurDiff = 20 * (-Math.Clamp(1.5 * ((double)curAngle - 60) / 180, -1, 1) + 1);
+                angCurDiff = 20 * (-Math.Clamp(1.5 * ((double)curAngle - (int)Angle.Triangle) / 180, -1, 1) + 1);
                 totalAngStrainWorth += angCurDiff * flowPatternMult;
                 totalAngStrainWorth *= 0.9;
                 totalAngStrainWorth = Math.Max(0, totalAngStrainWorth);

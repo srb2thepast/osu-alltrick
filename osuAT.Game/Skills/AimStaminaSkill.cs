@@ -8,6 +8,7 @@ using osu.Game.Rulesets.Osu.Objects;
 using osuAT.Game.Skills.Resources;
 using osuAT.Game.Types;
 using osuTK;
+using static osuAT.Game.Skills.Resources.SharedMethods;
 
 namespace osuAT.Game.Skills
 {
@@ -52,17 +53,17 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-            private double jerkDifficulty = 0;
-            private double aimDifficulty = 0;
+            private double jerkDifficulty;
+            private double aimDifficulty;
             private double curAngle;
 
-            private double curWorth = 0;
+            private double curWorth;
 
             [HiddenDebugValue]
-            private double highestWorth = 0;
+            private double highestWorth;
 
-            private double jerkAngWorth = 0;
-            private double totalJerkStrainWorth = 0;
+            private double jerkAngWorth;
+            private double totalJerkStrainWorth;
 
             public override void CalcNext(OsuDifficultyHitObject diffHit)
             {
@@ -73,7 +74,7 @@ namespace osuAT.Game.Skills
                 aimDifficulty = diffHit.MinimumJumpDistance / diffHit.DeltaTime / 4;
 
                 // Jerk Angle Difficulty
-                jerkAngWorth = Math.Clamp(-1.5 * (curAngle - 60) / 180 + 0.5, 0, 1);
+                jerkAngWorth = Math.Clamp((-1.5 * (curAngle - (double)Angle.Triangle) / (double)Angle.Line) + 0.5, 0, 1);
                 totalJerkStrainWorth += jerkAngWorth;
                 totalJerkStrainWorth = Math.Max(0, jerkAngWorth) * 0.995;
                 jerkDifficulty = 30 * Math.Log(totalJerkStrainWorth + 1);
@@ -83,9 +84,9 @@ namespace osuAT.Game.Skills
 
                 // Miss and combo scaling
                 CurTotalPP = highestWorth;
-                CurTotalPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
-                CurTotalPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
-                CurTotalPP *= SharedMethods.SimpleAccNerf(FocusedScore.Accuracy);
+                CurTotalPP *= MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
+                CurTotalPP *= LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
+                CurTotalPP *= SimpleAccNerf(FocusedScore.Accuracy);
             }
         }
 

@@ -16,7 +16,7 @@ namespace osuAT.Game.Skills
         "In osu!phd Nerve Control inherits properties from focus, " +
         "which inherits from pattern processing/reading. " +
         "It's better to work down to nerve control from reading so that a better understanding" +
-        "of reading difficulty in maps can be achieved, rather than jumping straight ahead to Nerve Control.")]
+        "of reading difficulty in maps can be achieved that can then be used while developing Nerve Control.")]
     public class NerveControlSkill : ISkill
     {
         #region Info

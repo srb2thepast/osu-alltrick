@@ -9,7 +9,7 @@ using osu.Game.Rulesets.Osu.Objects;
 using osuAT.Game.Skills.Resources;
 using osuAT.Game.Types;
 using osuTK;
-using static osuAT.Game.Skills.AimSkill;
+using static osuAT.Game.Skills.Resources.SharedMethods;
 
 namespace osuAT.Game.Skills
 {
@@ -54,17 +54,17 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-            private double angDifficulty = 0;
-            private double aimDifficulty = 0;
+            private double angDifficulty;
+            private double aimDifficulty;
             private double curAngle;
 
-            private double curAngStrainWorth = 0;
-            private double curWorth = 0;
+            private double curAngStrainWorth;
+            private double curWorth;
 
             [HiddenDebugValue]
-            private double highestWorth = 0;
+            private double highestWorth;
 
-            private double flowPatternMult = 0;
+            private double flowPatternMult;
 
             // Uneven Flow
             private double soloFlowPatternMult;
@@ -72,7 +72,7 @@ namespace osuAT.Game.Skills
             private double flowPatternCount;
             private double aubruptionWorth;
 
-            private double totalAngStrainWorth = 0;
+            private double totalAngStrainWorth;
 
             public override void Setup()
             {
@@ -90,17 +90,17 @@ namespace osuAT.Game.Skills
                 double lastAngle = (double)lastDiffHit.Angle * (180 / Math.PI);
 
                 // Flow Angle Difficulty
-                flowPatternMult = Math.Clamp(((double)curAngle - 60) / 60, 0, 1) / 2 + Math.Clamp(((double)lastAngle - 60) / 60, 0, 1) / 2;
+                flowPatternMult = Math.Clamp((curAngle - (int)Angle.Triangle) / (int)Angle.Triangle, 0, 1) / 2 + Math.Clamp(((double)lastAngle - (int)Angle.Triangle) / (int)Angle.Triangle, 0, 1) / 2;
 
                 // Angle Difficulty
-                curAngStrainWorth = -Math.Clamp(((double)curAngle) / (135 / 0.9), 0, 1) + 0.9;
+                curAngStrainWorth = -Math.Clamp(curAngle / ((int)Angle.Octagon / 0.9), 0, 1) + 0.9;
                 totalAngStrainWorth += curAngStrainWorth;
                 totalAngStrainWorth = Math.Max(0, totalAngStrainWorth);
                 angDifficulty = 10 * Math.Log(totalAngStrainWorth + 1);
-                aimDifficulty = (diffHit.MinimumJumpDistance / diffHit.DeltaTime) / 2;
+                aimDifficulty = diffHit.MinimumJumpDistance / diffHit.DeltaTime / 2;
 
                 // // Uneven Flow
-                soloFlowPatternMult = Math.Clamp(((double)curAngle - 60) / 60, 0, 1) / 2 + Math.Clamp(((double)lastAngle - 60) / 60, 0, 1) / 2;
+                soloFlowPatternMult = Math.Clamp((curAngle - (int)Angle.Triangle) / (int)Angle.Triangle, 0, 1) / 2 + Math.Clamp(((double)lastAngle - (int)Angle.Triangle) / (int)Angle.Triangle, 0, 1) / 2;
                 flowPatternCount = Math.Max(0, flowPatternCount + (soloFlowPatternMult * 10 - 9) * 3);
 
                 if (flowPatternCount >= 1)
@@ -113,9 +113,9 @@ namespace osuAT.Game.Skills
 
                 // Miss and combo scaling
                 CurTotalPP = highestWorth;
-                CurTotalPP *= SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
-                CurTotalPP *= SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
-                CurTotalPP *= SharedMethods.SimpleAccNerf(FocusedScore.Accuracy);
+                CurTotalPP *= MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo);
+                CurTotalPP *= LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo);
+                CurTotalPP *= SimpleAccNerf(FocusedScore.Accuracy);
             }
         }
 

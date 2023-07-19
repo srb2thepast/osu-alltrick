@@ -12,6 +12,8 @@ using osuAT.Game.Skills.Resources;
 using osuAT.Game.Types;
 using osuTK;
 
+(int)Angle.Triangle
+
 namespace osuAT.Game.Skills
 {
     public class SliderAimSkill : ISkill
@@ -59,19 +61,19 @@ namespace osuAT.Game.Skills
             {
             }
 
-            private double curWorth = 0;
+            private double curWorth;
 
             [HiddenDebugValue]
-            private double lastSliderApperance = 0;
+            private double lastSliderApperance;
 
             private double lastStrainNerf = 1;
 
             [HiddenDebugValue]
-            private double highestWorth = 0;
+            private double highestWorth;
 
-            private double sliderDifficulty = 0;
+            private double sliderDifficulty;
 
-            private double repeatBuff = 0;
+            private double repeatBuff;
 
             public override void CalcNext(OsuDifficultyHitObject osuHit)
             {
@@ -81,15 +83,16 @@ namespace osuAT.Game.Skills
                 {
                     lastSliderApperance = CurrentIndex;
                     repeatBuff = Math.Log(slideHit.SpanCount() + 1) * 1.6;
-                    sliderDifficulty = osuHit.TravelDistance / (osuHit.TravelTime) * 120 * repeatBuff;
+                    sliderDifficulty = osuHit.TravelDistance / osuHit.TravelTime * 120 * repeatBuff;
                     if (CurrentIndex == EndIndex - 1)
                     {
                         Console.WriteLine($"{osuHit.TravelDistance}/{osuHit.TravelTime} | " + sliderDifficulty + $" reps: {slideHit.SpanCount()}");
                     }
 
-                    lastStrainNerf = Math.Max((osuHit.DeltaTime) / 80, 1);
+                    lastStrainNerf = Math.Max(osuHit.DeltaTime / 80, 1);
                     curWorth += sliderDifficulty;
                 };
+
                 if (osuHit.BaseObject is HitCircle)
                 {
                     lastStrainNerf = Math.Max(1.1 * osuHit.DeltaTime / 80, 1);

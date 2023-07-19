@@ -29,13 +29,14 @@ namespace osuAT.Game.Skills.Resources
         /// <returns></returns>
         ///
 
-        public enum Degrees
+        public enum Angle
         {
             Triangle = 60,
             Square = 90,
             Pentagon = 108,
             Hexagon = 120,
-            Straight = 180,
+            Octagon = 135,
+            Line = 180,
         }
 
         public enum JumpDistances
@@ -43,11 +44,11 @@ namespace osuAT.Game.Skills.Resources
             Corners = 640, // Corner Jumps
         }
 
-        public enum StreamLengths {
+        public enum StreamLengths
+        {
             Burst = 3,
             Stream = 10,
             DeathStream = 32
-
         }
 
         public static double MissPenalty(int Misses, int MaxCombo)
@@ -154,6 +155,5 @@ namespace osuAT.Game.Skills.Resources
     /// </summary>
     public static class DiffHitObjectExtensions
     {
-
     }
 }
