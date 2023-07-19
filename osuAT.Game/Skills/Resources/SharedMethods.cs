@@ -43,6 +43,13 @@ namespace osuAT.Game.Skills.Resources
             Corners = 640, // Corner Jumps
         }
 
+        public enum StreamLengths {
+            Burst = 3,
+            Stream = 10,
+            DeathStream = 32
+
+        }
+
         public static double MissPenalty(int Misses, int MaxCombo)
         {
             return .97 * Math.Pow(1 - Math.Pow(((double)Misses) / MaxCombo, .775), Misses);
