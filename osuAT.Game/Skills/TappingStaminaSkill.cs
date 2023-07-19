@@ -21,7 +21,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "tapstamina";
 
-        public string Version => "0.004";
+        public string Version => "0.005";
 
         public string Summary => "The ability of your tapping to \n endure continuous strain";
 
@@ -59,8 +59,8 @@ namespace osuAT.Game.Skills
             private double curMSSpeed;
             private double msSpeedStrain;
 
-            private double bPMBuff ;
-            private double lenMult ;
+            private double bPMBuff;
+            private double lenMult;
             private double curWorth;
 
             public override void Setup()

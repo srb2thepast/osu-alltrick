@@ -20,7 +20,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "flowaim";
 
-        public string Version => "0.009";
+        public string Version => "0.010";
 
         public string Summary => "The ability to move your cursor \n in a fluid motion.";
 
@@ -68,8 +68,6 @@ namespace osuAT.Game.Skills
             private double curStreamSpaceBuff;
             private double curStreamSpaceMult;
 
-            private double curSpacedStreamLength;
-            private double curFlowStreamLength;
             private double curMSSpeed;
             private double msSpeedStrain;
 
@@ -115,7 +113,7 @@ namespace osuAT.Game.Skills
 
                 // Aim Difficulty
                 aimCurDiff = 10 * (diffHit.LazyJumpDistance / diffHit.DeltaTime);
-                aimTotal += 2 * aimCurDiff * flowPatternMult;
+                aimTotal += 2.5 * aimCurDiff * flowPatternMult;
                 aimTotal *= 0.5; // - 1 * (1-flowPatternMult);
                 aimDifficulty = aimTotal;
 
@@ -125,12 +123,12 @@ namespace osuAT.Game.Skills
                 curStreamSpeedMult = 0.75 * (1 - Math.Clamp(SharedMethods.BPMToMS(160, 2) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1));
 
                 // --- Calculate Spacing worth (is the stream spaced enough to be considered a stream requiring any sort of flow aim?)
-               // This should, in theory, prevent a 100 note burst ending in a 10 note spaced stream from being 110 notes long.
+                // This should, in theory, prevent a 100 note burst ending in a 10 note spaced stream from being 110 notes long.
                 curStreamSpaceBuff = Math.Clamp(aimDifficulty / 5, 0, 1);
                 curStreamSpaceMult = Math.Clamp((aimDifficulty - 2.5) / 2.5, 0, 1);
 
                 double curStreamBuff = (curStreamSpeedBuff + curStreamSpaceBuff) / 2;
-                double curStreamNerf = curStreamLength * ( (1-curStreamSpeedMult) + curStreamSpaceMult) / 2;
+                double curStreamNerf = curStreamLength * ((1 - curStreamSpeedMult) + curStreamSpaceMult) / 2;
                 curStreamLength += curStreamBuff;
                 curStreamLength -= curStreamLength * curStreamSpeedMult;
 

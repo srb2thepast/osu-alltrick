@@ -17,12 +17,29 @@ namespace SkillAnalyzer.Visual
 
         }
 
+
+
         [Test]
         public void TestAddFlowAim()
         {
             EnableSkillStep(Skill.Flowaim);
+        }
+        [Test]
+        public void TestCompareSpikes()
+        {
+            EnableSkillStep(Skill.Flowaim);
 
-            AddSeekStep("3:21:200  ");
+            AddSeekStep("5:15:445");
+            AddDebugValueAssert("aim difficulty > 16", Skill.Flowaim, "aimDifficulty", (val) =>
+            {
+                return (double)val > 16;
+            });
+
+            AddSeekStep("0:41:620");
+            AddDebugValueAssert("aim difficulty < 12", Skill.Flowaim, "aimDifficulty", (val) =>
+            {
+                return (double)val < 12;
+            });
         }
     }
 }
