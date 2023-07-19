@@ -12,9 +12,9 @@ namespace SkillAnalyzer.Visual
     {
         protected override string MapLocation => @"Blend S\K A Z M A S A - Bon Appetit S (Oldskool HappyHardcore Remix) (Short Ver.) (BarkingMadDog) [blend s (220 bpm)].osu";
         protected override List<ModInfo> AppliedMods => new List<ModInfo> { };
+
         public TappingStaminaAnalyzer()
         {
-
         }
 
         [Test]

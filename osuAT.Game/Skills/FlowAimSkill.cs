@@ -63,7 +63,16 @@ namespace osuAT.Game.Skills
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
             private double curStreamLength;
+            private double curStreamSpeedBuff;
+            private double curStreamSpeedMult;
+            private double curStreamSpaceBuff;
+            private double curStreamSpaceMult;
+
+            private double curSpacedStreamLength;
+            private double curFlowStreamLength;
             private double curMSSpeed;
+            private double msSpeedStrain;
+
 
             [HiddenDebugValue]
             private double aimTotal;
@@ -93,25 +102,41 @@ namespace osuAT.Game.Skills
                 if (lastDiffHit == null) return;
                 if (lastDiffHit.Angle == null) return;
                 if (diffHit.Angle == null) return;
+                if (diffHit.BaseObject is Spinner) return;
                 double curAngle = (double)diffHit.Angle * (180 / Math.PI);
                 double lastAngle = (double)lastDiffHit.Angle * (180 / Math.PI);
 
-                // Strain-based Stream Length
-                curStreamLength += Math.Clamp(SharedMethods.BPMToMS(180) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1);
-                curStreamLength -= curStreamLength * 0.75 * (1 - Math.Clamp(SharedMethods.BPMToMS(180, 2) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1));
+                // Smoothly scaling MS speed
                 curMSSpeed = diffHit.StartTime - lastDiffHit.StartTime;
-
-                // Length multiplier
-                lenMult = 1.3 * Math.Log((curStreamLength / 60) + 1);
-
-                // Aim Difficulty
-                aimCurDiff = 10 * (diffHit.LazyJumpDistance / diffHit.DeltaTime);
-                aimTotal += aimCurDiff * flowPatternMult;
-                aimTotal *= 0.5; // - 1 * (1-flowPatternMult);
-                aimDifficulty = aimTotal;
+                msSpeedStrain += 0.7 * (curMSSpeed - msSpeedStrain);
 
                 // Flow Pattern Multiplier
                 flowPatternMult = Math.Clamp(((double)curAngle - 60) / 60, 0, 1) / 2 + Math.Clamp(((double)lastAngle - 60) / 60, 0, 1) / 2;
+
+                // Aim Difficulty
+                aimCurDiff = 10 * (diffHit.LazyJumpDistance / diffHit.DeltaTime);
+                aimTotal += 2 * aimCurDiff * flowPatternMult;
+                aimTotal *= 0.5; // - 1 * (1-flowPatternMult);
+                aimDifficulty = aimTotal;
+
+                // Strain-based Stream Length
+                // --- Calculate Speed worth (is the stream fast enough to be considered one requiring fast tapping?)
+                curStreamSpeedBuff = Math.Clamp(SharedMethods.BPMToMS(160) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1);
+                curStreamSpeedMult = 0.75 * (1 - Math.Clamp(SharedMethods.BPMToMS(160, 2) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1));
+
+                // --- Calculate Spacing worth (is the stream spaced enough to be considered a stream requiring any sort of flow aim?)
+               // This should, in theory, prevent a 100 note burst ending in a 10 note spaced stream from being 110 notes long.
+                curStreamSpaceBuff = Math.Clamp(aimDifficulty / 5, 0, 1);
+                curStreamSpaceMult = Math.Clamp((aimDifficulty - 2.5) / 2.5, 0, 1);
+
+                double curStreamBuff = (curStreamSpeedBuff + curStreamSpaceBuff) / 2;
+                double curStreamNerf = curStreamLength * ( (1-curStreamSpeedMult) + curStreamSpaceMult) / 2;
+                curStreamLength += curStreamBuff;
+                curStreamLength -= curStreamLength * curStreamSpeedMult;
+
+
+                // Length multiplier
+                lenMult = Math.Log((curStreamLength / 60) + 1);
 
                 // Angle Difficulty
                 angCurDiff = 20 * (-Math.Clamp(1.5 * ((double)curAngle - 60) / 180, -1, 1) + 1);
@@ -122,7 +147,7 @@ namespace osuAT.Game.Skills
                 angDifficulty = 1.5 * Math.Log(totalAngStrainWorth + 1);
 
                 // Final value
-                curWorth = 1.25 * lenMult * flowPatternMult * (10 * aimDifficulty + (aimDifficulty * angDifficulty));
+                curWorth = 1.25 * lenMult * flowPatternMult * (aimDifficulty + (aimDifficulty * angDifficulty));
                 highestWorth = Math.Max(highestWorth, curWorth);
 
                 CurTotalPP = highestWorth;

@@ -55,11 +55,13 @@ namespace osuAT.Game.Skills
 
             public override RulesetInfo[] SupportedRulesets => new RulesetInfo[] { RulesetStore.Osu };
 
-            private double curStreamLength = 0;
-            private double curMSSpeed = 0;
-            private double bPMBuff = 0;
-            private double lenMult = 0;
-            private double curWorth = 0;
+            private double curStreamLength;
+            private double curMSSpeed;
+            private double msSpeedStrain;
+
+            private double bPMBuff ;
+            private double lenMult ;
+            private double curWorth;
 
             public override void Setup()
             {
@@ -72,21 +74,25 @@ namespace osuAT.Game.Skills
 
             public override void CalcNext(OsuDifficultyHitObject diffHitObj)
             {
-                var diffHit = (OsuDifficultyHitObject)diffHitObj;
+                var diffHit = diffHitObj;
                 _ = (OsuHitObject)diffHit.LastObject;
                 var lastDiffHit = diffHit.Previous(0);
                 if (lastDiffHit == null) return;
+                if (diffHit.BaseObject is Spinner) return;
 
                 // Strain-based Stream Length
-                curStreamLength += Math.Clamp(SharedMethods.BPMToMS(180) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1);
-                curStreamLength -= curStreamLength * 0.75 * (1 - Math.Clamp(SharedMethods.BPMToMS(180, 2) / (diffHit.StartTime - lastDiffHit.StartTime), 0, 1));
+                curStreamLength += Math.Clamp(SharedMethods.BPMToMS(170) / msSpeedStrain, 0, 1);
+                curStreamLength -= curStreamLength * 0.8 * (1 - Math.Clamp(SharedMethods.BPMToMS(170, 2) / (msSpeedStrain), 0, 1));
+
+                // Smoothly scaling MS speed
                 curMSSpeed = diffHit.StartTime - lastDiffHit.StartTime;
+                msSpeedStrain += 0.7 * (curMSSpeed - msSpeedStrain);
 
                 // Length multiplier
                 lenMult = 2 * Math.Log((curStreamLength * 1 / 40) + 1);
 
                 // BPMBuff
-                bPMBuff = 2 * Math.Pow(1.02, SharedMethods.MSToBPM(curMSSpeed));
+                bPMBuff = 2 * Math.Pow(1.02, SharedMethods.MSToBPM(msSpeedStrain));
 
                 // Final Value (Returns the most difficult stream)
                 curWorth = Math.Max(curWorth, bPMBuff * lenMult);

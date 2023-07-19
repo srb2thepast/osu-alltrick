@@ -27,6 +27,22 @@ namespace osuAT.Game.Skills.Resources
         /// <param name="Misses">The amount of misses on the map.</param>
         /// <param name="MaxCombo">The maximum amount of combo possible from the map.</param>
         /// <returns></returns>
+        ///
+
+        public enum Degrees
+        {
+            Triangle = 60,
+            Square = 90,
+            Pentagon = 108,
+            Hexagon = 120,
+            Straight = 180,
+        }
+
+        public enum JumpDistances
+        {
+            Corners = 640, // Corner Jumps
+        }
+
         public static double MissPenalty(int Misses, int MaxCombo)
         {
             return .97 * Math.Pow(1 - Math.Pow(((double)Misses) / MaxCombo, .775), Misses);
