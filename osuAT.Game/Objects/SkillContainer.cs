@@ -5,22 +5,17 @@ using System.Threading.Tasks;
 using NuGet.Protocol.Plugins;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Events;
-using osu.Game.Rulesets.Catch.UI;
-using osu.Game.Rulesets.Taiko.Edit.Blueprints;
 using osuAT.Game.Objects;
 using osuAT.Game.Screens;
 using osuAT.Game.Skills;
-using osuAT.Game.Skills.Resources;
-using osuAT.Game.UserInterface;
+using osuAT.Game.Skills.Resources;  
 using osuTK;
-using osuTK.Graphics.ES11;
 using osuTK.Input;
 
 namespace osuAT.Game
@@ -97,31 +92,21 @@ namespace osuAT.Game
                     Offset = Vector2.Zero,
                     Colour = Skill.Aim.PrimaryColor,
                 },
-                // Cursor Control -> Flow Aim
+                // Cursor Control -> Precision
                 new ArrowInfo {
                     MainSkill = Skill.CursorControl,
-                    TargetSkill = Skill.Flowaim,
-                    Rotation = 0,
-                    Offset = new Vector2(0,90),
+                    TargetSkill = Skill.Precision,
+                    Rotation = Direction.Down,
                     Colour = Skill.CursorControl.PrimaryColor,
                     Segments = new List<Segment> {
                         new Segment{
                             Start = 50,
-                            Length = 455,
-                            Rotation = Direction.Left
-                        },
-                        new Segment{
-                            Start = 50,
-                            Length = 1721,
+                            Length = 700,
                             Rotation = Direction.Down
                         },
-                        new Segment{
-                            Start = 100,
-                            Length = 140,
-                            Rotation = Direction.Left
-                        }
                     }
                 },
+
                 // Cursor Control -> Slider Aim
                 new ArrowInfo
                 {
@@ -154,12 +139,7 @@ namespace osuAT.Game
                     Segments = new List<Segment> {
                         new Segment{
                             Start = 50,
-                            Length = 455,
-                            Rotation = Direction.Down
-                        },
-                        new Segment{
-                            Start = 50,
-                            Length = 1050,
+                            Length = 1050+455,
                             Rotation = Direction.Down
                         },
                         new Segment{
@@ -188,7 +168,7 @@ namespace osuAT.Game
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0.3f,
-                //Texture = textures.Get(@"Contributors/chart")
+                // Texture = textures.Get(@"Contributors/chart")
             });
         }
         protected enum Direction

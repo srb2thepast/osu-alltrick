@@ -12,8 +12,6 @@ using osuAT.Game.Skills.Resources;
 using osuAT.Game.Types;
 using osuTK;
 
-(int)Angle.Triangle
-
 namespace osuAT.Game.Skills
 {
     public class SliderAimSkill : ISkill

@@ -20,6 +20,7 @@ namespace osuAT.Game.Skills
         public static SliderAimSkill SliderAim = new SliderAimSkill();
         public static TappingStaminaSkill TappingStamina = new TappingStaminaSkill();
         public static AimStaminaSkill AimStamina = new AimStaminaSkill();
+        public static PrecisionSkill Precision= new PrecisionSkill();
 
         /// <summary>
         /// A list of every skill currently supported.
@@ -30,7 +31,8 @@ namespace osuAT.Game.Skills
             Aim,
             SliderAim,
             TappingStamina,
-            AimStamina
+            AimStamina,
+            Precision
         };
 
         public static ISkill GetSkillByID(string skillid)

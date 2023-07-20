@@ -89,6 +89,12 @@ namespace osuAT.Game.Skills.Resources
             return (60000 / ms) / divisor;
         }
 
+        public static double ARToMS(double AR)
+        {
+            if (AR < 5) return (-60 * AR) + 1800;
+            else return (-75 * AR) + 1875;
+        }
+
         /// <summary>
         /// Returns an integer ranging from 0-1, where 1 means the score is an FC and 0 means the score has 0 combo.
         /// </summary>

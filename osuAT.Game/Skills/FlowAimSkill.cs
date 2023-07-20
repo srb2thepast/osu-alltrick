@@ -102,11 +102,11 @@ namespace osuAT.Game.Skills
                 msSpeedStrain += 0.7 * (curMSSpeed - msSpeedStrain);
 
                 // Flow Pattern Multiplier
-                flowPatternMult = Math.Clamp((curAngle - (int)Angle.Triangle) / (int)Angle.Triangle, 0, 1) / 2 + Math.Clamp(((double)lastAngle - (int)Angle.Triangle) / (int)Angle.Triangle, 0, 1) / 2;
+                flowPatternMult = (Math.Clamp((curAngle - (int)Angle.Triangle) / (int)Angle.Triangle, 0, 1) / 2) + Math.Clamp(((double)lastAngle - (int)Angle.Triangle) / (int)Angle.Triangle, 0, 1) / 2;
 
                 // Aim Difficulty
-                const double aim_difficulty_weight = 10;
-                aimCurDiff = aim_difficulty_weight * (diffHit.LazyJumpDistance / diffHit.DeltaTime) * (0.25 + 0.75 * flowPatternMult);
+                const double aim_difficulty_scale = 10;
+                aimCurDiff = aim_difficulty_scale * (diffHit.LazyJumpDistance / diffHit.DeltaTime) * (0.25 + 0.75 * flowPatternMult);
                 aimDifficulty += ((double)1 / 18) * ((aimCurDiff) - aimDifficulty);
 
                 // Strain-based Stream Length
@@ -116,8 +116,8 @@ namespace osuAT.Game.Skills
 
                 // --- Calculate Spacing worth (is the stream spaced enough to be considered a stream requiring any sort of flow aim?)
                 // This should, in theory, prevent a 100 note burst ending in a 10 note spaced stream from being 110 notes long.
-                curStreamSpaceBuff = Math.Clamp(aimDifficulty / (aim_difficulty_weight / 2), 0, 1);
-                curStreamSpaceMult = Math.Clamp((aimDifficulty - (aim_difficulty_weight / 4)) / (aim_difficulty_weight / 4), 0, 1);
+                curStreamSpaceBuff = Math.Clamp(aimDifficulty / (aim_difficulty_scale / 2), 0, 1);
+                curStreamSpaceMult = Math.Clamp((aimDifficulty - (aim_difficulty_scale / 4)) / (aim_difficulty_scale / 4), 0, 1);
 
                 double curStreamBuff = (curStreamSpeedBuff + curStreamSpaceBuff - 1) / 2; // Math.Max(Math.Pow((curStreamSpeedBuff + curStreamSpaceBuff) - 1,2), 0);
                 double curStreamNerf = (1 - flowPatternMult) * (curStreamSpeedNerf + (1 - curStreamSpaceMult)) / 2;
