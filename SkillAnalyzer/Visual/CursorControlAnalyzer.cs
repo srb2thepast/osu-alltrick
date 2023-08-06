@@ -10,7 +10,7 @@ namespace SkillAnalyzer.Visual
 {
     public partial class CursorControlAnalyzer : SkillAnalyzeScene
     {
-        protected override string MapLocation => @"lapix - Nexta (DTM9 Nowa) [ending].osu";
+        protected override string MapLocation => @"Hoshimachi Suisei - GHOST (Amateurre) [Shooting Star].osu";
         protected override List<ModInfo> AppliedMods => new() { };
 
         [Test]

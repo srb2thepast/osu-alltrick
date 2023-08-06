@@ -9,6 +9,7 @@ using osu.Framework.Platform; // Reminder: consider using osu.Framework.Platform
 using OsuApiHelper;
 using osuAT.Game.Skills.Resources;
 using osuAT.Game.Types;
+using static System.Net.Mime.MediaTypeNames;
 using Skill = osuAT.Game.Skills.Skill;
 
 namespace osuAT.Game
@@ -17,16 +18,16 @@ namespace osuAT.Game
     public class CSaveData
     {
         /// <summary>
+        /// The save data version.
+        /// </summary>
+        [JsonProperty("version")]
+        public string Version { get; set; } = "osu!AT save data v2";
+
+        /// <summary>
         /// The path of the player's osu! folder.
         /// </summary>
         [JsonProperty("osupath")]
         public string OsuPath { get; set; } = "";
-
-        /// <summary>
-        /// The save data version.
-        /// </summary>
-        [JsonProperty("version")]
-        public string Version { get; set; } = "osu!AT save data v1";
 
         /// <summary>d
         /// The versions of each skill the last time this savedata was saved.
@@ -158,8 +159,8 @@ namespace osuAT.Game
                 Save();
                 return;
             }
-
-            SaveData = JsonConvert.DeserializeObject<CSaveData>(Read());
+            checkForUpdates();
+            SaveData = deserializeSaveString();
             OsuApiKey.Key = SaveData.APIKey;
             ApiScoreProcessor.UpdateKeyValid();
             int i = 0;
@@ -387,31 +388,61 @@ namespace osuAT.Game
             return Encoding.UTF8.GetString(base64EncodedBytes);
         }
 
+        private static CSaveData deserializeSaveString()
+        {
+            return JsonConvert.DeserializeObject<CSaveData>(Read());
+        }
+
+        private static void checkForUpdates()
+        {
+            if (!CheckSaveExists()) return;
+
+            string text = File.ReadAllText(SaveFileFullPath);
+            if (text.StartsWith("g\u000e[_a\\M`T\u000e"))
+            {
+                Console.WriteLine("--- Migrating [osu!at savedata v1 ---> osu!at savedata v2]... ---");
+                string decodedtext = "";
+                foreach (char chara in text)
+                {
+                    decodedtext += (char)((chara) + 20);
+                }
+                text = decodedtext;
+                overwriteSaveFlie(text);
+                Console.WriteLine("--- Migration complete. ---");
+            }
+        }
+
         public static string Read()
         {
             if (!CheckSaveExists()) return null;
 
-            string decodedtext = "";
-            foreach (char chara in File.ReadAllText(SaveFileFullPath))
+            string text = File.ReadAllText(SaveFileFullPath);
+            if (text.StartsWith("g\u000e[_a\\M`T\u000e"))
             {
-                decodedtext += (char)((chara) + 20);
+                string decodedtext = "";
+                foreach (char chara in text)
+                {
+                    decodedtext += (char)((chara) + 20);
+                }
+                text = decodedtext;
             }
-            return decodedtext;
+
+            return text;
         }
 
         public static FileInfo Save()
         {
             IsSaving = true;
             CheckSaveExists();
-            string encodedtext = "";
-            foreach (char chara in JsonConvert.SerializeObject(SaveData))
-            {
-                var newchar = (char)(chara - 20);
-                encodedtext += newchar;
-            }
-            File.WriteAllText(SaveFileFullPath, encodedtext);
+            string text = JsonConvert.SerializeObject(SaveData);
+            overwriteSaveFlie(text);
             IsSaving = false;
             return new FileInfo(SaveFileFullPath);
+        }
+
+        private static void overwriteSaveFlie(string text)
+        {
+            File.WriteAllText(SaveFileFullPath, text);
         }
 
         /// <summary>

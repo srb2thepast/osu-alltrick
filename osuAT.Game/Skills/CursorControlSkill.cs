@@ -56,6 +56,7 @@ namespace osuAT.Game.Skills
 
             private double angDifficulty;
             private double aimDifficulty;
+            private double curAimDifficulty;
             private double curAngle;
 
             private double curAngStrainWorth;
@@ -66,11 +67,18 @@ namespace osuAT.Game.Skills
 
             private double flowPatternMult;
 
-            // Uneven Flow
             private double soloFlowPatternMult;
 
             private double flowPatternCount;
             private double aubruptionWorth;
+
+            private double cutFlowWorth;
+
+            [HiddenDebugValue]
+            private double velocityStrain;
+
+            private double velocityDifference;
+            private double cutStreamWorth;
 
             private double totalAngStrainWorth;
 
@@ -89,17 +97,22 @@ namespace osuAT.Game.Skills
                 curAngle = (double)diffHit.Angle * (180 / Math.PI);
                 double lastAngle = (double)lastDiffHit.Angle * (180 / Math.PI);
 
+                double cutWeight = 20;
+                double aimAndAngWeight = 5;
+                double aubruptWeight = 10;
+
                 // Flow Angle Difficulty
                 flowPatternMult = Math.Clamp((curAngle - (int)Angle.Triangle) / (int)Angle.Triangle, 0, 1) / 2 + Math.Clamp(((double)lastAngle - (int)Angle.Triangle) / (int)Angle.Triangle, 0, 1) / 2;
 
                 // Angle Difficulty
                 curAngStrainWorth = -Math.Clamp(curAngle / ((int)Angle.Octagon / 0.9), 0, 1) + 0.9;
-                totalAngStrainWorth += curAngStrainWorth;
-                totalAngStrainWorth = Math.Max(0, totalAngStrainWorth);
-                angDifficulty = 10 * Math.Log(totalAngStrainWorth + 1);
-                aimDifficulty = diffHit.MinimumJumpDistance / diffHit.DeltaTime / 2;
+                angDifficulty = 10 * Math.Log(curAngStrainWorth + 1);
 
-                // // Uneven Flow
+                // Aim Difficulty
+                curAimDifficulty = diffHit.MinimumJumpDistance / diffHit.DeltaTime / 2;
+                aimDifficulty += 0.7 * (curAimDifficulty - aimDifficulty);
+
+                // // Uneven Flow/Aubruption Difficulty
                 soloFlowPatternMult = Math.Clamp((curAngle - (int)Angle.Triangle) / (int)Angle.Triangle, 0, 1) / 2 + Math.Clamp(((double)lastAngle - (int)Angle.Triangle) / (int)Angle.Triangle, 0, 1) / 2;
                 flowPatternCount = Math.Max(0, flowPatternCount + (soloFlowPatternMult * 10 - 9) * 3);
 
@@ -108,7 +121,15 @@ namespace osuAT.Game.Skills
                 else
                     aubruptionWorth = 0;
 
-                curWorth = angDifficulty * aimDifficulty + (angDifficulty * aimDifficulty * (aubruptionWorth + 1));
+                // Cutstream Flow
+                double velocityDifficulty = curAimDifficulty * 20;
+                velocityStrain += 0.8 * (curAimDifficulty * 20 - velocityStrain);
+                velocityDifference = (curAimDifficulty * 20 - velocityStrain);
+                cutStreamWorth += 0.2 * (Math.Abs(velocityDifference) - cutStreamWorth);
+
+                curWorth = cutWeight * cutStreamWorth * aimDifficulty +
+                    aimAndAngWeight * angDifficulty * aimDifficulty +
+                    aubruptWeight * (angDifficulty * aimDifficulty * (aubruptionWorth));
                 highestWorth = Math.Max(highestWorth, curWorth);
 
                 // Miss and combo scaling

@@ -101,7 +101,7 @@ namespace osuAT.Game
                     Segments = new List<Segment> {
                         new Segment{
                             Start = 50,
-                            Length = 700,
+                            Length = 690,
                             Rotation = Direction.Down
                         },
                     }

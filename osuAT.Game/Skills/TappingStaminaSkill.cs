@@ -10,6 +10,7 @@ using osuAT.Game.Types;
 using osuTK;
 using Sentry.Infrastructure;
 using static osuAT.Game.Skills.AimSkill;
+using static osuAT.Game.Skills.Resources.SharedMethods;
 
 namespace osuAT.Game.Skills
 {
@@ -62,14 +63,14 @@ namespace osuAT.Game.Skills
             private double bPMBuff;
             private double lenMult;
             private double curWorth;
+            private double bpmSpeedStrain;
+
+            [HiddenDebugValue]
+            private double highestWorth;
 
             public override void Setup()
             {
-                curStreamLength = 0;
-                curMSSpeed = 0;
-                bPMBuff = 0;
-                lenMult = 0;
-                curWorth = 0;
+                msSpeedStrain = 80;
             }
 
             public override void CalcNext(OsuDifficultyHitObject diffHitObj)
@@ -83,24 +84,32 @@ namespace osuAT.Game.Skills
                 // Smoothly scaling MS speed
                 curMSSpeed = diffHit.StartTime - lastDiffHit.StartTime;
 
-                msSpeedStrain += 0.5 * (curMSSpeed - msSpeedStrain);
+                if (curMSSpeed > msSpeedStrain) // getting slower
+                    msSpeedStrain += 0.3 * (curMSSpeed - msSpeedStrain);
+                else // getting faster
+                    msSpeedStrain += 0.5 * (curMSSpeed - msSpeedStrain);
 
 
                 // Strain-based Stream Length
-                curStreamLength += Math.Clamp(SharedMethods.BPMToMS(180) / curMSSpeed, 0, 1);
-                curStreamLength -= curStreamLength * 0.8 * (1 - Math.Clamp(SharedMethods.BPMToMS(220, 2) / (curMSSpeed), 0, 1));
+                curStreamLength += Math.Clamp(SharedMethods.BPMToMS(180) / msSpeedStrain, 0, 1);
+                double curStreamPenalty = curStreamLength * (1 - Math.Clamp(SharedMethods.BPMToMS(160) / (msSpeedStrain), 0, 1));
+                curStreamLength -= curStreamPenalty;
+                curStreamLength = Math.Max(curStreamLength, 0);
 
                 // Length multiplier
-                lenMult = 2 * Math.Log((curStreamLength * 1 / 40) + 1);
+                lenMult = Math.Sqrt(curStreamLength/ (int)StreamLengths.DeathStream) * Math.Min(1,Math.Pow(2,curStreamLength/(int)StreamLengths.DeathStream-1));
+
+                bpmSpeedStrain = SharedMethods.MSToBPM(msSpeedStrain);
 
                 // BPMBuff
-                bPMBuff = 2 * Math.Pow(1.02, SharedMethods.MSToBPM(msSpeedStrain));
+                bPMBuff = 200 * Math.Pow(1.01, SharedMethods.MSToBPM(msSpeedStrain) - 180);
 
                 // Final Value (Returns the most difficult stream)
-                curWorth = Math.Max(curWorth, bPMBuff * lenMult);
+                curWorth = bPMBuff * lenMult;
+                highestWorth = Math.Max(highestWorth, curWorth);
 
                 CurTotalPP = (
-                    curWorth *
+                    highestWorth *
                     SharedMethods.MissPenalty(FocusedScore.AccuracyStats.CountMiss, FocusedScore.BeatmapInfo.MaxCombo) *
                     SharedMethods.LinearComboScaling(FocusedScore.Combo, FocusedScore.BeatmapInfo.MaxCombo) *
                     SharedMethods.SimpleAccNerf(FocusedScore.Accuracy)
