@@ -5,7 +5,7 @@ It's inspried by [DigitalHypno's osu!phd video.](https://www.youtube.com/watch?v
 
 https://user-images.githubusercontent.com/19241426/200956928-d7465949-5004-44c3-b7f7-724dc69ffc09.mp4
 
-<sub> - The current FlowAim pp calculator as of 9/11/2022, made in 30 minutes, wonderfully being broken by the power of Guess Who is Back. </sub>
+<sub> - An older FlowAim pp calculator from 9/11/2022, made in 30 minutes, wonderfully being broken by the power of Guess Who is Back. </sub>
 # How do I use this!?!?!?!?!?!?!?
 
 It's simple, really!!!
