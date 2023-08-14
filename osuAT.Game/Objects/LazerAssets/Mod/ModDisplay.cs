@@ -39,7 +39,6 @@ namespace osuAT.Game.Objects.LazerAssets.Mod
     /// </summary>
     public partial class ModDisplay : CompositeDrawable, IHasCurrentValue<IReadOnlyList<ModInfo>>
     {
-
         public partial class ReverseChildIDFillFlowContainer<T> : FillFlowContainer<T> where T : Drawable
         {
             protected override int Compare(Drawable x, Drawable y) => CompareReverseChildID(x, y);

@@ -49,6 +49,9 @@ namespace osuAT.Game.Objects.Displays
         [BackgroundDependencyLoader]
         private void load(LargeTextureStore textures)
         {
+            int diffNameWidth = Math.Clamp((Current.BeatmapInfo.DifficultyName.Length) * 5 + 16, 40, 100);
+            int mapperWidth = 210 - diffNameWidth-20;
+
             InternalChild = display = new Container
             {
                 AutoSizeAxes = Axes.Both,
@@ -87,7 +90,7 @@ namespace osuAT.Game.Objects.Displays
                                         Shadow = true,
                                         ShadowOffset = new Vector2(0,0.1f),
                                         Truncate = true,
-                                        Width = Math.Clamp((Current.BeatmapInfo.DifficultyName.Length)*2+16,40,100),
+                                        Width = diffNameWidth,
                                         Font = new FontUsage("ChivoBold",size: 13),
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft
@@ -99,7 +102,7 @@ namespace osuAT.Game.Objects.Displays
                                         Shadow = true,
                                         ShadowOffset = new Vector2(0,0.1f),
                                         Truncate = true,
-
+                                        Width = mapperWidth,
                                         Colour = Colour4.FromHex("#DDFFF4"),
                                         Font = new FontUsage("ChivoBold",size: 11),
                                         Anchor = Anchor.CentreLeft,

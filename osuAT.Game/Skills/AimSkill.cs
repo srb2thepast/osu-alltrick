@@ -18,7 +18,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "overallaim";
 
-        public string Version => "0.003";
+        public string Version => "0.004";
 
         public string Summary => "The ability to move your cursor \n to any circle.";
 
@@ -90,7 +90,7 @@ namespace osuAT.Game.Skills
                 totalAngStrainWorth = Math.Max(0, totalAngStrainWorth);
                 angDifficulty = 15 * Math.Log(totalAngStrainWorth + 1);
 
-                curWorth = aimDifficulty * 4 + (aimDifficulty * angDifficulty) * 4;
+                curWorth = aimDifficulty * 2.5 + (aimDifficulty * angDifficulty) * 2.5;
                 highestWorth = Math.Max(highestWorth, curWorth);
 
                 // Miss and combo scaling

@@ -447,7 +447,7 @@ namespace osuAT.Game
                     Console.WriteLine("Delay ended");
                     OsuApiBeatmap osuMap = default;
                     async Task<OsuApiBeatmap> mapRet() { osuMap = await ApiScoreProcessor.OsuGetBeatmap(osuScore.MapID); return osuMap; };
-                    result = await ApiScoreProcessor.AddToStorageIfValid(osuScore, mapRet);
+                    result = await ApiScoreProcessor.AddToStorageIfValid(osuScore, mapRet,i == topPlays.Count);
                     Console.WriteLine("Getting messages");
                     string resultMsg = ApiScoreProcessor.GetResultMessages(result, osuScore);
                     Console.WriteLine(resultMsg);

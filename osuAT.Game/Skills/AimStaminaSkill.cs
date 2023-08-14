@@ -19,7 +19,7 @@ namespace osuAT.Game.Skills
 
         public string Identifier => "aimstamina";
 
-        public string Version => "0.002";
+        public string Version => "0.003";
 
         public string Summary => "The ability for your aim to endure \n continous strain.";
 
@@ -55,6 +55,7 @@ namespace osuAT.Game.Skills
 
             private double jerkDifficulty;
             private double aimDifficulty;
+            private double aimStrainDifficutly;
             private double curAngle;
 
             private double curWorth;
@@ -73,13 +74,16 @@ namespace osuAT.Game.Skills
                 // Aim Difficulty
                 aimDifficulty = diffHit.MinimumJumpDistance / diffHit.DeltaTime / 4;
 
+                // Aim Continous Strain
+                aimStrainDifficutly += 0.6 * (aimDifficulty - aimStrainDifficutly);
+
                 // Jerk Angle Difficulty
                 jerkAngWorth = Math.Clamp((-1.5 * (curAngle - (double)Angle.Triangle) / (double)Angle.Line) + 0.5, 0, 1);
                 totalJerkStrainWorth += jerkAngWorth;
                 totalJerkStrainWorth = Math.Max(0, jerkAngWorth) * 0.995;
                 jerkDifficulty = 30 * Math.Log(totalJerkStrainWorth + 1);
 
-                curWorth = aimDifficulty * jerkDifficulty * 15;
+                curWorth = aimStrainDifficutly * jerkDifficulty * 15;
                 highestWorth = Math.Max(highestWorth, curWorth);
 
                 // Miss and combo scaling

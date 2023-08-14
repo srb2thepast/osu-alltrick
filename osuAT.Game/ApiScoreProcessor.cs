@@ -138,12 +138,12 @@ namespace osuAT.Game
             if (!SaveStorage.OsuPathIsValid())
                 return default;
 
-            var mapFolder = Directory.GetDirectories(SaveStorage.ConcateOsuPath(@"Songs\")).First((folder) =>
+            var mapFolder = Directory.GetDirectories(SaveStorage.ConcateOsuPath(@"Songs\")).FirstOrDefault((folder) =>
             {
                 return folder.StartsWith(SaveStorage.ConcateOsuPath(@"Songs\" + osuMap.BeatmapSetID + ' '));
             });
 
-            if (mapFolder == null) return default;
+            if (mapFolder == default) return default;
 
             var osuFile = Directory.GetFiles(mapFolder, "*.osu").Where((file) =>
             {
@@ -223,7 +223,7 @@ namespace osuAT.Game
         /// </summary>
         /// <param name="osuScore">A score of type<see cref="OsuPlay"/>.</param>
         /// <param name="mapRet">A delegate that returns a <see cref="OsuBeatmap"/> incase the score is already invalid. </param>
-        public static async Task<ProcessResult> AddToStorageIfValid(OsuPlay osuScore, TaskBeatmapReturner mapRet)
+        public static async Task<ProcessResult> AddToStorageIfValid(OsuPlay osuScore, TaskBeatmapReturner mapRet, bool save = true)
         {
             Console.WriteLine($"{ApiReqs} osu!api v1 requests have been sent.");
 
@@ -240,7 +240,7 @@ namespace osuAT.Game
             // Add to SaveStorage
             var score = await ConvertToScore(osuScore, osuMap);
             await score.Register(async: true);
-            SaveStorage.AddScore(score);
+            SaveStorage.AddScore(score, save);
             return scoreResult;
         }
 

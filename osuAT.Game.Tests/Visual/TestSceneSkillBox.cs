@@ -5,6 +5,7 @@ using osuAT.Game.Objects;
 using osuAT.Game.Skills;
 using osuAT.Game.Types;
 using osuTK;
+using TagLib.Id3v2;
 
 namespace osuAT.Game.Tests.Visual
 {
@@ -13,6 +14,7 @@ namespace osuAT.Game.Tests.Visual
         // Add visual tests to ensure correct behaviour of your game: https://github.com/ppy/osu-framework/wiki/Development-and-Testing
         // You can make changes to classes associated with the tests and they will recompile and update immediately.
         private FullSkillBox box;
+        private MiniSkillBox mbox;
 
         [Test]
         public void TestFullSkillBox()
@@ -38,6 +40,27 @@ namespace osuAT.Game.Tests.Visual
             AddStep("Go to page 1", () => { box.InfoBox.InfoBook.CurrentPage.Value = 1; });
             AddWaitStep("Wait a bit", 2);
             AddStep("Go to page 2", () => { box.InfoBox.InfoBook.CurrentPage.Value = 2; });
+        }
+
+        [Test]
+        public void TestMiniSkillBox()
+        {
+            
+            AddStep("Create new miniskillbox", () =>
+            {
+                Child = mbox = new MiniSkillBox
+                (Skill.Flowaim, null)
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Scale = new Vector2(2.7f),
+                };
+
+            });
+            AddStep("Set Box Worth Display", () =>
+            {
+                mbox.SetWorthDisplay(1, 100);
+            });
         }
 
     }

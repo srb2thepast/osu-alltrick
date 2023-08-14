@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -17,7 +19,6 @@ using osuTK;
 
 namespace osuAT.Game.Objects
 {
-
     public enum SkillBoxState
     {
         MiniBox = 1,
@@ -26,7 +27,6 @@ namespace osuAT.Game.Objects
 
     public partial class SkillBox : Container
     {
-
         public ISkill Skill;
         public SkillContainer ParentCont;
 
@@ -59,9 +59,16 @@ namespace osuAT.Game.Objects
             FullBox.InnerBox.Width = 1;
             SaveStorage.OnScoreAdded += new SaveStorage.ScoreAddedHandler(score =>
             {
+                double scorePP = score.AlltrickPP[Skill.Identifier];
+                var scoreList = SaveStorage.SaveData.AlltrickTop[Skill.Identifier][RulesetStore.Osu.Name];
+                int index = 1 + scoreList.FindIndex(0, scoreList.Count, (Tuple<Guid, double> tup) => {
+                    Console.WriteLine(tup.Item1 + " == " + score.ID);
+                    return tup.Item1 == score.ID;
+                    }
+                );
+                MiniBox.SetWorthDisplay((int)scorePP, index);
                 if (State == SkillBoxState.FullBox)
                 {
-
                     Schedule(() => FullBox.Appear());
                 };
                 if (State == SkillBoxState.MiniBox)
@@ -89,7 +96,6 @@ namespace osuAT.Game.Objects
             // Boxes
             MiniBox.Slideout();
             FullBox.Appear(200);
-
         }
 
         public async void TransitionToMini()
@@ -104,8 +110,6 @@ namespace osuAT.Game.Objects
             await Task.Delay(450); // wait for the container to almost completely zoom out
             ParentCont.MainScreen.AllowButtons = true;
             State = SkillBoxState.MiniBox;
-
         }
-
     }
 }

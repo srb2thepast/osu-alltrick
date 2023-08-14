@@ -49,6 +49,7 @@ namespace osuAT.Game.Screens
 
         public SettingsButton SetButton;
         public ImportButton ImpButton;
+        public PlayCheckButton RecentButton;
 
 
         [BackgroundDependencyLoader]
@@ -199,7 +200,15 @@ namespace osuAT.Game.Screens
                         },
                     }
                 },
-            };
+
+                new PlayCheckButton
+                {
+                    Anchor = Anchor.BottomRight,
+                    Position = new Vector2(-120,-120)
+
+
+                }
+        };
 
             SettingsButton.UsernameChanged += () =>
              {

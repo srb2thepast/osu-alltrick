@@ -11,6 +11,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
+using osu.Game.Scoring;
 using osuAT.Game.Objects;
 using osuAT.Game.Skills.Resources;
 using osuAT.Game.Types;
@@ -18,10 +19,8 @@ using osuTK;
 
 namespace osuAT.Game.Objects
 {
-
     public partial class MiniSkillBox : CompositeDrawable
     {
-
         public ISkill Skill;
         public SkillBox ParentBox;
 
@@ -32,6 +31,8 @@ namespace osuAT.Game.Objects
         private Container mainbox;
         private Container stars;
         private Container outerstars;
+        private Container boxWorthContainer;
+
         public MiniSkillBox(ISkill skill, SkillBox parentbox)
         {
             Origin = Anchor.Centre;
@@ -60,7 +61,6 @@ namespace osuAT.Game.Objects
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         Children = new Drawable[] {
-                                
                             // MainBox
                             mainbox = new Container {
                                 Size = new Vector2(352, Skill.MiniHeight),
@@ -80,14 +80,12 @@ namespace osuAT.Game.Objects
                                             Colour = Colour4.White,
                                         },
 
-                                        
                                         // Background
                                         new BufferedContainer {
                                             AutoSizeAxes = Axes.Both,
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
                                             Children = new Drawable[] {
-
                                                 miniBG = new Sprite {
                                                     Size = new Vector2(352, Skill.MiniHeight),
                                                     Anchor = Anchor.Centre,
@@ -125,7 +123,6 @@ namespace osuAT.Game.Objects
                                             Origin = Anchor.Centre,
 
                                             Children = new Drawable[] {
-
                                                 new Container {
                                                     AutoSizeAxes = Axes.Both,
                                                     Anchor = Anchor.Centre,
@@ -150,12 +147,10 @@ namespace osuAT.Game.Objects
                                                             Origin = Anchor.Centre,
                                                             Colour = Skill.PrimaryColor,
                                                             Y =  (Skill.MiniHeight/224-1)*80,
-
                                                         },
                                                     }
                                                 },
                                                 new SpriteText {
-
                                                     Text = Skill.Name,
                                                     Anchor = Anchor.Centre,
                                                     Y = -10 - (Skill.MiniHeight/264-1)*10,
@@ -169,15 +164,13 @@ namespace osuAT.Game.Objects
                                                     //    Horizontal = 15,
                                                     //    Vertical = 1
                                                     //},
-                                                    // 
-
+                                                    //
                                                 }.WithEffect(new GlowEffect
                                                 {
                                                     BlurSigma = new Vector2(1),
                                                     Strength = 5,
                                                     Colour = ColourInfo.GradientHorizontal(Skill.PrimaryColor, Skill.SecondaryColor),
                                                     PadExtent = true,
-
                                                 }).WithEffect(new OutlineEffect
                                                 {
                                                     BlurSigma = new Vector2(0),
@@ -185,10 +178,7 @@ namespace osuAT.Game.Objects
                                                     Colour = Colour4.White,
                                                     PadExtent = true,
                                                 }),
-
                                             },
-
-
                                         },
 
                                         // Stars
@@ -199,7 +189,6 @@ namespace osuAT.Game.Objects
                                             Y = 86,
                                             Children = new Drawable[] {}
                                         },
-
                                     }
                             },
 
@@ -249,11 +238,19 @@ namespace osuAT.Game.Objects
                                                 Strength = 0.3f,
                                                 Colour = Skill.SecondaryColor.Darken(0.2f),
                                                 PadExtent = true,
-
                                             }),
                                         }
                                     }
                                 }
+                            },
+
+                            // Box Worth Display
+                            boxWorthContainer =  new Container {
+                                Origin = Anchor.Centre,
+                                Anchor = Anchor.TopCentre,
+                                Y = -110,
+                                Size = new Vector2(10),
+                                // Child = new Box { RelativeSizeAxes = Axes.Both}
                             },
                         }
                     }
@@ -273,16 +270,14 @@ namespace osuAT.Game.Objects
                     )
               ));
             }
-
         }
-
 
         private partial class StarShad : Container
         {
             public Container StarShading;
+
             public StarShad(TextureStore textures, Colour4 MainColor, Colour4 ShadowColor, Vector2 Pos)
             {
-
                 Child = StarShading = new Container
                 {
                     Position = Pos,
@@ -307,16 +302,22 @@ namespace osuAT.Game.Objects
                         },
                     }
                 };
-
             }
         }
+
         protected override bool OnHover(HoverEvent e)
         {
             if (ParentBox.State == SkillBoxState.FullBox) return false;
             if (ParentBox.ParentCont.MainScreen.SkillCont.FocusedBox == ParentBox) return false;
             OnFocus();
             return base.OnHover(e);
+        }
 
+        public void SetWorthDisplay(int scorePP, int scorePlacement)
+        {
+            var disp = new BoxWorthDisplay(scorePP, scorePlacement) { Scale = new Vector2(0.75f) };
+            boxWorthContainer.Child = disp;
+            disp.Appear();
         }
 
         public void OnFocus()
@@ -372,7 +373,6 @@ namespace osuAT.Game.Objects
 
         public void Slideout()
         {
-
             mainbox.Delay(300).MoveToX(358, 600, Easing.InOutCubic);
             outerstars[0].Delay(400).MoveTo(new Vector2(0, 0), 600, Easing.InOutCubic);
             outerstars[1].Delay(400).MoveTo(new Vector2(0, 0), 600, Easing.InOutCubic);
@@ -390,6 +390,5 @@ namespace osuAT.Game.Objects
             outerstars.Delay(500).MoveTo(new Vector2(96, 70), 600, Easing.InOutCubic);
             outerstars.Delay(500).ScaleTo(1, 600, Easing.InOutCubic);
         }
-
     }
 }

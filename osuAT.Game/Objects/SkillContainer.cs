@@ -29,7 +29,7 @@ namespace osuAT.Game
         protected Container BoxContainer;
         public SkillContainer(HomeScreen mainscreen)
         {
-            Size = new Vector2(8000, 5000);
+            Size = new Vector2(8000, 8000);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             MainScreen = mainscreen;
@@ -214,10 +214,6 @@ namespace osuAT.Game
             return newArrow;
         }
 
-        protected override void LoadComplete()
-        {
-            base.LoadComplete();
-        }
 
         public void FocusOnBox(SkillBox box)
         {
@@ -433,20 +429,13 @@ namespace osuAT.Game
 
         }
         protected override bool OnScroll(ScrollEvent e)
-        { // one day... scrolling will be good... right...!??!?!??!?!?
-            // we did it
-            // scrolling...
-            // is finally...
-            // GOOD!!!!!!!!!!!!!!!!!!!!!!!!!
-            if (MainScreen.CurrentlyFocused == false) return false;
+        {
+            if (!MainScreen.CurrentlyFocused) return false;
             if (FocusedBox?.State == SkillBoxState.FullBox) { return false; }
             Vector2 newScale = lastscale + new Vector2(e.ScrollDelta.Y / 10, e.ScrollDelta.Y / 10);
 
-            lastscale = ((newScale.X < 0.2 && newScale.Y < 0.2) || (newScale.X > 1.5 && newScale.Y > 1.5)) ? lastscale : newScale;
-
-
-            //Child.MoveTo(BoxScreenPos, 300, Easing.OutExpo);
-            //lastoffpos = BoxScreenPos;
+            lastscale = new Vector2((float)Math.Clamp(newScale.X, 0.2f, 1.5f), (float)Math.Clamp(newScale.Y, 0.2f, 1.5f));
+            // lastscale = ((newScale.X < 0.17 && newScale.Y < 0.17) || (newScale.X > 1.5 && newScale.Y > 1.5)) ? lastscale : newScale;
             Child.ScaleTo(lastscale, 300, Easing.OutExpo);
             return true;
         }

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using NUnit.Framework.Internal.Execution;
+using osu.Framework.Bindables;
 using osu.Framework.Platform; // Reminder: consider using osu.Framework.Platform.Storage for safe file writing.
 using OsuApiHelper;
 using osuAT.Game.Skills.Resources;
@@ -88,6 +90,10 @@ namespace osuAT.Game
         public static Storage InternalStorage { get; private set; }
         public static string SaveFileFullPath => InternalStorage.GetFullPath(SaveFile);
         public static bool IsSaving = false;
+
+        public delegate void ScoreAddedHandler(Score score);
+        public static event ScoreAddedHandler OnScoreAdded;
+
 
         private static Dictionary<string, double> getDefaultTotal()
         {
@@ -529,7 +535,7 @@ namespace osuAT.Game
             SaveData.Scores.Remove(scoreID);
         }
 
-        public static void AddScore(Score score)
+        public static void AddScore(Score score, bool save = true)
         {
             CheckSaveExists();
 
@@ -544,11 +550,9 @@ namespace osuAT.Game
             SaveData.Scores = tempdict;
             addToSkillTops(score);
             OnScoreAdded?.Invoke(score);
+
+            if (save) Save();
         }
-
-        public delegate void ScoreAddedHandler(Score score);
-
-        public static event ScoreAddedHandler OnScoreAdded;
 
         /// <summary>
         /// Adds the score to every Skill's AlltrickTop([score.ScoreRuleset] and "overall"]) if it's high enough
