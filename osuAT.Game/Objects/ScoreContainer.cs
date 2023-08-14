@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -106,6 +107,8 @@ namespace osuAT.Game
                 };
                 scrollbox.Add(display);
                 index += 1;
+                if (index == 100) break;
+                if (index > 90) Console.WriteLine(index);
             }
         }
 

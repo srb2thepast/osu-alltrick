@@ -62,7 +62,6 @@ namespace osuAT.Game.Objects
                 double scorePP = score.AlltrickPP[Skill.Identifier];
                 var scoreList = SaveStorage.SaveData.AlltrickTop[Skill.Identifier][RulesetStore.Osu.Name];
                 int index = 1 + scoreList.FindIndex(0, scoreList.Count, (Tuple<Guid, double> tup) => {
-                    Console.WriteLine(tup.Item1 + " == " + score.ID);
                     return tup.Item1 == score.ID;
                     }
                 );
