@@ -66,14 +66,6 @@ namespace SkillAnalyzer
             await SaveStorage.Init(new NativeStorage("SkillAnalyzer"));
             foreach (var handler in Host.AvailableInputHandlers)
             {
-                if (handler is ITabletHandler tabhandler)
-                {
-                    Schedule(() =>
-                    {
-                        tabhandler.AreaSize.Value = new Vector2(75.6f, 48.17f);
-                        tabhandler.AreaOffset.Value = new Vector2(73.42f, 50.18f);
-                    });
-                }
             }
         }
 
