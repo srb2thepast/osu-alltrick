@@ -108,7 +108,6 @@ namespace osuAT.Game
                 scrollbox.Add(display);
                 index += 1;
                 if (index == 100) break;
-                if (index > 90) Console.WriteLine(index);
             }
         }
 
@@ -134,6 +133,7 @@ namespace osuAT.Game
                 display.BoxClicked += SwapBarTypes;
                 scrollbox.Add(display);
                 index += 1;
+                if (index == 100) break;
             }
         }
 
