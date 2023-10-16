@@ -1,11 +1,12 @@
 ![oatlogo](https://github.com/srb2thepast/osu-alltrick/assets/19241426/1ff236de-e085-47c8-af5a-b1d4430c8bae)
 
-**osu!alltrick is an app aimed to give every single skill from osu!phd it's own pp system.** 
-It's inspried by [DigitalHypno's osu!phd video.](https://www.youtube.com/watch?v=uc99yWeP1h4) 
+**osu! alltrick is an app aimed to give every single skill from osu!phd it's own pp system.** It's inspried by [DigitalHypno's osu!phd video.](https://www.youtube.com/watch?v=uc99yWeP1h4) 
 
 https://user-images.githubusercontent.com/19241426/200956928-d7465949-5004-44c3-b7f7-724dc69ffc09.mp4
 
 <sub> - An older FlowAim pp calculator from 9/11/2022, made in 30 minutes, wonderfully being broken by the power of Guess Who is Back. </sub>
+
+**!!!!! osu! alltrick is still in beta, and thus the calculations implemented are guaranteed to change drastically and be broken in many ways. Please report all bugs found onto the github page, and do not take the calculations shown as an objective measure of your skill!!! !!!!!** 
 # How do I use this!?!?!?!?!?!?!?
 
 It's simple, really!!!
@@ -14,13 +15,13 @@ It's simple, really!!!
 1. - **Download the latest release** over [here.](https://github.com/srb2thepast/osu-alltrick/releases/latest)
 2. - **Open the settings menu**, It'll be the gray cog to the right of the top bar.
 3. - **Copy your API key** from https://osu.ppy.sh/p/api/ and paste it into the API Key box by clicking to the right of the text. 
-4. - - **MAKE SURE YOU DO NOT PUBLICLY SHARE YOUR KEY OR YOUR OSU!AT SAVEFILE. READ ALL OF THE WARNINGS ON THE OSU!API PAGE.** osu!alltrick only uses your API key in order to get details on the scores you set so it can be displayed in each skill. That api key is automatically saved to your savefile, but that means if you give your savefile to someone else they will also have your api key. 
+4. - - **MAKE SURE YOU DO NOT PUBLICLY SHARE YOUR KEY OR YOUR OSU!AT SAVEFILE. READ ALL OF THE WARNINGS ON THE OSU!API PAGE.** osu! alltrick only uses your API key in order to get details on the scores you set so it can be displayed in each skill. That api key is automatically saved to your savefile, but that means if you give your savefile to someone else they will also have your api key. 
 - - - **If you need to share your savefile, you can remove your apikey from it by entering "RESET" into the API Key box.** If your key was removed successfully, the box should flash <span style="color:yellow">yellow</span> rather than green or red.
 5. - **Type your username into the Username box.** If you change your username, you might have to input it again.
 6. - **Set your osu! path location.** Click on "Select" and navigate! The button to select that path will not show up until you are in your osu! install folder. 
 7. - - Usually, the path is "AppData/Local/osu!".
 8. - **If your settings look something like this, you're be done!** Now play a map on osu, set that 223000pp Aim Skill top play, and make the world proud!!!
-9. - - Also, scores you set are only able to get submitted to osu!alltrick if it's submitted to osu! as well. That means if you set a play with lower score than another play with the same mods, it wont submit to osu!alltrick since osu! doesn't record those scores online.
+9. - - Also, scores you set are only able to get submitted to osu! alltrick if it's submitted to osu! as well. That means if you set a play with lower score than another play with the same mods, it wont submit to osu! alltrick since osu! doesn't record those scores online.
 
 ![aimage-removebg-preview (6)](https://user-images.githubusercontent.com/19241426/200733022-36f6aba6-dc27-43a1-940c-75493831dea7.png)
 
@@ -30,12 +31,12 @@ It's simple, really!!!
 - Double click the boxes to open them! wait, these are more like bentos than boxes...
 
 ## Importing a score set on a specific map
-If you want to import a score you've set in the past, just click on the download icon to the left of the top bar and input in the beatmap ID the score was set on. Currently, osu!alltrick is only able to import the play with the best score, regardless of what mods are applied.
+If you want to import a score you've set in the past, just click on the download icon to the left of the top bar and input in the beatmap ID the score was set on. Currently, osu! alltrick is only able to import the play with the best score, regardless of what mods are applied.
 
 The beatmap ID is the very last set of the 2 IDs in the link, for example, "osu.ppy.sh/beatmapsets/1229091#osu/**2555568**".
 
 ## Updating
-If there's ever a new update, the releases page will automatically open in your default browser when you open osu!alltrick. Just install the new release and delete the old release. Your scores will be transferred over easily as your savedata is stored in a stabler location.
+If there's ever a new update, the releases page will automatically open in your default browser when you open osu! alltrick. Just install the new release and delete the old release. Your scores will be transferred over easily as your savedata is stored in a stabler location.
 
 # Reporting Bugs
 Simply make an issue with:
