@@ -1,6 +1,6 @@
 ![oatlogo](https://github.com/srb2thepast/osu-alltrick/assets/19241426/1ff236de-e085-47c8-af5a-b1d4430c8bae)
 
-**osu! alltrick is an app aimed to give every single skill from osu!phd it's own pp system.** It's inspried by [DigitalHypno's osu!phd video.](https://www.youtube.com/watch?v=uc99yWeP1h4) 
+**osu! alltrick is an app aimed to give every single listed in osu!phd it's own pp system.** It's inspried by [DigitalHypno's osu!phd video.](https://www.youtube.com/watch?v=uc99yWeP1h4) 
 
 https://user-images.githubusercontent.com/19241426/200956928-d7465949-5004-44c3-b7f7-724dc69ffc09.mp4
 
